@@ -1,4 +1,4 @@
-package Model.OSM;
+package model.OSM;
 
 public class OSMWay {
 }
