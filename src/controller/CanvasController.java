@@ -10,17 +10,25 @@ import java.awt.geom.Point2D;
  * This controller handles all logic and input related to the canvas that draws the map.
  */
 public class CanvasController {
+    private static CanvasController instance = new CanvasController();
+
     private CanvasView canvas;
     private AffineTransform transform = new AffineTransform();
     private boolean useAntiAliasing = false;
 
-    public CanvasController(CanvasView c) {
-        canvas = c;
-    }
+    private CanvasController() {}
 
     /** Return the transform to be used in the canvasView */
     public AffineTransform getTransform() {
         return transform;
+    }
+
+    public static CanvasController getInstance() {
+        return instance;
+    }
+
+    public void addCanvas(CanvasView c) {
+        canvas = c;
     }
 
     /**

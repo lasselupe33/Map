@@ -1,5 +1,6 @@
 package view;
 
+import controller.CanvasController;
 import model.MainModel;
 
 import javax.swing.*;
@@ -8,7 +9,7 @@ import java.awt.*;
 public class MainWindowView {
     public JFrame window;
 
-    public MainWindowView(CanvasView cv, MainModel m) {
+    public MainWindowView(CanvasView cv, MainModel m, CanvasController cc) {
         window = new JFrame("Line Visualiser");
         window.setLayout(new BorderLayout());
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -17,7 +18,7 @@ public class MainWindowView {
         window.pack();
         window.setVisible(true);
         // put screen to correct place on canvas
-        cv.pan(-m.getMinLon(), -m.getMaxLat());
-        cv.zoom(window.getWidth() / (m.getMaxLon() - m.getMinLon()), 0, 0);
+        cc.pan(-m.getMinLon(), -m.getMaxLat());
+        cc.zoom(window.getWidth() / (m.getMaxLon() - m.getMinLon()), 0, 0);
     }
 }
