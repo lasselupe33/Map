@@ -14,8 +14,8 @@ import java.awt.geom.Rectangle2D;
  * This view draws the map.
  */
 public class CanvasView extends JComponent {
-    MainModel model;
-    CanvasController controller;
+    private MainModel model;
+    private CanvasController controller;
     private double fps = 0.0;
 
     public CanvasView(MainModel m, CanvasController c) {
