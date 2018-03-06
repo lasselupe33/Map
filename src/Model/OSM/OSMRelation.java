@@ -1,4 +1,4 @@
-package model.OSM;
+package model.osm;
 
 public class OSMRelation {
 }
