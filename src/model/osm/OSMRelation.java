@@ -1,4 +1,6 @@
 package model.osm;
 
-public class OSMRelation {
+import java.util.ArrayList;
+
+public class OSMRelation extends ArrayList<OSMWay> {
 }
