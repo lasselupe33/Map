@@ -1,16 +1,21 @@
 package controller;
 
+import view.CanvasView;
+
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class KeyboardController {
+public class KeyboardController extends KeyAdapter {
     private Model model;
     private MainWindowView view;
     private CanvasView canvas;
+    private CanvasController canvasController;
 
-    public KeyboardController(MainWindowView v, CanvasView c, Model m) {
+    public KeyboardController(MainWindowView v, CanvasView c, Model m, CanvasController cc) {
         view = v;
         canvas = c;
         model = m;
+        canvasController = cc;
 
         view.window.addKeyListener(this);
         canvas.addKeyListener(this);
@@ -20,26 +25,22 @@ public class KeyboardController {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyChar()) {
             case 'w':
-                canvas.pan(0, 10);
+                canvasController.pan(0, 10);
                 break;
             case 'a':
-                canvas.pan(10, 0);
+                canvasController.pan(10, 0);
                 break;
             case 's':
-                canvas.pan(0, -10);
+                canvasController.pan(0, -10);
                 break;
             case 'd':
-                canvas.pan(-10, 0);
+                canvasController.pan(-10, 0);
                 break;
             case '+':
-                canvas.zoomToCenter(1.1);
+                canvasController.zoomToCenter(1.1);
                 break;
             case '-':
-                canvas.zoomToCenter(1/1.1);
-                break;
-            case 'l':
-                canvas.toggleDrawingMode();
-                canvas.repaint();
+                canvasController.zoomToCenter(1/1.1);
                 break;
             case 'o':
                 model.load("output.bin");
@@ -51,4 +52,4 @@ public class KeyboardController {
                 break;
         }
     }
-}
+} c
