@@ -31,16 +31,16 @@ public class OSMHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         switch (qName) {
             case "bounds":
-                minLat = Double.parseDouble(attributes.getValue("minlat"));
-                minLon = Double.parseDouble(attributes.getValue("minlon"));
-                maxLat = Double.parseDouble(attributes.getValue("maxlat"));
-                maxLon = Double.parseDouble(attributes.getValue("maxlon"));
-                double avgLat = minLat + (maxLat - minLat) / 2;
+                model.minLat = Double.parseDouble(attributes.getValue("minlat"));
+                model.minLon = Double.parseDouble(attributes.getValue("minlon"));
+                model.maxLat = Double.parseDouble(attributes.getValue("maxlat"));
+                model.maxLon = Double.parseDouble(attributes.getValue("maxlon"));
+                double avgLat = model.minLat + (model.maxLat - model.minLat) / 2;
                 lonFactor = Math.cos(avgLat / 180 * Math.PI);
-                minLon *= lonFactor;
-                maxLon *= lonFactor;
-                maxLat = -maxLat;
-                minLat = -minLat;
+                model.minLon *= lonFactor;
+                model.maxLon *= lonFactor;
+                model.maxLat = -model.maxLat;
+                model.minLat = -model.minLat;
                 break;
             case "node":
                 double lon = Double.parseDouble(attributes.getValue("lon"));

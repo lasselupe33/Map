@@ -32,6 +32,9 @@ public class KeyboardController extends KeyAdapter {
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyChar()) {
+            case 'x':
+                canvasController.toggleAntiAliasing();
+                break;
             case 'w':
                 canvasController.pan(0, 10);
                 break;

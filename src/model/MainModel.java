@@ -12,7 +12,7 @@ import java.util.zip.ZipInputStream;
 
 public class MainModel extends Observable implements Serializable{
     private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
-    private double minLat, minLon, maxLat, maxLon;
+    public double minLat, minLon, maxLat, maxLon;
 
     public MainModel(){}
 
@@ -93,9 +93,7 @@ public class MainModel extends Observable implements Serializable{
         }
     }
 
-
     public Iterable<Shape> get(OSMWayType type) {
-        System.out.println(shapes);
         return shapes.get(type);
     }
 

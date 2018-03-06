@@ -20,7 +20,9 @@ public class MainWindowView {
         window.add(cv, BorderLayout.CENTER);
         window.pack();
         window.setVisible(true);
+
         // put screen to correct place on canvas
+        System.out.println(-m.getMinLon() + " " + -m.getMaxLat());
         cc.pan(-m.getMinLon(), -m.getMaxLat());
         cc.zoom(window.getWidth() / (m.getMaxLon() - m.getMinLon()), 0, 0);
     }
