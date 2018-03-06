@@ -1,6 +1,8 @@
 package controller;
 
+import model.MainModel;
 import view.CanvasView;
+import view.MainWindowView;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -8,12 +10,12 @@ import java.awt.event.KeyEvent;
  * This controller handles keyboard events (pressed keys).
  */
 public class KeyboardController extends KeyAdapter {
-    private Model model;
+    private MainModel model;
     private MainWindowView view;
     private CanvasView canvas;
     private CanvasController canvasController;
 
-    public KeyboardController(MainWindowView v, CanvasView c, Model m, CanvasController cc) {
+    public KeyboardController(MainWindowView v, CanvasView c, MainModel m, CanvasController cc) {
         view = v;
         canvas = c;
         model = m;
@@ -58,4 +60,4 @@ public class KeyboardController extends KeyAdapter {
                 break;
         }
     }
-} c
+}

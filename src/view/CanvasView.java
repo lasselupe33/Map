@@ -1,15 +1,11 @@
 package view;
 
-import bfst18.model.Model;
-import bfst18.osm.OSMWayType;
 import controller.CanvasController;
 import model.MainModel;
+import model.osm.OSMWayType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.*;
-import java.util.Observable;
-import java.util.Observer;
 
 public class CanvasView extends JComponent {
     MainModel model;

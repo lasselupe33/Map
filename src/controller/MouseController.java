@@ -1,5 +1,6 @@
 package controller;
 
+import model.MainModel;
 import view.CanvasView;
 
 import java.awt.event.MouseAdapter;
@@ -12,12 +13,12 @@ import static java.lang.Math.pow;
  * This controller handles mouse events.
  */
 public class MouseController extends MouseAdapter {
-    private Model model;
+    private MainModel model;
     private CanvasView canvas;
     private CanvasController canvasController;
     private Point2D lastMousePosition;
 
-    public MouseController(CanvasView c, Model m, CanvasController cc) {
+    public MouseController(CanvasView c, MainModel m, CanvasController cc) {
         canvas = c;
         model = m;
         canvasController = cc;
@@ -36,7 +37,7 @@ public class MouseController extends MouseAdapter {
         Point2D currentMousePosition = e.getPoint();
         double dx = currentMousePosition.getX() - lastMousePosition.getX();
         double dy = currentMousePosition.getY() - lastMousePosition.getY();
-        canvas.pan(dx, dy);
+        canvasController.pan(dx, dy);
         lastMousePosition = currentMousePosition;
     }
 
@@ -62,7 +63,7 @@ public class MouseController extends MouseAdapter {
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         double factor = pow(1.1, e.getWheelRotation());
-        canvas.zoom(factor, -e.getX(), -e.getY());
+        canvasController.zoom(factor, -e.getX(), -e.getY());
 
     }
 }
