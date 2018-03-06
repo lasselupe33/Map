@@ -7,6 +7,9 @@ import model.osm.OSMWayType;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * This view draws the map.
+ */
 public class CanvasView extends JComponent {
     MainModel model;
     CanvasController controller;
@@ -16,6 +19,10 @@ public class CanvasView extends JComponent {
         controller = c;
     }
 
+    /**
+     * Draw map.
+     * @param _g Graphics
+     */
     @Override
     public void paint(Graphics _g) {
         Graphics2D g = (Graphics2D) _g;
