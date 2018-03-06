@@ -6,6 +6,9 @@ import model.MainModel;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * This class creates the main window to display the map in.
+ */
 public class MainWindowView {
     public JFrame window;
 
