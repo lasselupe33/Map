@@ -25,6 +25,7 @@ public class MainModel extends Observable implements Serializable{
         load(filename);
     }
 
+
     private EnumMap<OSMWayType, List<Shape>> initializeMap() {
         EnumMap<OSMWayType, List<Shape>> map = new EnumMap<OSMWayType, List<Shape>>(OSMWayType.class);
         for (OSMWayType type: OSMWayType.values()) {
