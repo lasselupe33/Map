@@ -8,7 +8,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Point2D;
 
 import static java.lang.Math.pow;
-
+/**
+ * This controller handles mouse events.
+ */
 public class MouseController extends MouseAdapter {
     private Model model;
     private CanvasView canvas;
@@ -25,6 +27,10 @@ public class MouseController extends MouseAdapter {
         canvas.addMouseMotionListener(this);
     }
 
+    /**
+     * Pan by dragging the mouse
+     * @param e mouse dragged
+     */
     @Override
     public void mouseDragged(MouseEvent e) {
         Point2D currentMousePosition = e.getPoint();
@@ -34,6 +40,10 @@ public class MouseController extends MouseAdapter {
         lastMousePosition = currentMousePosition;
     }
 
+    /**
+     * Get position of mouse when pressed
+     * @param e mouse pressed
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         lastMousePosition = e.getPoint();
@@ -45,7 +55,10 @@ public class MouseController extends MouseAdapter {
                 "Model: [" + modelCoords.getX() + ", " + modelCoords.getY() + "]");
     }
 
-
+    /**
+     * Zoom with mouse wheel using wheel rotations
+     * @param e mouse wheel rotated
+     */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         double factor = pow(1.1, e.getWheelRotation());

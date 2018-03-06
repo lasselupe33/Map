@@ -4,7 +4,9 @@ import view.CanvasView;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
+/**
+ * This controller handles keyboard events (pressed keys).
+ */
 public class KeyboardController extends KeyAdapter {
     private Model model;
     private MainWindowView view;
@@ -21,6 +23,10 @@ public class KeyboardController extends KeyAdapter {
         canvas.addKeyListener(this);
     }
 
+    /**
+     * Assign functionality to keys
+     * @param e key pressed
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyChar()) {

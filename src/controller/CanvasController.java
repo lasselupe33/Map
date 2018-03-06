@@ -18,13 +18,15 @@ public class CanvasController {
         canvas = c;
     }
 
-    /** Return the transform to be used in the canvasView */
+    /**
+     * @return the transform to be used in the canvasView
+     */
     public AffineTransform getTransform() {
         return transform;
     }
 
     /**
-     * @return Whether or not the view should utilise antialias
+     * @return whether or not the view should utilise antialias
      */
     public boolean shouldAntiAlias() {
         return useAntiAliasing;
@@ -35,11 +37,20 @@ public class CanvasController {
         canvas.repaint();
     }
 
+    /**
+     *
+     * @param dx
+     * @param dy
+     */
     public void pan(double dx, double dy) {
         transform.preConcatenate(AffineTransform.getTranslateInstance(dx, dy));
         canvas.repaint();
     }
 
+    /**
+     * Zoom to center with given factor
+     * @param factor to zoom by
+     */
     public void zoomToCenter(double factor) {
         zoom(factor, -canvas.getWidth() / 2, -canvas.getHeight() / 2);
     }
