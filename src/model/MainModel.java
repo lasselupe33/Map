@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 
 public class MainModel extends Observable implements Serializable{
-
     private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
     private double minLat, minLon, maxLat, maxLon;
 
@@ -43,7 +42,7 @@ public class MainModel extends Observable implements Serializable{
     public void readFromOSM(InputSource filename) {
         try {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(new model.osm.OSMHandler());
+            xmlReader.setContentHandler(new OSMHandler(this));
             xmlReader.parse(filename);
         } catch (SAXException e) {
             e.printStackTrace();
@@ -92,11 +91,11 @@ public class MainModel extends Observable implements Serializable{
                 e.printStackTrace();
             }
         }
-        dirty();
     }
 
 
     public Iterable<Shape> get(OSMWayType type) {
+        System.out.println(shapes);
         return shapes.get(type);
     }
 

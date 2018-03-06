@@ -18,10 +18,14 @@ public class OSMHandler extends DefaultHandler {
     Map<Long, OSMWay> idToWay = new HashMap<>();
     HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
     OSMWay way;
-    MainModel model = new MainModel();
+    MainModel model;
     private double lonFactor;
     private OSMWayType type;
     private OSMRelation relation;
+
+    public OSMHandler(MainModel m) {
+        model = m;
+    }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {

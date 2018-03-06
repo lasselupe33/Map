@@ -52,7 +52,6 @@ public class CanvasView extends JComponent {
             g.draw(line);
         }
 
-
         // Draw Roads
         g.setStroke(new BasicStroke(0.00005f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         g.setPaint(new Color(255, 255, 255));
