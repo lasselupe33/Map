@@ -5,11 +5,7 @@ import model.MainModel;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.awt.*;
-import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
-import java.io.*;
 import java.util.*;
 
 public class OSMHandler extends DefaultHandler {
@@ -31,16 +27,20 @@ public class OSMHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         switch (qName) {
             case "bounds":
-                model.minLat = Double.parseDouble(attributes.getValue("minlat"));
-                model.minLon = Double.parseDouble(attributes.getValue("minlon"));
-                model.maxLat = Double.parseDouble(attributes.getValue("maxlat"));
-                model.maxLon = Double.parseDouble(attributes.getValue("maxlon"));
-                double avgLat = model.minLat + (model.maxLat - model.minLat) / 2;
+                minLat = Double.parseDouble(attributes.getValue("minlat"));
+                minLon = Double.parseDouble(attributes.getValue("minlon"));
+                maxLat = Double.parseDouble(attributes.getValue("maxlat"));
+                maxLon = Double.parseDouble(attributes.getValue("maxlon"));
+                double avgLat = minLat + (maxLat - minLat) / 2;
                 lonFactor = Math.cos(avgLat / 180 * Math.PI);
-                model.minLon *= lonFactor;
-                model.maxLon *= lonFactor;
-                model.maxLat = -model.maxLat;
-                model.minLat = -model.minLat;
+                minLon *= lonFactor;
+                model.setMinLon(minLon);
+                maxLon *= lonFactor;
+                model.setMaxLon(maxLon);
+                maxLat = -maxLat;
+                model.setMaxLat(maxLat);
+                minLat = -minLat;
+                model.setMinLat(minLat);
                 break;
             case "node":
                 double lon = Double.parseDouble(attributes.getValue("lon"));
