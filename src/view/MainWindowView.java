@@ -20,7 +20,7 @@ public class MainWindowView {
         window = new JFrame("Danmarkskort");
         window.setLayout(new BorderLayout());
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        cv.setPreferredSize(new Dimension(500, 500));
+        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         window.add(cv, BorderLayout.CENTER);
         makeMenuBar(window);
         window.pack();
