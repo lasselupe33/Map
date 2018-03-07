@@ -46,7 +46,10 @@ public class MouseController extends MouseAdapter {
      * @param e mouse pressed
      */
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e){
+        if (e.getClickCount() == 2) {
+            canvasController.zoom(1.4, -e.getX(), -e.getY());
+        }
         lastMousePosition = e.getPoint();
     }
 
@@ -62,7 +65,7 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        double factor = pow(1.1, e.getWheelRotation());
+        double factor = pow(1/1.1, e.getWheelRotation());
         canvasController.zoom(factor, -e.getX(), -e.getY());
 
     }
