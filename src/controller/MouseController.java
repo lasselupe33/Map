@@ -67,6 +67,5 @@ public class MouseController extends MouseAdapter {
     public void mouseWheelMoved(MouseWheelEvent e) {
         double factor = pow(1/1.1, e.getWheelRotation());
         canvasController.zoom(factor, -e.getX(), -e.getY());
-
     }
 }
