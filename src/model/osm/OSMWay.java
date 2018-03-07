@@ -10,6 +10,4 @@ public class OSMWay extends ArrayList<OSMNode>{
     public OSMNode to() {
         return get(size() - 1);
     }
-
-
 }
