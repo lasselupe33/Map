@@ -27,9 +27,8 @@ public class MainWindowView {
         window.setVisible(true);
 
         // put screen to correct place on canvas
-        System.out.println(-m.getMinLon() + " " + -m.getMaxLat());
         cc.pan(-m.getMinLon(), -m.getMaxLat());
-        cc.zoom(window.getWidth() / (m.getMaxLon() - m.getMinLon()), 0, 0);
+        cc.zoom(window.getHeight() / (m.getMaxLon() - m.getMinLon()), 0, 0);
     }
 
     // Create menubar
