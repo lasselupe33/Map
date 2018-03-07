@@ -1,5 +1,6 @@
 import controller.CanvasController;
 import controller.KeyboardController;
+import controller.MenuController;
 import controller.MouseController;
 import model.MainModel;
 import view.MainWindowView;
@@ -17,11 +18,11 @@ public class Main {
             } else {
                 model = new MainModel(args[0]);
             }
-
+            MenuController mc = new MenuController(model);
             CanvasController canvasController = CanvasController.getInstance();
             CanvasView cv = new CanvasView(model, canvasController);
             canvasController.addCanvas(cv);
-            MainWindowView v = new MainWindowView(cv, model, canvasController);
+            MainWindowView v = new MainWindowView(cv, model, canvasController, mc);
             new KeyboardController(v, cv, model, canvasController);
             new MouseController(cv, model, canvasController);
         });
