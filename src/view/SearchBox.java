@@ -11,27 +11,24 @@ public class SearchBox extends JPanel {
 
     public SearchBox() {
         setBackground(Color.WHITE);
-        setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
-
+        setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
         createSearchInput();
         createButtons();
+        add(searchInput);
+        add(enterSearch);
+        add(toggleRute);
     }
 
-    public void createSearchInput(){
+    public void createSearchInput() {
         searchInput = new JTextField("Søg..", 30);
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 12));
-        add(searchInput);
-
-
-
     }
+
     public void createButtons(){
         enterSearch = new JButton("S");
         toggleRute = new JButton("R");
         add(enterSearch);
         add(toggleRute);
     }
-
-
 }
 

@@ -46,7 +46,7 @@ public class MainWindowView {
         lpane.setBounds(0, 0, window.getWidth(), window.getHeight());
         cv.setBounds(0, 0,window.getWidth(), window.getHeight());
         av.setBounds(0, 0, 400, 300);
-        sb.setBounds(30, 25, 470, 40);
+        sb.setBounds(20, 20, 450, 40);
         zv.setBounds(window.getWidth()-100,window.getHeight()-200,70,70);
 
         // put screen to correct place on canvas
