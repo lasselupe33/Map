@@ -3,10 +3,7 @@ import controller.KeyboardController;
 import controller.MenuController;
 import controller.MouseController;
 import model.MainModel;
-import view.AddressView;
-import view.MainWindowView;
-import view.CanvasView;
-import view.SearchBox;
+import view.*;
 
 import javax.swing.*;
 
@@ -30,8 +27,9 @@ public class Main {
             canvasController.addCanvas(cv);
             AddressView av = new AddressView();
             SearchBox sb = new SearchBox();
+            ZoomView zv = new ZoomView();
 
-            MainWindowView v = new MainWindowView(cv, model, canvasController, mc, av, sb);
+            MainWindowView v = new MainWindowView(cv, model, canvasController, mc, av, sb, zv);
             new KeyboardController(v, cv, model, canvasController);
             new MouseController(cv, model, canvasController);
         });

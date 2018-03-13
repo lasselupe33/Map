@@ -15,23 +15,21 @@ public class SearchBox extends JPanel {
 
         createSearchInput();
         createButtons();
-        add(searchInput);
-        add(enterSearch);
-        add(toggleRute);
-
-
-
     }
 
     public void createSearchInput(){
         searchInput = new JTextField("Søg..", 30);
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 12));
+        add(searchInput);
+
 
 
     }
     public void createButtons(){
         enterSearch = new JButton("S");
         toggleRute = new JButton("R");
+        add(enterSearch);
+        add(toggleRute);
     }
 
 
