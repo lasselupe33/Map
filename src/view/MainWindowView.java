@@ -17,7 +17,7 @@ public class MainWindowView {
     public JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
 
-    public MainWindowView(CanvasView cv, MainModel m, CanvasController cc, MenuController mc, AddressView av) {
+    public MainWindowView(CanvasView cv, MainModel m, CanvasController cc, MenuController mc, AddressView av, SearchBox sb) {
         menuController = mc;
 
         // Create the window
@@ -32,6 +32,7 @@ public class MainWindowView {
         // Add components
         lpane.add(cv, 0, 0);
         lpane.add(av, 1, 0);
+        lpane.add(sb, 2, 0);
         makeMenuBar(window);
 
         // Display!
@@ -42,6 +43,7 @@ public class MainWindowView {
         lpane.setBounds(0, 0, window.getWidth(), window.getHeight());
         cv.setBounds(0, 0,window.getWidth(), window.getHeight());
         av.setBounds(0, 0, 400, 300);
+        sb.setBounds(30, 25, 470, 40);
 
         // put screen to correct place on canvas
         cc.pan(-m.getMinLon(), -m.getMaxLat());

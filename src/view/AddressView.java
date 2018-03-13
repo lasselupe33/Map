@@ -11,12 +11,11 @@ public class AddressView extends JPanel {
     JLabel cityLabel = new JLabel();
 
     public AddressView() {
-        setLayout(new );
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
 
         addressLabel.setText("Rued Langaardsvej 7");
-        cityLabel.setText("2300 København S");
+        cityLabel.setText("2300 Kï¿½benhavn S");
 
         addressLabel.setFont(new Font("Myriad Pro", Font.PLAIN, 12));
 

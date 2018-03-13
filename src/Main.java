@@ -6,6 +6,7 @@ import model.MainModel;
 import view.AddressView;
 import view.MainWindowView;
 import view.CanvasView;
+import view.SearchBox;
 
 import javax.swing.*;
 
@@ -28,8 +29,9 @@ public class Main {
             CanvasView cv = new CanvasView(model, canvasController);
             canvasController.addCanvas(cv);
             AddressView av = new AddressView();
+            SearchBox sb = new SearchBox();
 
-            MainWindowView v = new MainWindowView(cv, model, canvasController, mc, av);
+            MainWindowView v = new MainWindowView(cv, model, canvasController, mc, av, sb);
             new KeyboardController(v, cv, model, canvasController);
             new MouseController(cv, model, canvasController);
         });
