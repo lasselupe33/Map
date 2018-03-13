@@ -10,7 +10,7 @@ public class AddressView extends JPanel {
     private final JLabel addressLabel = new JLabel();
     private final JLabel cityLabel = new JLabel();
     private final String fontFamily = "Myriad Pro";
-    private final int topOffset = 80;
+    private final int topOffset = 70;
     private final int addressSize = 20;
     private final int citySize = 16;
     private final int borderSize = 20;
