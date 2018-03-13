@@ -22,7 +22,6 @@ public class MouseController extends MouseAdapter {
         canvas = c;
         model = m;
         canvasController = cc;
-
         canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
         canvas.addMouseMotionListener(this);
