@@ -42,7 +42,7 @@ public class MainWindowView {
         // Setup bounds once the screen size has been determined
         lpane.setBounds(0, 0, window.getWidth(), window.getHeight());
         cv.setBounds(0, 0,window.getWidth(), window.getHeight());
-        sb.setBounds(30, 25, 470, 40);
+        sb.setBounds(20, 20, 450, 40);
 
         // put screen to correct place on canvas
         cc.pan(-m.getMinLon(), -m.getMaxLat());

@@ -10,7 +10,7 @@ public class AddressView extends JPanel {
     private final JLabel addressLabel = new JLabel();
     private final JLabel cityLabel = new JLabel();
     private final String fontFamily = "Myriad Pro";
-    private final int topOffset = 90;
+    private final int topOffset = 80;
     private final int addressSize = 20;
     private final int citySize = 16;
     private final int borderSize = 20;
@@ -38,7 +38,7 @@ public class AddressView extends JPanel {
         labelsPanel.setPreferredSize(new Dimension(300, height));
 
         // Setup address label
-        addressLabel.setText("Rued Langaardsvej 7 gj egr erg erg erg erg egr  rge");
+        addressLabel.setText("Rued Langaardsvej 7");
         addressLabel.setForeground(Color.decode("#383838"));
         addressLabel.setFont(new Font(fontFamily, Font.PLAIN, addressSize));
         addressLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
