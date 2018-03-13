@@ -5,6 +5,7 @@ import controller.MenuController;
 import model.MainModel;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -13,18 +14,34 @@ import java.awt.event.ActionEvent;
  */
 public class MainWindowView {
     public JFrame window;
+    public JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
 
-    public MainWindowView(CanvasView cv, MainModel m, CanvasController cc, MenuController mc) {
+    public MainWindowView(CanvasView cv, MainModel m, CanvasController cc, MenuController mc, AddressView av) {
         menuController = mc;
+
+        // Create the window
         window = new JFrame("Danmarkskort");
         window.setLayout(new BorderLayout());
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        window.add(cv, BorderLayout.CENTER);
+
+        // Setup pane to contain layered components
+        window.add(lpane, BorderLayout.CENTER);
+
+        // Add components
+        lpane.add(cv, 0, 0);
+        lpane.add(av, 1, 0);
         makeMenuBar(window);
+
+        // Display!
         window.pack();
         window.setVisible(true);
+
+        // Setup bounds once the screen size has been determined
+        lpane.setBounds(0, 0, window.getWidth(), window.getHeight());
+        cv.setBounds(0, 0,window.getWidth(), window.getHeight());
+        av.setBounds(0, 0, 400, 300);
 
         // put screen to correct place on canvas
         cc.pan(-m.getMinLon(), -m.getMaxLat());
