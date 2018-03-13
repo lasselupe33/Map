@@ -10,7 +10,7 @@ public class AddressView extends JPanel {
     private final JLabel addressLabel = new JLabel();
     private final JLabel cityLabel = new JLabel();
     private final String fontFamily = "Myriad Pro";
-    private final int topOffset = 125;
+    private final int topOffset = 90;
     private final int addressSize = 20;
     private final int citySize = 16;
     private final int borderSize = 20;
@@ -34,7 +34,7 @@ public class AddressView extends JPanel {
         // Create labels container
         labelsPanel.setLayout(new BoxLayout(labelsPanel, BoxLayout.PAGE_AXIS));
         labelsPanel.setOpaque(false);
-        labelsPanel.setBorder(BorderFactory.createEmptyBorder(125, 20, 20, 20));
+        labelsPanel.setBorder(BorderFactory.createEmptyBorder(topOffset, borderSize, borderSize, borderSize));
         labelsPanel.setPreferredSize(new Dimension(300, height));
 
         // Setup address label
@@ -59,7 +59,7 @@ public class AddressView extends JPanel {
     public JPanel renderButtons() {
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
         buttonsPanel.setOpaque(false);
-        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(125, 0, 20, 20));
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(topOffset, 0, borderSize, borderSize));
 
         // Setup save button
         ImageIcon saveIcon = new ImageIcon("assets/icons/bookmark.png");
