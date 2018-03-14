@@ -66,6 +66,7 @@ public class SearchBox extends JPanel {
         JLabel iconLabel = new JLabel(icon);
         iconLabel.addMouseListener(searchBoxController);
         iconLabel.setName("search");
+        iconLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         // Setup search input
         searchInput = new JTextField("Søg..");
@@ -106,6 +107,7 @@ public class SearchBox extends JPanel {
         iconLabel.setPreferredSize(new Dimension(26, 20));
         iconLabel.addMouseListener(searchBoxController);
         iconLabel.setName("rightButton");
+        iconLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         rightButtonContainer.add(iconLabel);
 

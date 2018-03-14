@@ -8,7 +8,7 @@ public class StateController {
 
     public StateController() {
         // Setup initial state
-        currentState = ViewStates.INITIAL;
+        currentState = ViewStates.NAVIGATION_ACTIVE;
     }
 
     public void addMainView(MainWindowView view) {

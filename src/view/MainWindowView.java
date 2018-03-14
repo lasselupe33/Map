@@ -25,6 +25,7 @@ public class MainWindowView {
     private AddressView addressView;
     private SearchBox searchBox;
     private ZoomView zoomView;
+    private NavigationView navigationView;
     private StateController stateController;
     private boolean initialRender = true;
     private ViewStates prevState;
@@ -37,7 +38,8 @@ public class MainWindowView {
             AddressView av,
             SearchBox sb,
             ZoomView zv,
-            StateController sc
+            StateController sc,
+            NavigationView nv
     ) {
         menuController = mc;
         canvasView = cv;
@@ -47,6 +49,7 @@ public class MainWindowView {
         searchBox = sb;
         zoomView = zv;
         stateController = sc;
+        navigationView = nv;
 
         // Create the window
         window = new JFrame("Danmarkskort");
@@ -83,7 +86,8 @@ public class MainWindowView {
                     break;
 
                 case NAVIGATION_ACTIVE:
-
+                    lpane.remove(searchBox);
+                    lpane.remove(navigationView);
                     break;
             }
         }
@@ -103,8 +107,8 @@ public class MainWindowView {
                 break;
 
             case NAVIGATION_ACTIVE:
-                // Temp..
-
+                lpane.add(searchBox, 2, 2);
+                lpane.add(navigationView, 1, 4);
                 break;
 
             default:
@@ -148,6 +152,7 @@ public class MainWindowView {
         canvasView.setBounds(0, 0, width, height);
         searchBox.setBounds(20, 20, 445, 32);
         zoomView.setBounds(width - 100,height - 200,70,70);
+        navigationView.setBounds(0, 0, 450, height);
 
         // Update previous state for next update
         prevState = stateController.getCurrentState();
