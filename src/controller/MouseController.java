@@ -26,12 +26,19 @@ public class MouseController extends MouseAdapter {
         canvas.addMouseMotionListener(this);
     }
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // Ensure keyboard events are used when the canvas has been pressed
+        canvas.requestFocus();
+    }
+
     /**
      * Pan by dragging the mouse
      * @param e mouse dragged
      */
     @Override
     public void mouseDragged(MouseEvent e) {
+        canvas.requestFocus();
         Point2D currentMousePosition = e.getPoint();
         double dx = currentMousePosition.getX() - lastMousePosition.getX();
         double dy = currentMousePosition.getY() - lastMousePosition.getY();
@@ -44,7 +51,9 @@ public class MouseController extends MouseAdapter {
      * @param e mouse pressed
      */
     @Override
-    public void mousePressed(MouseEvent e){
+    public void mousePressed(MouseEvent e) {
+        canvas.requestFocus();
+
         if (e.getClickCount() == 2) {
             canvasController.zoom(1.4, -e.getX(), -e.getY());
         }
@@ -61,6 +70,7 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
+        canvas.requestFocus();
         double factor = pow(1/1.1, e.getWheelRotation());
         canvasController.zoom(factor, -e.getX(), -e.getY());
     }

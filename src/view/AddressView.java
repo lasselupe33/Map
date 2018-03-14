@@ -1,5 +1,7 @@
 package view;
 
+import controller.AddressController;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,12 +17,15 @@ public class AddressView extends JPanel {
     private final int citySize = 16;
     private final int borderSize = 20;
     private final int height = topOffset + addressSize + borderSize * 2 + citySize;
-
+    private AddressController addressController;
     private JPanel labelsPanel = new JPanel();
     private JPanel buttonsPanel = new JPanel();
 
-    public AddressView() {
+    public AddressView(AddressController ac) {
+        addressController = ac;
+
         // Setup view
+        setName("AddressView");
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
@@ -44,7 +49,7 @@ public class AddressView extends JPanel {
         addressLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
         // Setup city label
-        cityLabel.setText("2300 København S");
+        cityLabel.setText("2300 KÃ¸benhavn S");
         cityLabel.setForeground(Color.decode("#383838"));
         cityLabel.setFont(new Font(fontFamily, Font.PLAIN, citySize));
 
@@ -70,6 +75,9 @@ public class AddressView extends JPanel {
         save.setHorizontalAlignment(JLabel.LEFT);
         save.setVerticalAlignment(JLabel.TOP);
         save.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
+        save.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        save.setName("bookmark");
+        save.addMouseListener(addressController);
         buttonsPanel.add(save);
 
         // Setup navigation button
@@ -80,6 +88,9 @@ public class AddressView extends JPanel {
         navigation.setIcon(navigationIcon);
         navigation.setHorizontalAlignment(JLabel.LEFT);
         navigation.setVerticalAlignment(JLabel.TOP);
+        navigation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        navigation.setName("navigation");
+        navigation.addMouseListener(addressController);
         buttonsPanel.add(navigation);
 
         return buttonsPanel;

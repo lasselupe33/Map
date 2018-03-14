@@ -9,7 +9,7 @@ public class FooterView extends JPanel {
     public FooterView(){
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
-        setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
+        setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
         setOpaque(true);
         hoverAdress.setText("IT-Universitetet i København Rued Langgaards Vej 7");
         hoverAdress.setForeground(Color.decode("#383838"));

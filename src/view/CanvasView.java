@@ -20,6 +20,7 @@ public class CanvasView extends JComponent {
     public CanvasView(MainModel m, CanvasController c) {
         model = m;
         controller = c;
+        setFocusable(true);
     }
 
     /**
