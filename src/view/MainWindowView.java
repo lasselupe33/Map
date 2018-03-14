@@ -17,6 +17,7 @@ public class MainWindowView {
     private JFrame window;
     private JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
+    private boolean initialRender = true;
 
     public MainWindowView(
             CanvasView cv,
@@ -69,15 +70,29 @@ public class MainWindowView {
         window.pack();
         window.setVisible(true);
 
+        int width = 0;
+        int height = 0;
+
+        // To ensure proper dimensions on mac we use the screenSize to calculate initial dimensions
+        if (initialRender) {
+            GraphicsConfiguration gc = window.getGraphicsConfiguration();
+            Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
+            width = gc.getBounds().width - screenInsets.left - screenInsets.right;
+            height = gc.getBounds().height - screenInsets.top - screenInsets.bottom;
+        } else {
+            width = window.getWidth();
+            height = window.getHeight();
+        }
+        
         // Setup bounds once the screen size has been determined
-        lpane.setBounds(0, 0, window.getWidth(), window.getHeight());
-        cv.setBounds(0, 0, window.getWidth(), window.getHeight());
+        lpane.setBounds(0, 0, width, height);
+        cv.setBounds(0, 0, width, height);
         sb.setBounds(20, 20, 445, 32);
-        zv.setBounds(window.getWidth()-100,window.getHeight()-200,70,70);
+        zv.setBounds(width - 100,height - 200,70,70);
 
         // put screen to correct place on canvas
         cc.pan(-m.getMinLon(), -m.getMaxLat());
-        cc.zoom(window.getHeight() / (m.getMaxLon() - m.getMinLon()), 0, 0);
+        cc.zoom(height / (m.getMaxLon() - m.getMinLon()), 0, 0);
     }
 
     public JFrame getWindow() {
