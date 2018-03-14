@@ -13,19 +13,22 @@ import static java.lang.Math.pow;
  * This controller handles mouse events.
  */
 public class MouseController extends MouseAdapter {
-    private MainModel model;
     private CanvasView canvas;
     private CanvasController canvasController;
     private Point2D lastMousePosition;
 
-    public MouseController(CanvasView c, MainModel m, CanvasController cc) {
+    public MouseController(CanvasView c, CanvasController cc) {
         canvas = c;
-        model = m;
         canvasController = cc;
-
         canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
         canvas.addMouseMotionListener(this);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // Ensure keyboard events are used when the canvas has been pressed
+        canvas.requestFocus();
     }
 
     /**
@@ -34,6 +37,7 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseDragged(MouseEvent e) {
+        canvas.requestFocus();
         Point2D currentMousePosition = e.getPoint();
         double dx = currentMousePosition.getX() - lastMousePosition.getX();
         double dy = currentMousePosition.getY() - lastMousePosition.getY();
@@ -46,7 +50,9 @@ public class MouseController extends MouseAdapter {
      * @param e mouse pressed
      */
     @Override
-    public void mousePressed(MouseEvent e){
+    public void mousePressed(MouseEvent e) {
+        canvas.requestFocus();
+
         if (e.getClickCount() == 2) {
             canvasController.zoom(1.4, -e.getX(), -e.getY());
         }
@@ -63,6 +69,7 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
+        canvas.requestFocus();
         double factor = pow(1/1.1, e.getWheelRotation());
         canvasController.zoom(factor, -e.getX(), -e.getY());
     }
