@@ -70,6 +70,9 @@ public class CanvasController {
         canvas.repaint();
     }
 
+    /**
+     * Helper that returns the corresponding model coordinates of a screen coordinate, based on the current transform.
+     */
     public Point2D toModelCoords(Point2D p) {
         try {
             return transform.inverseTransform(p, null);
