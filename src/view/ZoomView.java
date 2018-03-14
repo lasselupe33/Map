@@ -31,9 +31,7 @@ public class ZoomView extends JPanel {
         zoomIn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
         zoomIn.setMaximumSize(new Dimension(buttonBorderSize, buttonBorderSize));
         zoomIn.setFont(new Font(fontFamily, Font.PLAIN, fontSize));
-        zoomIn.addActionListener((e) -> {
-            canvasController.zoomToCenter(1.1);
-        });
+        zoomIn.addActionListener((e) -> canvasController.zoomToCenter(1.1));
 
 
         zoomOut = new JButton("-");
@@ -42,9 +40,7 @@ public class ZoomView extends JPanel {
         zoomOut.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
         zoomOut.setMaximumSize(new Dimension(buttonBorderSize, buttonBorderSize));
         zoomOut.setFont(new Font(fontFamily, Font.PLAIN, fontSize));
-        zoomOut.addActionListener((e) -> {
-            canvasController.zoomToCenter(1/1.1);
-        });
+        zoomOut.addActionListener((e) -> canvasController.zoomToCenter(1/1.1));
 
         add(zoomIn);
         add(Box.createVerticalStrut(10));

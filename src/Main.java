@@ -26,13 +26,14 @@ public class Main {
             cc.addCanvas(cv);
             AddressView av = new AddressView();
             SearchBox sb = new SearchBox(sc, sbc);
+            FooterView fv = new FooterView();
 
             ZoomView zv = new ZoomView(cc);
 
             sbc.addView(sb);
 
 
-            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc);
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, fv);
             sc.addMainView(v);
             new KeyboardController(v, cv, model, cc);
             new MouseController(cv, cc);

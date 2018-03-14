@@ -28,6 +28,7 @@ public class MainWindowView {
     private StateController stateController;
     private boolean initialRender = true;
     private ViewStates prevState;
+    private FooterView footerView;
 
     public MainWindowView(
             CanvasView cv,
@@ -37,7 +38,8 @@ public class MainWindowView {
             AddressView av,
             SearchBox sb,
             ZoomView zv,
-            StateController sc
+            StateController sc,
+            FooterView fv
     ) {
         menuController = mc;
         canvasView = cv;
@@ -47,6 +49,7 @@ public class MainWindowView {
         searchBox = sb;
         zoomView = zv;
         stateController = sc;
+        footerView = fv;
 
         // Create the window
         window = new JFrame("Danmarkskort");
@@ -114,6 +117,7 @@ public class MainWindowView {
         if (initialRender) {
             lpane.add(canvasView, 0, 0);
             lpane.add(zoomView, 3, 1);
+            lpane.add(footerView, 4, 5);
         }
 
         // Display!
@@ -148,6 +152,7 @@ public class MainWindowView {
         canvasView.setBounds(0, 0, width, height);
         searchBox.setBounds(20, 20, 445, 32);
         zoomView.setBounds(width - 100,height - 200,70,70);
+        footerView.setBounds(0, height-70, width, 30);
 
         // Update previous state for next update
         prevState = stateController.getCurrentState();
