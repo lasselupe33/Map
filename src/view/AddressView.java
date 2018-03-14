@@ -49,7 +49,7 @@ public class AddressView extends JPanel {
         addressLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
         // Setup city label
-        cityLabel.setText("2300 København S");
+        cityLabel.setText("2300 KÃ¸benhavn S");
         cityLabel.setForeground(Color.decode("#383838"));
         cityLabel.setFont(new Font(fontFamily, Font.PLAIN, citySize));
 

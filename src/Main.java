@@ -29,11 +29,13 @@ public class Main {
             ac.addView(av);
             SearchBox sb = new SearchBox(sc, sbc);
             sbc.addView(sb);
-            ZoomView zv = new ZoomView();
+            FooterView fv = new FooterView();
+            ZoomView zv = new ZoomView(cc);
             NavigationView nv = new NavigationView();
 
-            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv);
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv);
             sc.addMainView(v);
+
             new KeyboardController(v, cv, model, cc);
             new MouseController(cv, cc);
         });

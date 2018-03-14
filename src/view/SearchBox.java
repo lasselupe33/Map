@@ -25,8 +25,6 @@ public class SearchBox extends JPanel {
         setBackground(Color.WHITE);
         setLayout(new BorderLayout());
         setBorder(null);
-
-        update();
     }
 
     /**
@@ -34,13 +32,19 @@ public class SearchBox extends JPanel {
      */
     public void update() {
         if (!initialRender) {
-            remove(searchContainer);
+            if (stateController.getPrevState() != ViewStates.NAVIGATION_ACTIVE) {
+                remove(searchContainer);
+            }
+
             remove(rightButtonContainer);
         } else {
             initialRender = false;
         }
 
-        add(createSearchInput(), BorderLayout.WEST);
+        if (stateController.getCurrentState() != ViewStates.NAVIGATION_ACTIVE) {
+            add(createSearchInput(), BorderLayout.WEST);
+        }
+
         add(createRightButton(), BorderLayout.EAST);
     }
 
@@ -54,7 +58,7 @@ public class SearchBox extends JPanel {
         searchContainer.setPreferredSize(new Dimension(415, 32));
         searchContainer.setLayout(new BorderLayout());
         searchContainer.setOpaque(false);
-        searchContainer.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#383838")));
+        searchContainer.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, Color.decode("#383838")));
 
         // Setup margin between input and border
         Border border = searchContainer.getBorder();
@@ -89,7 +93,7 @@ public class SearchBox extends JPanel {
         // Setup wrapper panel
         rightButtonContainer = new JPanel();
         rightButtonContainer.setOpaque(false);
-        rightButtonContainer.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.decode("#383838")));
+        rightButtonContainer.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#383838")));
         rightButtonContainer.setPreferredSize(new Dimension(32, 32));
 
         // Create button

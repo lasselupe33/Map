@@ -28,7 +28,7 @@ public class MainWindowView {
     private NavigationView navigationView;
     private StateController stateController;
     private boolean initialRender = true;
-    private ViewStates prevState;
+    private FooterView footerView;
 
     public MainWindowView(
             CanvasView cv,
@@ -39,7 +39,8 @@ public class MainWindowView {
             SearchBox sb,
             ZoomView zv,
             StateController sc,
-            NavigationView nv
+            NavigationView nv,
+            FooterView fv
     ) {
         menuController = mc;
         canvasView = cv;
@@ -50,12 +51,24 @@ public class MainWindowView {
         zoomView = zv;
         stateController = sc;
         navigationView = nv;
+        footerView = fv;
 
         // Create the window
         window = new JFrame("Danmarkskort");
         window.setLayout(new BorderLayout());
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+        // Setup window size
+        GraphicsConfiguration gc = window.getGraphicsConfiguration();
+        Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
+        int width = gc.getBounds().width - screenInsets.left - screenInsets.right;
+        int height = gc.getBounds().height - screenInsets.top - screenInsets.bottom;
+        window.setPreferredSize(new Dimension(width, height));
+
+        // put screen to correct place on canvas
+        canvasController.pan(-mainModel.getMinLon(), -mainModel.getMaxLat());
+        canvasController.zoom(height / (mainModel.getMaxLon() - mainModel.getMinLon()), 0, 0);
 
         // Setup pane to contain layered components
         window.add(lpane, BorderLayout.CENTER);
@@ -75,7 +88,7 @@ public class MainWindowView {
     public void update() {
         // Remove old components
         if (!initialRender) {
-            switch (prevState) {
+            switch (stateController.getPrevState()) {
                 case INITIAL:
                     lpane.remove(searchBox);
                     break;
@@ -118,44 +131,23 @@ public class MainWindowView {
         if (initialRender) {
             lpane.add(canvasView, 0, 0);
             lpane.add(zoomView, 3, 1);
+            lpane.add(footerView, 4, 5);
         }
 
         // Display!
         if (initialRender) {
             window.pack();
             window.setVisible(true);
-        }
-
-        int width = 0;
-        int height = 0;
-
-        // To ensure proper dimensions on mac we use the screenSize to calculate initial dimensions
-        if (initialRender) {
-            GraphicsConfiguration gc = window.getGraphicsConfiguration();
-            Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
-            width = gc.getBounds().width - screenInsets.left - screenInsets.right;
-            height = gc.getBounds().height - screenInsets.top - screenInsets.bottom;
-
-            // put screen to correct place on canvas
-            canvasController.pan(-mainModel.getMinLon(), -mainModel.getMaxLat());
-            canvasController.zoom(height / (mainModel.getMaxLon() - mainModel.getMinLon()), 0, 0);
-
-            // Specify initial render has been completed
             initialRender = false;
-        } else {
-            width = window.getWidth();
-            height = window.getHeight();
         }
 
         // Setup bounds once the screen size has been determined
-        lpane.setBounds(0, 0, width, height);
-        canvasView.setBounds(0, 0, width, height);
+        lpane.setBounds(0, 0, window.getWidth(), window.getHeight());
+        canvasView.setBounds(0, 0, window.getWidth(), window.getHeight());
         searchBox.setBounds(20, 20, 445, 32);
-        zoomView.setBounds(width - 100,height - 200,70,70);
-        navigationView.setBounds(0, 0, 450, height);
-
-        // Update previous state for next update
-        prevState = stateController.getCurrentState();
+        zoomView.setBounds(window.getWidth() - 100,window.getHeight() - 200,70,70);
+        navigationView.setBounds(0, 0, 450, window.getHeight());
+        footerView.setBounds(0, window.getHeight() - 90, window.getWidth(), 30);
     }
 
     /**
