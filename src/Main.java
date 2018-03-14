@@ -1,7 +1,4 @@
-import controller.CanvasController;
-import controller.KeyboardController;
-import controller.MenuController;
-import controller.MouseController;
+import controller.*;
 import model.MainModel;
 import view.*;
 
@@ -20,18 +17,27 @@ public class Main {
 
             // Controllers
             MenuController mc = new MenuController(model);
-            CanvasController canvasController = CanvasController.getInstance();
+            CanvasController cc = CanvasController.getInstance();
+            StateController sc = new StateController();
+            SearchBoxController sbc = new SearchBoxController(sc);
 
             // Views
-            CanvasView cv = new CanvasView(model, canvasController);
-            canvasController.addCanvas(cv);
+            CanvasView cv = new CanvasView(model, cc);
+            cc.addCanvas(cv);
             AddressView av = new AddressView();
-            SearchBox sb = new SearchBox();
-            ZoomView zv = new ZoomView();
+            SearchBox sb = new SearchBox(sc, sbc);
+            FooterView fv = new FooterView();
 
-            MainWindowView v = new MainWindowView(cv, model, canvasController, mc, av, sb, zv);
-            new KeyboardController(v, cv, model, canvasController);
-            new MouseController(cv, model, canvasController);
+            ZoomView zv = new ZoomView(cc);
+
+            sbc.addView(sb);
+
+
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, fv);
+            sc.addMainView(v);
+            new KeyboardController(v, cv, model, cc);
+            new MouseController(cv, cc);
+            new ResizeController(v);
         });
     }
 }

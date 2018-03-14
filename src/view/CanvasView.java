@@ -16,7 +16,6 @@ import java.awt.geom.Rectangle2D;
 public class CanvasView extends JComponent {
     private MainModel model;
     private CanvasController controller;
-    private double fps = 0.0;
 
     public CanvasView(MainModel m, CanvasController c) {
         model = m;
@@ -29,7 +28,6 @@ public class CanvasView extends JComponent {
      */
     @Override
     public void paint(Graphics _g) {
-        long t1 = System.nanoTime();
         Graphics2D g = (Graphics2D) _g;
         g.setStroke(new BasicStroke(Float.MIN_VALUE));
         Rectangle2D viewRect = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
@@ -83,15 +81,7 @@ public class CanvasView extends JComponent {
                 g.fill(building);
             }
         }
-        long t2 = System.nanoTime();
-        fps = (fps + 1e9/ (t2 - t1)) / 2;
+
         g.setTransform(new AffineTransform());
-        g.setColor(Color.WHITE);
-        g.fillRect(5, 5, 80, 20);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g.setColor(Color.BLACK);
-        g.drawRect(5, 5, 80, 20);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.drawString(String.format("FPS: %.1f", fps), 10, 20);
     }
 }
