@@ -40,7 +40,7 @@ public class NavigationView extends JPanel {
         JPanel topPanel = new JPanel();
         topPanel.setOpaque(false);
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-        topPanel.setMaximumSize(new Dimension(width, 250));
+        topPanel.setMaximumSize(new Dimension(width, 200));
         topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.decode("#a7a7a7")));
 
         topPanel.add(navigationTypeInputs());
@@ -57,8 +57,7 @@ public class NavigationView extends JPanel {
         JPanel navigationTypeContainer = new JPanel();
         navigationTypeContainer.setOpaque(false);
         navigationTypeContainer.setLayout(new GridLayout(1, 3));
-        navigationTypeContainer.setBorder(new EmptyBorder(52, 150, 0, 150));
-        navigationTypeContainer.setPreferredSize(new Dimension(width, 82));
+        navigationTypeContainer.setBorder(new EmptyBorder(20, 150, 0, 150));
 
         // Setup Car button
         ImageIcon carIcon = new ImageIcon("assets/icons/car.png");

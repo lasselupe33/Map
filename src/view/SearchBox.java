@@ -31,6 +31,7 @@ public class SearchBox extends JPanel {
      * Helper function that updates the component
      */
     public void update() {
+        // Remove components if necessary
         if (!initialRender) {
             if (stateController.getPrevState() != ViewStates.NAVIGATION_ACTIVE) {
                 remove(searchContainer);
@@ -41,8 +42,12 @@ public class SearchBox extends JPanel {
             initialRender = false;
         }
 
+        // Add required components and update bounds
         if (stateController.getCurrentState() != ViewStates.NAVIGATION_ACTIVE) {
             add(createSearchInput(), BorderLayout.WEST);
+            setBounds(20, 20, 445, 32);
+        } else {
+            setBounds(433, 20, 32, 32);
         }
 
         add(createRightButton(), BorderLayout.EAST);
@@ -52,6 +57,9 @@ public class SearchBox extends JPanel {
         return searchInput;
     }
 
+    /**
+     * Helper that creates the searchInput alongside required buttons.
+     */
     public JPanel createSearchInput() {
         // Setup wrapper
         searchContainer = new JPanel();

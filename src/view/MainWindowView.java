@@ -144,7 +144,6 @@ public class MainWindowView {
         // Setup bounds once the screen size has been determined
         lpane.setBounds(0, 0, window.getWidth(), window.getHeight());
         canvasView.setBounds(0, 0, window.getWidth(), window.getHeight());
-        searchBox.setBounds(20, 20, 445, 32);
         zoomView.setBounds(window.getWidth() - 100,window.getHeight() - 200,70,70);
         navigationView.setBounds(0, 0, 450, window.getHeight());
         footerView.setBounds(0, window.getHeight() - 90, window.getWidth(), 30);
