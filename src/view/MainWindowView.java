@@ -52,8 +52,8 @@ public class MainWindowView {
         // put screen to correct place on canvas
         cc.pan(-m.getMinLon(), -m.getMaxLat());
         cc.zoom(window.getHeight() / (m.getMaxLon() - m.getMinLon()), 0, 0);
-    }
 
+    }
     // Create menubar
     private void makeMenuBar(JFrame frame)
     {
