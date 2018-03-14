@@ -2,16 +2,22 @@ package view;
 
 import controller.SearchBoxController;
 import controller.StateController;
+import controller.ViewStates;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class SearchBox extends JPanel {
     private StateController stateController;
     private SearchBoxController searchBoxController;
+    private JTextField searchInput;
+    private JPanel searchContainer;
+    private JPanel rightButtonContainer;
+    private boolean initialRender = true;
 
     public SearchBox(StateController sc, SearchBoxController sbc) {
         stateController = sc;
@@ -19,13 +25,32 @@ public class SearchBox extends JPanel {
         setBackground(Color.WHITE);
         setLayout(new BorderLayout());
         setBorder(null);
+
+        update();
+    }
+
+    /**
+     * Helper function that updates the component
+     */
+    public void update() {
+        if (!initialRender) {
+            remove(searchContainer);
+            remove(rightButtonContainer);
+        } else {
+            initialRender = false;
+        }
+
         add(createSearchInput(), BorderLayout.WEST);
         add(createRightButton(), BorderLayout.EAST);
     }
 
+    public JTextField getSearchInput() {
+        return searchInput;
+    }
+
     public JPanel createSearchInput() {
         // Setup wrapper
-        JPanel searchContainer = new JPanel();
+        searchContainer = new JPanel();
         searchContainer.setPreferredSize(new Dimension(415, 32));
         searchContainer.setLayout(new BorderLayout());
         searchContainer.setOpaque(false);
@@ -39,11 +64,15 @@ public class SearchBox extends JPanel {
         // Setup icon
         ImageIcon icon = new ImageIcon("assets/icons/search.png");
         JLabel iconLabel = new JLabel(icon);
+        iconLabel.addMouseListener(searchBoxController);
+        iconLabel.setName("search");
 
         // Setup search input
-        JTextField searchInput = new JTextField("Søg..", 37);
+        searchInput = new JTextField("Søg..");
+        searchInput.setPreferredSize(new Dimension(360, searchInput.getHeight()));
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 12));
         searchInput.setBorder(BorderFactory.createEmptyBorder());
+        searchInput.addActionListener(e -> searchBoxController.onSearchInput());
 
         // Add to wrapper
         searchContainer.add(searchInput, BorderLayout.WEST);
@@ -57,16 +86,27 @@ public class SearchBox extends JPanel {
      */
     public JPanel createRightButton() {
         // Setup wrapper panel
-        JPanel rightButtonContainer = new JPanel();
+        rightButtonContainer = new JPanel();
         rightButtonContainer.setOpaque(false);
         rightButtonContainer.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.decode("#383838")));
         rightButtonContainer.setPreferredSize(new Dimension(32, 32));
 
         // Create button
-        ImageIcon icon = new ImageIcon("assets/icons/cross.png");
+        String imageURL;
+
+        if (stateController.getCurrentState() == ViewStates.INITIAL) {
+            imageURL = "assets/icons/navigation.png";
+        } else {
+            imageURL = "assets/icons/cross.png";
+        }
+
+        ImageIcon icon = new ImageIcon(imageURL);
         JLabel iconLabel = new JLabel(icon);
         iconLabel.setVerticalAlignment(JLabel.CENTER);
         iconLabel.setPreferredSize(new Dimension(26, 20));
+        iconLabel.addMouseListener(searchBoxController);
+        iconLabel.setName("rightButton");
+
         rightButtonContainer.add(iconLabel);
 
         return rightButtonContainer;
