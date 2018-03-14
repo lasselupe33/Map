@@ -8,7 +8,7 @@ public class StateController {
 
     public StateController() {
         // Setup initial state
-        currentState = ViewStates.ADDRESS_ENTERED;
+        currentState = ViewStates.INITIAL;
     }
 
     public void addMainView(MainWindowView view) {
@@ -21,6 +21,7 @@ public class StateController {
 
     public void updateCurrentState(ViewStates newState) {
         currentState = newState;
-        mainView.getWindow().repaint();
+        mainView.update();
+        mainView.lpane.repaint();
     }
 }

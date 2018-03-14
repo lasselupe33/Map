@@ -26,6 +26,7 @@ public class Main {
             cc.addCanvas(cv);
             AddressView av = new AddressView();
             SearchBox sb = new SearchBox(sc, sbc);
+            sbc.addView(sb);
             ZoomView zv = new ZoomView();
 
             MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc);
