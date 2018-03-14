@@ -10,6 +10,7 @@ public class StateController {
     public StateController() {
         // Setup initial state
         currentState = ViewStates.NAVIGATION_ACTIVE;
+        prevState = ViewStates.NAVIGATION_ACTIVE;
     }
 
     public void addMainView(MainWindowView view) {
@@ -23,10 +24,12 @@ public class StateController {
     public ViewStates getPrevState() { return prevState; }
 
     public void updateCurrentState(ViewStates newState) {
-        prevState = currentState;
         currentState = newState;
         mainView.update();
         mainView.lpane.repaint();
     }
 
+    public void updatePrevState() {
+        prevState = currentState;
+    }
 }

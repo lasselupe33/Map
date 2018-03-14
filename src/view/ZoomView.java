@@ -28,19 +28,19 @@ public class ZoomView extends JPanel {
         zoomIn = new JButton("+");
         zoomIn.setBackground(Color.WHITE);
         zoomIn.setOpaque(true);
-        zoomIn.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
+        zoomIn.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
         zoomIn.setMaximumSize(new Dimension(buttonBorderSize, buttonBorderSize));
         zoomIn.setFont(new Font(fontFamily, Font.PLAIN, fontSize));
-        zoomIn.addActionListener((e) -> canvasController.zoomToCenter(1.1));
+        zoomIn.addActionListener((e) -> canvasController.zoomToCenter(1.25));
 
 
         zoomOut = new JButton("-");
         zoomOut.setBackground(Color.WHITE);
         zoomOut.setOpaque(true);
-        zoomOut.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
+        zoomOut.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
         zoomOut.setMaximumSize(new Dimension(buttonBorderSize, buttonBorderSize));
         zoomOut.setFont(new Font(fontFamily, Font.PLAIN, fontSize));
-        zoomOut.addActionListener((e) -> canvasController.zoomToCenter(1/1.1));
+        zoomOut.addActionListener((e) -> canvasController.zoomToCenter(1/1.25));
 
         add(zoomIn);
         add(Box.createVerticalStrut(10));

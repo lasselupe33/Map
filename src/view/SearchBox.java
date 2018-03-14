@@ -75,7 +75,7 @@ public class SearchBox extends JPanel {
         // Setup search input
         searchInput = new JTextField("Søg..");
         searchInput.setPreferredSize(new Dimension(360, searchInput.getHeight()));
-        searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 12));
+        searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 14));
         searchInput.setBorder(BorderFactory.createEmptyBorder());
         searchInput.addActionListener(e -> searchBoxController.onSearchInput());
 
