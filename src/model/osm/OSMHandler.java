@@ -10,11 +10,12 @@ import java.util.*;
 
 public class OSMHandler extends DefaultHandler {
     private double minLat, minLon, maxLat, maxLon;
-    LongToOSMNodeMap idToNode = new LongToOSMNodeMap(25);
-    Map<Long, OSMWay> idToWay = new HashMap<>();
-    HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
-    OSMWay way;
-    MainModel model;
+    private LongToOSMNodeMap idToNode = new LongToOSMNodeMap(25);
+    private Map<Long, OSMWay> idToWay = new HashMap<>();
+    private HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
+    private OSMWay way;
+    private MainModel model;
+    private List<OSMWay> ways = new ArrayList<>();
     private double lonFactor;
     private OSMWayType type;
     private OSMRelation relation;
@@ -119,11 +120,18 @@ public class OSMHandler extends DefaultHandler {
                 } else {
                     node = way.get(0);
                     path.moveTo(node.getLon(), node.getLat());
+                    int counter = 0;
+                    double sumLat = 0; double sumLon = 0;
                     for (int i = 1; i < way.size(); i++) {
                         node = way.get(i);
                         path.lineTo(node.getLon(), node.getLat());
+                        sumLat += node.getLat(); sumLon += node.getLon();
+                        counter++;
                     }
+                    way.setAvgLatandLon(sumLat/counter, sumLon/counter);
+                    ways.add(way);
                     model.add(type, path);
+
                 }
                 break;
             case "relation":
@@ -157,5 +165,9 @@ public class OSMHandler extends DefaultHandler {
             default:
                 break;
         }
+    }
+
+    public List<OSMWay> getListOfWays(){
+        return ways;
     }
 }

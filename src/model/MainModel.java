@@ -1,5 +1,6 @@
 package model;
 
+import helpers.KDTree;
 import model.osm.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -13,11 +14,13 @@ import java.util.zip.ZipInputStream;
 public class MainModel extends Observable implements Serializable{
     private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
     private double minLat, minLon, maxLat, maxLon;
+    private KDTree tree;
 
     public MainModel(){}
 
     public MainModel(String filename) {
         load(filename);
+        tree = new KDTree();
     }
 
 
@@ -44,6 +47,7 @@ public class MainModel extends Observable implements Serializable{
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
             xmlReader.setContentHandler(new OSMHandler(this));
             xmlReader.parse(filename);
+
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
