@@ -79,20 +79,23 @@ public class MainWindowView {
             Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
             width = gc.getBounds().width - screenInsets.left - screenInsets.right;
             height = gc.getBounds().height - screenInsets.top - screenInsets.bottom;
+
+            // put screen to correct place on canvas
+            cc.pan(-m.getMinLon(), -m.getMaxLat());
+            cc.zoom(height / (m.getMaxLon() - m.getMinLon()), 0, 0);
+
+            // Specify initial render has been completed
+            initialRender = false;
         } else {
             width = window.getWidth();
             height = window.getHeight();
         }
-        
+
         // Setup bounds once the screen size has been determined
         lpane.setBounds(0, 0, width, height);
         cv.setBounds(0, 0, width, height);
         sb.setBounds(20, 20, 445, 32);
         zv.setBounds(width - 100,height - 200,70,70);
-
-        // put screen to correct place on canvas
-        cc.pan(-m.getMinLon(), -m.getMaxLat());
-        cc.zoom(height / (m.getMaxLon() - m.getMinLon()), 0, 0);
     }
 
     public JFrame getWindow() {

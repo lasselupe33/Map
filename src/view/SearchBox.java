@@ -41,7 +41,8 @@ public class SearchBox extends JPanel {
         JLabel iconLabel = new JLabel(icon);
 
         // Setup search input
-        JTextField searchInput = new JTextField("Søg..", 37);
+        JTextField searchInput = new JTextField("Søg..");
+        searchInput.setPreferredSize(new Dimension(360, searchInput.getHeight()));
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 12));
         searchInput.setBorder(BorderFactory.createEmptyBorder());
 
