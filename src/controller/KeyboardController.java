@@ -21,7 +21,6 @@ public class KeyboardController extends KeyAdapter {
         model = m;
         canvasController = cc;
 
-        view.window.addKeyListener(this);
         canvas.addKeyListener(this);
     }
 

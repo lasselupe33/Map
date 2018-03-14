@@ -1,5 +1,8 @@
 package view;
 
+import controller.SearchBoxController;
+import controller.StateController;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -7,7 +10,12 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class SearchBox extends JPanel {
-    public SearchBox() {
+    private StateController stateController;
+    private SearchBoxController searchBoxController;
+
+    public SearchBox(StateController sc, SearchBoxController sbc) {
+        stateController = sc;
+        searchBoxController = sbc;
         setBackground(Color.WHITE);
         setLayout(new BorderLayout());
         setBorder(null);

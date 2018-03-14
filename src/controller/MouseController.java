@@ -13,14 +13,12 @@ import static java.lang.Math.pow;
  * This controller handles mouse events.
  */
 public class MouseController extends MouseAdapter {
-    private MainModel model;
     private CanvasView canvas;
     private CanvasController canvasController;
     private Point2D lastMousePosition;
 
-    public MouseController(CanvasView c, MainModel m, CanvasController cc) {
+    public MouseController(CanvasView c, CanvasController cc) {
         canvas = c;
-        model = m;
         canvasController = cc;
 
         canvas.addMouseListener(this);

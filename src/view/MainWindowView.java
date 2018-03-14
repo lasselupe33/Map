@@ -2,6 +2,7 @@ package view;
 
 import controller.CanvasController;
 import controller.MenuController;
+import controller.StateController;
 import model.MainModel;
 
 import javax.swing.*;
@@ -13,11 +14,20 @@ import java.awt.event.ActionEvent;
  * This class creates the main window to display the map in.
  */
 public class MainWindowView {
-    public JFrame window;
-    public JLayeredPane lpane = new JLayeredPane();
+    private JFrame window;
+    private JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
 
-    public MainWindowView(CanvasView cv, MainModel m, CanvasController cc, MenuController mc, AddressView av, SearchBox sb, ZoomView zv) {
+    public MainWindowView(
+            CanvasView cv,
+            MainModel m,
+            CanvasController cc,
+            MenuController mc,
+            AddressView av,
+            SearchBox sb,
+            ZoomView zv,
+            StateController sc
+    ) {
         menuController = mc;
 
         // Create the window
@@ -32,11 +42,28 @@ public class MainWindowView {
 
 
         // Add components
-        lpane.add(cv, 0, 0);
-        lpane.add(av, 1, 0);
-        lpane.add(sb, 2, 0);
-        lpane.add(zv, 3, 0);
         makeMenuBar(window);
+        lpane.add(cv, 0, 0);
+        lpane.add(zv, 3, 0);
+
+        switch(sc.getCurrentState()) {
+            case INITIAL:
+                lpane.add(sb, 2, 0);
+                break;
+
+            case ADDRESS_ENTERED:
+                lpane.add(sb, 2, 0);
+                lpane.add(av, 1, 0);
+                break;
+
+            case NAVIGATION_ACTIVE:
+                // Temp..
+
+                break;
+
+            default:
+                // No other viewStates should exist!
+        }
 
         // Display!
         window.pack();
@@ -51,6 +78,10 @@ public class MainWindowView {
         // put screen to correct place on canvas
         cc.pan(-m.getMinLon(), -m.getMaxLat());
         cc.zoom(window.getHeight() / (m.getMaxLon() - m.getMinLon()), 0, 0);
+    }
+
+    public JFrame getWindow() {
+        return window;
     }
 
     // Create menubar
