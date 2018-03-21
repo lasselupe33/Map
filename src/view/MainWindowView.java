@@ -146,7 +146,7 @@ public class MainWindowView {
         canvasView.setBounds(0, 0, window.getWidth(), window.getHeight());
         zoomView.setBounds(window.getWidth() - 100,window.getHeight() - 200,70,70);
         navigationView.setBounds(0, 0, 450, window.getHeight());
-        footerView.setBounds(0, window.getHeight() - 90, window.getWidth(), 30);
+        footerView.setBounds(0, window.getHeight() - 70, window.getWidth(), 30);
 
         // Update the previous state after render
         stateController.updatePrevState();

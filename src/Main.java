@@ -29,7 +29,7 @@ public class Main {
             ac.addView(av);
             SearchBox sb = new SearchBox(sc, sbc);
             sbc.addView(sb);
-            FooterView fv = new FooterView();
+            FooterView fv = new FooterView(cc, model);
             ZoomView zv = new ZoomView(cc);
             NavigationView nv = new NavigationView();
 
