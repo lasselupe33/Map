@@ -70,6 +70,7 @@ public class OSMHandler extends DefaultHandler {
                         type = OSMWayType.ROAD;
                         if (attributes.getValue("v").equals("primary")) {
                             type = OSMWayType.HIGHWAY;
+
                         }
                         break;
                     case "natural":
@@ -120,16 +121,11 @@ public class OSMHandler extends DefaultHandler {
                 } else {
                     node = way.get(0);
                     path.moveTo(node.getLon(), node.getLat());
-                    int counter = 0;
-                    double sumLat = 0; double sumLon = 0;
                     for (int i = 1; i < way.size(); i++) {
                         node = way.get(i);
                         path.lineTo(node.getLon(), node.getLat());
-                        sumLat += node.getLat(); sumLon += node.getLon();
-                        counter++;
                     }
-                    way.setAvgLatandLon(sumLat/counter, sumLon/counter);
-                    ways.add(way);
+
                     model.add(type, path);
 
                 }

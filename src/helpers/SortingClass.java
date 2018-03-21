@@ -4,6 +4,7 @@ import model.osm.OSMWay;
 
 import java.util.Random;
 
+
 public class SortingClass {
 
     /**
