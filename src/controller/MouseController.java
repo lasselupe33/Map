@@ -2,7 +2,9 @@ package controller;
 
 import model.MainModel;
 import view.CanvasView;
+import view.DistanceCalculation;
 
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -62,8 +64,6 @@ public class MouseController extends MouseAdapter {
 
     public void mouseMoved(MouseEvent e) {
         Point2D modelCoords = canvasController.toModelCoords(e.getPoint());
-        System.out.println(modelCoords);
-        System.out.println(e.getPoint());
     }
 
     /**

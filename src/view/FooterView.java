@@ -11,8 +11,8 @@ public class FooterView extends JPanel {
     private JLabel hoverAdress2 = new JLabel();
     private DistanceCalculation distanceIcon;
 
-    public FooterView(CanvasController cc, MainModel mm){
-        distanceIcon = new DistanceCalculation(cc, mm);
+    public FooterView(CanvasController cc){
+        distanceIcon = new DistanceCalculation(cc);
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
