@@ -2,6 +2,7 @@ package model.osm;
 
 import helpers.LongToOSMNodeMap;
 import model.MainModel;
+import model.MapElements;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -13,9 +14,9 @@ public class OSMHandler extends DefaultHandler {
     private LongToOSMNodeMap idToNode = new LongToOSMNodeMap(25);
     private Map<Long, OSMWay> idToWay = new HashMap<>();
     private HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
+    private List<MapElements> mapElements = new ArrayList<>();
     private OSMWay way;
     private MainModel model;
-    private List<OSMWay> ways = new ArrayList<>();
     private double lonFactor;
     private OSMWayType type;
     private OSMRelation relation;
@@ -125,7 +126,8 @@ public class OSMHandler extends DefaultHandler {
                         node = way.get(i);
                         path.lineTo(node.getLon(), node.getLat());
                     }
-
+                    MapElements m = new MapElements(path);
+                    mapElements.add(m);
                     model.add(type, path);
 
                 }
@@ -163,7 +165,7 @@ public class OSMHandler extends DefaultHandler {
         }
     }
 
-    public List<OSMWay> getListOfWays(){
-        return ways;
+    public List<MapElements> getListOfElements(){
+        return mapElements;
     }
 }

@@ -14,6 +14,7 @@ import java.util.zip.ZipInputStream;
 public class MainModel extends Observable implements Serializable{
     private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
     private double minLat, minLon, maxLat, maxLon;
+    private OSMHandler handler;
     private KDTree tree;
 
     public MainModel(){}
@@ -21,6 +22,7 @@ public class MainModel extends Observable implements Serializable{
     public MainModel(String filename) {
         load(filename);
         tree = new KDTree();
+        tree.createTree(handler.getListOfElements(), this);
     }
 
 
@@ -44,8 +46,9 @@ public class MainModel extends Observable implements Serializable{
 
     public void readFromOSM(InputSource filename) {
         try {
+            handler = new OSMHandler(this);
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(new OSMHandler(this));
+            xmlReader.setContentHandler(handler);
             xmlReader.parse(filename);
 
         } catch (SAXException e) {

@@ -1,24 +1,23 @@
 package helpers;
 
-import model.osm.OSMWay;
+import model.MapElements;
 
+import java.util.List;
 import java.util.Random;
 
 
 public class SortingClass {
 
-    /**
-     * Rearranges the array in ascending order, using the natural order.
-     * @param a the array to be sorted
-     */
-    /*public static void sort(OSMWay[] a, boolean even) {
+
+    public static void sort(List<MapElements> list, boolean even) {
+        MapElements[] a = new MapElements[list.size()];
+        a = list.toArray(a);
         shuffleArray(a);
         sort(a, 0, a.length - 1, even);
-        assert isSorted(a);
-    }*/
+    }
 
     // quicksort the subarray from a[lo] to a[hi]
-    public static void sort(OSMWay[] a, int lo, int hi, boolean even) {
+    public static void sort(MapElements[] a, int lo, int hi, boolean even) {
         if (hi <= lo) return;
         int j = partition(a, lo, hi, even);
         sort(a, lo, j-1, even);
@@ -28,10 +27,28 @@ public class SortingClass {
 
     // partition the subarray a[lo..hi] so that a[lo..j-1] <= a[j] <= a[j+1..hi]
     // and return the index j.
-    private static int partition(OSMWay[] a, int lo, int hi, boolean even) {
-        int j;
-        if(even) j = partLat(a, lo, hi);
-        else j = partLon(a, lo, hi);
+    private static int partition(MapElements[] a, int lo, int hi, boolean even) {
+        int i = lo;
+        int j = hi + 1;
+        MapElements v = a[lo];
+        while (true) {
+
+            // find item on lo to swap
+            while (less(a[++i], v, even)) {
+                if (i == hi) break;
+            }
+
+            // find item on hi to swap
+            while (less(v, a[--j], even)) {
+                if (j == lo) break;      // redundant since a[lo] acts as sentinel
+            }
+
+            // check if pointers cross
+            if (i >= j) break;
+
+            exch(a, i, j);
+        }
+
         // put partitioning item v at a[j]
         exch(a, lo, j);
 
@@ -39,85 +56,12 @@ public class SortingClass {
         return j;
     }
 
-    private static int partLon(OSMWay[] a, int lo, int hi){
-        int i = lo;
-        int j = hi + 1;
-        OSMWay v = a[lo];
-        while (true) {
-
-            // find item on lo to swap
-            while (lessLon(a[++i], v)) {
-                if (i == hi) break;
-            }
-
-            // find item on hi to swap
-            while (lessLon(v, a[--j])) {
-                if (j == lo) break;      // redundant since a[lo] acts as sentinel
-            }
-
-            // check if pointers cross
-            if (i >= j) break;
-
-            exch(a, i, j);
-        }
-        return j;
-    }
-
-    private static int partLat(OSMWay[] a, int lo, int hi){
-        int i = lo;
-        int j = hi + 1;
-        OSMWay v = a[lo];
-        while (true) {
-
-            // find item on lo to swap
-            while (lessLat(a[++i], v)) {
-                if (i == hi) break;
-            }
-
-            // find item on hi to swap
-            while (lessLat(v, a[--j])) {
-                if (j == lo) break;      // redundant since a[lo] acts as sentinel
-            }
-
-            // check if pointers cross
-            if (i >= j) break;
-
-            exch(a, i, j);
-        }
-        return j;
-    }
-
-    /**
-     * Rearranges the array so that {@code a[k]} contains the kth smallest key;
-     * {@code a[0]} through {@code a[k-1]} are less than (or equal to) {@code a[k]}; and
-     * {@code a[k+1]} through {@code a[n-1]} are greater than (or equal to) {@code a[k]}.
-     *
-     * @param  a the array
-     * @param  k the rank of the key
-     * @return the key of rank {@code k}
-     * @throws IllegalArgumentException unless {@code 0 <= k < a.length}
-     */
-    public static OSMWay select(OSMWay[] a, int k, boolean even) {
-        if (k < 0 || k >= a.length) {
-            throw new IllegalArgumentException("index is not between 0 and " + a.length + ": " + k);
-        }
-        shuffleArray(a);
-        int lo = 0, hi = a.length - 1;
-        while (hi > lo) {
-            int i = partition(a, lo, hi, even);
-            if      (i > k) hi = i - 1;
-            else if (i < k) lo = i + 1;
-            else return a[i];
-        }
-        return a[lo];
-    }
 
 
-
-    private static void shuffleArray(OSMWay[] array)
+    private static void shuffleArray(MapElements[] array)
     {
         int index;
-        OSMWay temp;
+        MapElements temp;
         Random random = new Random();
         for (int i = array.length - 1; i > 0; i--)
         {
@@ -133,14 +77,14 @@ public class SortingClass {
      ***************************************************************************/
 
     // is v < w ?
-    private static boolean lessLon(OSMWay v, OSMWay w) {
-        if (v == w) return false;   // optimization when reference equals
-        return v.getAvgLon() < w.getAvgLon();
-    }
-
-    private static boolean lessLat(OSMWay v, OSMWay w) {
-        if (v.getAvgLat() == w.getAvgLat()) return false;   // optimization when reference equals
-        return v.getAvgLat() < w.getAvgLat();
+    private static boolean less(MapElements v, MapElements w, boolean even) {
+        if(even) {
+            if (v == w) return false;   // optimization when reference equals
+            return v.getX() < w.getX();
+        } else {
+            if (v == w) return false;   // optimization when reference equals
+            return v.getY() < w.getY();
+        }
     }
 
     // exchange a[i] and a[j]
@@ -151,18 +95,6 @@ public class SortingClass {
     }
 
 
-    /***************************************************************************
-     *  Check if array is sorted - useful for debugging.
-     ***************************************************************************/
-    /*private static boolean isSorted(OSMWay[] a) {
-        return isSorted(a, 0, a.length - 1);
-    }
-
-    private static boolean isSorted(OSMWay[] a, int lo, int hi) {
-        for (int i = lo + 1; i <= hi; i++)
-            if (less(a[i], a[i-1])) return false;
-        return true;
-    }*/
 
 
 }
