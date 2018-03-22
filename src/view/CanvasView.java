@@ -2,6 +2,8 @@ package view;
 
 import controller.CanvasController;
 import model.MainModel;
+import model.MapElements;
+import model.osm.OSMHandler;
 import model.osm.OSMWayType;
 
 import javax.swing.*;
@@ -32,6 +34,7 @@ public class CanvasView extends JComponent {
         long t1 = System.nanoTime();
         Graphics2D g = (Graphics2D) _g;
         g.setStroke(new BasicStroke(Float.MIN_VALUE));
+
         Rectangle2D viewRect = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
 
         g.setPaint(new Color(60, 149, 255));
@@ -43,6 +46,15 @@ public class CanvasView extends JComponent {
             e.printStackTrace();
         }
 
+        g.setColor(Color.white);
+        for(MapElements s : model.getTreeData()){
+            if (s.getShape().intersects(viewRect)) {
+                g.draw(s.getShape());
+            }
+        }
+
+
+        /*
         if (controller.shouldAntiAlias()) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
@@ -82,7 +94,7 @@ public class CanvasView extends JComponent {
             if (building.intersects(viewRect)) {
                 g.fill(building);
             }
-        }
+        }*/
         long t2 = System.nanoTime();
         fps = (fps + 1e9/ (t2 - t1)) / 2;
         g.setTransform(new AffineTransform());

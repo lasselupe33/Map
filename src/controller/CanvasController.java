@@ -1,11 +1,13 @@
 package controller;
 
 import model.MainModel;
+import model.MapElements;
 import view.CanvasView;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.util.List;
 
 /**
  * This controller handles all logic and input related to the canvas that draws the map.
@@ -53,6 +55,7 @@ public class CanvasController {
      */
     public void pan(double dx, double dy) {
         transform.preConcatenate(AffineTransform.getTranslateInstance(dx, dy));
+        //test();
         canvas.repaint();
     }
 
@@ -72,11 +75,12 @@ public class CanvasController {
         canvas.repaint();
     }
 
-    public void test(){
+    private void test(){
         Point2D p0 = new Point2D.Double(0,0);
         Point2D p1 = new Point2D.Double(canvas.getWidth(), canvas.getHeight());
         MainModel.updateMap(toModelCoords(p0),toModelCoords(p1));
     }
+
 
     public Point2D toModelCoords(Point2D p) {
         try {

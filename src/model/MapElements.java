@@ -3,7 +3,7 @@ package model;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-public class MapElements  {
+public class MapElements {
     private Shape shape;
     private double x, y;
     private Rectangle2D r;
@@ -25,6 +25,10 @@ public class MapElements  {
 
     public Rectangle2D getBounds(){
         return r;
+    }
+
+    public Shape getShape(){
+        return shape;
     }
 
 }
