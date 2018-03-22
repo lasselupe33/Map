@@ -14,6 +14,7 @@ public class DistanceCalculation extends JComponent {
     private Point2D startModelPoint;
     private Point2D endModelPoint;
     private double distance;
+    private String text;
 
     public DistanceCalculation(CanvasController cc){
         canvasController = cc;
@@ -33,14 +34,21 @@ public class DistanceCalculation extends JComponent {
         endModelPoint = canvasController.toModelCoords(new Point(screenDistance, 10));
         distance = getDistance(startModelPoint.getX(), startModelPoint.getY(), endModelPoint.getX(), endModelPoint.getY());
 
-        //Distance Text with 2 decimals
-        String text = Math.round(distance*100.0)/100.0 + "km";
+        //Distance Text
+        if(distance > 1){
+            text = Math.round(distance*100.0)/100.0 + "km";
+        } else if(distance > 0.01){
+            text = Math.round(distance*1000) + "m";
+        } else {
+            text = "under 1m";
+        }
+
         g.drawString(text, 0, 20);
 
 
         //DistanceIcon painting
         int textwidth = g.getFontMetrics().stringWidth(text);
-        g.fillRect(textwidth, 10, screenDistance, 10);
+        g.fillRect(textwidth+2, 12, screenDistance, 8);
 
 
 
