@@ -35,12 +35,12 @@ public class DistanceCalculation extends JComponent {
 
         //Distance Text with 2 decimals
         String text = Math.round(distance*100.0)/100.0 + "km";
-        g.drawString(text, 0, 10);
+        g.drawString(text, 0, 20);
 
 
         //DistanceIcon painting
         int textwidth = g.getFontMetrics().stringWidth(text);
-        g.fillRect(textwidth, 0, screenDistance, 10);
+        g.fillRect(textwidth, 10, screenDistance, 10);
 
 
 
