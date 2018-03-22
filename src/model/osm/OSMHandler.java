@@ -70,7 +70,24 @@ public class OSMHandler extends DefaultHandler {
                         type = OSMWayType.ROAD;
                         if (attributes.getValue("v").equals("primary")) {
                             type = OSMWayType.HIGHWAY;
-
+                        }
+                        if (attributes.getValue("v").equals("secondary")) {
+                            type = OSMWayType.SECONDARYROAD;
+                        }
+                        if (attributes.getValue("v").equals("secondary")) {
+                            type = OSMWayType.TERTIARYROAD;
+                        }
+                        if (attributes.getValue("v").equals("service")) {
+                            type = OSMWayType.SERVICE;
+                        }
+                        if (attributes.getValue("v").equals("path")) {
+                            type = OSMWayType.PATH;
+                        }
+                        if (attributes.getValue("v").equals("footway")) {
+                            type = OSMWayType.FOOTWAY;
+                        }
+                        if (attributes.getValue("v").equals("cycleway")) {
+                            type = OSMWayType.CYCLEWAY;
                         }
                         break;
                     case "natural":
@@ -80,8 +97,54 @@ public class OSMHandler extends DefaultHandler {
                             type = OSMWayType.COASTLINE;
                         }
                         break;
+                    case "route":
+                        if (attributes.getValue("v").equals("ferry")) {
+                            type = OSMWayType.FERRY;
+                        }
+                        break;
                     case "building":
                         type = OSMWayType.BUILDING;
+                        if (attributes.getValue("v").equals("church")) {
+                            type = OSMWayType.PLACE_OF_WORSHIP;
+                        }
+                        break;
+                    case "leisure":
+                        if (attributes.getValue("v").equals("park")) {
+                            type = OSMWayType.PARK;
+                        }
+                        if (attributes.getValue("v").equals("pitch")) {
+                            type = OSMWayType.PITCH;
+                        }
+                        if (attributes.getValue("v").equals("garden")) {
+                            type = OSMWayType.PARK;
+                        }
+                        if (attributes.getValue("v").equals("playground")) {
+                            type = OSMWayType.PLAYGROUND;
+                        }
+                        break;
+                    case "landuse":
+                        if (attributes.getValue("v").equals("forest")) {
+                            type = OSMWayType.PARK;
+                        }
+                        if (attributes.getValue("v").equals("allotments")) {
+                            type = OSMWayType.ALLOMENTS;
+                        }
+                        if (attributes.getValue("v").equals("cemetery")) {
+                            type = OSMWayType.CEMETERY;
+                        }
+                        break;
+                    case "place":
+                        if (attributes.getValue("v").equals("island")) {
+                            type = OSMWayType.PLACE;
+                        }
+                        if (attributes.getValue("v").equals("square")) {
+                            type = OSMWayType.PEDESTRIAN;
+                        }
+                        break;
+                    case "amenity":
+                        if (attributes.getValue("v").equals("place_of_worship")) {
+                            type = OSMWayType.PLACE_OF_WORSHIP;
+                        }
                         break;
                     default:
                         break;
@@ -125,6 +188,7 @@ public class OSMHandler extends DefaultHandler {
                         node = way.get(i);
                         path.lineTo(node.getLon(), node.getLat());
                     }
+
 
                     model.add(type, path);
 
