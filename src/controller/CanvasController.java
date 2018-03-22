@@ -1,5 +1,6 @@
 package controller;
 
+import model.MainModel;
 import view.CanvasView;
 
 import java.awt.geom.AffineTransform;
@@ -67,7 +68,14 @@ public class CanvasController {
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
+        test();
         canvas.repaint();
+    }
+
+    public void test(){
+        Point2D p0 = new Point2D.Double(0,0);
+        Point2D p1 = new Point2D.Double(canvas.getWidth(), canvas.getHeight());
+        MainModel.updateMap(toModelCoords(p0),toModelCoords(p1));
     }
 
     public Point2D toModelCoords(Point2D p) {

@@ -6,6 +6,7 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -15,7 +16,7 @@ public class MainModel extends Observable implements Serializable{
     private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
     private double minLat, minLon, maxLat, maxLon;
     private OSMHandler handler;
-    private KDTree tree;
+    private static KDTree tree;
 
     public MainModel(){}
 
@@ -25,9 +26,14 @@ public class MainModel extends Observable implements Serializable{
         tree.createTree(handler.getListOfElements(), this);
     }
 
+    public static void updateMap(Point2D p0, Point2D p1){
+        List<MapElements> list = tree.searchTree(p0, p1);
+        System.out.println(list.size());
+    }
+
 
     private EnumMap<OSMWayType, List<Shape>> initializeMap() {
-        EnumMap<OSMWayType, List<Shape>> map = new EnumMap<OSMWayType, List<Shape>>(OSMWayType.class);
+        EnumMap<OSMWayType, List<Shape>> map = new EnumMap<>(OSMWayType.class);
         for (OSMWayType type: OSMWayType.values()) {
             map.put(type, new ArrayList<>());
         }
