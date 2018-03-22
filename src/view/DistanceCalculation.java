@@ -17,16 +17,36 @@ public class DistanceCalculation extends JComponent {
 
     public DistanceCalculation(CanvasController cc){
         canvasController = cc;
+        JTextField test = new JTextField("hej");
+        setLayout(new BorderLayout());
+        add(test, BorderLayout.EAST);
+
     }
 
     public void paint(Graphics _g){
         Graphics2D g = (Graphics2D) _g;
-        g.setColor(Color.red);
-        g.fillRect(0, 0, screenDistance, 10);
+        g.setColor(Color.BLACK);
+
+
+        //Distance calculation
         startModelPoint =  canvasController.toModelCoords(new Point(0, 10));
         endModelPoint = canvasController.toModelCoords(new Point(screenDistance, 10));
         distance = getDistance(startModelPoint.getX(), startModelPoint.getY(), endModelPoint.getX(), endModelPoint.getY());
-        System.out.println(distance);
+
+        //Distance Text with 2 decimals
+        String text = Math.round(distance*100.0)/100.0 + "km";
+        g.drawString(text, 0, 10);
+
+
+        //DistanceIcon painting
+        int textwidth = g.getFontMetrics().stringWidth(text);
+        g.fillRect(textwidth, 0, screenDistance, 10);
+
+
+
+
+
+
 
     }
 
