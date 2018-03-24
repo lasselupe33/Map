@@ -21,11 +21,7 @@ public class FooterView extends JPanel {
 
 
         add(hoverAdress, BorderLayout.WEST);
-        add(distanceIcon, BorderLayout.CENTER);
-
-
-
-
+        add(distanceIcon, BorderLayout.EAST);
     }
 }
 

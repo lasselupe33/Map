@@ -18,16 +18,12 @@ public class DistanceCalculation extends JComponent {
 
     public DistanceCalculation(CanvasController cc){
         canvasController = cc;
-        JTextField test = new JTextField("hej");
-        setLayout(new BorderLayout());
-        add(test, BorderLayout.EAST);
-
+        setPreferredSize(new Dimension(200, 30));
     }
 
     public void paint(Graphics _g){
         Graphics2D g = (Graphics2D) _g;
         g.setColor(Color.BLACK);
-
 
         //Distance calculation
         startModelPoint =  canvasController.toModelCoords(new Point(0, 10));
@@ -37,25 +33,22 @@ public class DistanceCalculation extends JComponent {
         //Distance Text
         if(distance > 1){
             text = Math.round(distance*100.0)/100.0 + "km";
-        } else if(distance > 0.01){
+        } else if(distance > 0.001){
             text = Math.round(distance*1000) + "m";
         } else {
             text = "under 1m";
         }
+        
+        // Draw text
+        int textWidth = g.getFontMetrics().stringWidth(text);
+        g.drawString(text, 200 - screenDistance - 30 - textWidth, 20);
 
-        g.drawString(text, 0, 20);
+        // Draw scale
+        g.fillRect(getWidth() - screenDistance - 20, 20, screenDistance, 2);
 
-
-        //DistanceIcon painting
-        int textwidth = g.getFontMetrics().stringWidth(text);
-        g.fillRect(textwidth+2, 12, screenDistance, 8);
-
-
-
-
-
-
-
+        // Draw scale edges
+        g.fillRect(getWidth() - screenDistance - 20, 10, 2, 10);
+        g.fillRect(getWidth() - 22, 10, 2, 10);
     }
 
     public double getDistance(double lat1, double lon1, double lat2, double lon2){
