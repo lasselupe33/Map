@@ -4,6 +4,7 @@ import controller.CanvasController;
 import model.MainModel;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class FooterView extends JPanel {
@@ -16,8 +17,8 @@ public class FooterView extends JPanel {
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
         setOpaque(true);
-        hoverAdress.setPreferredSize(new Dimension(1250, 20));
         hoverAdress.setText("IT-Universitetet i København Rued Langgaards Vej 7");
+        hoverAdress.setBorder(new EmptyBorder(0, 10, 0, 0));
 
 
         add(hoverAdress, BorderLayout.WEST);

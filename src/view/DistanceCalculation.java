@@ -23,7 +23,7 @@ public class DistanceCalculation extends JComponent {
 
     public void paint(Graphics _g){
         Graphics2D g = (Graphics2D) _g;
-        g.setColor(Color.BLACK);
+        g.setColor(Color.decode("#383838"));
 
         //Distance calculation
         startModelPoint =  canvasController.toModelCoords(new Point(0, 10));
@@ -38,17 +38,17 @@ public class DistanceCalculation extends JComponent {
         } else {
             text = "under 1m";
         }
-        
+
         // Draw text
         int textWidth = g.getFontMetrics().stringWidth(text);
-        g.drawString(text, 200 - screenDistance - 30 - textWidth, 20);
+        g.drawString(text, 200 - screenDistance - 20 - textWidth, 20);
 
         // Draw scale
-        g.fillRect(getWidth() - screenDistance - 20, 20, screenDistance, 2);
+        g.fillRect(getWidth() - screenDistance - 10, 18, screenDistance, 2);
 
         // Draw scale edges
-        g.fillRect(getWidth() - screenDistance - 20, 10, 2, 10);
-        g.fillRect(getWidth() - 22, 10, 2, 10);
+        g.fillRect(getWidth() - screenDistance - 10, 12, 2, 6);
+        g.fillRect(getWidth() - 12, 12, 2, 6);
     }
 
     public double getDistance(double lat1, double lon1, double lat2, double lon2){
