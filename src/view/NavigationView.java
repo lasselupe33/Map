@@ -1,5 +1,7 @@
 package view;
 
+import controller.TextController;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -99,6 +101,7 @@ public class NavigationView extends JPanel {
         // Start input
         JTextField startInput = new JTextField("Fra:");
         startInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
+        startInput.addFocusListener(new TextController());
         inputContainer.add(startInput);
 
         // Add margin between inputs
@@ -107,6 +110,7 @@ public class NavigationView extends JPanel {
         // End input
         JTextField endInput = new JTextField("Til:");
         endInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
+        endInput.addFocusListener(new TextController());
         inputContainer.add(endInput);
 
         // Add margin between inputs

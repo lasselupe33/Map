@@ -141,12 +141,15 @@ public class MainWindowView {
             initialRender = false;
         }
 
+        int height = window.getContentPane().getHeight();
+        int width = window.getContentPane().getWidth();
+
         // Setup bounds once the screen size has been determined
-        lpane.setBounds(0, 0, window.getWidth(), window.getHeight());
-        canvasView.setBounds(0, 0, window.getWidth(), window.getHeight());
-        zoomView.setBounds(window.getWidth() - 100,window.getHeight() - 200,70,70);
-        navigationView.setBounds(0, 0, 450, window.getHeight());
-        footerView.setBounds(0, window.getHeight() - 90, window.getWidth(), 30);
+        lpane.setBounds(0, 0, width, height);
+        canvasView.setBounds(0, 0, width, height);
+        zoomView.setBounds(width - 100,height - 130,70,70);
+        navigationView.setBounds(0, 0, 450, height);
+        footerView.setBounds(0, height - 30, width, 30);
 
         // Update the previous state after render
         stateController.updatePrevState();
