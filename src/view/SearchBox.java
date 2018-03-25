@@ -2,6 +2,7 @@ package view;
 
 import controller.SearchBoxController;
 import controller.StateController;
+import controller.TextController;
 import controller.ViewStates;
 
 import javax.swing.*;
@@ -86,6 +87,7 @@ public class SearchBox extends JPanel {
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 14));
         searchInput.setBorder(BorderFactory.createEmptyBorder());
         searchInput.addActionListener(e -> searchBoxController.onSearchInput());
+        searchInput.addFocusListener(new TextController());
 
         // Add to wrapper
         searchContainer.add(searchInput, BorderLayout.WEST);
