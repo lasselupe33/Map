@@ -32,9 +32,7 @@ public class CanvasController {
         return instance;
     }
 
-    public void addCanvas(CanvasView c) {
-        canvas = c;
-    }
+    public void addCanvas(CanvasView c) { canvas = c; }
 
     /**
      * @return whether or not the view should utilise antialias
@@ -55,7 +53,7 @@ public class CanvasController {
      */
     public void pan(double dx, double dy) {
         transform.preConcatenate(AffineTransform.getTranslateInstance(dx, dy));
-        //test();
+        updateMap();
         canvas.repaint();
     }
 
@@ -71,11 +69,11 @@ public class CanvasController {
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
-        test();
+        updateMap();
         canvas.repaint();
     }
 
-    private void test(){
+    public void updateMap(){
         Point2D p0 = new Point2D.Double(0,0);
         Point2D p1 = new Point2D.Double(canvas.getWidth(), canvas.getHeight());
         MainModel.updateMap(toModelCoords(p0),toModelCoords(p1));

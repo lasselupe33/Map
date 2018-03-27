@@ -10,7 +10,7 @@ public class MapElements {
 
     public MapElements(Shape s){
         shape = s;
-        r = shape.getBounds2D();
+        r = shape.getBounds();
         x = r.getX();
         y = r.getY();
     }

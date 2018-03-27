@@ -27,8 +27,6 @@ public class KDTree {
     }
 
 
-
-
     // search the KD Tree
     public List<MapElements> searchTree(Point2D p0, Point2D p1){
         int depth = 0;
@@ -79,7 +77,7 @@ public class KDTree {
         //System.out.println("Entering depth " + depth + " with list size: " + list.size());
         if (list.size() < 1000) return new Node(list);
 
-        SortingClass.sort(list, isEven(depth));
+        list = SortingClass.sort(list, isEven(depth));
 
         int median = list.size()/2;
         double split;

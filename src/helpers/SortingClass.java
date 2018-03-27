@@ -2,6 +2,7 @@ package helpers;
 
 import model.MapElements;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -9,11 +10,12 @@ import java.util.Random;
 public class SortingClass {
 
 
-    public static void sort(List<MapElements> list, boolean even) {
+    public static List<MapElements> sort(List<MapElements> list, boolean even) {
         MapElements[] a = new MapElements[list.size()];
         a = list.toArray(a);
         shuffleArray(a);
         sort(a, 0, a.length - 1, even);
+        return Arrays.asList(a);
     }
 
     // quicksort the subarray from a[lo] to a[hi]
