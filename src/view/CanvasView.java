@@ -2,9 +2,7 @@ package view;
 
 import controller.CanvasController;
 import model.MainModel;
-import model.MapElements;
-import model.osm.OSMHandler;
-import model.osm.OSMWayType;
+import model.MapElement;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +45,7 @@ public class CanvasView extends JComponent {
         }
 
         g.setColor(Color.white);
-        for(MapElements s : model.getTreeData()){
+        for(MapElement s : model.getTreeData()){
             if (s.getShape().intersects(viewRect)) {
                 g.draw(s.getShape());
             }

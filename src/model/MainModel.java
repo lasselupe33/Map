@@ -17,7 +17,7 @@ public class MainModel extends Observable implements Serializable{
     private double minLat, minLon, maxLat, maxLon;
     private OSMHandler handler;
     private static KDTree tree;
-    private static List<MapElements> maplist;
+    private static List<MapElement> maplist;
 
     public MainModel(){}
 
@@ -32,7 +32,7 @@ public class MainModel extends Observable implements Serializable{
         maplist = tree.searchTree(p0, p1);
     }
 
-    public List<MapElements> getTreeData(){
+    public List<MapElement> getTreeData(){
         //System.out.println(maplist.size());
         return maplist;
     }

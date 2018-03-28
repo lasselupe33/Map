@@ -1,13 +1,11 @@
 package controller;
 
 import model.MainModel;
-import model.MapElements;
 import view.CanvasView;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.util.List;
 
 /**
  * This controller handles all logic and input related to the canvas that draws the map.
