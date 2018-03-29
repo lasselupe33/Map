@@ -126,7 +126,7 @@ public class OSMHandler extends DefaultHandler {
                         node = way.get(i);
                         path.lineTo(node.getLon(), node.getLat());
                     }
-                    MapElement m = new MapElement(path);
+                    MapElement m = new MapElement(path, type);
                     mapElements.add(m);
                     model.add(type, path);
 

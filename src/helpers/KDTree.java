@@ -14,8 +14,9 @@ public class KDTree {
     private MainModel model;
 
     public static class Comparators {
-        static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getX);
-        static final Comparator<MapElement> Y_COMPARATOR = Comparator.comparing(MapElement::getY);
+        static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getElementX);
+        static final Comparator<MapElement> Y_COMPARATOR = Comparator.comparing(MapElement::getElementY);
+        static final Comparator<MapElement> Z_COMPARATOR = Comparator.comparing(MapElement::getTypeZoomLevel);
     }
 
     private class Node{
@@ -32,6 +33,78 @@ public class KDTree {
         }
     }
 
+    public KDTree (List<MapElement> list, MainModel m) {
+        model = m;
+        int depth = 0;
+        root = buildTree(root, list, depth);
+    }
+
+
+    // creating the KD Tree and inserting data
+
+    private Node buildTree(Node x, List<MapElement> list, int depth){
+        //System.out.println("Entering depth " + depth + " with list size: " + list.size());
+        if (list.size() < 1000) return new Node(list);
+
+        int median = list.size()/2;
+        double split = 0;
+        Line2D splitLine = null;
+
+
+        int axis = axis(depth);
+        switch (axis) {
+            case 0:
+                list.sort(Comparators.X_COMPARATOR);
+                split = list.get(median).getElementX();
+                splitLine = new Line2D.Double(new Point2D.Double(split, model.getMinLat()), new Point2D.Double(split, model.getMaxLat()));
+                break;
+            case 1:
+                list.sort(Comparators.Y_COMPARATOR);
+                split = list.get(median).getElementY();
+                splitLine = new Line2D.Double(new Point2D.Double(model.getMinLon(), split), new Point2D.Double(model.getMaxLon(), split));
+                break;
+            case 2:
+                list.sort(Comparators.Z_COMPARATOR);
+                break;
+            default:
+                break;
+        }
+
+
+        List<MapElement> listLeft = new ArrayList<>();
+        List<MapElement> listRight = new ArrayList<>();
+
+
+            for(int i = 0; i < list.size(); i++) {
+                MapElement s = list.get(i);
+
+                if (axis == 2) {
+                    if (i < median) {
+                        listLeft.add(s);
+                    } else {
+                        listRight.add(s);
+                    }
+                } else {
+
+                    if (splitLine.intersects(s.getBounds())) {
+                        listLeft.add(s);
+                        listRight.add(s);
+                    } else if (i < median) {
+                        listLeft.add(s);
+                    } else {
+                        listRight.add(s);
+                    }
+                }
+            }
+
+        x = new Node(split);
+        x.leftChild = buildTree(x.leftChild, listLeft, depth + 1);
+        x.rightChild = buildTree(x.rightChild, listRight, depth + 1);
+
+        //System.out.println("Leaving depth " + depth);
+        return x;
+    }
+
 
     // search the KD Tree
     public List<MapElement> searchTree(Point2D p0, Point2D p1){
@@ -45,25 +118,35 @@ public class KDTree {
 
         if(x.value != null) return x.value;
 
-        if(isEven(depth)){
 
-            if(p0.getX() < x.split && p1.getX() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-            else if (p0.getX() > x.split && p1.getX() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-            else {
-                list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-            }
 
-        } else {
+        switch (axis(depth)) {
+            case 0:
+                if(p0.getX() < x.split && p1.getX() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
+                else if (p0.getX() > x.split && p1.getX() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
+                else {
+                    list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
+                    list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
+                }
+                break;
+            case 1:
+                if(p0.getY() < x.split && p1.getY() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
+                else if (p0.getY() > x.split && p1.getY() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
+                else {
+                    list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
+                    list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
+                }
+                break;
+            case 2:
 
-            if(p0.getY() < x.split && p1.getY() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-            else if (p0.getY() > x.split && p1.getY() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-            else {
-                list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-            }
-
+                break;
+            default:
+                break;
         }
+
+
+
+
 
         return list;
     }
@@ -72,56 +155,9 @@ public class KDTree {
 
 
 
-    // creating the KD Tree and inserting data
-    public void createTree(List<MapElement> list, MainModel m){
-        model = m;
-        int depth = 0;
-        root = buildTree(root, list, depth);
-    }
-
-    private Node buildTree(Node x, List<MapElement> list, int depth){
-        //System.out.println("Entering depth " + depth + " with list size: " + list.size());
-        if (list.size() < 1000) return new Node(list);
-
-        int median = list.size()/2;
-        double split;
-        Line2D splitLine;
-        if(isEven(depth)){
-            list.sort(Comparators.X_COMPARATOR);
-            split = list.get(median).getX();
-            splitLine = new Line2D.Double(new Point2D.Double(split, model.getMinLat()), new Point2D.Double(split, model.getMaxLat()));
-        } else {
-            list.sort(Comparators.Y_COMPARATOR);
-            split = list.get(median).getY();
-            splitLine = new Line2D.Double(new Point2D.Double(model.getMinLon(), split), new Point2D.Double(model.getMaxLon(), split));
-        }
-
-        List<MapElement> listLeft = new ArrayList<>();
-        List<MapElement> listRight = new ArrayList<>();
-
-        for(int i = 0; i < list.size(); i++) {
-            MapElement s = list.get(i);
-            if (splitLine.intersects(s.getBounds())){
-                listLeft.add(s);
-                listRight.add(s);
-            } else if(i < median) {
-                listLeft.add(s);
-            } else {
-                listRight.add(s);
-            }
-        }
-
-        x = new Node(split);
-        x.leftChild = buildTree(x.leftChild, listLeft, depth + 1);
-        x.rightChild = buildTree(x.rightChild, listRight, depth + 1);
-
-        //System.out.println("Leaving depth " + depth);
-        return x;
-    }
-
     // check if depth is even
-    private boolean isEven(int depth) {
-        return (depth % 2 == 0);
+    private int axis(int depth) {
+        return depth % 3;
     }
 
 }

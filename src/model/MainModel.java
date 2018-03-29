@@ -23,8 +23,7 @@ public class MainModel extends Observable implements Serializable{
 
     public MainModel(String filename) {
         load(filename);
-        tree = new KDTree();
-        tree.createTree(handler.getListOfElements(), this);
+        tree = new KDTree(handler.getListOfElements(), this);
     }
 
 

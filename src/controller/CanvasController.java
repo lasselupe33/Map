@@ -16,6 +16,7 @@ public class CanvasController {
     private CanvasView canvas;
     private AffineTransform transform = new AffineTransform();
     private boolean useAntiAliasing = false;
+    private int zoomLevel;
 
     private CanvasController() {}
 
@@ -64,6 +65,9 @@ public class CanvasController {
     }
 
     public void zoom(double factor, double x, double y) {
+
+
+
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
