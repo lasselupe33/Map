@@ -1,5 +1,6 @@
 package model;
 
+import controller.CanvasController;
 import helpers.KDTree;
 import model.osm.*;
 import org.xml.sax.*;
@@ -28,7 +29,7 @@ public class MainModel extends Observable implements Serializable{
 
 
     public static void updateMap(Point2D p0, Point2D p1){
-        maplist = tree.searchTree(p0, p1);
+        maplist = tree.searchTree(p0, p1, CanvasController.getInstance().getZoomLevel());
     }
 
     public List<MapElement> getTreeData(){

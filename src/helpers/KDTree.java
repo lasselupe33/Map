@@ -12,6 +12,8 @@ import java.util.List;
 public class KDTree {
     private Node root;
     private MainModel model;
+    private int[] zoomValue = {30, 20, 10, 0};
+    private int zoom, size, scale;
 
     public static class Comparators {
         static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getElementX);
@@ -35,14 +37,15 @@ public class KDTree {
 
     public KDTree (List<MapElement> list, MainModel m) {
         model = m;
+        int index = 0;
         int depth = 0;
-        root = buildTree(root, list, depth);
+        root = buildTree(root, list, depth, index);
     }
 
 
     // creating the KD Tree and inserting data
 
-    private Node buildTree(Node x, List<MapElement> list, int depth){
+    private Node buildTree(Node x, List<MapElement> list, int depth, int index){
         //System.out.println("Entering depth " + depth + " with list size: " + list.size());
         if (list.size() < 1000) return new Node(list);
 
@@ -54,17 +57,17 @@ public class KDTree {
         int axis = axis(depth);
         switch (axis) {
             case 0:
+                list.sort(Comparators.Z_COMPARATOR);
+                break;
+            case 1:
                 list.sort(Comparators.X_COMPARATOR);
                 split = list.get(median).getElementX();
                 splitLine = new Line2D.Double(new Point2D.Double(split, model.getMinLat()), new Point2D.Double(split, model.getMaxLat()));
                 break;
-            case 1:
+            case 2:
                 list.sort(Comparators.Y_COMPARATOR);
                 split = list.get(median).getElementY();
                 splitLine = new Line2D.Double(new Point2D.Double(model.getMinLon(), split), new Point2D.Double(model.getMaxLon(), split));
-                break;
-            case 2:
-                list.sort(Comparators.Z_COMPARATOR);
                 break;
             default:
                 break;
@@ -78,7 +81,7 @@ public class KDTree {
             for(int i = 0; i < list.size(); i++) {
                 MapElement s = list.get(i);
 
-                if (axis == 2) {
+                if (axis == 0) {
                     if (i < median) {
                         listLeft.add(s);
                     } else {
@@ -98,21 +101,23 @@ public class KDTree {
             }
 
         x = new Node(split);
-        x.leftChild = buildTree(x.leftChild, listLeft, depth + 1);
-        x.rightChild = buildTree(x.rightChild, listRight, depth + 1);
+        x.leftChild = buildTree(x.leftChild, listLeft, depth + 1, index);
+        x.rightChild = buildTree(x.rightChild, listRight, depth + 1, index);
 
-        //System.out.println("Leaving depth " + depth);
+        //System.out.println("Leaving depth " + depth + " at axis = " + axis);
         return x;
     }
 
 
     // search the KD Tree
-    public List<MapElement> searchTree(Point2D p0, Point2D p1){
+    public List<MapElement> searchTree(Point2D p0, Point2D p1, int z){
+        zoom = z;
+        int index = 0;
         int depth = 0;
-        return searchTree(root, p0, p1, depth);
+        return searchTree(root, p0, p1, depth, index);
     }
 
-    private List<MapElement> searchTree(Node x, Point2D p0, Point2D p1, int depth){
+    private List<MapElement> searchTree(Node x, Point2D p0, Point2D p1, int depth, int index){
 
         List<MapElement> list = new ArrayList<>();
 
@@ -121,23 +126,30 @@ public class KDTree {
 
 
         switch (axis(depth)) {
-            case 0:
-                if(p0.getX() < x.split && p1.getX() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                else if (p0.getX() > x.split && p1.getX() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-                else {
-                    list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                    list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-                }
-                break;
             case 1:
-                if(p0.getY() < x.split && p1.getY() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                else if (p0.getY() > x.split && p1.getY() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
+                if(p0.getX() < x.split && p1.getX() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1, index));
+                else if (p0.getX() > x.split && p1.getX() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1, index));
                 else {
-                    list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                    list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
+                    list.addAll(searchTree(x.leftChild, p0, p1, depth + 1, index));
+                    list.addAll(searchTree(x.rightChild, p0, p1, depth + 1, index));
                 }
                 break;
             case 2:
+                if(p0.getY() < x.split && p1.getY() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1, index));
+                else if (p0.getY() > x.split && p1.getY() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1, index));
+                else {
+                    list.addAll(searchTree(x.leftChild, p0, p1, depth + 1, index));
+                    list.addAll(searchTree(x.rightChild, p0, p1, depth + 1, index));
+                }
+                break;
+            case 0:
+
+                if ( index >= zoomValue.length ) index = zoomValue.length-1;
+                if (zoom < zoomValue[index++]) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1, index));
+                else {
+                    list.addAll(searchTree(x.leftChild, p0, p1, depth + 1, index));
+                    list.addAll(searchTree(x.rightChild, p0, p1, depth + 1, index));
+                }
 
                 break;
             default:
