@@ -69,7 +69,7 @@ public class CanvasController {
         if (factor < 1.0) zoomLevel--;
         else if (factor > 1.0) zoomLevel++;
 
-        System.out.println(zoomLevel);
+        //System.out.println(zoomLevel);
 
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));

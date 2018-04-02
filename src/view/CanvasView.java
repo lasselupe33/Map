@@ -3,6 +3,7 @@ package view;
 import controller.CanvasController;
 import model.MainModel;
 import model.MapElement;
+import model.osm.OSMWayType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,9 +47,33 @@ public class CanvasView extends JComponent {
 
         g.setColor(Color.white);
         for(MapElement s : model.getTreeData()){
-            if (s.getShape().intersects(viewRect)) {
-                g.draw(s.getShape());
+            switch (s.getTypeZoomLevel()){
+                case COASTLINE:
+                    g.setPaint(new Color(237, 237, 237));
+                    g.fill(s.getShape());
+                    break;
+                case WATER:
+                    g.setPaint(new Color(60, 149, 255));
+                    g.fill(s.getShape());
+                    break;
+                case ROAD:
+                    g.setStroke(new BasicStroke(0.00001f));
+                    g.setPaint(new Color(230, 219, 34));
+                    g.fill(s.getShape());
+                case HIGHWAY:
+                    g.setStroke(new BasicStroke(0.00005f));
+                    g.setPaint(new Color(248, 157, 255));
+                    g.draw(s.getShape());
+                case BUILDING:
+                    g.setPaint(new Color(172, 169, 151));
+                    g.fill(s.getShape());
+                default:
+                    g.setStroke(new BasicStroke(Float.MIN_VALUE));
+                    g.setPaint(Color.black);
+                    g.draw(s.getShape());
+                    break;
             }
+            g.draw(s.getShape());
         }
 
 
