@@ -144,6 +144,8 @@ public class OSMHandler extends DefaultHandler {
                         path.lineTo(node.getLon(), node.getLat());
                     }
                 }
+                MapElement m = new MapElement(path, type);
+                mapElements.add(m);
                 model.add(type, path);
                 break;
             case "osm":
@@ -159,8 +161,8 @@ public class OSMHandler extends DefaultHandler {
                             node = way.get(i);
                             path.lineTo(node.getLon(), node.getLat());
                         }
-                        MapElement m = new MapElement(path, OSMWayType.COASTLINE);
-                        mapElements.add(m);
+                        MapElement me = new MapElement(path, OSMWayType.COASTLINE);
+                        mapElements.add(me);
                         model.add(OSMWayType.COASTLINE, path);
                     }
 

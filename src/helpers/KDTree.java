@@ -47,7 +47,7 @@ public class KDTree {
         list.sort(Comparators.Z_COMPARATOR);
         int tmp = 0;
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getTypeZoomLevel().equals(OSMWayType.WATER)) break;
+            if (list.get(i).getTypeZoomLevel().equals(OSMWayType.UNKNOWN)) break;
             list1.add(list.get(i));
             tmp = i;
         }
@@ -131,8 +131,8 @@ public class KDTree {
         List<MapElement> list = new ArrayList<>();
 
         list.addAll(searchTree(root1, p0, p1, depth));
-        if ( zoom > 20 ) list.addAll(searchTree(root2, p0, p1, depth));
-        if ( zoom > 40 ) list.addAll(searchTree(root3, p0, p1, depth));
+        if ( zoom > 5 ) list.addAll(searchTree(root2, p0, p1, depth));
+        if ( zoom > 10 ) list.addAll(searchTree(root3, p0, p1, depth));
         return list;
     }
 
