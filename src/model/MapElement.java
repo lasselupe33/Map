@@ -1,14 +1,15 @@
 package model;
 
 import model.osm.OSMWayType;
+
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 public class MapElement {
     private Shape shape;
-    private OSMWayType type;
     private double x, y;
     private Rectangle2D r;
+    private OSMWayType type;
 
     public MapElement(Shape s, OSMWayType t){
         shape = s;
@@ -30,7 +31,7 @@ public class MapElement {
         return r;
     }
 
-    public OSMWayType getTypeZoomLevel(){ return type; }
+    public OSMWayType getType() { return type; }
 
     public Shape getShape(){
         return shape;

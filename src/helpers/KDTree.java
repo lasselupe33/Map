@@ -12,15 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 public class KDTree {
-    private Node root1, root2, root3;
     private MainModel model;
-    private int[] zoomValue = {0, 5, 10, 15};
-    private int zoom;
+    private Node rootCoastline, rootWater, rootRoad, rootHighway, rootBuilding, rootUnknown;
 
     public static class Comparators {
         static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getElementX);
         static final Comparator<MapElement> Y_COMPARATOR = Comparator.comparing(MapElement::getElementY);
-        static final Comparator<MapElement> Z_COMPARATOR = Comparator.comparing(MapElement::getTypeZoomLevel);
     }
 
     private class Node{
@@ -37,34 +34,15 @@ public class KDTree {
         }
     }
 
-    public KDTree (List<MapElement> list, MainModel m) {
+    public KDTree (MainModel m) {
         model = m;
         int depth = 0;
-        List<MapElement> list1 = new ArrayList<>();
-        List<MapElement> list2 = new ArrayList<>();
-        List<MapElement> list3 = new ArrayList<>();
-
-        list.sort(Comparators.Z_COMPARATOR);
-        int tmp = 0;
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getTypeZoomLevel().equals(OSMWayType.UNKNOWN)) break;
-            list1.add(list.get(i));
-            tmp = i;
-        }
-
-        for (int i = tmp+1; i < list.size(); i++) {
-            if (list.get(i).getTypeZoomLevel().equals(OSMWayType.BUILDING)) break;
-            list2.add(list.get(i));
-            tmp = i;
-        }
-
-        for (int i = tmp+1; i < list.size(); i++) {
-            list3.add(list.get(i));
-        }
-
-        root1 = buildTree(root1, list1, depth);
-        root2 = buildTree(root2, list2, depth);
-        root3 = buildTree(root3, list3, depth);
+        rootCoastline = buildTree(rootCoastline, model.get(OSMWayType.COASTLINE), depth);
+        rootWater = buildTree(rootWater, model.get(OSMWayType.WATER), depth);
+        rootRoad = buildTree(rootRoad, model.get(OSMWayType.ROAD), depth);
+        rootHighway = buildTree(rootHighway, model.get(OSMWayType.HIGHWAY), depth);
+        rootBuilding = buildTree(rootBuilding, model.get(OSMWayType.BUILDING), depth);
+        rootUnknown = buildTree(rootUnknown, model.get(OSMWayType.UNKNOWN), depth);
     }
 
 
@@ -126,14 +104,10 @@ public class KDTree {
 
 
     // search the KD Tree
-    public List<MapElement> searchTree(Point2D p0, Point2D p1, int zoom){
+    public List<MapElement> searchTree(Point2D p0, Point2D p1, OSMWayType type){
         int depth = 0;
-        List<MapElement> list = new ArrayList<>();
-
-        list.addAll(searchTree(root1, p0, p1, depth));
-        if ( zoom > 5 ) list.addAll(searchTree(root2, p0, p1, depth));
-        if ( zoom > 10 ) list.addAll(searchTree(root3, p0, p1, depth));
-        return list;
+        Node tmp = getRoot(type);
+        return searchTree(tmp, p0, p1, depth);
     }
 
     private List<MapElement> searchTree(Node x, Point2D p0, Point2D p1, int depth){
@@ -167,6 +141,25 @@ public class KDTree {
     }
 
 
+    private Node getRoot(OSMWayType type) {
+        switch (type){
+            case COASTLINE:
+                return rootCoastline;
+            case WATER:
+                return rootWater;
+            case ROAD:
+                return rootRoad;
+            case HIGHWAY:
+                return rootHighway;
+            case BUILDING:
+                return rootBuilding;
+            case UNKNOWN:
+                return rootUnknown;
+            default:
+                break;
+        }
+        return null;
+    }
 
 
 

@@ -75,6 +75,7 @@ public class CanvasController {
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
         updateMap();
+
         canvas.repaint();
     }
 

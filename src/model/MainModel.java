@@ -14,40 +14,43 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 
 public class MainModel extends Observable implements Serializable{
-    private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
+    private static  EnumMap<OSMWayType, List<MapElement>> mapelements = initializeMap();
     private double minLat, minLon, maxLat, maxLon;
-    private OSMHandler handler;
     private static KDTree tree;
-    private static List<MapElement> maplist;
+    private static List<MapElement> maplist = new ArrayList<>();
 
     public MainModel(){}
 
     public MainModel(String filename) {
         load(filename);
-        tree = new KDTree(handler.getListOfElements(), this);
+        tree = new KDTree(this);
     }
 
 
     public static void updateMap(Point2D p0, Point2D p1){
-        maplist = tree.searchTree(p0, p1, CanvasController.getInstance().getZoomLevel());
+        int zoom = CanvasController.getInstance().getZoomLevel();
+
+        maplist.clear();
+        for (OSMWayType e : OSMWayType.values()) {
+            if ( zoom > e.getZoomValue() ) maplist.addAll(tree.searchTree(p0, p1, e));
+        }
     }
 
     public List<MapElement> getTreeData(){
-        //System.out.println(maplist.size());
         return maplist;
     }
 
 
-    private EnumMap<OSMWayType, List<Shape>> initializeMap() {
-        EnumMap<OSMWayType, List<Shape>> map = new EnumMap<>(OSMWayType.class);
+    private static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
+        EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
         for (OSMWayType type: OSMWayType.values()) {
             map.put(type, new ArrayList<>());
         }
         return map;
     }
 
-    public void add(OSMWayType type, Shape shape) {
-        shapes.get(type).add(shape);
+    public void add(OSMWayType type, MapElement m) {
+        mapelements.get(type).add(m);
         dirty();
     }
 
@@ -58,9 +61,8 @@ public class MainModel extends Observable implements Serializable{
 
     public void readFromOSM(InputSource filename) {
         try {
-            handler = new OSMHandler(this);
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(handler);
+            xmlReader.setContentHandler(new OSMHandler(this));
             xmlReader.parse(filename);
 
         } catch (SAXException e) {
@@ -73,7 +75,7 @@ public class MainModel extends Observable implements Serializable{
     public void save(String filename) {
         try {
             ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename));
-            os.writeObject(shapes);
+            os.writeObject(mapelements);
             os.writeObject(minLon);
             os.writeObject(minLat);
             os.writeObject(maxLon);
@@ -99,7 +101,7 @@ public class MainModel extends Observable implements Serializable{
         } else if (filename.endsWith(".bin")) {
             try {
                 ObjectInputStream is = new ObjectInputStream(new FileInputStream(filename));
-                shapes = (EnumMap<OSMWayType, List<Shape>>) is.readObject();
+                mapelements = (EnumMap<OSMWayType, List<MapElement>>) is.readObject();
                 minLon = (double) is.readObject();
                 minLat = (double) is.readObject();
                 maxLon = (double) is.readObject();
@@ -112,8 +114,8 @@ public class MainModel extends Observable implements Serializable{
         }
     }
 
-    public Iterable<Shape> get(OSMWayType type) {
-        return shapes.get(type);
+    public List<MapElement> get(OSMWayType type) {
+        return mapelements.get(type);
     }
 
     public double getMinLat() {

@@ -14,14 +14,11 @@ public class OSMHandler extends DefaultHandler {
     private LongToOSMNodeMap idToNode = new LongToOSMNodeMap(25);
     private Map<Long, OSMWay> idToWay = new HashMap<>();
     private HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
-    private List<MapElement> mapElements = new ArrayList<>();
     private OSMWay way;
     private MainModel model;
     private double lonFactor;
     private OSMWayType type;
     private OSMRelation relation;
-
-    int counter = 0;
 
     public OSMHandler(MainModel m) {
         model = m;
@@ -81,7 +78,6 @@ public class OSMHandler extends DefaultHandler {
                             type = OSMWayType.WATER;
                         } else if (attributes.getValue("v").equals("coastline")) {
                             type = OSMWayType.COASTLINE;
-                            counter++;
                         }
                         break;
                     case "building":
@@ -129,9 +125,7 @@ public class OSMHandler extends DefaultHandler {
                         node = way.get(i);
                         path.lineTo(node.getLon(), node.getLat());
                     }
-                    MapElement m = new MapElement(path, type);
-                    mapElements.add(m);
-                    model.add(type, path);
+                    model.add(type, new MapElement(path, type));
 
                 }
                 break;
@@ -144,9 +138,8 @@ public class OSMHandler extends DefaultHandler {
                         path.lineTo(node.getLon(), node.getLat());
                     }
                 }
-                MapElement m = new MapElement(path, type);
-                mapElements.add(m);
-                model.add(type, path);
+
+                model.add(type, new MapElement(path, type));
                 break;
             case "osm":
                 // convert all coastlines found to paths
@@ -161,19 +154,19 @@ public class OSMHandler extends DefaultHandler {
                             node = way.get(i);
                             path.lineTo(node.getLon(), node.getLat());
                         }
-                        MapElement me = new MapElement(path, OSMWayType.COASTLINE);
-                        mapElements.add(me);
-                        model.add(OSMWayType.COASTLINE, path);
+                        model.add(OSMWayType.COASTLINE, new MapElement(path, OSMWayType.COASTLINE));
                     }
 
                 }
+                break;
             default:
                 break;
         }
     }
 
-    public List<MapElement> getListOfElements(){
-        System.out.println(counter);
-        return mapElements;
-    }
+
+
+
+
+
 }
