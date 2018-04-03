@@ -1,5 +1,7 @@
 package model;
 
+import helpers.OSMHandler;
+import helpers.TST;
 import model.osm.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -10,8 +12,9 @@ import java.util.*;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
-public class MainModel extends Observable implements Serializable{
+public class MainModel implements Serializable{
     private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
+    private TST<Address> addresses = new TST<>();
     private double minLat, minLon, maxLat, maxLon;
 
     public MainModel(){}
@@ -31,12 +34,6 @@ public class MainModel extends Observable implements Serializable{
 
     public void add(OSMWayType type, Shape shape) {
         shapes.get(type).add(shape);
-        dirty();
-    }
-
-    public void dirty() {
-        setChanged();
-        notifyObservers();
     }
 
     public void readFromOSM(InputSource filename) {
