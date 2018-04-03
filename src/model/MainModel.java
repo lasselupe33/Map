@@ -1,28 +1,18 @@
 package model;
 
-import helpers.OSMHandler;
-import helpers.TST;
 import model.osm.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import java.util.zip.ZipInputStream;
 
 public class MainModel implements Serializable{
+    private Addresses addresses = new Addresses();
     private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
-    private TST<Address> addresses = new TST<>();
-    private double minLat, minLon, maxLat, maxLon;
+    public double minLat, minLon, maxLat, maxLon;
 
     public MainModel(){}
-
-    public MainModel(String filename) {
-        load(filename);
-    }
-
 
     private EnumMap<OSMWayType, List<Shape>> initializeMap() {
         EnumMap<OSMWayType, List<Shape>> map = new EnumMap<OSMWayType, List<Shape>>(OSMWayType.class);
@@ -36,66 +26,17 @@ public class MainModel implements Serializable{
         shapes.get(type).add(shape);
     }
 
-    public void addAddress(Address address) {
-        addresses.put(address.toKey(), address);
-    }
-
-    public void readFromOSM(InputSource filename) {
-        try {
-            XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(new OSMHandler(this));
-            xmlReader.parse(filename);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void save(String filename) {
-        try {
-            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename));
-            os.writeObject(shapes);
-            os.writeObject(minLon);
-            os.writeObject(minLat);
-            os.writeObject(maxLon);
-            os.writeObject(maxLat);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void load(String filename) {
-        if (filename.endsWith(".osm")) {
-            readFromOSM(new InputSource(filename));
-        } else if (filename.endsWith(".zip")) {
-            try {
-                ZipInputStream zis = new ZipInputStream(new FileInputStream(filename));
-                zis.getNextEntry();
-                readFromOSM(new InputSource(zis));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (filename.endsWith(".bin")) {
-            try {
-                ObjectInputStream is = new ObjectInputStream(new FileInputStream(filename));
-                shapes = (EnumMap<OSMWayType, List<Shape>>) is.readObject();
-                minLon = (double) is.readObject();
-                minLat = (double) is.readObject();
-                maxLon = (double) is.readObject();
-                maxLat = (double) is.readObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public Iterable<Shape> get(OSMWayType type) {
         return shapes.get(type);
+    }
+
+    /** Getters */
+    public Addresses getAddresses() {
+        return addresses;
+    }
+
+    public EnumMap<OSMWayType, List<Shape>> getShapes() {
+        return shapes;
     }
 
     public double getMinLat() {
@@ -114,6 +55,15 @@ public class MainModel implements Serializable{
         return maxLon;
     }
 
+    /** Settters */
+    public void setAddresses(Addresses addresses) {
+        this.addresses = addresses;
+    }
+
+    public void setShapes(EnumMap<OSMWayType, List<Shape>> shapes) {
+        this.shapes = shapes;
+    }
+
     public void setMinLat(double minLat){this.minLat = minLat;}
 
     public void setMinLon(double minLon){this.minLon = minLon;}
@@ -121,6 +71,4 @@ public class MainModel implements Serializable{
     public void setMaxLat(double maxLat){this.maxLat = maxLat;}
 
     public void setMaxLon(double maxLon){this.maxLon = maxLon;}
-
-
 }

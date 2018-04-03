@@ -175,7 +175,7 @@ public class OSMHandler extends DefaultHandler {
         currentAddress.setAddress(street, house_no, postcode);
 
         // Add address to data-model
-        model.addAddress(currentAddress);
+        model.getAddresses().add(currentAddress);
 
         // Reset fields
         street = house_no = postcode = null;

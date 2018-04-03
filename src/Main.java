@@ -1,4 +1,5 @@
 import controller.*;
+import model.IOModel;
 import model.MainModel;
 import view.*;
 
@@ -7,20 +8,22 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            MainModel model;
+            // Models
+            MainModel model = new MainModel();
+            IOModel ioModel;
 
             if (args.length == 0) {
-                model = new MainModel();
+                ioModel = new IOModel(model);
             } else {
-                model = new MainModel(args[0]);
+                ioModel = new IOModel(model, args[0]);
             }
 
             // Controllers
             MenuController mc = new MenuController(model);
             CanvasController cc = CanvasController.getInstance();
             StateController sc = new StateController();
-            SearchBoxController sbc = new SearchBoxController(sc);
             AddressController ac = new AddressController(sc);
+            SearchBoxController sbc = new SearchBoxController(model, sc, ac);
 
             // Views
             CanvasView cv = new CanvasView(model, cc);
@@ -36,7 +39,7 @@ public class Main {
             MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv);
             sc.addMainView(v);
 
-            new KeyboardController(v, cv, model, cc);
+            new KeyboardController(v, cv, model, cc, ioModel);
             new MouseController(cv, cc);
             new ResizeController(v);
         });

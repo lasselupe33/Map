@@ -114,6 +114,7 @@ public class MainWindowView {
 
         // Rerender components
         searchBox.update();
+        addressView.update();
 
         // Add components
         switch(stateController.getCurrentState()) {

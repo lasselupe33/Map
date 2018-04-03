@@ -2,6 +2,11 @@ package controller;
 
 import view.MainWindowView;
 
+/**
+ * Global controller that takes care of handling the current state of the application, i.e. which view should currently
+ * be visible.
+ * This will often be called from other controllers.
+ */
 public class StateController {
     private ViewStates currentState;
     private MainWindowView mainView;
@@ -9,8 +14,8 @@ public class StateController {
 
     public StateController() {
         // Setup initial state
-        currentState = ViewStates.NAVIGATION_ACTIVE;
-        prevState = ViewStates.NAVIGATION_ACTIVE;
+        currentState = ViewStates.INITIAL;
+        prevState = ViewStates.INITIAL;
     }
 
     public void addMainView(MainWindowView view) {
