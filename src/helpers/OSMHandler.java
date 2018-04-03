@@ -13,7 +13,6 @@ import java.awt.geom.Path2D;
 import java.util.*;
 
 public class OSMHandler extends DefaultHandler {
-    private double minLat, minLon, maxLat, maxLon;
     LongToOSMNodeMap idToNode = new LongToOSMNodeMap(25);
     Map<Long, OSMWay> idToWay = new HashMap<>();
     HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
@@ -107,10 +106,10 @@ public class OSMHandler extends DefaultHandler {
     /** Helper to be called when the parser reaches the coordinates of the given OSM-file */
     private void parseCoordinates(Attributes attributes) {
         // Get the coordinates from the file
-        minLat = Double.parseDouble(attributes.getValue("minlat"));
-        minLon = Double.parseDouble(attributes.getValue("minlon"));
-        maxLat = Double.parseDouble(attributes.getValue("maxlat"));
-        maxLon = Double.parseDouble(attributes.getValue("maxlon"));
+        double minLat = Double.parseDouble(attributes.getValue("minlat"));
+        double minLon = Double.parseDouble(attributes.getValue("minlon"));
+        double maxLat = Double.parseDouble(attributes.getValue("maxlat"));
+        double maxLon = Double.parseDouble(attributes.getValue("maxlon"));
 
         // Compute lonFactor to ensure map won't be shrunk on the x-axis.
         // NB: This is necessary due to the world being round, and this approach would be incorrect if parsing the whole

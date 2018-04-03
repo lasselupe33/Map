@@ -66,16 +66,23 @@ public class MainWindowView {
         int height = gc.getBounds().height - screenInsets.top - screenInsets.bottom;
         window.setPreferredSize(new Dimension(width, height));
 
-        // put screen to correct place on canvas
-        canvasController.pan(-mainModel.getMinLon(), -mainModel.getMaxLat());
-        canvasController.zoom(height / (mainModel.getMaxLon() - mainModel.getMinLon()), 0, 0);
-
         // Setup pane to contain layered components
         window.add(lpane, BorderLayout.CENTER);
 
         makeMenuBar();
 
+        // Run initial render
         update();
+
+        // put screen to correct place on canvas
+        height = window.getContentPane().getHeight();
+        int offsetX = (window.getContentPane().getWidth() - height) / 2;
+
+        canvasController.pan(-mainModel.getMinLon(), -mainModel.getMaxLat());
+        canvasController.zoom(height / (mainModel.getMaxLon() - mainModel.getMinLon()), 0, 0);
+
+        // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
+        canvasController.pan(offsetX, 0);
     }
 
     public JFrame getWindow() {
