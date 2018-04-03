@@ -6,25 +6,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AddressBuilder {
-    private String street = "Unknown", house, floor, side, postcode, city;
-    private float lat, lon;
+    private String street = "Unknown", house, postcode, city;
+    private double lat, lon;
 
-    public AddressBuilder(float lat, float lon) {
+    public AddressBuilder(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
     }
 
     public AddressBuilder street(String _street) { street = _street; return this; }
     public AddressBuilder house(String _house)   { house = _house;   return this; }
-    public AddressBuilder floor(String _floor)   { floor = _floor;   return this; }
-    public AddressBuilder side(String _side)     { side = _side;     return this; }
     public AddressBuilder postcode(String _postcode) { postcode = _postcode; return this; }
     public AddressBuilder city(String _city)     { city = _city;     return this; }
     public Address build() {
-        return new Address(street, house, floor, side, postcode, city, lat, lon);
+        return new Address(street, house, postcode, city, lat, lon);
     }
 
-    public static Address parse(String s, float lat, float lon) {
+    public static Address parse(String s, double lat, double lon) {
         final String regex = "((?<street>[a-zA-ZåæøÅÆØ ]+?)\\s+(?<house>\\d+))?\\s*[,]*\\s*((?<postcode>\\d{4})\\s+(?<city>[a-zA-ZåæøÅÆØ ]+))?";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(s);

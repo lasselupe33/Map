@@ -36,6 +36,10 @@ public class MainModel implements Serializable{
         shapes.get(type).add(shape);
     }
 
+    public void addAddress(Address address) {
+        addresses.put(address.toKey(), address);
+    }
+
     public void readFromOSM(InputSource filename) {
         try {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();

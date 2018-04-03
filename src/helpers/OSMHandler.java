@@ -1,6 +1,7 @@
 package helpers;
 
 import helpers.LongToOSMNodeMap;
+import model.Address;
 import model.MainModel;
 import model.osm.OSMNode;
 import model.osm.OSMRelation;
@@ -22,6 +23,12 @@ public class OSMHandler extends DefaultHandler {
     private OSMWayType type;
     private OSMRelation relation;
 
+    // Fields related to created addresses
+    private Address currentAddress;
+    private String street;
+    private String house_no;
+    private String postcode;
+
     public OSMHandler(MainModel m) {
         model = m;
     }
@@ -33,10 +40,7 @@ public class OSMHandler extends DefaultHandler {
                 parseCoordinates(attributes);
                 break;
             case "node":
-                double lon = Double.parseDouble(attributes.getValue("lon"));
-                double lat = Double.parseDouble(attributes.getValue("lat"));
-                long id = Long.parseLong(attributes.getValue("id"));
-                idToNode.put(id, lonFactor * lon, -lat);
+                parseNode(attributes);
                 break;
             case "way":
                 way = new OSMWay();
@@ -71,6 +75,19 @@ public class OSMHandler extends DefaultHandler {
                     case "building":
                         type = OSMWayType.BUILDING;
                         break;
+
+                    case "addr:street":
+                        street = attributes.getValue("v");
+                        break;
+
+                    case "addr:housenumber":
+                        house_no = attributes.getValue("v");
+                        break;
+
+                    case "addr:postcode":
+                        postcode = attributes.getValue("v");
+                        break;
+
                     default:
                         break;
                 }
@@ -86,6 +103,9 @@ public class OSMHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         switch (qName) {
+            case "node":
+                createAddress();
+                break;
             case "way":
                 if (type == OSMWayType.COASTLINE) {
                     handleCoastline();
@@ -101,6 +121,20 @@ public class OSMHandler extends DefaultHandler {
             default:
                 break;
         }
+    }
+
+    /** Internal helper that parses a node */
+    private void parseNode(Attributes attributes) {
+        // Get the lon and lat of the node
+        double lon = Double.parseDouble(attributes.getValue("lon"));
+        double lat = Double.parseDouble(attributes.getValue("lat"));
+        long id = Long.parseLong(attributes.getValue("id"));
+
+        // Add node to map
+        idToNode.put(id, lonFactor * lon, -lat);
+
+        // Create temp address to be used when parsing address fields
+        currentAddress = new Address(lonFactor * lon, -lat);
     }
 
     /** Helper to be called when the parser reaches the coordinates of the given OSM-file */
@@ -128,9 +162,28 @@ public class OSMHandler extends DefaultHandler {
         model.setMinLat(minLat);
     }
 
+    /** Internal helper that creates an address */
+    private void createAddress() {
+        // Create address of node if possible
+        if (street == null) {
+            // Bail out if street doesn't exist.
+            house_no = postcode = null;
+
+            return;
+        }
+
+        currentAddress.setAddress(street, house_no, postcode);
+
+        // Add address to data-model
+        model.addAddress(currentAddress);
+
+        // Reset fields
+        street = house_no = postcode = null;
+    }
+
     /** Internal helper that creates a way when called (i.e. when the parser reaches the end of a way */
     private void createWay(OSMWay way) {
-        Path2D path = parseWay(new Path2D.Double(), way);
+        Path2D path = convertWayToPath(new Path2D.Double(), way);
 
         model.add(type, path);
     }
@@ -140,14 +193,14 @@ public class OSMHandler extends DefaultHandler {
         Path2D path = new Path2D.Double();
 
         for (OSMWay way : relation) {
-            path = parseWay(path, way);
+            path = convertWayToPath(path, way);
         }
 
         model.add(type, path);
     }
 
     /** Internal helper that converts a way into a path */
-    private Path2D parseWay(Path2D path, OSMWay way) {
+    private Path2D convertWayToPath(Path2D path, OSMWay way) {
         OSMNode node = way.get(0);
         path.moveTo(node.getLon(), node.getLat());
         for (int i = 1; i < way.size(); i++) {
