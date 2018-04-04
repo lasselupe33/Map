@@ -20,6 +20,15 @@ public class MainModel implements Serializable{
         tree = new KDTree(this);
     }
 
+    public static void updateMap(Point2D p0, Point2D p1){
+        int zoom = CanvasController.getInstance().getZoomLevel();
+
+        maplist.clear();
+        for (OSMWayType e : OSMWayType.values()) {
+            if ( zoom > e.getZoomValue() ) maplist.addAll(tree.searchTree(p0, p1, e));
+        }
+    }
+
     private static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
         EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
         for (OSMWayType type: OSMWayType.values()) {

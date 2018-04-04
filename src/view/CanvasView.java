@@ -1,6 +1,7 @@
 package view;
 
 import controller.CanvasController;
+import helpers.ColorMap;
 import model.MainModel;
 import model.MapElement;
 import model.osm.OSMWayType;
@@ -44,34 +45,34 @@ public class CanvasView extends JComponent {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        
+
         g.setPaint(Color.yellow);
         for (MapElement m : model.getTreeData()){
             switch (m.getType()){
                 case COASTLINE:
-                    g.setPaint(new Color(237, 237, 237));
+                    g.setPaint(ColorMap.getColor(m.getType()));
                     g.fill(m.getShape());
                     break;
                 case WATER:
-                    g.setPaint(new Color(60, 149, 255));
+                    g.setPaint(ColorMap.getColor(m.getType()));
                     g.fill(m.getShape());
                     break;
                 case UNKNOWN:
-                    g.setPaint(Color.black);
+                    g.setPaint(ColorMap.getColor(m.getType()));
                     g.draw(m.getShape());
                     break;
                 case ROAD:
                     g.setStroke(new BasicStroke(0.00001f));
-                    g.setPaint(new Color(230, 139, 213));
+                    g.setPaint(ColorMap.getColor(m.getType()));
                     g.draw(m.getShape());
                     break;
                 case HIGHWAY:
                     g.setStroke(new BasicStroke(0.00005f));
-                    g.setPaint(new Color(255, 114, 109));
+                    g.setPaint(ColorMap.getColor(m.getType()));
                     g.draw(m.getShape());
                     break;
                 case BUILDING:
-                    g.setPaint(new Color(172, 169, 151));
+                    g.setPaint(ColorMap.getColor(m.getType()));
                     g.fill(m.getShape());
                     break;
                 default:

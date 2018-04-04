@@ -325,7 +325,8 @@ public class OSMHandler extends DefaultHandler {
         }
     }
 
-    /** TODO: Do something clever. */
+    /*
+    TODO: Do something clever.
     private void addElement(OSMWayType type, Path2D path) {
         model.MapElements.MapElement elm;
         switch (type) {
@@ -379,4 +380,5 @@ public class OSMHandler extends DefaultHandler {
 
         model.add(elm);
     }
+    */
 }
