@@ -1,5 +1,6 @@
 package controller;
 
+import model.IOModel;
 import model.MainModel;
 import view.CanvasView;
 import view.MainWindowView;
@@ -14,14 +15,15 @@ public class KeyboardController extends KeyAdapter {
     private MainWindowView view;
     private CanvasView canvas;
     private CanvasController canvasController;
+    private IOModel ioModel;
 
-    public KeyboardController(MainWindowView v, CanvasView c, MainModel m, CanvasController cc) {
+    public KeyboardController(MainWindowView v, CanvasView c, MainModel m, CanvasController cc, IOModel iom) {
         view = v;
         canvas = c;
         model = m;
         canvasController = cc;
+        ioModel = iom;
 
-        view.window.addKeyListener(this);
         canvas.addKeyListener(this);
     }
 
@@ -54,10 +56,10 @@ public class KeyboardController extends KeyAdapter {
                 canvasController.zoomToCenter(1/1.1);
                 break;
             case 'o':
-                model.load("output.bin");
+                ioModel.load("output.bin");
                 break;
             case 'p':
-                model.save("output.bin");
+                ioModel.save("output.bin");
                 break;
             default:
                 break;
