@@ -18,6 +18,8 @@ public class SearchBox extends JPanel {
     private JTextField searchInput;
     private JPanel searchContainer;
     private JPanel rightButtonContainer;
+    private JPanel favoriteButtonContainer;
+    private JPanel buttonsContainer;
     private boolean initialRender = true;
 
     public SearchBox(StateController sc, SearchBoxController sbc) {
@@ -46,12 +48,12 @@ public class SearchBox extends JPanel {
         // Add required components and update bounds
         if (stateController.getCurrentState() != ViewStates.NAVIGATION_ACTIVE) {
             add(createSearchInput(), BorderLayout.WEST);
-            setBounds(20, 20, 445, 32);
+            setBounds(20, 20, 477, 32);
         } else {
             setBounds(433, 20, 32, 32);
         }
 
-        add(createRightButton(), BorderLayout.EAST);
+        add(createButtons(), BorderLayout.EAST);
     }
 
     public JTextField getSearchInput() {
@@ -96,7 +98,16 @@ public class SearchBox extends JPanel {
         return searchContainer;
     }
 
-    
+    public JPanel createButtons() {
+     buttonsContainer = new JPanel();
+     buttonsContainer.setOpaque(false);
+     buttonsContainer.setLayout(new BorderLayout());
+     buttonsContainer.setPreferredSize(new Dimension(64, 60));
+     buttonsContainer.add(createRightButton(), BorderLayout.WEST);
+     buttonsContainer.add(createFavoriteButton(), BorderLayout.EAST);
+
+     return buttonsContainer;
+    }
 
     /**
      * Creates the wrapper that contains the righthand-side button
@@ -129,5 +140,30 @@ public class SearchBox extends JPanel {
 
         return rightButtonContainer;
     }
+    public JPanel createFavoriteButton() {
+        // Setup wrapper panel
+        favoriteButtonContainer = new JPanel();
+        favoriteButtonContainer.setOpaque(false);
+        favoriteButtonContainer.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#383838")));
+        favoriteButtonContainer.setPreferredSize(new Dimension(32, 32));
+
+        // Create button
+        String imageURL = "assets/icons/favorite.png";
+
+
+        ImageIcon icon = new ImageIcon(imageURL);
+        JLabel iconLabel = new JLabel(icon);
+        iconLabel.setVerticalAlignment(JLabel.CENTER);
+        iconLabel.setPreferredSize(new Dimension(26, 20));
+        iconLabel.addMouseListener(searchBoxController);
+        iconLabel.setName("favoriteButton");
+        iconLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        favoriteButtonContainer.add(iconLabel);
+
+        return favoriteButtonContainer;
+    }
+
+
 }
 
