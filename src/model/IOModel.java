@@ -40,7 +40,7 @@ public class IOModel {
     public void save(String filename) {
         try {
             ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename));
-            os.writeObject(model.getShapes());
+            os.writeObject(model.getMapElements());
             os.writeObject(model.getMinLon());
             os.writeObject(model.getMinLat());
             os.writeObject(model.getMaxLon());
@@ -66,7 +66,7 @@ public class IOModel {
         } else if (filename.endsWith(".bin")) {
             try {
                 ObjectInputStream is = new ObjectInputStream(new FileInputStream(filename));
-                model.setShapes((EnumMap<OSMWayType, List<Shape>>) is.readObject());
+                model.setMapElements((EnumMap<OSMWayType, List<MapElement>>) is.readObject());
                 model.setMinLon((double) is.readObject());
                 model.setMinLat((double) is.readObject());
                 model.setMaxLon((double) is.readObject());

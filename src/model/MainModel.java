@@ -1,33 +1,50 @@
 package model;
 
+import controller.CanvasController;
+import helpers.KDTree;
 import model.osm.*;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.*;
 import java.util.List;
 
 public class MainModel implements Serializable{
     private Addresses addresses = new Addresses();
-    private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
-    public double minLat, minLon, maxLat, maxLon;
+    private EnumMap<OSMWayType, List<MapElement>> mapelements = initializeMap();
+    private double minLat, minLon, maxLat, maxLon;
+    private static KDTree tree;
+    private static List<MapElement> maplist = new ArrayList<>();
 
-    public MainModel(){}
+    public MainModel(){
+        tree = new KDTree(this);
+    }
 
-    private EnumMap<OSMWayType, List<Shape>> initializeMap() {
-        EnumMap<OSMWayType, List<Shape>> map = new EnumMap<OSMWayType, List<Shape>>(OSMWayType.class);
+
+    public static void updateMap(Point2D p0, Point2D p1){
+        int zoom = CanvasController.getInstance().getZoomLevel();
+
+        maplist.clear();
+        for (OSMWayType e : OSMWayType.values()) {
+            if ( zoom > e.getZoomValue() ) maplist.addAll(tree.searchTree(p0, p1, e));
+        }
+    }
+
+    public List<MapElement> getTreeData(){
+        return maplist;
+    }
+
+    private static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
+        EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
         for (OSMWayType type: OSMWayType.values()) {
             map.put(type, new ArrayList<>());
         }
         return map;
     }
 
-    public void add(OSMWayType type, Shape shape) {
-        shapes.get(type).add(shape);
-    }
-
-    public Iterable<Shape> get(OSMWayType type) {
-        return shapes.get(type);
+    public void add(OSMWayType type, MapElement m) {
+        mapelements.get(type).add(m);
     }
 
     /** Getters */
@@ -35,8 +52,12 @@ public class MainModel implements Serializable{
         return addresses;
     }
 
-    public EnumMap<OSMWayType, List<Shape>> getShapes() {
-        return shapes;
+    public List<MapElement> get(OSMWayType type) {
+        return mapelements.get(type);
+    }
+
+    public EnumMap<OSMWayType, List<MapElement>> getMapElements() {
+        return mapelements;
     }
 
     public double getMinLat() {
@@ -60,8 +81,8 @@ public class MainModel implements Serializable{
         this.addresses = addresses;
     }
 
-    public void setShapes(EnumMap<OSMWayType, List<Shape>> shapes) {
-        this.shapes = shapes;
+    public void setMapElements(EnumMap<OSMWayType, List<MapElement>> mapElements) {
+        this.mapelements = mapElements;
     }
 
     public void setMinLat(double minLat){this.minLat = minLat;}

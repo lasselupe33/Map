@@ -3,6 +3,7 @@ package helpers;
 import helpers.LongToOSMNodeMap;
 import model.Address;
 import model.MainModel;
+import model.MapElement;
 import model.osm.OSMNode;
 import model.osm.OSMRelation;
 import model.osm.OSMWay;
@@ -185,7 +186,7 @@ public class OSMHandler extends DefaultHandler {
     private void createWay(OSMWay way) {
         Path2D path = convertWayToPath(new Path2D.Double(), way);
 
-        model.add(type, path);
+        model.add(type, new MapElement(path, type));
     }
 
     /** Internal helper that creates a relation when called (i.e. when the parser reaches the end of a relation */
@@ -196,7 +197,7 @@ public class OSMHandler extends DefaultHandler {
             path = convertWayToPath(path, way);
         }
 
-        model.add(type, path);
+        model.add(type, new MapElement(path, type));
     }
 
     /** Internal helper that converts a way into a path */
@@ -253,7 +254,7 @@ public class OSMHandler extends DefaultHandler {
                     path.lineTo(node.getLon(), node.getLat());
                 }
 
-                model.add(OSMWayType.COASTLINE, path);
+                model.add(OSMWayType.COASTLINE, new MapElement(path, OSMWayType.COASTLINE));
             }
 
         }
