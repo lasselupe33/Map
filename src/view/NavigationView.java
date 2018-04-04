@@ -5,6 +5,7 @@ import controller.TextController;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.net.URL;
 
 public class NavigationView extends JPanel {
     private boolean initialRender = true;
@@ -62,7 +63,8 @@ public class NavigationView extends JPanel {
         navigationTypeContainer.setBorder(new EmptyBorder(20, 150, 0, 150));
 
         // Setup Car button
-        ImageIcon carIcon = new ImageIcon("assets/icons/car.png");
+        URL carURL = this.getClass().getResource("/icons/car.png");
+        ImageIcon carIcon = new ImageIcon(carURL);
         JLabel car = new JLabel();
         car.setIcon(carIcon);
         car.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -71,7 +73,8 @@ public class NavigationView extends JPanel {
         navigationTypeContainer.add(car);
 
         // Setup cycle button
-        ImageIcon cycleIcon = new ImageIcon("assets/icons/cycle.png");
+        URL cycleURL = this.getClass().getResource("/icons/cycle.png");
+        ImageIcon cycleIcon = new ImageIcon(cycleURL);
         JLabel cycle = new JLabel();
         cycle.setIcon(cycleIcon);
         cycle.setHorizontalAlignment(SwingConstants.CENTER);
@@ -80,7 +83,8 @@ public class NavigationView extends JPanel {
         navigationTypeContainer.add(cycle);
 
         // Setup pedestrian button
-        ImageIcon pedestrianIcon = new ImageIcon("assets/icons/pedestrian.png");
+        URL pedestrianURL = this.getClass().getResource("/icons/pedestrian.png");
+        ImageIcon pedestrianIcon = new ImageIcon(pedestrianURL);
         JLabel pedestrian = new JLabel();
         pedestrian.setIcon(pedestrianIcon);
         pedestrian.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

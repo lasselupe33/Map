@@ -4,6 +4,7 @@ import model.MainModel;
 import view.*;
 
 import javax.swing.*;
+import java.net.URL;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,7 +14,8 @@ public class Main {
             IOModel ioModel;
 
             if (args.length == 0) {
-                ioModel = new IOModel(model);
+                URL data = Main.class.getResource("/data/small.zip");
+                ioModel = new IOModel(model, data);
             } else {
                 ioModel = new IOModel(model, args[0]);
             }

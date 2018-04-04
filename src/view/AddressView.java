@@ -5,6 +5,7 @@ import model.Address;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 /**
  * This class draws the panel that displays the information about a given street when searched for.
@@ -83,7 +84,8 @@ public class AddressView extends JPanel {
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(topOffset, 0, borderSize, borderSize));
 
         // Setup save button
-        ImageIcon saveIcon = new ImageIcon("assets/icons/bookmark.png");
+        URL bookmarkURL = this.getClass().getResource("/icons/bookmark.png");
+        ImageIcon saveIcon = new ImageIcon(bookmarkURL);
         JLabel save = new JLabel();
         save.setText("GEM");
         save.setForeground(Color.decode("#383838"));
@@ -97,7 +99,8 @@ public class AddressView extends JPanel {
         buttonsPanel.add(save);
 
         // Setup navigation button
-        ImageIcon navigationIcon = new ImageIcon("assets/icons/navigation.png");
+        URL navigationURL = this.getClass().getResource("/icons/navigation.png");
+        ImageIcon navigationIcon = new ImageIcon(navigationURL);
         JLabel navigation = new JLabel();
         navigation.setText("RUTE");
         navigation.setForeground(Color.decode("#383838"));
