@@ -62,7 +62,7 @@ public class SearchBox extends JPanel {
      * Helper that creates the searchInput alongside required buttons.
      */
     public JPanel createSearchInput() {
-        // Setup wrapper
+        // Setup wrapper`
         searchContainer = new JPanel();
         searchContainer.setPreferredSize(new Dimension(415, 32));
         searchContainer.setLayout(new BorderLayout());
