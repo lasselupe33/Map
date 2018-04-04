@@ -37,6 +37,7 @@ public class KDTree {
     public KDTree (MainModel m) {
         model = m;
         int depth = 0;
+
         rootCoastline = buildTree(rootCoastline, model.get(OSMWayType.COASTLINE), depth);
         rootWater = buildTree(rootWater, model.get(OSMWayType.WATER), depth);
         rootRoad = buildTree(rootRoad, model.get(OSMWayType.ROAD), depth);
@@ -106,8 +107,8 @@ public class KDTree {
     // search the KD Tree
     public List<MapElement> searchTree(Point2D p0, Point2D p1, OSMWayType type){
         int depth = 0;
-        Node tmp = getRoot(type);
-        return searchTree(tmp, p0, p1, depth);
+        Node root = getRoot(type);
+        return searchTree(root, p0, p1, depth);
     }
 
     private List<MapElement> searchTree(Node x, Point2D p0, Point2D p1, int depth){
