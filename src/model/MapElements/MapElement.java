@@ -14,6 +14,7 @@ public class MapElement {
     Boolean shouldFill;
 
     MapElement(OSMWayType type, Shape s){
+        this.type = type;
         shape = s;
         rect = shape.getBounds2D();
         x = rect.getX();
@@ -29,5 +30,7 @@ public class MapElement {
     }
 
     public Rectangle2D getRect() { return rect; }
+
+    public OSMWayType getType() { return type; }
 
 }

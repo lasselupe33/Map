@@ -2,6 +2,8 @@ package model.osm;
 
 import helpers.LongToOSMNodeMap;
 import model.MainModel;
+import model.MapElements.MapElement;
+import model.MapElements.Road;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -190,7 +192,7 @@ public class OSMHandler extends DefaultHandler {
                     }
 
 
-                    model.add(type, path);
+                    addElement(type, path);
 
                 }
                 break;
@@ -203,7 +205,7 @@ public class OSMHandler extends DefaultHandler {
                         path.lineTo(node.getLon(), node.getLat());
                     }
                 }
-                model.add(type, path);
+                addElement(type, path);
                 break;
             case "osm":
                 // convert all coastlines found to paths
@@ -218,7 +220,7 @@ public class OSMHandler extends DefaultHandler {
                             node = way.get(i);
                             path.lineTo(node.getLon(), node.getLat());
                         }
-                        model.add(OSMWayType.COASTLINE, path);
+                        addElement(OSMWayType.COASTLINE, path);
                     }
 
                 }
@@ -229,5 +231,59 @@ public class OSMHandler extends DefaultHandler {
 
     public List<OSMWay> getListOfWays(){
         return ways;
+    }
+
+    private void addElement(OSMWayType type, Path2D path) {
+        MapElement elm;
+        switch (type) {
+            case COASTLINE:
+                elm = new Coastline(type, path);
+                break;
+            case PLACE:
+                elm = new Place(type, path);
+                break;
+            case WATER:
+                elm = new Water(type, path);
+                break;
+            case PITCH:
+                break;
+            case ALLOMENTS:
+                break;
+            case ROAD:
+            case HIGHWAY:
+            case SECONDARYROAD:
+            case TERTIARYROAD:
+            case PEDESTRIAN:
+            case SERVICE:
+                elm = new Road(type, path, "name");
+                break;
+            case BUILDING:
+                elm = new Building(type, path);
+                break;
+            case PARK:
+                break;
+            case PLAYGROUND:
+                break;
+            case CEMETERY:
+                break;
+            case FOOTWAY:
+                break;
+            case PATH:
+                break;
+            case FERRY:
+                break;
+            case SUBWAY:
+                break;
+            case CYCLEWAY:
+                break;
+            case PLACE_OF_WORSHIP:
+                break;
+            case UNKNOWN:
+                break;
+            default:
+                break;
+        }
+
+        model.add(elm);
     }
 }

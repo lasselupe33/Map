@@ -1,5 +1,5 @@
 package helpers;
-
+/*
 import model.osm.OSMWay;
 
 import java.awt.*;
@@ -72,3 +72,5 @@ public class KDTree {
     }
 
 }
+
+*/

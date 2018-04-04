@@ -1,6 +1,7 @@
 package model;
 
-import helpers.KDTree;
+//import helpers.KDTree;
+import model.MapElements.MapElement;
 import model.osm.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -12,28 +13,19 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 
 public class MainModel extends Observable implements Serializable{
-    private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
+    private List<MapElement> elements = new ArrayList<>();
     private double minLat, minLon, maxLat, maxLon;
-    private KDTree tree;
+    //private KDTree tree;
 
     public MainModel(){}
 
     public MainModel(String filename) {
         load(filename);
-        tree = new KDTree();
+        //tree = new KDTree();
     }
 
-
-    private EnumMap<OSMWayType, List<Shape>> initializeMap() {
-        EnumMap<OSMWayType, List<Shape>> map = new EnumMap<OSMWayType, List<Shape>>(OSMWayType.class);
-        for (OSMWayType type: OSMWayType.values()) {
-            map.put(type, new ArrayList<>());
-        }
-        return map;
-    }
-
-    public void add(OSMWayType type, Shape shape) {
-        shapes.get(type).add(shape);
+    public void add(MapElement elm) {
+        elements.add(elm);
         dirty();
     }
 
@@ -58,7 +50,7 @@ public class MainModel extends Observable implements Serializable{
     public void save(String filename) {
         try {
             ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename));
-            os.writeObject(shapes);
+            os.writeObject(elements);
             os.writeObject(minLon);
             os.writeObject(minLat);
             os.writeObject(maxLon);
@@ -84,7 +76,7 @@ public class MainModel extends Observable implements Serializable{
         } else if (filename.endsWith(".bin")) {
             try {
                 ObjectInputStream is = new ObjectInputStream(new FileInputStream(filename));
-                shapes = (EnumMap<OSMWayType, List<Shape>>) is.readObject();
+                elements = (ArrayList<MapElement>) is.readObject();
                 minLon = (double) is.readObject();
                 minLat = (double) is.readObject();
                 maxLon = (double) is.readObject();
@@ -97,8 +89,8 @@ public class MainModel extends Observable implements Serializable{
         }
     }
 
-    public Iterable<Shape> get(OSMWayType type) {
-        return shapes.get(type);
+    public List<MapElement> getList() {
+        return elements;
     }
 
     public double getMinLat() {
