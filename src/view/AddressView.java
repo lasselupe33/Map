@@ -1,6 +1,7 @@
 package view;
 
 import controller.AddressController;
+import model.Address;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,8 +19,9 @@ public class AddressView extends JPanel {
     private final int borderSize = 20;
     private final int height = topOffset + addressSize + borderSize * 2 + citySize;
     private AddressController addressController;
-    private JPanel labelsPanel = new JPanel();
-    private JPanel buttonsPanel = new JPanel();
+    private JPanel labelsPanel;
+    private JPanel buttonsPanel;
+    private boolean initialRender = true;
 
     public AddressView(AddressController ac) {
         addressController = ac;
@@ -30,12 +32,24 @@ public class AddressView extends JPanel {
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
         setBounds(0, 0, 450, height);
+    }
+
+    /** Update function to be called when the addressView should be updated */
+    public void update() {
+        if (!initialRender) {
+            remove(labelsPanel);
+            remove(buttonsPanel);
+        } else {
+            initialRender = false;
+        }
 
         add(renderLabels(), BorderLayout.WEST);
         add(renderButtons(), BorderLayout.EAST);
     }
 
     public JPanel renderLabels() {
+        labelsPanel = new JPanel();
+
         // Create labels container
         labelsPanel.setLayout(new BoxLayout(labelsPanel, BoxLayout.PAGE_AXIS));
         labelsPanel.setOpaque(false);
@@ -43,13 +57,14 @@ public class AddressView extends JPanel {
         labelsPanel.setPreferredSize(new Dimension(300, height));
 
         // Setup address label
-        addressLabel.setText("Rued Langaardsvej 7");
+        Address address = addressController.getAddress();
+        addressLabel.setText(address.getStreet() + " " + address.getHouse());
         addressLabel.setForeground(Color.decode("#383838"));
         addressLabel.setFont(new Font(fontFamily, Font.PLAIN, addressSize));
         addressLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
         // Setup city label
-        cityLabel.setText("2300 København S");
+        cityLabel.setText(address.getPostcode() + " " + address.getCity());
         cityLabel.setForeground(Color.decode("#383838"));
         cityLabel.setFont(new Font(fontFamily, Font.PLAIN, citySize));
 
@@ -62,6 +77,7 @@ public class AddressView extends JPanel {
     }
 
     public JPanel renderButtons() {
+        buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
         buttonsPanel.setOpaque(false);
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(topOffset, 0, borderSize, borderSize));
