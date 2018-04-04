@@ -4,8 +4,9 @@ import model.osm.OSMWayType;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 
-public class MapElement {
+public class MapElement implements Serializable {
     private Shape shape;
     private double x, y;
     private Rectangle2D r;

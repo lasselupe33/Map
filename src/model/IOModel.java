@@ -11,6 +11,8 @@ import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.zip.ZipInputStream;
@@ -51,6 +53,8 @@ public class IOModel {
 
     public void save(String filename) {
         try {
+            File out = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + filename);
+            System.out.println(out.getAbsolutePath());
             ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename));
             os.writeObject(model.getMapElements());
             os.writeObject(model.getMinLon());
