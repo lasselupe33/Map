@@ -4,6 +4,7 @@ import controller.CanvasController;
 import controller.MenuController;
 import controller.StateController;
 import controller.ViewStates;
+import model.Favorite;
 import model.MainModel;
 
 import javax.swing.*;
@@ -29,6 +30,7 @@ public class MainWindowView {
     private StateController stateController;
     private boolean initialRender = true;
     private FooterView footerView;
+    private FavoriteView favoriteView;
 
     public MainWindowView(
             CanvasView cv,
@@ -40,7 +42,8 @@ public class MainWindowView {
             ZoomView zv,
             StateController sc,
             NavigationView nv,
-            FooterView fv
+            FooterView fv,
+            FavoriteView favoriteView
     ) {
         menuController = mc;
         canvasView = cv;
@@ -52,6 +55,7 @@ public class MainWindowView {
         stateController = sc;
         navigationView = nv;
         footerView = fv;
+        this.favoriteView = favoriteView;
 
         // Create the window
         window = new JFrame("Danmarkskort");
@@ -109,6 +113,9 @@ public class MainWindowView {
                     lpane.remove(searchBox);
                     lpane.remove(navigationView);
                     break;
+                case FAVORITES:
+                    lpane.remove(favoriteView);
+                    break;
             }
         }
 
@@ -130,6 +137,11 @@ public class MainWindowView {
             case NAVIGATION_ACTIVE:
                 lpane.add(searchBox, 2, 2);
                 lpane.add(navigationView, 1, 4);
+                break;
+
+            case FAVORITES:
+                System.out.println("HEJ");
+                lpane.add(favoriteView, 1, 5);
                 break;
 
             default:
@@ -158,6 +170,7 @@ public class MainWindowView {
         zoomView.setBounds(width - 100,height - 130,70,70);
         navigationView.setBounds(0, 0, 450, height);
         footerView.setBounds(0, height - 30, width, 30);
+        favoriteView.setBounds(0, 0, 450, height);
 
         // Update the previous state after render
         stateController.updatePrevState();

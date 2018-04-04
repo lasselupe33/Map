@@ -14,8 +14,8 @@ public class StateController {
 
     public StateController() {
         // Setup initial state
-        currentState = ViewStates.INITIAL;
-        prevState = ViewStates.INITIAL;
+        currentState = ViewStates.FAVORITES;
+        prevState = ViewStates.FAVORITES;
     }
 
     public void addMainView(MainWindowView view) {

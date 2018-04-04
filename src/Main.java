@@ -1,4 +1,5 @@
 import controller.*;
+import model.Favorites;
 import model.IOModel;
 import model.MainModel;
 import view.*;
@@ -35,8 +36,9 @@ public class Main {
             FooterView fv = new FooterView(cc);
             ZoomView zv = new ZoomView(cc);
             NavigationView nv = new NavigationView();
+            FavoriteView favoriteView = new FavoriteView(new Favorites());
 
-            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv);
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, favoriteView);
             sc.addMainView(v);
 
             new KeyboardController(v, cv, model, cc, ioModel);
