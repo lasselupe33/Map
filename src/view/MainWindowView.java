@@ -140,7 +140,6 @@ public class MainWindowView {
                 break;
 
             case FAVORITES:
-                System.out.println("HEJ");
                 lpane.add(favoriteView, 1, 5);
                 break;
 

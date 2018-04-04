@@ -96,6 +96,8 @@ public class SearchBox extends JPanel {
         return searchContainer;
     }
 
+    
+
     /**
      * Creates the wrapper that contains the righthand-side button
      */

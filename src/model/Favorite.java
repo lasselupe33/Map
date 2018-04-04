@@ -19,4 +19,9 @@ public class Favorite {
     public String getName() {
         return name;
     }
+
+
+    public String getAddress() {
+        return address;
+    }
 }

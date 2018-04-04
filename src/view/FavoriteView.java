@@ -4,6 +4,7 @@ import model.Favorite;
 import model.Favorites;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class FavoriteView extends JPanel {
@@ -28,7 +29,10 @@ public class FavoriteView extends JPanel {
     }
 
     private void addLabelToFavorites(Favorite f) {
-        JLabel label = new JLabel(f.getName());
+        String text = "<html><span style=\"font-size: 10px;\">" + f.getName() +
+                "</span><br><span style=\"font-size: 5px;\">"+f.getAddress()+"</span></html>";
+        JLabel label = new JLabel(text);
+        label.setBorder(new EmptyBorder(10, 10, 10, 10));
         
         add(label);
 
