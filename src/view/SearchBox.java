@@ -36,24 +36,47 @@ public class SearchBox extends JPanel {
     public void update() {
         // Remove components if necessary
         if (!initialRender) {
-            if (stateController.getPrevState() != ViewStates.NAVIGATION_ACTIVE) {
-                remove(searchContainer);
+            switch(stateController.getPrevState()){
+                case INITIAL:
+                    remove(searchContainer);
+                    remove(buttonsContainer);
+                    break;
+                case ADDRESS_ENTERED:
+                    remove(searchContainer);
+                    remove(buttonsContainer);
+                    break;
+                case NAVIGATION_ACTIVE:
+                    remove(buttonsContainer);
+                    break;
+                case FAVORITES:
+                    remove(rightButtonContainer);
+                    break;
             }
-            remove(buttonsContainer);
         } else {
             initialRender = false;
         }
 
         // Add required components and update bounds
-        if (stateController.getCurrentState() != ViewStates.NAVIGATION_ACTIVE) {
-            add(createSearchInput(), BorderLayout.WEST);
-            setBounds(20, 20, 477, 32);
-        } else {
-            setBounds(433, 20, 64, 32);
+        switch(stateController.getCurrentState()){
+            case INITIAL:
+                add(createSearchInput(), BorderLayout.WEST);
+                setBounds(20, 20, 477, 32);
+                add(createButtons(), BorderLayout.EAST);
+                break;
+            case ADDRESS_ENTERED:
+                add(createSearchInput(), BorderLayout.WEST);
+                setBounds(20, 20, 477, 32);
+                add(createButtons(), BorderLayout.EAST);
+                break;
+            case NAVIGATION_ACTIVE:
+                setBounds(433, 20, 64, 32);
+                add(createButtons(), BorderLayout.EAST);
+                break;
+            case FAVORITES:
+                setBounds(433, 20, 32, 32);
+                add(createRightButton(), BorderLayout.EAST);
+                break;
         }
-
-        add(createButtons(), BorderLayout.EAST);
-
     }
 
     public JTextField getSearchInput() {
