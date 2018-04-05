@@ -39,8 +39,7 @@ public class SearchBox extends JPanel {
             if (stateController.getPrevState() != ViewStates.NAVIGATION_ACTIVE) {
                 remove(searchContainer);
             }
-
-            remove(rightButtonContainer);
+            remove(buttonsContainer);
         } else {
             initialRender = false;
         }
@@ -50,10 +49,11 @@ public class SearchBox extends JPanel {
             add(createSearchInput(), BorderLayout.WEST);
             setBounds(20, 20, 477, 32);
         } else {
-            setBounds(433, 20, 32, 32);
+            setBounds(433, 20, 64, 32);
         }
 
         add(createButtons(), BorderLayout.EAST);
+
     }
 
     public JTextField getSearchInput() {

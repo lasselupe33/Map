@@ -41,6 +41,9 @@ public class SearchBoxController extends MouseAdapter {
                     onCloseClick();
                 }
                 break;
+            case "favoriteButton":
+                onFavoritesClick();
+                break;
         }
     }
 
@@ -70,5 +73,9 @@ public class SearchBoxController extends MouseAdapter {
 
     public void onCloseClick() {
         stateController.updateCurrentState(ViewStates.INITIAL);
+    }
+
+    public void onFavoritesClick() {
+        stateController.updateCurrentState(ViewStates.FAVORITES);
     }
 }

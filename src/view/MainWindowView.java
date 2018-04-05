@@ -115,6 +115,7 @@ public class MainWindowView {
                     break;
                 case FAVORITES:
                     lpane.remove(favoriteView);
+                    lpane.remove(searchBox);
                     break;
             }
         }
@@ -140,6 +141,7 @@ public class MainWindowView {
                 break;
 
             case FAVORITES:
+                lpane.add(searchBox, 2, 2);
                 lpane.add(favoriteView, 1, 5);
                 break;
 
