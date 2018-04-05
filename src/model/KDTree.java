@@ -1,13 +1,16 @@
 package model;
 
-import model.MapElements.MapElement;
-
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import model.MapElements.MapElement;
 import java.util.*;
 
-public class KDTree {
-    private static EnumMap<ZoomLevel, List<MapElement>> mapelements;
+public class KDTree implements Serializable {
+    private static transient EnumMap<ZoomLevel, List<MapElement>> mapelements;
     private double maxLat, minLat, maxLon, minLon;
     private Node rootOne, rootTwo, rootThree, rootFour, rootFive, rootSix;
 
@@ -16,7 +19,7 @@ public class KDTree {
         static final Comparator<MapElement> Y_COMPARATOR = Comparator.comparing(MapElement::getElementY);
     }
 
-    private class Node{
+    public class Node implements Serializable {
         private List<MapElement> value;
         private double split;
         private Node leftChild, rightChild;
@@ -47,7 +50,6 @@ public class KDTree {
         rootFour = buildTree(rootFour, mapelements.get(ZoomLevel.FOUR), depth);
         rootFive = buildTree(rootFive, mapelements.get(ZoomLevel.FIVE), depth);
         rootSix = buildTree(rootSix, mapelements.get(ZoomLevel.SIX), depth);
-
     }
 
 
@@ -117,7 +119,6 @@ public class KDTree {
     }
 
     private List<MapElement> searchTree(Node x, Point2D p0, Point2D p1, int depth){
-
         List<MapElement> list = new ArrayList<>();
 
         if(x.value != null) return x.value;

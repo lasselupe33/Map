@@ -2,6 +2,7 @@ package model;
 
 import controller.CanvasController;
 import model.MapElements.MapElement;
+import model.osm.OSMWayType;
 
 import java.awt.geom.Point2D;
 import java.io.*;
@@ -19,23 +20,25 @@ public class MainModel implements Serializable{
 
     public void createTree() { tree = new KDTree(mapelements, maxLat, minLat, maxLon, minLon); }
 
+
     public static void updateMap(Point2D p0, Point2D p1){
         int zoom = CanvasController.getInstance().getZoomLevel();
 
         maplist.clear();
         for (ZoomLevel e : ZoomLevel.values()) {
-            if ( zoom > e.getZoomValue() ) maplist.addAll(tree.searchTree(p0, p1, e));
+            if ( zoom > e.getZoomValue() ) {
+                maplist.addAll(tree.searchTree(p0, p1, e));
+            }
         }
     }
 
-    private static EnumMap<ZoomLevel, List<MapElement>> initializeMap() {
+    public static EnumMap<ZoomLevel, List<MapElement>> initializeMap() {
         EnumMap<ZoomLevel, List<MapElement>> map = new EnumMap<>(ZoomLevel.class);
         for (ZoomLevel type: ZoomLevel.values()) {
             map.put(type, new ArrayList<>());
         }
         return map;
     }
-
     public void add(ZoomLevel type, MapElement m) {
         mapelements.get(type).add(m);
     }

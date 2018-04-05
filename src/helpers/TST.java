@@ -1,5 +1,6 @@
 package helpers;
 
+import java.io.Serializable;
 import java.util.*;
 
 /******************************************************************************
@@ -62,11 +63,11 @@ import java.util.*;
  *  For additional documentation, see <a href="https://algs4.cs.princeton.edu/52trie">Section 5.2</a> of
  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
  */
-public class TST<Value> {
+public class TST<Value> implements Serializable {
     private int n;              // size
     private Node<Value> root;   // root of TST
 
-    private static class Node<Value> {
+    private static class Node<Value> implements Serializable {
         private char c;                        // character
         private Node<Value> left, mid, right;  // left, middle, and right subtries
         private Value val;                     // value associated with string

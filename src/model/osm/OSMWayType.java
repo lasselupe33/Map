@@ -1,6 +1,8 @@
 package model.osm;
 
-public enum OSMWayType {
+import java.io.Serializable;
+
+public enum OSMWayType implements Serializable {
     COASTLINE,
     PLACE,
     RESIDENTIAL,

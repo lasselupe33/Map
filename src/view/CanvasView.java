@@ -45,18 +45,61 @@ public class CanvasView extends JComponent {
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
+        g.setPaint(Color.yellow);
         for (MapElement m : model.getTreeData()){
-            g.setPaint(ColorMap.getColor(m.getType()));
-            if (m.shouldFill()){
-                g.setStroke(new BasicStroke(Float.MIN_VALUE));
-                g.fill(m.getShape());
-            } else {
-                g.setStroke(StrokeMap.getStroke(m.getType()));
-                g.draw(m.getShape());
+            switch (m.getType()){
+                case COASTLINE:
+                    g.setPaint(new Color(237, 237, 237));
+                    g.fill(m.getShape());
+                    break;
+                case WATER:
+                    g.setPaint(new Color(60, 149, 255));
+                    g.fill(m.getShape());
+                    break;
+                case UNKNOWN:
+                    g.setPaint(Color.black);
+                    g.draw(m.getShape());
+                    break;
+                case ROAD:
+                    g.setStroke(new BasicStroke(0.00001f));
+                    g.setPaint(new Color(230, 139, 213));
+                    g.draw(m.getShape());
+                    break;
+                case HIGHWAY:
+                    g.setStroke(new BasicStroke(0.00005f));
+                    g.setPaint(new Color(255, 114, 109));
+                    g.draw(m.getShape());
+                    break;
+                case BUILDING:
+                    g.setPaint(new Color(172, 169, 151));
+                    g.fill(m.getShape());
+                    break;
+                default:
+                    break;
             }
 
         }
 
-        g.setTransform(new AffineTransform());
+        /*
+
+
+        g.setPaint(new Color(237, 237, 237));
+        for (MapElement coastline: model.get(OSMWayType.COASTLINE)) {
+            g.fill(coastline.getShape());
+        }
+
+        g.setPaint(new Color(60, 149, 255));
+        for (MapElement water: model.get(OSMWayType.WATER)) {
+            g.fill(water.getShape());
+        }
+
+        if (zoom > 5) {
+            g.setPaint(Color.black);
+            for (MapElement line : model.get(OSMWayType.UNKNOWN)) {
+                g.draw(line.getShape());
+            }
+        }
+
+        */
     }
 }
