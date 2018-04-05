@@ -4,20 +4,39 @@ import model.MainModel;
 import view.*;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.util.Timer;
 
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            long timeA = System.currentTimeMillis();
+
             // Models
             MainModel model = new MainModel();
             IOModel ioModel;
 
             if (args.length == 0) {
-                URL data = Main.class.getResource("/data/small.zip");
-                ioModel = new IOModel(model, data);
+                // Attempt to load binary file if it exists, else fallback to default .osm-map
+                File binaryData = null;
+
+                try {
+                    binaryData = new File(URLDecoder.decode(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "data/output.bin", "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                if (binaryData.exists()) {
+                    ioModel = new IOModel(model, "output.bin", true);
+                } else {
+                    URL data = Main.class.getResource("/data/small.zip");
+                    ioModel = new IOModel(model, data);
+                }
             } else {
-                ioModel = new IOModel(model, args[0]);
+                ioModel = new IOModel(model, args[0], false);
             }
 
             // Controllers
@@ -44,6 +63,9 @@ public class Main {
             new KeyboardController(v, cv, model, cc, ioModel);
             new MouseController(cv, cc);
             new ResizeController(v);
+
+            long timeB = System.currentTimeMillis();
+            System.out.println("Elapsed time:" + (timeB - timeA));
         });
     }
 }

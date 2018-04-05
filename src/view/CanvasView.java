@@ -44,7 +44,7 @@ public class CanvasView extends JComponent {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        
+
         g.setPaint(Color.yellow);
         for (MapElement m : model.getTreeData()){
             switch (m.getType()){

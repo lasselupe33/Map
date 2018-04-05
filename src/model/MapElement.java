@@ -8,8 +8,8 @@ import java.io.Serializable;
 
 public class MapElement implements Serializable {
     private Shape shape;
-    private double x, y;
-    private Rectangle2D r;
+    private transient double x, y;
+    private transient Rectangle2D r;
     private OSMWayType type;
 
     public MapElement(Shape s, OSMWayType t){
@@ -21,14 +21,26 @@ public class MapElement implements Serializable {
     }
 
     public double getElementX(){
+        if ((Double) x == null) {
+            x = r.getX();
+        }
+
         return x;
     }
 
     public double getElementY(){
+        if ((Double) y == null) {
+            y = r.getY();
+        }
+
         return y;
     }
 
     public Rectangle2D getBounds(){
+        if (r == null) {
+            r = shape.getBounds2D();
+        }
+
         return r;
     }
 

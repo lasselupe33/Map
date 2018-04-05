@@ -7,12 +7,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import java.awt.*;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URLDecoder;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.zip.ZipInputStream;
@@ -34,9 +31,9 @@ public class IOModel {
         }
 
     }
-    public IOModel(MainModel m, String filename) {
+    public IOModel(MainModel m, String filename, Boolean loadBinary) {
         model = m;
-        load(filename);
+        load(filename, loadBinary);
     }
 
     public void readFromOSM(InputSource filename) {
@@ -51,26 +48,36 @@ public class IOModel {
         }
     }
 
-    public void save(String filename) {
+    public void save() {
         try {
-            File out = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + filename);
-            System.out.println(out.getAbsolutePath());
-            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename));
-            os.writeObject(model.getMapElements());
-            os.writeObject(model.getMinLon());
-            os.writeObject(model.getMinLat());
-            os.writeObject(model.getMaxLon());
-            os.writeObject(model.getMaxLat());
+            // Get the correct path in relation to where the files currently reside
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/output.bin", "UTF-8");
+
+            // Write data
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
+            out.writeObject(model.getMapElements());
+            out.writeObject(model.getMinLon());
+            out.writeObject(model.getMinLat());
+            out.writeObject(model.getMaxLon());
+            out.writeObject(model.getMaxLat());
+            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     /** Helper that allows loading of a file only by passing the filename */
-    public void load(String filename) {
+    public void load(String filename, Boolean loadBinary) {
         try {
+            if (loadBinary) {
+                // Get the correct path in relation to where the binary files currently reside
+                filename = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/" + filename, "UTF-8");
+            }
+
             load(new FileInputStream(filename), filename);
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -98,6 +105,8 @@ public class IOModel {
                 model.setMinLat((double) ois.readObject());
                 model.setMaxLon((double) ois.readObject());
                 model.setMaxLat((double) ois.readObject());
+                model.reInitTree();
+
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {

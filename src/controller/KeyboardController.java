@@ -56,10 +56,10 @@ public class KeyboardController extends KeyAdapter {
                 canvasController.zoomToCenter(1/1.1);
                 break;
             case 'o':
-                ioModel.load("output.bin");
+                ioModel.load("output.bin", true);
                 break;
             case 'p':
-                ioModel.save("output.bin");
+                ioModel.save();
                 break;
             default:
                 break;

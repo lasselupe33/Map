@@ -21,6 +21,13 @@ public class MainModel implements Serializable{
         tree = new KDTree(this);
     }
 
+    /**
+     * Helper that reinitializses the KD-tree.
+     * This is necessary when loading data via a binary file, instead of utilizing the OSM-handler.
+     */
+    public void reInitTree() {
+        tree = new KDTree(this);
+    }
 
     public static void updateMap(Point2D p0, Point2D p1){
         int zoom = CanvasController.getInstance().getZoomLevel();
