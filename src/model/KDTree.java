@@ -4,19 +4,16 @@ import model.MapElements.MapElement;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class KDTree {
-    private static MainModel model;
+    private static EnumMap<ZoomLevel, List<MapElement>> mapelements;
+    private double maxLat, minLat, maxLon, minLon;
     private Node rootOne, rootTwo, rootThree, rootFour, rootFive, rootSix;
 
     public static class Comparators {
         static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getElementX);
         static final Comparator<MapElement> Y_COMPARATOR = Comparator.comparing(MapElement::getElementY);
-        static final Comparator<MapElement> TYPE_COMPARATOR = Comparator.comparing(MapElement::getType);
     }
 
     private class Node{
@@ -33,18 +30,23 @@ public class KDTree {
         }
     }
 
-    public KDTree (MainModel m) {
-        model = m;
+    public KDTree (EnumMap map, double _maxLat, double _minLat, double _maxLon, double _minLon) {
+        mapelements = map;
+        maxLat = _maxLat;
+        minLat = _minLat;
+        maxLon = _maxLon;
+        minLon = _minLon;
+
         int depth = 0;
 
         CalculateZoomLevel.calculateNumberOfElements();
 
-        rootOne = buildTree(rootOne, model.get(ZoomLevel.ONE), depth);
-        rootTwo = buildTree(rootTwo, model.get(ZoomLevel.TWO), depth);
-        rootThree = buildTree(rootThree, model.get(ZoomLevel.THREE), depth);
-        rootFour = buildTree(rootFour, model.get(ZoomLevel.FOUR), depth);
-        rootFive = buildTree(rootFive, model.get(ZoomLevel.FIVE), depth);
-        rootSix = buildTree(rootSix, model.get(ZoomLevel.SIX), depth);
+        rootOne = buildTree(rootOne, mapelements.get(ZoomLevel.ONE), depth);
+        rootTwo = buildTree(rootTwo, mapelements.get(ZoomLevel.TWO), depth);
+        rootThree = buildTree(rootThree, mapelements.get(ZoomLevel.THREE), depth);
+        rootFour = buildTree(rootFour, mapelements.get(ZoomLevel.FOUR), depth);
+        rootFive = buildTree(rootFive, mapelements.get(ZoomLevel.FIVE), depth);
+        rootSix = buildTree(rootSix, mapelements.get(ZoomLevel.SIX), depth);
 
     }
 
@@ -65,12 +67,12 @@ public class KDTree {
             case 0:
                 list.sort(Comparators.X_COMPARATOR);
                 split = list.get(median).getElementX();
-                splitLine = new Line2D.Double(new Point2D.Double(split, model.getMinLat()), new Point2D.Double(split, model.getMaxLat()));
+                splitLine = new Line2D.Double(new Point2D.Double(split, minLat), new Point2D.Double(split, maxLat));
                 break;
             case 1:
                 list.sort(Comparators.Y_COMPARATOR);
                 split = list.get(median).getElementY();
-                splitLine = new Line2D.Double(new Point2D.Double(model.getMinLon(), split), new Point2D.Double(model.getMaxLon(), split));
+                splitLine = new Line2D.Double(new Point2D.Double(minLon, split), new Point2D.Double(maxLon, split));
                 break;
             default:
                 break;
@@ -81,21 +83,21 @@ public class KDTree {
         List<MapElement> listRight = new ArrayList<>();
 
 
-            for(int i = 0; i < list.size(); i++) {
-                MapElement s = list.get(i);
+        for(int i = 0; i < list.size(); i++) {
+            MapElement s = list.get(i);
 
 
 
-                    if (splitLine.intersects(s.getBounds())) {
-                        listLeft.add(s);
-                        listRight.add(s);
-                    } else if (i < median) {
-                        listLeft.add(s);
-                    } else {
-                        listRight.add(s);
-                    }
-
+            if (splitLine.intersects(s.getBounds())) {
+                listLeft.add(s);
+                listRight.add(s);
+            } else if (i < median) {
+                listLeft.add(s);
+            } else {
+                listRight.add(s);
             }
+
+        }
 
         x = new Node(split);
         x.leftChild = buildTree(x.leftChild, listLeft, depth + 1);
@@ -180,7 +182,7 @@ public class KDTree {
         static void calculateNumberOfElements(){
 
             for (ZoomLevel level : ZoomLevel.values()) {
-                zoomScale += model.get(level).size();
+                zoomScale += mapelements.get(level).size();
             }
             System.out.println("Number of elements: " + zoomScale);
             int length = String.valueOf(zoomScale).length();

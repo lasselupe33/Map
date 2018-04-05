@@ -17,7 +17,7 @@ public class MainModel implements Serializable{
 
     public MainModel(){}
 
-    public void createTree() { tree = new KDTree(this); }
+    public void createTree() { tree = new KDTree(mapelements, maxLat, minLat, maxLon, minLon); }
 
     public static void updateMap(Point2D p0, Point2D p1){
         int zoom = CanvasController.getInstance().getZoomLevel();
