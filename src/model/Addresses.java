@@ -2,7 +2,9 @@ package model;
 
 import helpers.TST;
 
-public class Addresses {
+import java.io.Serializable;
+
+public class Addresses implements Serializable {
     private TST<Coordinates> addresses = new TST<>();
 
     public Addresses() {

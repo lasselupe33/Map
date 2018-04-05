@@ -1,7 +1,11 @@
 package model;
 
+import helpers.KDTree;
 import helpers.OSMHandler;
 import model.osm.OSMWayType;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+import org.nustaq.serialization.util.FSTInputStream;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -54,8 +58,13 @@ public class IOModel {
             String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/output.bin", "UTF-8");
 
             // Write data
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
-            out.writeObject(model.getMapElements());
+            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
+            // ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
+            for (OSMWayType type : OSMWayType.values()) {
+                out.writeObject(model.getMapElements().get(type));
+                out.flush();
+            }
+            // out.writeObject(model.getMapElements());
             out.writeObject(model.getMinLon());
             out.writeObject(model.getMinLat());
             out.writeObject(model.getMaxLon());
@@ -88,7 +97,6 @@ public class IOModel {
             readFromOSM(new InputSource(filename));
         } else if (filename.endsWith(".zip")) {
             try {
-
                 ZipInputStream zis = new ZipInputStream(is);
                 zis.getNextEntry();
                 readFromOSM(new InputSource(zis));
@@ -99,8 +107,14 @@ public class IOModel {
             }
         } else if (filename.endsWith(".bin")) {
             try {
-                ObjectInputStream ois = new ObjectInputStream(is);
-                model.setMapElements((EnumMap<OSMWayType, List<MapElement>>) ois.readObject());
+                FSTObjectInput ois = new FSTObjectInput(is);
+                EnumMap<OSMWayType, List<MapElement>> tempMap = MainModel.initializeMap();
+
+                for (OSMWayType type : OSMWayType.values()) {
+                    tempMap.put(type, (List<MapElement>) ois.readObject());
+                }
+
+                model.setMapElements(tempMap);
                 model.setMinLon((double) ois.readObject());
                 model.setMinLat((double) ois.readObject());
                 model.setMaxLon((double) ois.readObject());

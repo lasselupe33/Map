@@ -42,7 +42,7 @@ public class MainModel implements Serializable{
         return maplist;
     }
 
-    private static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
+    public static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
         EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
         for (OSMWayType type: OSMWayType.values()) {
             map.put(type, new ArrayList<>());

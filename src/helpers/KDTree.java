@@ -6,12 +6,13 @@ import model.osm.OSMWayType;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public class KDTree {
+public class KDTree implements Serializable {
     private MainModel model;
     private Node rootCoastline, rootWater, rootRoad, rootHighway, rootBuilding, rootUnknown;
 
@@ -20,7 +21,7 @@ public class KDTree {
         static final Comparator<MapElement> Y_COMPARATOR = Comparator.comparing(MapElement::getElementY);
     }
 
-    private class Node{
+    private class Node implements Serializable {
         private List<MapElement> value;
         private double split;
         private Node leftChild, rightChild;
