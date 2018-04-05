@@ -147,8 +147,9 @@ public class NavigationView extends JPanel {
         switchAndSubmitPanel.setLayout(new BorderLayout());
 
         //SwitchFromTo button
-        JButton switchFromTo = new JButton("switch");
-        switchFromTo.setForeground(Color.decode("#4285F4"));
+        ImageIcon switchIcon = new ImageIcon("assets/icons/arrow.jpg");
+        JButton switchFromTo = new JButton(switchIcon);
+        //switchFromTo.setForeground(Color.decode("#4285F4"));
         switchFromTo.setBackground(Color.WHITE);
         switchFromTo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         switchFromTo.addActionListener((e) -> switchFromAndTo());
@@ -168,13 +169,17 @@ public class NavigationView extends JPanel {
     private void switchFromAndTo() {
         String startTextHolder = startInput.getText();
         String endTextHolder = endInput.getText();
-        if(!(startTextHolder.equals("Fra:") || endTextHolder.equals("Til:"))){
+        if(startTextHolder.equals("Fra:") && endTextHolder.equals("Til:")){
+            //nothing happens
+        } else if (startTextHolder.equals("Fra:")){
+            startInput.setText(endTextHolder);
+            endInput.setText("Til:");
+        } else if (endTextHolder.equals("Til:")){
+            endInput.setText(startTextHolder);
+            startInput.setText("Fra:");
+        } else {
             startInput.setText(endTextHolder);
             endInput.setText(startTextHolder);
         }
-
-
     }
-
-
 }
