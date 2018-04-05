@@ -48,7 +48,7 @@ public class CanvasView extends JComponent {
 
         g.setPaint(Color.yellow);
         for (MapElement m : model.getTreeData()){
-            switch (m.getType()){
+            /*switch (m.getType()){
                 case COASTLINE:
                     g.setPaint(ColorMap.getColor(m.getType()));
                     g.fill(m.getShape());
@@ -77,50 +77,10 @@ public class CanvasView extends JComponent {
                     break;
                 default:
                     break;
-            }
+            }*/
 
         }
 
-        /*
-
-
-        g.setPaint(new Color(237, 237, 237));
-        for (MapElement coastline: model.get(OSMWayType.COASTLINE)) {
-            g.fill(coastline.getShape());
-        }
-
-        g.setPaint(new Color(60, 149, 255));
-        for (MapElement water: model.get(OSMWayType.WATER)) {
-            g.fill(water.getShape());
-        }
-
-        if (zoom > 5) {
-            g.setPaint(Color.black);
-            for (MapElement line : model.get(OSMWayType.UNKNOWN)) {
-                g.draw(line.getShape());
-            }
-        }
-
-        if (zoom > 15) {
-            g.setStroke(new BasicStroke(0.00001f));
-            g.setPaint(new Color(230, 139, 213));
-            for (MapElement road : model.get(OSMWayType.ROAD)) {
-                g.draw(road.getShape());
-            }
-        }
-
-        g.setStroke(new BasicStroke(0.00005f));
-        g.setPaint(new Color(255, 114, 109));
-        for (MapElement highway: model.get(OSMWayType.HIGHWAY)) {
-            g.draw(highway.getShape());
-        }
-
-        if (zoom > 10) {
-            g.setPaint(new Color(172, 169, 151));
-            for (MapElement building : model.get(OSMWayType.BUILDING)) {
-                g.fill(building.getShape());
-            }
-        }*/
         g.setTransform(new AffineTransform());
     }
 }
