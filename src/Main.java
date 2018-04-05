@@ -1,6 +1,7 @@
 import controller.*;
 import model.IOModel;
 import model.MainModel;
+import model.MapModel;
 import view.*;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ public class Main {
 
             // Models
             MainModel model = new MainModel();
+            MapModel mapModel = new MapModel(model);
             IOModel ioModel;
 
             if (args.length == 0) {
@@ -29,13 +31,13 @@ public class Main {
                 }
 
                 if (binaryData.exists()) {
-                    ioModel = new IOModel(model, "output.bin", true);
+                    ioModel = new IOModel(model, mapModel, "output.bin", true);
                 } else {
                     URL data = Main.class.getResource("/data/small.zip");
-                    ioModel = new IOModel(model, data);
+                    ioModel = new IOModel(model, mapModel, data);
                 }
             } else {
-                ioModel = new IOModel(model, args[0], false);
+                ioModel = new IOModel(model, mapModel, args[0], false);
             }
 
             // Controllers
@@ -46,8 +48,8 @@ public class Main {
             SearchBoxController sbc = new SearchBoxController(model, sc, ac);
 
             // Views
-            CanvasView cv = new CanvasView(model, cc);
-            cc.addCanvas(cv);
+            CanvasView cv = new CanvasView(cc);
+            cc.addDependencies(cv, mapModel);
             AddressView av = new AddressView(ac);
             ac.addView(av);
             SearchBox sb = new SearchBox(sc, sbc);

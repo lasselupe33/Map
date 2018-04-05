@@ -1,6 +1,7 @@
 package model;
 
 import helpers.OSMHandler;
+import model.osm.OSMWayType;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
 import model.MapElements.MapElement;
@@ -18,13 +19,11 @@ import java.util.zip.ZipInputStream;
 
 public class IOModel {
     private MainModel model;
+    private MapModel mapModel;
 
-    public IOModel(MainModel m) {
+    public IOModel(MainModel m, MapModel mm, URL filepath) {
         model = m;
-    }
-
-    public IOModel(MainModel m, URL filepath) {
-        model = m;
+        mapModel = mm;
 
         try {
             load(filepath.openStream(), filepath.toString());
@@ -33,17 +32,19 @@ public class IOModel {
         }
 
     }
-    public IOModel(MainModel m, String filename, Boolean loadBinary) {
+    public IOModel(MainModel m, MapModel mm, String filename, Boolean loadBinary) {
         model = m;
+        mapModel = mm;
+
         load(filename, loadBinary);
     }
 
     public void readFromOSM(InputSource filename) {
         try {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(new OSMHandler(model));
+            xmlReader.setContentHandler(new OSMHandler(model, mapModel));
             xmlReader.parse(filename);
-            model.createTree();
+            mapModel.createTree();
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -58,11 +59,6 @@ public class IOModel {
 
             // Write data
             FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
-            for (ZoomLevel level : ZoomLevel.values()) {
-                out.writeObject(model.getMapElements().get(level));
-                // Ensure to flush with each zoomLevel to avoid heap overflow
-                out.flush();
-            }
 
             // Write data to model
             out.writeObject(model.getMinLon());
@@ -70,6 +66,8 @@ public class IOModel {
             out.writeObject(model.getMaxLon());
             out.writeObject(model.getMaxLat());
             out.close();
+
+            mapModel.serialize();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -110,22 +108,14 @@ public class IOModel {
             try {
                 FSTObjectInput ois = new FSTObjectInput(is);
 
-                // Firstly, create the mapelements map
-                EnumMap<ZoomLevel, List<MapElement>> tempMap = MainModel.initializeMap();
-                for (ZoomLevel level : ZoomLevel.values()) {
-                    tempMap.put(level, (List<MapElement>) ois.readObject());
-                }
-
                 // Add data to model
-                model.setMapElements(tempMap);
                 model.setMinLon((double) ois.readObject());
                 model.setMinLat((double) ois.readObject());
                 model.setMaxLon((double) ois.readObject());
                 model.setMaxLat((double) ois.readObject());
 
                 // Create tree with loaded data
-                model.createTree();
-
+                mapModel.deserialize();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
