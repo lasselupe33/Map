@@ -1,13 +1,12 @@
 package model;
 
 import helpers.OSMHandler;
-import model.osm.OSMWayType;
+import model.MapElements.MapElement;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import java.awt.*;
 import java.io.*;
 import java.util.EnumMap;
 import java.util.List;

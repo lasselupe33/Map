@@ -1,6 +1,6 @@
 package model;
 
-import model.osm.OSMWayType;
+import model.MapElements.MapElement;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;

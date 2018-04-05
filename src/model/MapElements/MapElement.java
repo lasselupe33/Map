@@ -1,6 +1,5 @@
 package model.MapElements;
 
-import model.Address;
 import model.osm.OSMWayType;
 
 import java.awt.*;
@@ -8,29 +7,35 @@ import java.awt.geom.Rectangle2D;
 
 public class MapElement {
     private Shape shape;
-    private Rectangle2D rect;
     private double x, y;
+    private Rectangle2D r;
     private OSMWayType type;
-    Boolean shouldFill;
+    boolean shouldFill;
 
-    MapElement(OSMWayType type, Shape s){
-        this.type = type;
+    public MapElement(Shape s, OSMWayType t, boolean sf){
         shape = s;
-        rect = shape.getBounds2D();
-        x = rect.getX();
-        y = rect.getY();
+        type = t;
+        shouldFill = sf;
+        r = shape.getBounds2D();
+        x = r.getX();
+        y = r.getY();
     }
 
-    public double getX(){
+    public double getElementX(){
         return x;
     }
 
-    public double getY(){
+    public double getElementY(){
         return y;
     }
 
-    public Rectangle2D getRect() { return rect; }
+    public Rectangle2D getBounds(){
+        return r;
+    }
 
     public OSMWayType getType() { return type; }
 
+    public boolean shouldFill() { return shouldFill; }
+
+    public Shape getShape(){ return shape; }
 }

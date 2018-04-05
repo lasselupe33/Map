@@ -5,6 +5,7 @@ import model.MainModel;
 public enum OSMWayType {
     COASTLINE,
     PLACE,
+    PARK,
     WATER,
     UNKNOWN,
     BUILDING,
@@ -13,7 +14,6 @@ public enum OSMWayType {
     SERVICE,
     ROAD,
     PEDESTRIAN,
-    PARK,
     PLAYGROUND,
     CEMETERY,
     FOOTWAY,

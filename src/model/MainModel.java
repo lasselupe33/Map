@@ -1,7 +1,7 @@
 package model;
 
 import controller.CanvasController;
-import model.osm.*;
+import model.MapElements.MapElement;
 
 import java.awt.geom.Point2D;
 import java.io.*;
