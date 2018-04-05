@@ -1,7 +1,5 @@
 package model.osm;
 
-import model.MainModel;
-
 public enum OSMWayType {
     COASTLINE,
     PLACE,
@@ -30,5 +28,5 @@ public enum OSMWayType {
     HIGHWAY,
     PLACE_OF_WORSHIP,
     BARRIER,
-    HEDGE
+    DRAIN, HEDGE
 }

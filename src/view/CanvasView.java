@@ -5,6 +5,7 @@ import helpers.ColorMap;
 import helpers.StrokeMap;
 import model.MainModel;
 import model.MapElements.MapElement;
+import model.osm.OSMWayType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +36,7 @@ public class CanvasView extends JComponent {
         Rectangle2D viewRect = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
 
         g.setStroke(new BasicStroke(Float.MIN_VALUE));
-        g.setPaint(new Color(60, 149, 255));
+        g.setPaint(ColorMap.getColor(OSMWayType.WATER));
         g.fill(viewRect);
         g.transform(controller.getTransform());
 

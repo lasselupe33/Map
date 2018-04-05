@@ -30,5 +30,6 @@ public class StrokeMap {
         strokeMap.put(OSMWayType.MOTORWAY, new BasicStroke(0.00025f));
         strokeMap.put(OSMWayType.BARRIER, new BasicStroke(0.000007f));
         strokeMap.put(OSMWayType.HEDGE, new BasicStroke(0.000007f));
+        strokeMap.put(OSMWayType.DRAIN, new BasicStroke(0.000007f));
     }
 }

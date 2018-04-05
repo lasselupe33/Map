@@ -69,6 +69,9 @@ public class OSMHandler extends DefaultHandler {
                         if (attributes.getValue("v").equals("motorway")) {
                             type = OSMWayType.MOTORWAY;
                         }
+                        if (attributes.getValue("v").equals("motorway_link")) {
+                            type = OSMWayType.MOTORWAY;
+                        }
                         if (attributes.getValue("v").equals("primary")) {
                             type = OSMWayType.HIGHWAY;
                         }
@@ -94,8 +97,12 @@ public class OSMHandler extends DefaultHandler {
                     case "natural":
                         if (attributes.getValue("v").equals("water")) {
                             type = OSMWayType.WATER;
-                        } else if (attributes.getValue("v").equals("coastline")) {
+                        }
+                        if (attributes.getValue("v").equals("coastline")) {
                             type = OSMWayType.COASTLINE;
+                        }
+                        if (attributes.getValue("v").equals("wood")) {
+                            type = OSMWayType.FORREST;
                         }
                         break;
                     case "route":
@@ -157,6 +164,11 @@ public class OSMHandler extends DefaultHandler {
                         type = OSMWayType.BARRIER;
                         if (attributes.getValue("v").equals("hedge")) {
                             type = OSMWayType.HEDGE;
+                        }
+                        break;
+                    case "waterway":
+                        if (attributes.getValue("v").equals("drain")) {
+                            type = OSMWayType.DRAIN;
                         }
                         break;
                     case "addr:street":
@@ -429,6 +441,9 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case HEDGE:
                 model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
+                break;
+            case DRAIN:
+                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
                 break;
             default:
                 break;
