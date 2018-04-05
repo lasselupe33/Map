@@ -9,9 +9,7 @@ public class StrokeMap {
     private static EnumMap<OSMWayType, Stroke> strokeMap = null;
 
     public static Stroke getStroke(OSMWayType type) {
-        if (strokeMap == null) {
-            initializeStandard();
-        }
+        if (strokeMap == null) initializeStandard();
         return strokeMap.get(type);
     }
 
@@ -29,5 +27,7 @@ public class StrokeMap {
         strokeMap.put(OSMWayType.TERTIARYROAD, new BasicStroke(0.0009f));
         strokeMap.put(OSMWayType.SECONDARYROAD, new BasicStroke(0.00010f));
         strokeMap.put(OSMWayType.HIGHWAY, new BasicStroke(0.00020f));
+        strokeMap.put(OSMWayType.BARRIER, new BasicStroke(0.000007f));
+        strokeMap.put(OSMWayType.HEDGE, new BasicStroke(0.000007f));
     }
 }

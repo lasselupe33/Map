@@ -12,8 +12,8 @@ public class ColorMap {
     private static EnumMap<OSMWayType, Color> colorBlindMode = null;
 
     public static Color getColor(OSMWayType type) {
-        if (standardMode == null) { initializeStandard(); }
-        if (colorBlindMode == null) { initializeColorBlind(); }
+        if (standardMode == null) initializeStandard();
+        if (colorBlindMode == null) initializeColorBlind();
         switch (MenuController.getMode()) {
             case STANDARD:
                 return standardMode.get(type);
@@ -49,6 +49,8 @@ public class ColorMap {
         standardMode.put(OSMWayType.SECONDARYROAD, new Color(255, 255, 255));
         standardMode.put(OSMWayType.HIGHWAY, new Color(252, 214, 164));
         standardMode.put(OSMWayType.PLACE_OF_WORSHIP, new Color(175, 156, 141));
+        standardMode.put(OSMWayType.BARRIER, new Color(128, 129, 122));
+        standardMode.put(OSMWayType.HEDGE, new Color(170, 224, 203));
     }
 
     private static void initializeColorBlind() {

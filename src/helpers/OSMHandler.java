@@ -144,7 +144,12 @@ public class OSMHandler extends DefaultHandler {
                             type = OSMWayType.PLACE_OF_WORSHIP;
                         }
                         break;
-
+                    case "barrier":
+                        type = OSMWayType.BARRIER;
+                        if (attributes.getValue("v").equals("hedge")) {
+                            type = OSMWayType.HEDGE;
+                        }
+                        break;
                     case "addr:street":
                         street = attributes.getValue("v");
                         break;
@@ -397,6 +402,12 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case UNKNOWN:
                 model.add(ZoomLevel.SIX, new MapElement(path, type, false));
+                break;
+            case BARRIER:
+                model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
+                break;
+            case HEDGE:
+                model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
                 break;
             default:
                 break;
