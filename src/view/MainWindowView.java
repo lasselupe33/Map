@@ -1,9 +1,6 @@
 package view;
 
-import controller.CanvasController;
-import controller.MenuController;
-import controller.StateController;
-import controller.ViewStates;
+import controller.*;
 import model.Favorite;
 import model.MainModel;
 
@@ -31,6 +28,7 @@ public class MainWindowView {
     private boolean initialRender = true;
     private FooterView footerView;
     private FavoriteView favoriteView;
+    private FavoriteController favoriteController;
 
     public MainWindowView(
             CanvasView cv,
@@ -43,7 +41,8 @@ public class MainWindowView {
             StateController sc,
             NavigationView nv,
             FooterView fv,
-            FavoriteView favoriteView
+            FavoriteView favoriteView,
+            FavoriteController favoriteController
     ) {
         menuController = mc;
         canvasView = cv;
@@ -56,6 +55,7 @@ public class MainWindowView {
         navigationView = nv;
         footerView = fv;
         this.favoriteView = favoriteView;
+        this.favoriteController = favoriteController;
 
         // Create the window
         window = new JFrame("Danmarkskort");
