@@ -362,7 +362,7 @@ public class OSMHandler extends DefaultHandler {
                 model.add(ZoomLevel.ONE, new MapElement(path, type, true));
                 break;
             case PLACE:
-                model.add(ZoomLevel.TWO, new MapElement(path, type, true));
+                model.add(ZoomLevel.ONE, new MapElement(path, type, true));
                 break;
             case RESIDENTIAL:
                 model.add(ZoomLevel.TWO, new MapElement(path, type, true));
