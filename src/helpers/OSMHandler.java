@@ -382,7 +382,7 @@ public class OSMHandler extends DefaultHandler {
                 model.add(ZoomLevel.TWO, new MapElement(path, type, true));
                 break;
             case FORREST:
-                model.add(ZoomLevel.TWO, new MapElement(path, type, true));
+                model.add(ZoomLevel.THREE, new MapElement(path, type, true));
                 break;
             case FARMLAND:
                 model.add(ZoomLevel.THREE, new MapElement(path, type, true));
@@ -442,7 +442,7 @@ public class OSMHandler extends DefaultHandler {
                 model.add(ZoomLevel.FOUR, new MapElement(path, type, false));
                 break;
             case CYCLEWAY:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
+                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
                 break;
             case PLACE_OF_WORSHIP:
                 model.add(ZoomLevel.SIX, new MapElement(path, type,  true));

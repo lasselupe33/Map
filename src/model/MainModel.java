@@ -26,6 +26,7 @@ public class MainModel implements Serializable{
         for (ZoomLevel e : ZoomLevel.values()) {
             if ( zoom > e.getZoomValue() ) maplist.addAll(tree.searchTree(p0, p1, e));
         }
+        maplist.sort(Comparator.comparing(MapElement::getType));
     }
 
     private static EnumMap<ZoomLevel, List<MapElement>> initializeMap() {

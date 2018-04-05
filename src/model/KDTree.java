@@ -14,6 +14,7 @@ public class KDTree {
     public static class Comparators {
         static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getElementX);
         static final Comparator<MapElement> Y_COMPARATOR = Comparator.comparing(MapElement::getElementY);
+        static final Comparator<MapElement> TYPE_COMPARATOR = Comparator.comparing(MapElement::getType);
     }
 
     private class Node{
@@ -113,7 +114,9 @@ public class KDTree {
         int depth = 0;
         Node root = getRoot(type);
         if ( root == null ) return Collections.EMPTY_LIST;
-        return searchTree(root, p0, p1, depth);
+        List<MapElement> list = searchTree(root, p0, p1, depth);
+
+        return list;
     }
 
     private List<MapElement> searchTree(Node x, Point2D p0, Point2D p1, int depth){
