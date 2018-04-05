@@ -5,6 +5,7 @@ import model.Address;
 import model.MainModel;
 import model.MapElement;
 import model.MapElements.Road;
+import model.ZoomLevel;
 import model.osm.OSMNode;
 import model.osm.OSMRelation;
 import model.osm.OSMWay;
@@ -22,8 +23,10 @@ public class OSMHandler extends DefaultHandler {
     OSMWay way;
     MainModel model;
     private double lonFactor;
+    private ZoomLevel level;
     private OSMWayType type;
     private OSMRelation relation;
+
 
     // Fields related to created addresses
     private Address currentAddress;
@@ -47,11 +50,13 @@ public class OSMHandler extends DefaultHandler {
             case "way":
                 way = new OSMWay();
                 type = OSMWayType.UNKNOWN;
+                level = ZoomLevel.SIX;
                 idToWay.put(Long.parseLong(attributes.getValue("id")), way);
                 break;
             case "relation":
                 relation = new OSMRelation();
                 type = OSMWayType.UNKNOWN;
+                level = ZoomLevel.SIX;
                 break;
             case "member":
                 OSMWay w = idToWay.get(Long.parseLong(attributes.getValue("ref")));
@@ -63,82 +68,105 @@ public class OSMHandler extends DefaultHandler {
                 switch (attributes.getValue("k")) {
                     case "highway":
                         type = OSMWayType.ROAD;
+                        level = ZoomLevel.FIVE;
                         if (attributes.getValue("v").equals("primary")) {
                             type = OSMWayType.HIGHWAY;
+                            level = ZoomLevel.ONE;
                         }
                         if (attributes.getValue("v").equals("secondary")) {
                             type = OSMWayType.SECONDARYROAD;
+                            level = ZoomLevel.FOUR;
                         }
                         if (attributes.getValue("v").equals("secondary")) {
                             type = OSMWayType.TERTIARYROAD;
+                            level = ZoomLevel.SIX;
                         }
                         if (attributes.getValue("v").equals("service")) {
                             type = OSMWayType.SERVICE;
+                            level = ZoomLevel.SIX;
                         }
                         if (attributes.getValue("v").equals("path")) {
                             type = OSMWayType.PATH;
+                            level = ZoomLevel.SIX;
                         }
                         if (attributes.getValue("v").equals("footway")) {
                             type = OSMWayType.FOOTWAY;
+                            level = ZoomLevel.SIX;
                         }
                         if (attributes.getValue("v").equals("cycleway")) {
                             type = OSMWayType.CYCLEWAY;
+                            level = ZoomLevel.SIX;
                         }
                         break;
                     case "natural":
                         if (attributes.getValue("v").equals("water")) {
                             type = OSMWayType.WATER;
+                            level = ZoomLevel.TWO;
                         } else if (attributes.getValue("v").equals("coastline")) {
                             type = OSMWayType.COASTLINE;
+                            level = ZoomLevel.ONE;
                         }
                         break;
                     case "route":
                         if (attributes.getValue("v").equals("ferry")) {
                             type = OSMWayType.FERRY;
+                            level = ZoomLevel.THREE;
                         }
                         break;
                     case "building":
                         type = OSMWayType.BUILDING;
+                        level = ZoomLevel.FIVE;
                         if (attributes.getValue("v").equals("church")) {
                             type = OSMWayType.PLACE_OF_WORSHIP;
+                            level = ZoomLevel.SIX;
                         }
                         break;
                     case "leisure":
                         if (attributes.getValue("v").equals("park")) {
                             type = OSMWayType.PARK;
+                            level = ZoomLevel.FIVE;
                         }
                         if (attributes.getValue("v").equals("pitch")) {
                             type = OSMWayType.PITCH;
+                            level = ZoomLevel.FIVE;
                         }
                         if (attributes.getValue("v").equals("garden")) {
                             type = OSMWayType.PARK;
+                            level = ZoomLevel.FIVE;
                         }
                         if (attributes.getValue("v").equals("playground")) {
                             type = OSMWayType.PLAYGROUND;
+                            level = ZoomLevel.FIVE;
                         }
                         break;
                     case "landuse":
                         if (attributes.getValue("v").equals("forest")) {
                             type = OSMWayType.PARK;
+                            level = ZoomLevel.TWO;
                         }
                         if (attributes.getValue("v").equals("allotments")) {
                             type = OSMWayType.ALLOMENTS;
+                            level = ZoomLevel.TWO;
                         }
                         if (attributes.getValue("v").equals("cemetery")) {
                             type = OSMWayType.CEMETERY;
+                            level = ZoomLevel.THREE;
                         }
                         break;
                     case "place":
                         if (attributes.getValue("v").equals("island")) {
                             type = OSMWayType.PLACE;
+                            level = ZoomLevel.FOUR;
                         }
                         if (attributes.getValue("v").equals("square")) {
                             type = OSMWayType.PEDESTRIAN;
+                            level = ZoomLevel.FOUR;
                         }
                         break;
                     case "amenity":
                         if (attributes.getValue("v").equals("place_of_worship")) {
                             type = OSMWayType.PLACE_OF_WORSHIP;
+                            level = ZoomLevel.FIVE;
                         }
                         break;
 
@@ -251,7 +279,7 @@ public class OSMHandler extends DefaultHandler {
     private void createWay(OSMWay way) {
         Path2D path = convertWayToPath(new Path2D.Double(), way);
 
-        model.add(type, new MapElement(path, type));
+        model.add(level, new MapElement(path, type));
     }
 
     /** Internal helper that creates a relation when called (i.e. when the parser reaches the end of a relation */
@@ -262,7 +290,7 @@ public class OSMHandler extends DefaultHandler {
             path = convertWayToPath(path, way);
         }
 
-        model.add(type, new MapElement(path, type));
+        model.add(level, new MapElement(path, type));
     }
 
     /** Internal helper that converts a way into a path */
@@ -319,7 +347,7 @@ public class OSMHandler extends DefaultHandler {
                     path.lineTo(node.getLon(), node.getLat());
                 }
 
-                model.add(OSMWayType.COASTLINE, new MapElement(path, OSMWayType.COASTLINE));
+                model.add(ZoomLevel.ONE, new MapElement(path, OSMWayType.COASTLINE));
             }
 
         }
