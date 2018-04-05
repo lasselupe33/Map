@@ -27,6 +27,7 @@ public class StrokeMap {
         strokeMap.put(OSMWayType.TERTIARYROAD, new BasicStroke(0.0009f));
         strokeMap.put(OSMWayType.SECONDARYROAD, new BasicStroke(0.00010f));
         strokeMap.put(OSMWayType.HIGHWAY, new BasicStroke(0.00020f));
+        strokeMap.put(OSMWayType.MOTORWAY, new BasicStroke(0.00025f));
         strokeMap.put(OSMWayType.BARRIER, new BasicStroke(0.000007f));
         strokeMap.put(OSMWayType.HEDGE, new BasicStroke(0.000007f));
     }

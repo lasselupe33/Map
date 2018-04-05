@@ -66,6 +66,9 @@ public class OSMHandler extends DefaultHandler {
                 switch (attributes.getValue("k")) {
                     case "highway":
                         type = OSMWayType.ROAD;
+                        if (attributes.getValue("v").equals("motorway")) {
+                            type = OSMWayType.MOTORWAY;
+                        }
                         if (attributes.getValue("v").equals("primary")) {
                             type = OSMWayType.HIGHWAY;
                         }
@@ -369,6 +372,9 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case ROAD:
                 model.add(ZoomLevel.FIVE, new MapElement(path, type,  false));
+                break;
+            case MOTORWAY:
+                model.add(ZoomLevel.ONE, new MapElement(path, type,  false));
                 break;
             case HIGHWAY:
                 model.add(ZoomLevel.TWO, new MapElement(path, type, false));

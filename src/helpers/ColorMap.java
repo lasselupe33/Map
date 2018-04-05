@@ -54,6 +54,7 @@ public class ColorMap {
         standardMode.put(OSMWayType.PLACE_OF_WORSHIP, new Color(175, 156, 141));
         standardMode.put(OSMWayType.BARRIER, new Color(128, 129, 122));
         standardMode.put(OSMWayType.HEDGE, new Color(170, 224, 203));
+        standardMode.put(OSMWayType.MOTORWAY, new Color(232, 146, 162));
     }
 
     private static void initializeColorBlind() {

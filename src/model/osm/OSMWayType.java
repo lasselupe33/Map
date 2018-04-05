@@ -15,6 +15,7 @@ public enum OSMWayType {
     PITCH,
     ALLOMENTS,
     SERVICE,
+    MOTORWAY,
     ROAD,
     PEDESTRIAN,
     PLAYGROUND,
