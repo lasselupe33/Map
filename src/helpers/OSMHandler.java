@@ -72,6 +72,9 @@ public class OSMHandler extends DefaultHandler {
                         if (attributes.getValue("v").equals("motorway_link")) {
                             type = OSMWayType.MOTORWAY;
                         }
+                        if (attributes.getValue("v").equals("trunk_link")) {
+                            type = OSMWayType.MOTORWAY;
+                        }
                         if (attributes.getValue("v").equals("primary")) {
                             type = OSMWayType.HIGHWAY;
                         }
@@ -145,6 +148,17 @@ public class OSMHandler extends DefaultHandler {
                         }
                         if (attributes.getValue("v").equals("cemetery")) {
                             type = OSMWayType.CEMETERY;
+                        }
+                        if (attributes.getValue("v").equals("grass")) {
+                            type = OSMWayType.GRASS;
+                        }
+                        break;
+                    case "aeroway":
+                        if (attributes.getValue("v").equals("aerodrome")) {
+                            type = OSMWayType.AEROWAY;
+                        }
+                        if (attributes.getValue("v").equals("runway")) {
+                            type = OSMWayType.RUNWAY;
                         }
                         break;
                     case "place":
@@ -444,6 +458,15 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case DRAIN:
                 model.add(ZoomLevel.SIX, new MapElement(path, type, false));
+                break;
+            case AEROWAY:
+                model.add(ZoomLevel.FIVE, new MapElement(path, type, true));
+                break;
+            case RUNWAY:
+                model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
+                break;
+            case GRASS:
+                model.add(ZoomLevel.FIVE, new MapElement(path, type, true));
                 break;
             default:
                 break;

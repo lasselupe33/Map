@@ -6,12 +6,14 @@ public enum OSMWayType {
     RESIDENTIAL,
     FORREST,
     FARMLAND,
+    AEROWAY,
     PARK,
     WATER,
     UNKNOWN,
     BUILDING,
     PITCH,
     ALLOMENTS,
+    GRASS,
     SERVICE,
     MOTORWAY,
     ROAD,
@@ -28,5 +30,5 @@ public enum OSMWayType {
     HIGHWAY,
     PLACE_OF_WORSHIP,
     BARRIER,
-    DRAIN, HEDGE
+    DRAIN, RUNWAY, HEDGE
 }

@@ -56,6 +56,9 @@ public class ColorMap {
         standardMode.put(OSMWayType.HEDGE, new Color(170, 224, 203));
         standardMode.put(OSMWayType.MOTORWAY, new Color(232, 146, 162));
         standardMode.put(OSMWayType.DRAIN, new Color(60, 149, 255));
+        standardMode.put(OSMWayType.AEROWAY, new Color(233, 209, 255));
+        standardMode.put(OSMWayType.RUNWAY, new Color(187, 187, 204));
+        standardMode.put(OSMWayType.GRASS, new Color(205, 235, 176));
     }
 
     private static void initializeColorBlind() {
