@@ -1,7 +1,5 @@
 package model.osm;
 
-import model.MainModel;
-
 public enum OSMWayType {
     COASTLINE,
     PLACE,

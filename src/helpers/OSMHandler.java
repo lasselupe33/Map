@@ -425,10 +425,10 @@ public class OSMHandler extends DefaultHandler {
                 model.add(ZoomLevel.SIX, new MapElement(path, type, false));
                 break;
             case BARRIER:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
+                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
                 break;
             case HEDGE:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
+                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
                 break;
             default:
                 break;
