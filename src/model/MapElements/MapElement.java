@@ -1,4 +1,4 @@
-package model;
+package model.MapElements;
 
 import model.osm.OSMWayType;
 
@@ -11,26 +11,28 @@ public class MapElement implements Serializable {
     private transient double x, y;
     private transient Rectangle2D r;
     private OSMWayType type;
+    boolean shouldFill;
 
-    public MapElement(Shape s, OSMWayType t){
+    public MapElement(Shape s, OSMWayType t, boolean sf){
         shape = s;
         type = t;
+        shouldFill = sf;
         r = shape.getBounds2D();
         x = r.getX();
         y = r.getY();
     }
 
     public double getElementX(){
-        if ((Double) x == null) {
-            x = r.getX();
+        if (x == 0.0) {
+            x = getBounds().getX();
         }
 
         return x;
     }
 
     public double getElementY(){
-        if ((Double) y == null) {
-            y = r.getY();
+        if (y == 0.0) {
+            y = getBounds().getY();
         }
 
         return y;
@@ -46,7 +48,7 @@ public class MapElement implements Serializable {
 
     public OSMWayType getType() { return type; }
 
-    public Shape getShape(){
-        return shape;
-    }
+    public boolean shouldFill() { return shouldFill; }
+
+    public Shape getShape(){ return shape; }
 }

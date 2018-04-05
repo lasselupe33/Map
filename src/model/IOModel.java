@@ -1,11 +1,9 @@
 package model;
 
-import helpers.KDTree;
 import helpers.OSMHandler;
-import model.osm.OSMWayType;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
-import org.nustaq.serialization.util.FSTInputStream;
+import model.MapElements.MapElement;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -45,6 +43,7 @@ public class IOModel {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
             xmlReader.setContentHandler(new OSMHandler(model));
             xmlReader.parse(filename);
+            model.createTree();
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -59,12 +58,13 @@ public class IOModel {
 
             // Write data
             FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
-            // ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
-            for (OSMWayType type : OSMWayType.values()) {
-                out.writeObject(model.getMapElements().get(type));
+            for (ZoomLevel level : ZoomLevel.values()) {
+                out.writeObject(model.getMapElements().get(level));
+                // Ensure to flush with each zoomLevel to avoid heap overflow
                 out.flush();
             }
-            // out.writeObject(model.getMapElements());
+
+            // Write data to model
             out.writeObject(model.getMinLon());
             out.writeObject(model.getMinLat());
             out.writeObject(model.getMaxLon());
@@ -93,6 +93,7 @@ public class IOModel {
 
     /** Helper that loads OSM-data from a inputStream */
     public void load(InputStream is, String filename) {
+        System.out.println(filename);
         if (filename.endsWith(".osm")) {
             readFromOSM(new InputSource(filename));
         } else if (filename.endsWith(".zip")) {
@@ -108,18 +109,22 @@ public class IOModel {
         } else if (filename.endsWith(".bin")) {
             try {
                 FSTObjectInput ois = new FSTObjectInput(is);
-                EnumMap<OSMWayType, List<MapElement>> tempMap = MainModel.initializeMap();
 
-                for (OSMWayType type : OSMWayType.values()) {
-                    tempMap.put(type, (List<MapElement>) ois.readObject());
+                // Firstly, create the mapelements map
+                EnumMap<ZoomLevel, List<MapElement>> tempMap = MainModel.initializeMap();
+                for (ZoomLevel level : ZoomLevel.values()) {
+                    tempMap.put(level, (List<MapElement>) ois.readObject());
                 }
 
+                // Add data to model
                 model.setMapElements(tempMap);
                 model.setMinLon((double) ois.readObject());
                 model.setMinLat((double) ois.readObject());
                 model.setMaxLon((double) ois.readObject());
                 model.setMaxLat((double) ois.readObject());
-                model.reInitTree();
+
+                // Create tree with loaded data
+                model.createTree();
 
             } catch (IOException e) {
                 e.printStackTrace();

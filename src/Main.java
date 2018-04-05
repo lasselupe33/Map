@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Timer;
 
 public class Main {
     public static void main(String[] args) {

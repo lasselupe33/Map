@@ -190,6 +190,14 @@ public class MainWindowView {
         JMenu showMenu = new JMenu("Indstillinger");
         menubar.add(showMenu);
 
+        JMenuItem standardItem = new JMenuItem("Standard mode");
+        quitItem.addActionListener((ActionEvent e) -> menuController.standardMode());
+        showMenu.add(standardItem);
+
+        JMenuItem colorBlindItem = new JMenuItem("Color blind mode");
+        quitItem.addActionListener((ActionEvent e) -> menuController.colorBlindMode());
+        showMenu.add(colorBlindItem);
+
         /*
         JMenuItem pRoadItem = new JCheckBoxMenuItem("Primary roads", true);
         pRoadItem.addActionListener(this);
