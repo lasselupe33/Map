@@ -1,10 +1,8 @@
 package model;
 
 import controller.CanvasController;
-import helpers.KDTree;
-import model.osm.*;
+import model.MapElements.MapElement;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.*;
@@ -12,38 +10,33 @@ import java.util.List;
 
 public class MainModel implements Serializable{
     private Addresses addresses = new Addresses();
-    private EnumMap<OSMWayType, List<MapElement>> mapelements = initializeMap();
+    private static EnumMap<ZoomLevel, List<MapElement>> mapelements = initializeMap();
     private double minLat, minLon, maxLat, maxLon;
     private static KDTree tree;
     private static List<MapElement> maplist = new ArrayList<>();
 
-    public MainModel(){
-        tree = new KDTree(this);
-    }
+    public MainModel(){}
 
+    public void createTree() { tree = new KDTree(this); }
 
     public static void updateMap(Point2D p0, Point2D p1){
         int zoom = CanvasController.getInstance().getZoomLevel();
 
         maplist.clear();
-        for (OSMWayType e : OSMWayType.values()) {
+        for (ZoomLevel e : ZoomLevel.values()) {
             if ( zoom > e.getZoomValue() ) maplist.addAll(tree.searchTree(p0, p1, e));
         }
     }
 
-    public List<MapElement> getTreeData(){
-        return maplist;
-    }
-
-    private static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
-        EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
-        for (OSMWayType type: OSMWayType.values()) {
+    private static EnumMap<ZoomLevel, List<MapElement>> initializeMap() {
+        EnumMap<ZoomLevel, List<MapElement>> map = new EnumMap<>(ZoomLevel.class);
+        for (ZoomLevel type: ZoomLevel.values()) {
             map.put(type, new ArrayList<>());
         }
         return map;
     }
 
-    public void add(OSMWayType type, MapElement m) {
+    public void add(ZoomLevel type, MapElement m) {
         mapelements.get(type).add(m);
     }
 
@@ -52,11 +45,15 @@ public class MainModel implements Serializable{
         return addresses;
     }
 
-    public List<MapElement> get(OSMWayType type) {
+    public List<MapElement> getTreeData(){
+        return maplist;
+    }
+
+    public List<MapElement> get(ZoomLevel type) {
         return mapelements.get(type);
     }
 
-    public EnumMap<OSMWayType, List<MapElement>> getMapElements() {
+    public EnumMap<ZoomLevel, List<MapElement>> getMapElements() {
         return mapelements;
     }
 
@@ -76,13 +73,13 @@ public class MainModel implements Serializable{
         return maxLon;
     }
 
-    /** Settters */
+    /** Setters */
     public void setAddresses(Addresses addresses) {
         this.addresses = addresses;
     }
 
-    public void setMapElements(EnumMap<OSMWayType, List<MapElement>> mapElements) {
-        this.mapelements = mapElements;
+    public void setMapElements(EnumMap<ZoomLevel, List<MapElement>> mapElements) {
+        mapelements = mapElements;
     }
 
     public void setMinLat(double minLat){this.minLat = minLat;}
@@ -92,4 +89,7 @@ public class MainModel implements Serializable{
     public void setMaxLat(double maxLat){this.maxLat = maxLat;}
 
     public void setMaxLon(double maxLon){this.maxLon = maxLon;}
+
+
+
 }

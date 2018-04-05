@@ -1,4 +1,4 @@
-package model;
+package model.MapElements;
 
 import model.osm.OSMWayType;
 
@@ -10,10 +10,12 @@ public class MapElement {
     private double x, y;
     private Rectangle2D r;
     private OSMWayType type;
+    boolean shouldFill;
 
-    public MapElement(Shape s, OSMWayType t){
+    public MapElement(Shape s, OSMWayType t, boolean sf){
         shape = s;
         type = t;
+        shouldFill = sf;
         r = shape.getBounds2D();
         x = r.getX();
         y = r.getY();
@@ -33,7 +35,7 @@ public class MapElement {
 
     public OSMWayType getType() { return type; }
 
-    public Shape getShape(){
-        return shape;
-    }
+    public boolean shouldFill() { return shouldFill; }
+
+    public Shape getShape(){ return shape; }
 }

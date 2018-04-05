@@ -1,13 +1,12 @@
 package model;
 
 import helpers.OSMHandler;
-import model.osm.OSMWayType;
+import model.MapElements.MapElement;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import java.awt.*;
 import java.io.*;
 import java.util.EnumMap;
 import java.util.List;
@@ -30,6 +29,7 @@ public class IOModel {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
             xmlReader.setContentHandler(new OSMHandler(model));
             xmlReader.parse(filename);
+            model.createTree();
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -66,7 +66,7 @@ public class IOModel {
         } else if (filename.endsWith(".bin")) {
             try {
                 ObjectInputStream is = new ObjectInputStream(new FileInputStream(filename));
-                model.setMapElements((EnumMap<OSMWayType, List<MapElement>>) is.readObject());
+                model.setMapElements((EnumMap<ZoomLevel, List<MapElement>>) is.readObject());
                 model.setMinLon((double) is.readObject());
                 model.setMinLat((double) is.readObject());
                 model.setMaxLon((double) is.readObject());
