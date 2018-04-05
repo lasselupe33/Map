@@ -9,6 +9,8 @@ import java.awt.*;
 public class NavigationView extends JPanel {
     private boolean initialRender = true;
     private int width = 450;
+    private JTextField startInput;
+    private JTextField endInput;
 
     public NavigationView() {
         // Setup view
@@ -99,7 +101,7 @@ public class NavigationView extends JPanel {
         inputContainer.setPreferredSize(new Dimension(width, 125));
 
         // Start input
-        JTextField startInput = new JTextField("Fra:");
+        startInput = new JTextField("Fra:");
         startInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
         startInput.addFocusListener(new TextController());
         inputContainer.add(startInput);
@@ -108,7 +110,7 @@ public class NavigationView extends JPanel {
         inputContainer.add(Box.createVerticalStrut(10));
 
         // End input
-        JTextField endInput = new JTextField("Til:");
+        endInput = new JTextField("Til:");
         endInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
         endInput.addFocusListener(new TextController());
         inputContainer.add(endInput);
@@ -134,14 +136,45 @@ public class NavigationView extends JPanel {
         JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>5 min</span> <span style='font-size:12px;color:#4285F4;'>(1,9 km)</span></html>");
         middlePanel.add(timeLabel, BorderLayout.WEST);
 
+        middlePanel.add(renderSwitchAndSubmitButtons(), BorderLayout.EAST);
+
+        return middlePanel;
+    }
+
+    private JPanel renderSwitchAndSubmitButtons(){
+        JPanel switchAndSubmitPanel = new JPanel();
+        switchAndSubmitPanel.setOpaque(false);
+        switchAndSubmitPanel.setLayout(new BorderLayout());
+
+        //SwitchFromTo button
+        JButton switchFromTo = new JButton("switch");
+        switchFromTo.setForeground(Color.decode("#4285F4"));
+        switchFromTo.setBackground(Color.WHITE);
+        switchFromTo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        switchFromTo.addActionListener((e) -> switchFromAndTo());
+        switchAndSubmitPanel.add(switchFromTo, BorderLayout.WEST);
 
         // Submit-button
         JButton submitButton = new JButton("RUTE");
         submitButton.setForeground(Color.decode("#4285F4"));
         submitButton.setBackground(Color.WHITE);
         submitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        middlePanel.add(submitButton, BorderLayout.EAST);
+        switchAndSubmitPanel.add(submitButton, BorderLayout.EAST);
 
-        return middlePanel;
+
+        return switchAndSubmitPanel;
     }
+
+    private void switchFromAndTo() {
+        String startTextHolder = startInput.getText();
+        String endTextHolder = endInput.getText();
+        if(!(startTextHolder.equals("Fra:") || endTextHolder.equals("Til:"))){
+            startInput.setText(endTextHolder);
+            endInput.setText(startTextHolder);
+        }
+
+
+    }
+
+
 }
