@@ -12,9 +12,11 @@ import java.util.List;
 public class KDTree {
     private static MainModel model;
     private Node rootOne, rootTwo, rootThree, rootFour, rootFive, rootSix;
+
     public static class Comparators {
         static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getElementX);
         static final Comparator<MapElement> Y_COMPARATOR = Comparator.comparing(MapElement::getElementY);
+        static final Comparator<MapElement> TYPE_COMPARATOR = Comparator.comparing(MapElement::getType);
     }
 
     private class Node{
