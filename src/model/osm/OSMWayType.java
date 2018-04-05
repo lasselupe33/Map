@@ -7,6 +7,7 @@ public enum OSMWayType {
     PLACE,
     RESIDENTIAL,
     FORREST,
+    FARMLAND,
     PARK,
     WATER,
     UNKNOWN,

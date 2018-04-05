@@ -31,6 +31,7 @@ public class ColorMap {
         standardMode.put(OSMWayType.PLACE, new Color(242, 239, 233));
         standardMode.put(OSMWayType.RESIDENTIAL, new Color(234, 224, 216));
         standardMode.put(OSMWayType.FORREST, new Color(173, 216, 176));
+        standardMode.put(OSMWayType.FARMLAND, new Color(251, 236, 215));
         standardMode.put(OSMWayType.WATER, new Color(60, 149, 255));
         standardMode.put(OSMWayType.UNKNOWN, Color.black);
         standardMode.put(OSMWayType.BUILDING, new Color(223, 213, 206));

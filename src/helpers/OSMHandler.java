@@ -127,6 +127,9 @@ public class OSMHandler extends DefaultHandler {
                         if (attributes.getValue("v").equals("residential")) {
                             type = OSMWayType.RESIDENTIAL;
                         }
+                        if (attributes.getValue("v").equals("farmland")) {
+                            type = OSMWayType.FARMLAND;
+                        }
                         if (attributes.getValue("v").equals("allotments")) {
                             type = OSMWayType.ALLOMENTS;
                         }
@@ -351,6 +354,9 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case FORREST:
                 model.add(ZoomLevel.TWO, new MapElement(path, type, true));
+                break;
+            case FARMLAND:
+                model.add(ZoomLevel.THREE, new MapElement(path, type, true));
                 break;
             case WATER:
                 model.add(ZoomLevel.THREE, new MapElement(path, type, true));
