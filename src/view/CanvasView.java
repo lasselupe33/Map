@@ -1,13 +1,14 @@
 package view;
 
 import controller.CanvasController;
+import helpers.ColorMap;
+import helpers.StrokeMap;
 import model.MainModel;
-import model.osm.OSMWayType;
+import model.MapElements.MapElement;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -30,59 +31,75 @@ public class CanvasView extends JComponent {
     @Override
     public void paint(Graphics _g) {
         Graphics2D g = (Graphics2D) _g;
-        g.setStroke(new BasicStroke(Float.MIN_VALUE));
+
         Rectangle2D viewRect = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
 
+        g.setStroke(new BasicStroke(Float.MIN_VALUE));
         g.setPaint(new Color(60, 149, 255));
         g.fill(viewRect);
         g.transform(controller.getTransform());
-        try {
-            viewRect = controller.getTransform().createInverse().createTransformedShape(viewRect).getBounds2D();
-        } catch (NoninvertibleTransformException e) {
-            e.printStackTrace();
-        }
+
 
         if (controller.shouldAntiAlias()) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
+
+        g.setPaint(Color.yellow);
+        for (MapElement m : model.getTreeData()){
+            switch (m.getType()){
+                case COASTLINE:
+                    g.setPaint(new Color(237, 237, 237));
+                    g.fill(m.getShape());
+                    break;
+                case WATER:
+                    g.setPaint(new Color(60, 149, 255));
+                    g.fill(m.getShape());
+                    break;
+                case UNKNOWN:
+                    g.setPaint(Color.black);
+                    g.draw(m.getShape());
+                    break;
+                case ROAD:
+                    g.setStroke(new BasicStroke(0.00001f));
+                    g.setPaint(new Color(230, 139, 213));
+                    g.draw(m.getShape());
+                    break;
+                case HIGHWAY:
+                    g.setStroke(new BasicStroke(0.00005f));
+                    g.setPaint(new Color(255, 114, 109));
+                    g.draw(m.getShape());
+                    break;
+                case BUILDING:
+                    g.setPaint(new Color(172, 169, 151));
+                    g.fill(m.getShape());
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        /*
+
+
         g.setPaint(new Color(237, 237, 237));
-        for (Shape coastline: model.get(OSMWayType.COASTLINE)) {
-            g.fill(coastline);
+        for (MapElement coastline: model.get(OSMWayType.COASTLINE)) {
+            g.fill(coastline.getShape());
         }
+
         g.setPaint(new Color(60, 149, 255));
-        for (Shape water: model.get(OSMWayType.WATER)) {
-            if (water.intersects(viewRect)) {
-                g.fill(water);
-            }
+        for (MapElement water: model.get(OSMWayType.WATER)) {
+            g.fill(water.getShape());
         }
-        g.setPaint(Color.black);
-        for (Shape line: model.get(OSMWayType.UNKNOWN)) {
-            if (line.intersects(viewRect)) {
-                g.draw(line);
-            }
-        }
-        g.setStroke(new BasicStroke(0.00001f));
-        g.setPaint(new Color(230, 139, 213));
-        for (Shape road : model.get(OSMWayType.ROAD)) {
-            if (road.intersects(viewRect)) {
-                g.draw(road);
-            }
-        }
-        g.setStroke(new BasicStroke(0.00005f));
-        g.setPaint(new Color(255, 114, 109));
-        for (Shape highway: model.get(OSMWayType.HIGHWAY)) {
-            if (highway.intersects(viewRect)) {
-                g.draw(highway);
-            }
-        }
-        g.setPaint(new Color(172, 169, 151));
-        for (Shape building: model.get(OSMWayType.BUILDING)) {
-            if (building.intersects(viewRect)) {
-                g.fill(building);
+
+        if (zoom > 5) {
+            g.setPaint(Color.black);
+            for (MapElement line : model.get(OSMWayType.UNKNOWN)) {
+                g.draw(line.getShape());
             }
         }
 
-        g.setTransform(new AffineTransform());
+        */
     }
 }

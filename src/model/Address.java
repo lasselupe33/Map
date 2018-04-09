@@ -1,60 +1,54 @@
 package model;
 
-import java.util.*;
-import java.util.regex.*;
+import java.io.Serializable;
 
-public class Address {
-    private final String street, house, floor, side, postcode, city;
+public class Address implements Serializable {
+    private String street, house, postcode, city;
+    private Coordinates coordinates;
 
-    private Address(String _street, String _house, String _floor, String _side, String _postcode, String _city) {
+    /** Constructor to be used while parsing OSM-files */
+    public Address(double lat, double lon) {
+        this.coordinates = new Coordinates(lat, lon);
+    }
+
+    /** Constructor to be used when parsing addresses */
+    public Address(String _street, String _house, String _postcode, String _city) {
         street = _street;
         house = _house;
-        floor = _floor;
-        side = _side;
         postcode = _postcode;
         city = _city;
     }
 
-    public String toString() {
-        return (street != null ? street + " " : "") +
-                (house != null ? house + " " : "") +
-                (floor != null ? floor + " " : "") +
-                (side != null ? side + " " : "") +
-                (postcode != null ? postcode + " " : "") +
-                (city != null ? city + " " : "");
+    /** Helper to set the address of an addresses. To be used while parsing OSM-files */
+    public void setAddress(String _street, String _house, String _postcode) {
+        street = _street;
+        house = _house;
+        postcode = _postcode;
     }
 
-    public static class Builder {
-        private String street = "Unknown", house, floor, side, postcode, city;
-        public Builder street(String _street) { street = _street; return this; }
-        public Builder house(String _house)   { house = _house;   return this; }
-        public Builder floor(String _floor)   { floor = _floor;   return this; }
-        public Builder side(String _side)     { side = _side;     return this; }
-        public Builder postcode(String _postcode) { postcode = _postcode; return this; }
-        public Builder city(String _city)     { city = _city;     return this; }
-        public Address build() {
-            return new Address(street, house, floor, side, postcode, city);
-        }
+    /** Helper that converts an address to a key to be used in the data-structure */
+    public String toKey() {
+        return (street + postcode + (house != null ? house : "")).toLowerCase();
     }
 
-    public String street()   { return street; }
-    public String house()    { return house; }
-    public String floor()    { return floor; }
-    public String side()     { return side; }
-    public String postcode() { return postcode; }
-    public String city()     { return city; }
+    /** Getters */
+    public String getStreet() {
+        return street;
+    }
 
-    public static Address parse(String s) {
-        final String regex = "((?<street>[a-zA-ZåæøÅÆØ ]+?)\\s+(?<house>\\d+))?\\s*[,]*\\s*((?<postcode>\\d{4})\\s+(?<city>[a-zA-ZåæøÅÆØ ]+))?";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(s);
-        Builder b = new Builder();
-        if (matcher.matches()) {
-            return b.city(matcher.group("city")).
-                    house(matcher.group("house")).
-                    postcode(matcher.group("postcode")).
-                    street(matcher.group("street")).build();
-        }
-        throw new IllegalArgumentException("Invalid address " + s);
+    public String getHouse() {
+        return house;
+    }
+
+    public String getPostcode() {
+        return postcode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
     }
 }

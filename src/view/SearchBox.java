@@ -11,6 +11,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 
 public class SearchBox extends JPanel {
     private StateController stateController;
@@ -75,7 +76,8 @@ public class SearchBox extends JPanel {
         searchContainer.setBorder(new CompoundBorder(border, margin));
 
         // Setup icon
-        ImageIcon icon = new ImageIcon("assets/icons/search.png");
+        URL iconURL = this.getClass().getResource("/icons/search.png");
+        ImageIcon icon = new ImageIcon(iconURL);
         JLabel iconLabel = new JLabel(icon);
         iconLabel.addMouseListener(searchBoxController);
         iconLabel.setName("search");
@@ -107,12 +109,12 @@ public class SearchBox extends JPanel {
         rightButtonContainer.setPreferredSize(new Dimension(32, 32));
 
         // Create button
-        String imageURL;
+        URL imageURL;
 
         if (stateController.getCurrentState() == ViewStates.INITIAL) {
-            imageURL = "assets/icons/navigation.png";
+            imageURL = this.getClass().getResource("/icons/navigation.png");
         } else {
-            imageURL = "assets/icons/cross.png";
+            imageURL = this.getClass().getResource("/icons/cross.png");
         }
 
         ImageIcon icon = new ImageIcon(imageURL);
