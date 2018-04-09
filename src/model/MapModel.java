@@ -26,8 +26,7 @@ public class MapModel {
         mainModel = m;
     }
 
-    public void createTree() { tree = new KDTree(mapElements, mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon()); }
-
+    /** Public helper that initializses an empty enum-map filled with arraylist for all mapTypes */
     public static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
         EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
         for (OSMWayType type: OSMWayType.values()) {
@@ -36,10 +35,12 @@ public class MapModel {
         return map;
     }
 
+    /** Add a mapElement to the list. This will happen while parsing OSM-files */
     public void add(OSMWayType type, MapElement m) {
         mapElements.get(type).add(m);
     }
 
+    /** Internal helper that retrieves the currently required points to render the map */
     public void updateMap(Point2D p0, Point2D p1){
         int zoomLevel = ZoomLevelMap.getZoomLevel();
 
@@ -57,14 +58,18 @@ public class MapModel {
     /** Serializes all data necessary to load and display the map */
     public void serialize() {
         try {
-            for (OSMWayType type : OSMWayType.values()) {
-                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/" + type + ".bin", "UTF-8");
-                FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/map.bin", "UTF-8");
+            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
 
+            for (OSMWayType type : OSMWayType.values()) {
                 out.writeObject(get(type));
-                out.close();
+                out.flush();
             }
 
+            out.close();
+
+            // Now that the map has been saved, we are free to remove the mapElements list in order to preserve space
+            mapElements = null;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -74,18 +79,23 @@ public class MapModel {
         }
     }
 
+    /** Internal helper that deserializses the MapModel */
     public void deserialize() {
         try {
-            for (OSMWayType type : OSMWayType.values()) {
-                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/" + type + ".bin", "UTF-8");
-                FSTObjectInput in = new FSTObjectInput(new FileInputStream(path));
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/map.bin", "UTF-8");
+            FSTObjectInput in = new FSTObjectInput(new FileInputStream(path));
 
+            for (OSMWayType type : OSMWayType.values()) {
                 mapElements.put(type, (List<MapElement>) in.readObject());
-                in.close();
             }
 
+            in.close();
+
+            // Always rebuild tree, since loading the binary tree takes longer in total
             createTree();
 
+            // Remove mapElements once tree has been build to preserve space
+            mapElements = null;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -102,11 +112,11 @@ public class MapModel {
         return mapElements.get(type);
     }
 
-    public EnumMap<OSMWayType, List<MapElement>> getMapElements() {
-        return mapElements;
-    }
-
+    /** Returns the mapData required to render the screen */
     public List<MapElement> getMapData(){
         return maplist;
     }
+
+    /** Helper that creates a new KDTree based on the mapElements currently available to the MapModel */
+    public void createTree() { tree = new KDTree(mapElements, mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon()); }
 }

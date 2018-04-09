@@ -27,19 +27,22 @@ public class Main {
                 File binaryData = null;
 
                 try {
-                    binaryData = new File(URLDecoder.decode(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "data/output.bin", "UTF-8"));
+                    binaryData = new File(URLDecoder.decode(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "data/map.bin", "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
 
                 if (binaryData.exists()) {
-                    ioModel = new IOModel(model, mapModel, "output.bin", true);
+                    // If binary data exists, use this.
+                    ioModel = new IOModel(model, mapModel);
                 } else {
+                    // .. else fallback to provided .zip
                     URL data = Main.class.getResource("/data/small.zip");
                     ioModel = new IOModel(model, mapModel, data);
                 }
             } else {
-                ioModel = new IOModel(model, mapModel, args[0], false);
+                // .. or, if arguments are supplied, always use these.
+                ioModel = new IOModel(model, mapModel, args[0]);
             }
 
             // Controllers
