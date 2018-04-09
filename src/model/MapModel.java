@@ -41,8 +41,8 @@ public class MapModel {
     }
 
     public void updateMap(Point2D p0, Point2D p1){
-        Rectangle2D viewRect = CanvasController.getInstance().getModelViewRect();
         int zoomLevel = ZoomLevelMap.getZoomLevel();
+
         int i = 0;
         maplist.clear();
         for (OSMWayType type : OSMWayType.values()) {
@@ -51,18 +51,6 @@ public class MapModel {
             }
 
             i++;
-            /*
-            List<MapElement> newElements = tree.searchTree(p0, p1, i);
-
-
-            if (maplist.size() + newElements.size() < 2000) {
-                for (MapElement elm : newElements) {
-                    if (elm.getBounds().intersects(viewRect)) {
-                        maplist.add(elm);
-                    }
-                }
-            }
-            */
         }
     }
 

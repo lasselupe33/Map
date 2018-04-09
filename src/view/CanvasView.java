@@ -44,14 +44,18 @@ public class CanvasView extends JComponent {
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
+        viewRect = controller.getModelViewRect();
+
         for (MapElement m : controller.getMapData()){
-            g.setPaint(ColorMap.getColor(m.getType()));
-            if (m.shouldFill()){
-                g.setStroke(new BasicStroke(Float.MIN_VALUE));
-                g.fill(m.getShape());
-            } else {
-                g.setStroke(StrokeMap.getStroke(m.getType()));
-                g.draw(m.getShape());
+            if (m.getShape().intersects(viewRect)) {
+                g.setPaint(ColorMap.getColor(m.getType()));
+                if (m.shouldFill()){
+                    g.setStroke(new BasicStroke(Float.MIN_VALUE));
+                    g.fill(m.getShape());
+                } else {
+                    g.setStroke(StrokeMap.getStroke(m.getType()));
+                    g.draw(m.getShape());
+                }
             }
         }
     }

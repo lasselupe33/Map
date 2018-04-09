@@ -12,6 +12,8 @@ import java.net.URLDecoder;
 
 public class Main {
     public static void main(String[] args) {
+        System.setProperty("sun.java2d.opengl","True");
+
         SwingUtilities.invokeLater(() -> {
             long timeA = System.currentTimeMillis();
 

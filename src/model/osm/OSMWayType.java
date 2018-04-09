@@ -3,13 +3,13 @@ package model.osm;
 import java.io.Serializable;
 
 public enum OSMWayType implements Serializable {
+    WATER(440),
+    FORREST(460),
     COASTLINE(1),
     MOTORWAY(1),
     HIGHWAY(200),
     PLACE(5000), // Shouldn't be drawn
     RESIDENTIAL(330),
-    FORREST(460),
-    WATER(440),
     FARMLAND(500),
     SECONDARYROAD(500),
     PITCH(500),
