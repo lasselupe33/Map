@@ -1,9 +1,7 @@
 package view;
 
-import controller.SearchBoxController;
-import controller.StateController;
-import controller.TextController;
-import controller.ViewStates;
+import controller.*;
+import javafx.scene.control.ComboBox;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -16,14 +14,16 @@ import java.net.URL;
 public class SearchBox extends JPanel {
     private StateController stateController;
     private SearchBoxController searchBoxController;
+    private AutoCompleteController autoCompleteController;
     private JTextField searchInput;
     private JPanel searchContainer;
     private JPanel rightButtonContainer;
     private boolean initialRender = true;
 
-    public SearchBox(StateController sc, SearchBoxController sbc) {
+    public SearchBox(StateController sc, SearchBoxController sbc, AutoCompleteController acc) {
         stateController = sc;
         searchBoxController = sbc;
+        autoCompleteController = acc;
         setBackground(Color.WHITE);
         setLayout(new BorderLayout());
         setBorder(null);
@@ -89,6 +89,7 @@ public class SearchBox extends JPanel {
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 14));
         searchInput.setBorder(BorderFactory.createEmptyBorder());
         searchInput.addActionListener(e -> searchBoxController.onSearchInput());
+        searchInput.addKeyListener(autoCompleteController);
         searchInput.addFocusListener(new TextController());
 
         // Add to wrapper

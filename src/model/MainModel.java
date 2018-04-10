@@ -7,13 +7,15 @@ import java.io.*;
 import java.net.URLDecoder;
 
 public class MainModel implements Serializable{
-    private Addresses addresses = new Addresses();
+    private AddressesModel addresses;
     private double minLat, minLon, maxLat, maxLon;
 
-    public MainModel(){}
+    public MainModel(AddressesModel am){
+        addresses = am;
+    }
 
     /** Getters */
-    public Addresses getAddresses() {
+    public AddressesModel getAddresses() {
         return addresses;
     }
 
@@ -34,7 +36,7 @@ public class MainModel implements Serializable{
     }
 
     /** Setters */
-    public void setAddresses(Addresses addresses) {
+    public void setAddresses(AddressesModel addresses) {
         this.addresses = addresses;
     }
 

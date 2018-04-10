@@ -1,4 +1,5 @@
 import controller.*;
+import model.AddressesModel;
 import model.IOModel;
 import model.MainModel;
 import model.MapModel;
@@ -18,7 +19,8 @@ public class Main {
             long timeA = System.currentTimeMillis();
 
             // Models
-            MainModel model = new MainModel();
+            AddressesModel addressesModel = new AddressesModel();
+            MainModel model = new MainModel(addressesModel);
             MapModel mapModel = new MapModel(model);
             IOModel ioModel;
 
@@ -51,19 +53,23 @@ public class Main {
             StateController sc = new StateController();
             AddressController ac = new AddressController(sc);
             SearchBoxController sbc = new SearchBoxController(model, sc, ac);
+            AutoCompleteController acc = new AutoCompleteController();
 
             // Views
             CanvasView cv = new CanvasView(cc);
             cc.addDependencies(cv, mapModel);
             AddressView av = new AddressView(ac);
             ac.addView(av);
-            SearchBox sb = new SearchBox(sc, sbc);
+            SearchBox sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
             FooterView fv = new FooterView(cc);
             ZoomView zv = new ZoomView(cc);
             NavigationView nv = new NavigationView();
+            AutoCompleteList al = new AutoCompleteList(acc);
+            acc.addDependencies(al, sb, addressesModel);
 
-            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv);
+            // Pass all views to the main window view.
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, al);
             sc.addMainView(v);
 
             new KeyboardController(v, cv, model, cc, ioModel);
