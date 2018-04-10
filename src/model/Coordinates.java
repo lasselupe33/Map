@@ -1,7 +1,9 @@
 package model;
 
+import java.io.Serializable;
+
 /** Simple class that contains latitude and longitude coordinates */
-public class Coordinates {
+public class Coordinates implements Serializable {
     private Double lat, lon;
 
     public Coordinates(double lat, double lon) {

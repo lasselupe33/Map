@@ -10,17 +10,16 @@ import model.osm.OSMWayType;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 
 /**
  * This view draws the map.
  */
 public class CanvasView extends JComponent {
-    private MainModel model;
     private CanvasController controller;
 
-    public CanvasView(MainModel m, CanvasController c) {
-        model = m;
+    public CanvasView(CanvasController c) {
         controller = c;
         setFocusable(true);
     }
@@ -40,24 +39,24 @@ public class CanvasView extends JComponent {
         g.fill(viewRect);
         g.transform(controller.getTransform());
 
-
         if (controller.shouldAntiAlias()) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
-        for (MapElement m : model.getTreeData()){
-            g.setPaint(ColorMap.getColor(m.getType()));
-            if (m.shouldFill()){
-                g.setStroke(new BasicStroke(Float.MIN_VALUE));
-                g.fill(m.getShape());
-            } else {
-                g.setStroke(StrokeMap.getStroke(m.getType()));
-                g.draw(m.getShape());
+        viewRect = controller.getModelViewRect();
+
+        for (MapElement m : controller.getMapData()){
+            if (m.getShape().intersects(viewRect)) {
+                g.setPaint(ColorMap.getColor(m.getType()));
+                if (m.shouldFill()){
+                    g.setStroke(new BasicStroke(Float.MIN_VALUE));
+                    g.fill(m.getShape());
+                } else {
+                    g.setStroke(StrokeMap.getStroke(m.getType()));
+                    g.draw(m.getShape());
+                }
             }
-
         }
-
-        g.setTransform(new AffineTransform());
     }
 }

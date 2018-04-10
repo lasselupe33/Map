@@ -29,7 +29,7 @@ public class ColorMap {
     private static void initializeStandard() {
         standardMode = new EnumMap<>(OSMWayType.class);
         standardMode.put(OSMWayType.COASTLINE, new Color(237, 237, 237));
-        standardMode.put(OSMWayType.PLACE, new Color(242, 239, 233));
+        standardMode.put(OSMWayType.PLACE, new Color(0, 239, 233));
         standardMode.put(OSMWayType.RESIDENTIAL, new Color(234, 224, 216));
         standardMode.put(OSMWayType.FORREST, new Color(173, 216, 176));
         standardMode.put(OSMWayType.FARMLAND, new Color(251, 236, 215));

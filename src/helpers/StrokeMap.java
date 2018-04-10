@@ -21,12 +21,13 @@ public class StrokeMap {
         strokeMap.put(OSMWayType.ROAD, new BasicStroke(0.00010f));
         strokeMap.put(OSMWayType.PEDESTRIAN, new BasicStroke(0.00015f));
         strokeMap.put(OSMWayType.FOOTWAY, new BasicStroke(0.000007f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
+                BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f));
         strokeMap.put(OSMWayType.PATH, new BasicStroke(0.000007f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
+                BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f));
         strokeMap.put(OSMWayType.FERRY, new BasicStroke(0.000007f));
         strokeMap.put(OSMWayType.SUBWAY, new BasicStroke(0.000007f));
-        strokeMap.put(OSMWayType.CYCLEWAY, new BasicStroke(0.000007f));
+        strokeMap.put(OSMWayType.CYCLEWAY, new BasicStroke(0.000007f, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f));
         strokeMap.put(OSMWayType.TERTIARYROAD, new BasicStroke(0.00009f));
         strokeMap.put(OSMWayType.SECONDARYROAD, new BasicStroke(0.00010f));
         strokeMap.put(OSMWayType.HIGHWAY, new BasicStroke(0.00020f));

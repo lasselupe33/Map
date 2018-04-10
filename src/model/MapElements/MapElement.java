@@ -4,11 +4,12 @@ import model.osm.OSMWayType;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 
-public class MapElement {
+public class MapElement implements Serializable {
     private Shape shape;
-    private double x, y;
-    private Rectangle2D r;
+    private transient double x, y;
+    private transient Rectangle2D r;
     private OSMWayType type;
     boolean shouldFill;
 
@@ -22,14 +23,26 @@ public class MapElement {
     }
 
     public double getElementX(){
+        if (x == 0.0) {
+            x = getBounds().getX();
+        }
+
         return x;
     }
 
     public double getElementY(){
+        if (y == 0.0) {
+            y = getBounds().getY();
+        }
+
         return y;
     }
 
     public Rectangle2D getBounds(){
+        if (r == null) {
+            r = shape.getBounds2D();
+        }
+
         return r;
     }
 
