@@ -21,7 +21,6 @@ public class CanvasController {
     private CanvasView canvas;
     private AffineTransform transform = new AffineTransform();
     private boolean useAntiAliasing = false;
-    private int zoomLevel = 0;
 
     /**
      * @return the transform to be used in the canvasView
@@ -69,17 +68,10 @@ public class CanvasController {
 
     public void zoom(double factor, double x, double y) {
 
-        if (factor < 1.0) zoomLevel--;
-        else if (factor > 1.0) zoomLevel++;
-
-        //System.out.println(zoomLevel);
-
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
-        updateMap();
 
-        canvas.repaint();
     }
 
     /** Helper that returns the current data required for rendering the map */
@@ -106,9 +98,6 @@ public class CanvasController {
         return null;
     }
 
-    public int getZoomLevel() {
-        return zoomLevel;
-    }
 
     public Point2D toModelCoords(Point2D p) {
         try {
