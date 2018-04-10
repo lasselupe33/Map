@@ -1,5 +1,7 @@
 package model;
 
+import helpers.KDTree;
+
 import java.io.Serializable;
 
 public enum ZoomLevel implements Serializable {
@@ -11,7 +13,7 @@ public enum ZoomLevel implements Serializable {
         zoomValue = zoom;
     }
 
-    public int getZoomValue() { return zoomValue * KDTree.CalculateZoomLevel.getScale(); }
+    // public int getZoomValue() { return zoomValue * KDTree.CalculateZoomLevel.getScale(); }
 
     //private int calculateScale(){}
 }

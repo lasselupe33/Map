@@ -3,6 +3,7 @@ package helpers;
 import model.Address;
 import model.MainModel;
 import model.MapElements.MapElement;
+import model.MapModel;
 import model.ZoomLevel;
 import model.osm.OSMNode;
 import model.osm.OSMRelation;
@@ -20,6 +21,7 @@ public class OSMHandler extends DefaultHandler {
     HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
     OSMWay way;
     MainModel model;
+    MapModel mapModel;
     private double lonFactor;
     private ZoomLevel level;
     private OSMWayType type;
@@ -32,8 +34,9 @@ public class OSMHandler extends DefaultHandler {
     private String house_no;
     private String postcode;
 
-    public OSMHandler(MainModel m) {
+    public OSMHandler(MainModel m, MapModel mm) {
         model = m;
+        mapModel = mm;
     }
 
     @Override
@@ -373,100 +376,41 @@ public class OSMHandler extends DefaultHandler {
     private void addElement(OSMWayType type, Path2D path) {
         switch (type) {
             case COASTLINE:
-                model.add(ZoomLevel.ONE, new MapElement(path, type, true));
-                break;
             case PLACE:
-                model.add(ZoomLevel.ONE, new MapElement(path, type, true));
-                break;
             case RESIDENTIAL:
-                model.add(ZoomLevel.TWO, new MapElement(path, type, true));
-                break;
             case FORREST:
-                model.add(ZoomLevel.THREE, new MapElement(path, type, true));
-                break;
             case FARMLAND:
-                model.add(ZoomLevel.THREE, new MapElement(path, type, true));
-                break;
             case WATER:
-                model.add(ZoomLevel.THREE, new MapElement(path, type, true));
-                break;
             case PITCH:
-                model.add(ZoomLevel.FOUR, new MapElement(path, type,  true));
-                break;
             case ALLOMENTS:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type,  true));
-                break;
-            case ROAD:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type,  false));
-                break;
-            case MOTORWAY:
-                model.add(ZoomLevel.ONE, new MapElement(path, type,  false));
-                break;
-            case HIGHWAY:
-                model.add(ZoomLevel.TWO, new MapElement(path, type, false));
-                break;
-            case SECONDARYROAD:
-                model.add(ZoomLevel.THREE, new MapElement(path, type, false));
-                break;
-            case TERTIARYROAD:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
-                break;
             case PEDESTRIAN:
-                model.add(ZoomLevel.SIX, new MapElement(path, type,  true));
-                break;
-            case SERVICE:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
-                break;
             case BUILDING:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type,  true));
-                break;
             case PARK:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type,  true));
-                break;
             case PLAYGROUND:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type,  true));
-                break;
             case CEMETERY:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type,  true));
-                break;
-            case FOOTWAY:
-                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
-                break;
-            case PATH:
-                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
-                break;
-            case FERRY:
-                model.add(ZoomLevel.FOUR, new MapElement(path, type, false));
-                break;
-            case SUBWAY:
-                model.add(ZoomLevel.FOUR, new MapElement(path, type, false));
-                break;
-            case CYCLEWAY:
-                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
-                break;
             case PLACE_OF_WORSHIP:
-                model.add(ZoomLevel.SIX, new MapElement(path, type,  true));
-                break;
-            case UNKNOWN:
-                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
-                break;
-            case BARRIER:
-                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
-                break;
-            case HEDGE:
-                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
-                break;
-            case DRAIN:
-                model.add(ZoomLevel.SIX, new MapElement(path, type, false));
-                break;
             case AEROWAY:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type, true));
-                break;
-            case RUNWAY:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type, false));
-                break;
             case GRASS:
-                model.add(ZoomLevel.FIVE, new MapElement(path, type, true));
+                mapModel.add(type, new MapElement(path, type,  true));
+                break;
+
+            case ROAD:
+            case MOTORWAY:
+            case HIGHWAY:
+            case SECONDARYROAD:
+            case TERTIARYROAD:
+            case SERVICE:
+            case FOOTWAY:
+            case PATH:
+            case FERRY:
+            case SUBWAY:
+            case CYCLEWAY:
+            case UNKNOWN:
+            case BARRIER:
+            case HEDGE:
+            case DRAIN:
+            case RUNWAY:
+                mapModel.add(type, new MapElement(path, type, false));
                 break;
             default:
                 break;

@@ -1,18 +1,24 @@
-package model;
+package helpers;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.io.Serializable;
+import java.io.*;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import model.MapElements.MapElement;
+import model.osm.OSMWay;
+import model.osm.OSMWayType;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+
 import java.util.*;
 
 public class KDTree implements Serializable {
-    private static transient EnumMap<ZoomLevel, List<MapElement>> mapelements;
     private double maxLat, minLat, maxLon, minLon;
-    private Node rootOne, rootTwo, rootThree, rootFour, rootFive, rootSix;
+    private Node[] roots;
+    private static int amountOfElements = 0;
 
     public static class Comparators {
         static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getElementX);
@@ -33,29 +39,35 @@ public class KDTree implements Serializable {
         }
     }
 
-    public KDTree (EnumMap map, double _maxLat, double _minLat, double _maxLon, double _minLon) {
-        mapelements = map;
+    public KDTree (EnumMap<OSMWayType, List<MapElement>> map, double _maxLat, double _minLat, double _maxLon, double _minLon) {
         maxLat = _maxLat;
         minLat = _minLat;
         maxLon = _maxLon;
         minLon = _minLon;
 
-        int depth = 0;
+        roots = new Node[OSMWayType.values().length];
 
-        CalculateZoomLevel.calculateNumberOfElements();
+        int i = 0;
+        for (OSMWayType type : OSMWayType.values()) {
+            amountOfElements += map.get(type).size();
+            roots[i] = buildTree(map.get(type));
+            i++;
+        }
 
-        rootOne = buildTree(rootOne, mapelements.get(ZoomLevel.ONE), depth);
-        rootTwo = buildTree(rootTwo, mapelements.get(ZoomLevel.TWO), depth);
-        rootThree = buildTree(rootThree, mapelements.get(ZoomLevel.THREE), depth);
-        rootFour = buildTree(rootFour, mapelements.get(ZoomLevel.FOUR), depth);
-        rootFive = buildTree(rootFive, mapelements.get(ZoomLevel.FIVE), depth);
-        rootSix = buildTree(rootSix, mapelements.get(ZoomLevel.SIX), depth);
+        System.out.println(amountOfElements);
     }
 
+    /**
+     * Method to be called when one wishes to begin creating a new tree
+     */
+    private Node buildTree(List<MapElement> list) {
+        return buildTree(list, 0);
+    }
 
-    // creating the KD Tree and inserting data
-
-    private Node buildTree(Node x, List<MapElement> list, int depth){
+    /**
+     * Helper that recursively builds a tree.
+     */
+    private Node buildTree(List<MapElement> list, int depth){
         //System.out.println("Entering depth " + depth + " with list size: " + list.size());
         if (list.size() < 1000) return new Node(list);
 
@@ -88,8 +100,6 @@ public class KDTree implements Serializable {
         for(int i = 0; i < list.size(); i++) {
             MapElement s = list.get(i);
 
-
-
             if (splitLine.intersects(s.getBounds())) {
                 listLeft.add(s);
                 listRight.add(s);
@@ -98,12 +108,11 @@ public class KDTree implements Serializable {
             } else {
                 listRight.add(s);
             }
-
         }
 
-        x = new Node(split);
-        x.leftChild = buildTree(x.leftChild, listLeft, depth + 1);
-        x.rightChild = buildTree(x.rightChild, listRight, depth + 1);
+        Node x = new Node(split);
+        x.leftChild = buildTree(listLeft, depth + 1);
+        x.rightChild = buildTree(listRight, depth + 1);
 
         //System.out.println("Leaving depth " + depth + " at axis = " + axis);
         return x;
@@ -111,9 +120,9 @@ public class KDTree implements Serializable {
 
 
     // search the KD Tree
-    public List<MapElement> searchTree(Point2D p0, Point2D p1, ZoomLevel type){
+    public List<MapElement> searchTree(Point2D p0, Point2D p1, int level){
         int depth = 0;
-        Node root = getRoot(type);
+        Node root = getRoot(level);
         if ( root == null ) return Collections.EMPTY_LIST;
         return searchTree(root, p0, p1, depth);
     }
@@ -149,53 +158,13 @@ public class KDTree implements Serializable {
     }
 
 
-    private Node getRoot(ZoomLevel type) {
-        switch (type){
-            case ONE:
-                return rootOne;
-            case TWO:
-                return rootTwo;
-            case THREE:
-                return rootThree;
-            case FOUR:
-                return rootFour;
-            case FIVE:
-                return rootFive;
-            case SIX:
-                return rootSix;
-            default:
-                break;
-        }
-        return null;
+    private Node getRoot(int level) {
+        return roots[level];
     }
-
 
 
     // check if depth is even
     private int axis(int depth) {
         return depth % 2;
     }
-
-
-    public static class CalculateZoomLevel {
-
-        private static int zoomScale;
-
-        static void calculateNumberOfElements(){
-
-            for (ZoomLevel level : ZoomLevel.values()) {
-                zoomScale += mapelements.get(level).size();
-            }
-            System.out.println("Number of elements: " + zoomScale);
-            int length = String.valueOf(zoomScale).length();
-            int firstDigit = Character.getNumericValue(("" + zoomScale).charAt(0));
-            zoomScale = length * firstDigit;
-
-        }
-
-        public static int getScale(){
-            return zoomScale/2;
-        }
-    }
-
 }

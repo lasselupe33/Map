@@ -1,63 +1,20 @@
 package model;
 
-import controller.CanvasController;
-import model.MapElements.MapElement;
-import model.osm.OSMWayType;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
 
-import java.awt.geom.Point2D;
 import java.io.*;
-import java.util.*;
-import java.util.List;
+import java.net.URLDecoder;
 
 public class MainModel implements Serializable{
     private Addresses addresses = new Addresses();
-    private static EnumMap<ZoomLevel, List<MapElement>> mapelements = initializeMap();
     private double minLat, minLon, maxLat, maxLon;
-    private static KDTree tree;
-    private static List<MapElement> maplist = new ArrayList<>();
 
     public MainModel(){}
-
-    public void createTree() { tree = new KDTree(mapelements, maxLat, minLat, maxLon, minLon); }
-
-
-    public static void updateMap(Point2D p0, Point2D p1){
-        int zoom = CanvasController.getInstance().getZoomLevel();
-
-        maplist.clear();
-        for (ZoomLevel e : ZoomLevel.values()) {
-            if ( zoom > e.getZoomValue() ) maplist.addAll(tree.searchTree(p0, p1, e));
-        }
-        maplist.sort(Comparator.comparing(MapElement::getType));
-    }
-
-    public static EnumMap<ZoomLevel, List<MapElement>> initializeMap() {
-        EnumMap<ZoomLevel, List<MapElement>> map = new EnumMap<>(ZoomLevel.class);
-        for (ZoomLevel type: ZoomLevel.values()) {
-            map.put(type, new ArrayList<>());
-        }
-        return map;
-    }
-
-    public void add(ZoomLevel type, MapElement m) {
-        mapelements.get(type).add(m);
-    }
 
     /** Getters */
     public Addresses getAddresses() {
         return addresses;
-    }
-
-    public List<MapElement> getTreeData(){
-        return maplist;
-    }
-
-    public List<MapElement> get(ZoomLevel type) {
-        return mapelements.get(type);
-    }
-
-    public EnumMap<ZoomLevel, List<MapElement>> getMapElements() {
-        return mapelements;
     }
 
     public double getMinLat() {
@@ -81,10 +38,6 @@ public class MainModel implements Serializable{
         this.addresses = addresses;
     }
 
-    public void setMapElements(EnumMap<ZoomLevel, List<MapElement>> mapElements) {
-        mapelements = mapElements;
-    }
-
     public void setMinLat(double minLat){this.minLat = minLat;}
 
     public void setMinLon(double minLon){this.minLon = minLon;}
@@ -93,6 +46,48 @@ public class MainModel implements Serializable{
 
     public void setMaxLon(double maxLon){this.maxLon = maxLon;}
 
+    /** Internal helper the serializses the MainModel */
+    public void serialize() {
+        try {
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/main.bin", "UTF-8");
+            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
 
+            // Add data to model
+            out.writeObject(minLon);
+            out.writeObject(minLat);
+            out.writeObject(maxLon);
+            out.writeObject(maxLat);
+            out.close();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    /** Internal helper that deserializses the MainModel */
+    public void deserialize() {
+        try {
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/main.bin", "UTF-8");
+            FSTObjectInput in = new FSTObjectInput(new FileInputStream(path));
+
+            // Add data to model
+            minLon = (double) in.readObject();
+            minLat = (double) in.readObject();
+            maxLon = (double) in.readObject();
+            maxLat = (double) in.readObject();
+
+            in.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }
