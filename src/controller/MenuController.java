@@ -23,9 +23,7 @@ public class MenuController {
         mode = ColorMap.Mode.STANDARD;
     }
 
-    public void colorBlindMode() {
-        mode = ColorMap.Mode.COLORBLIND;
-    }
+    public void colorBlindMode() { mode = ColorMap.Mode.COLORBLIND; }
 
     public static ColorMap.Mode getMode() {
         return mode;
