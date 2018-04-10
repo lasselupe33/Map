@@ -4,7 +4,6 @@ import model.Address;
 import model.MainModel;
 import model.MapElements.MapElement;
 import model.MapModel;
-import model.ZoomLevel;
 import model.osm.OSMNode;
 import model.osm.OSMRelation;
 import model.osm.OSMWay;
@@ -23,7 +22,6 @@ public class OSMHandler extends DefaultHandler {
     MainModel model;
     MapModel mapModel;
     private double lonFactor;
-    private ZoomLevel level;
     private OSMWayType type;
     private OSMRelation relation;
 
@@ -51,13 +49,11 @@ public class OSMHandler extends DefaultHandler {
             case "way":
                 way = new OSMWay();
                 type = OSMWayType.UNKNOWN;
-                level = ZoomLevel.SIX;
                 idToWay.put(Long.parseLong(attributes.getValue("id")), way);
                 break;
             case "relation":
                 relation = new OSMRelation();
                 type = OSMWayType.UNKNOWN;
-                level = ZoomLevel.SIX;
                 break;
             case "member":
                 OSMWay w = idToWay.get(Long.parseLong(attributes.getValue("ref")));
