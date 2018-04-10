@@ -123,7 +123,6 @@ public class KDTree implements Serializable {
     public List<MapElement> searchTree(Point2D p0, Point2D p1, int level){
         int depth = 0;
         Node root = getRoot(level);
-        if ( root == null ) return Collections.EMPTY_LIST;
         return searchTree(root, p0, p1, depth);
     }
 

@@ -1,14 +1,18 @@
 package controller;
 
+import helpers.ZoomLevelMap;
 import model.MainModel;
 import model.MapElements.MapElement;
 import model.MapModel;
+import model.osm.OSMWayType;
 import view.CanvasView;
 
+import javax.swing.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -21,6 +25,7 @@ public class CanvasController {
     private CanvasView canvas;
     private AffineTransform transform = new AffineTransform();
     private boolean useAntiAliasing = false;
+
 
     /**
      * @return the transform to be used in the canvasView
@@ -54,8 +59,7 @@ public class CanvasController {
      */
     public void pan(double dx, double dy) {
         transform.preConcatenate(AffineTransform.getTranslateInstance(dx, dy));
-        updateMap();
-        canvas.repaint();
+        MouseController.thread();
     }
 
     /**
@@ -67,17 +71,14 @@ public class CanvasController {
     }
 
     public void zoom(double factor, double x, double y) {
-
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
-
+        updateMap();
     }
 
     /** Helper that returns the current data required for rendering the map */
-    public List<MapElement> getMapData() {
-        return mapModel.getMapData();
-    }
+    public List<MapElement> getMapData() { return mapModel.getMapData(); }
 
     /**
      * Helper that returns the corresponding model coordinates of a screen coordinate, based on the current transform.
@@ -86,6 +87,7 @@ public class CanvasController {
         Point2D p0 = new Point2D.Double(0,0);
         Point2D p1 = new Point2D.Double(canvas.getWidth(), canvas.getHeight());
         mapModel.updateMap(toModelCoords(p0),toModelCoords(p1));
+        canvas.repaint();
     }
 
     public Rectangle2D getModelViewRect() {
