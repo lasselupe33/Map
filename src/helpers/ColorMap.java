@@ -22,7 +22,8 @@ public class ColorMap {
             default:
                 break;
         }
-        return standardMode.get(type);
+        //return standardMode.get(type);
+        return colorBlindMode.get(type);
     }
 
     private static void initializeStandard() {
@@ -62,6 +63,40 @@ public class ColorMap {
     }
 
     private static void initializeColorBlind() {
+        colorBlindMode = new EnumMap<>(OSMWayType.class);
+        //Color.decode("#3c8eff")
+        colorBlindMode.put(OSMWayType.COASTLINE, new Color(237, 237, 237));
+        colorBlindMode.put(OSMWayType.PLACE, new Color(249, 230, 189));
+        colorBlindMode.put(OSMWayType.RESIDENTIAL, new Color(170, 9, 59));
+        colorBlindMode.put(OSMWayType.FORREST, new Color(9, 180, 90));
+        colorBlindMode.put(OSMWayType.FARMLAND, new Color(249, 120, 80));
+        colorBlindMode.put(OSMWayType.WATER, new Color(60, 149, 255));
+        colorBlindMode.put(OSMWayType.UNKNOWN, Color.black);
+        colorBlindMode.put(OSMWayType.BUILDING, new Color(223, 213, 206));
+        colorBlindMode.put(OSMWayType.PITCH, new Color(9, 180, 90));
+        colorBlindMode.put(OSMWayType.ALLOMENTS, new Color(249, 120, 80));
+        colorBlindMode.put(OSMWayType.SERVICE, new Color(255, 255, 255));
+        colorBlindMode.put(OSMWayType.ROAD, new Color(255, 255, 255));
+        colorBlindMode.put(OSMWayType.PEDESTRIAN, new Color(255, 255, 255));
+        colorBlindMode.put(OSMWayType.PARK, new Color(9, 180, 90));
+        colorBlindMode.put(OSMWayType.PLAYGROUND, new Color(9, 180, 90));
+        colorBlindMode.put(OSMWayType.CEMETERY, new Color(9, 180, 90));
+        colorBlindMode.put(OSMWayType.FOOTWAY, new Color(249, 120, 249));
+        colorBlindMode.put(OSMWayType.PATH, new Color(249, 120, 249));
+        colorBlindMode.put(OSMWayType.FERRY, new Color(0,90,199));
+        colorBlindMode.put(OSMWayType.SUBWAY, new Color(0,9,130));
+        colorBlindMode.put(OSMWayType.CYCLEWAY, new Color(0,90,199));
+        colorBlindMode.put(OSMWayType.TERTIARYROAD, new Color(255, 255, 255));
+        colorBlindMode.put(OSMWayType.SECONDARYROAD, new Color(255, 255, 255));
+        colorBlindMode.put(OSMWayType.HIGHWAY, new Color(252, 214, 164));
+        colorBlindMode.put(OSMWayType.PLACE_OF_WORSHIP, new Color(175, 156, 141));
+        colorBlindMode.put(OSMWayType.BARRIER, new Color(128, 129, 122));
+        colorBlindMode.put(OSMWayType.HEDGE, new Color(170, 224, 203));
+        colorBlindMode.put(OSMWayType.MOTORWAY, new Color(239,239,49));
+        colorBlindMode.put(OSMWayType.DRAIN, new Color(60, 149, 255));
+        //colorBlindMode.put(OSMWayType.AEROWAY, new Color(233, 209, 255));
+        //colorBlindMode.put(OSMWayType.RUNWAY, new Color(187, 187, 204));
+        colorBlindMode.put(OSMWayType.GRASS, new Color(9, 180, 90));
     }
 
     public enum Mode {
