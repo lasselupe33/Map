@@ -42,7 +42,7 @@ public class AddressesModel implements Serializable {
         for (String key : matchingKeys) {
             matchingAddresses.add(addresses.get(key).toString());
         }
-        
+
         return matchingAddresses;
     }
 }
