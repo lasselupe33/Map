@@ -5,6 +5,7 @@ import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -51,8 +52,10 @@ public class MainModel implements Serializable{
     /** Internal helper the serializses the MainModel */
     public void serialize() {
         try {
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/main.bin", "UTF-8");
-            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
+            URL path = Main.class.getResource("/data/main.bin");
+            File file = new File(path.toURI());
+            OutputStream stream = new FileOutputStream(file);
+            FSTObjectOutput out = new FSTObjectOutput(stream);
 
             // Add data to model
             out.writeObject(minLon);
@@ -65,6 +68,8 @@ public class MainModel implements Serializable{
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
     }

@@ -106,12 +106,12 @@ public class IOModel {
             }
         }
 
-        // Always save data after a new map has been loaded.
-        save();
-
         if (!Main.initialRender) {
             // If a new map has been loaded, then refresh the canvas.
             CanvasController.getInstance().reset();
+        } else {
+            // Always save data after when a new map has been loaded
+            save();
         }
     }
 
