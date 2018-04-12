@@ -1,7 +1,7 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
-public class Favorites extends ArrayList<Favorite>{
-
+public class Favorites extends HashSet<Favorite>{
+    
 }
