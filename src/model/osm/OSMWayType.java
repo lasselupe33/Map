@@ -9,15 +9,14 @@ public enum OSMWayType implements Serializable {
     FARMLAND(490),
     AEROWAY(490),
     PARK(485),
-    FORREST(380),
+    FORREST(370),
     WATER(400),
-    UNKNOWN(510),
     BUILDING(509),
     PITCH(490),
     ALLOMENTS(495),
     GRASS(485),
     SERVICE(490),
-    CYCLEWAY(505),
+    CYCLEWAY(508),
     MOTORWAY(1),
     ROAD(490),
     PEDESTRIAN(500),
@@ -31,10 +30,11 @@ public enum OSMWayType implements Serializable {
     SECONDARYROAD(450),
     HIGHWAY(390),
     PLACE_OF_WORSHIP(490),
-    BARRIER(500),
+    BARRIER(509),
     DRAIN(490),
     RUNWAY(490),
-    HEDGE(509);
+    HEDGE(509),
+    UNKNOWN(510);
 
     private final int priority;
 

@@ -41,6 +41,7 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseDragged(MouseEvent e) {
+        if (t != null) t.interrupt();
         canvas.requestFocus();
         Point2D currentMousePosition = e.getPoint();
         double dx = currentMousePosition.getX() - lastMousePosition.getX();
@@ -88,7 +89,7 @@ public class MouseController extends MouseAdapter {
         t = new Thread() {
             public void run() {
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) { }
                 CanvasController.getInstance().updateMap();
             }
