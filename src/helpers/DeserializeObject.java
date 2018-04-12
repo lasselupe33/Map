@@ -69,7 +69,7 @@ public class DeserializeObject implements Runnable {
 
             for (String name : names) {
                 // Setup output path
-                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/" + name + ".bin", "UTF-8");
+                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/data/" + name + ".bin", "UTF-8");
                 InputStream stream = new FileInputStream(path);
                 FSTObjectInput in = IOModel.conf.getObjectInput(stream);
 

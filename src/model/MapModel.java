@@ -86,7 +86,7 @@ public class MapModel {
     /** Serializes all data necessary to load and display the map */
     public void serialize() {
         try {
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/info.bin", "UTF-8");
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/data/info.bin", "UTF-8");
             FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
 
             for (OSMWayType type : OSMWayType.values()) {
@@ -100,15 +100,15 @@ public class MapModel {
                         List<MapElement> tempList = new ArrayList<>(currList.subList(currentlyProcessed, Math.min(currentlyProcessed + 200000, currList.size() - 1)));
                         currentlyProcessed += 200000;
 
-                        String name = type.toString() + "-" + currentlyProcessed;
+                        String name = "map/" + type.toString() + "-" + currentlyProcessed;
                         listNames.add(name);
                         new SerializeObject(new String[] { name }, tempList);
                     }
 
                     out.writeObject(listNames.toArray(new String[listNames.size()]), String[].class);
                 } else {
-                    out.writeObject(new String[] { type.toString() }, String[].class);
-                    new SerializeObject(new String[] {type.toString()}, get(type));
+                    out.writeObject(new String[] { "map/" + type.toString() }, String[].class);
+                    new SerializeObject(new String[] { "map/" + type.toString()}, get(type));
                 }
             }
 
@@ -134,7 +134,7 @@ public class MapModel {
             parameterTypes[1] = String.class;
             Method callback = MapModel.class.getMethod("onThreadDeserializeComplete", parameterTypes);
 
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/info.bin", "UTF-8");
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/data/info.bin", "UTF-8");
             InputStream stream = new FileInputStream(path);
             FSTObjectInput in = new FSTObjectInput(stream);
 
