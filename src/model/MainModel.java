@@ -1,42 +1,23 @@
 package model;
 
-import model.osm.*;
 
-import java.awt.*;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+
 import java.io.*;
-import java.util.*;
-import java.util.List;
+import java.net.URLDecoder;
 
 public class MainModel implements Serializable{
-    private Addresses addresses = new Addresses();
-    private EnumMap<OSMWayType, List<Shape>> shapes = initializeMap();
-    public double minLat, minLon, maxLat, maxLon;
+    private AddressesModel addresses;
+    private double minLat, minLon, maxLat, maxLon;
 
-    public MainModel(){}
-
-    private EnumMap<OSMWayType, List<Shape>> initializeMap() {
-        EnumMap<OSMWayType, List<Shape>> map = new EnumMap<OSMWayType, List<Shape>>(OSMWayType.class);
-        for (OSMWayType type: OSMWayType.values()) {
-            map.put(type, new ArrayList<>());
-        }
-        return map;
-    }
-
-    public void add(OSMWayType type, Shape shape) {
-        shapes.get(type).add(shape);
-    }
-
-    public Iterable<Shape> get(OSMWayType type) {
-        return shapes.get(type);
+    public MainModel(AddressesModel am){
+        addresses = am;
     }
 
     /** Getters */
-    public Addresses getAddresses() {
+    public AddressesModel getAddresses() {
         return addresses;
-    }
-
-    public EnumMap<OSMWayType, List<Shape>> getShapes() {
-        return shapes;
     }
 
     public double getMinLat() {
@@ -55,13 +36,9 @@ public class MainModel implements Serializable{
         return maxLon;
     }
 
-    /** Settters */
-    public void setAddresses(Addresses addresses) {
+    /** Setters */
+    public void setAddresses(AddressesModel addresses) {
         this.addresses = addresses;
-    }
-
-    public void setShapes(EnumMap<OSMWayType, List<Shape>> shapes) {
-        this.shapes = shapes;
     }
 
     public void setMinLat(double minLat){this.minLat = minLat;}
@@ -71,4 +48,49 @@ public class MainModel implements Serializable{
     public void setMaxLat(double maxLat){this.maxLat = maxLat;}
 
     public void setMaxLon(double maxLon){this.maxLon = maxLon;}
+
+    /** Internal helper the serializses the MainModel */
+    public void serialize() {
+        try {
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/main.bin", "UTF-8");
+            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
+
+            // Add data to model
+            out.writeObject(minLon);
+            out.writeObject(minLat);
+            out.writeObject(maxLon);
+            out.writeObject(maxLat);
+            out.close();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** Internal helper that deserializses the MainModel */
+    public void deserialize() {
+        try {
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/main.bin", "UTF-8");
+            FSTObjectInput in = new FSTObjectInput(new FileInputStream(path));
+
+            // Add data to model
+            minLon = (double) in.readObject();
+            minLat = (double) in.readObject();
+            maxLon = (double) in.readObject();
+            maxLat = (double) in.readObject();
+
+            in.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }

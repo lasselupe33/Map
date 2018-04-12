@@ -1,35 +1,46 @@
 package model;
 
 import helpers.OSMHandler;
-import model.osm.OSMWayType;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import java.awt.*;
 import java.io.*;
-import java.util.EnumMap;
-import java.util.List;
+import java.net.URL;
 import java.util.zip.ZipInputStream;
 
 public class IOModel {
     private MainModel model;
+    private MapModel mapModel;
 
-    public IOModel(MainModel m) {
+    public IOModel(MainModel m, MapModel mm, String filename) {
         model = m;
-    }
-
-    public IOModel(MainModel m, String filename) {
-        model = m;
+        mapModel = mm;
         load(filename);
     }
 
+    /** Constructor for loading a URL */
+    public IOModel(MainModel m, MapModel mm, URL filepath) {
+        model = m;
+        mapModel = mm;
+        load(filepath);
+    }
+
+    /** Constructor for loading binary data */
+    public IOModel(MainModel m, MapModel mm) {
+        model = m;
+        mapModel = mm;
+        loadBinary();
+    }
+
+    /** Internal helper that sets up the OSMHandler and begins reading from an OSM-file */
     public void readFromOSM(InputSource filename) {
         try {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(new OSMHandler(model));
+            xmlReader.setContentHandler(new OSMHandler(model, mapModel));
             xmlReader.parse(filename);
+            mapModel.createTree();
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -37,25 +48,39 @@ public class IOModel {
         }
     }
 
-    public void save(String filename) {
+    /** Helper that serializses all models */
+    public void save() {
+        model.serialize();
+        mapModel.serialize();
+    }
+
+    /** Load data from a string */
+    public void load(String filename) {
         try {
-            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename));
-            os.writeObject(model.getShapes());
-            os.writeObject(model.getMinLon());
-            os.writeObject(model.getMinLat());
-            os.writeObject(model.getMaxLon());
-            os.writeObject(model.getMaxLat());
+            load(new FileInputStream(filename), filename);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** Load data from a url */
+    public void load(URL filename) {
+        try {
+            load(filename.openStream(), filename.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void load(String filename) {
+    /** Helper that loads OSM-data from a inputStream */
+    public void load(InputStream is, String filename) {
+        System.out.println(filename);
+
         if (filename.endsWith(".osm")) {
             readFromOSM(new InputSource(filename));
         } else if (filename.endsWith(".zip")) {
             try {
-                ZipInputStream zis = new ZipInputStream(new FileInputStream(filename));
+                ZipInputStream zis = new ZipInputStream(is);
                 zis.getNextEntry();
                 readFromOSM(new InputSource(zis));
             } catch (FileNotFoundException e) {
@@ -63,19 +88,16 @@ public class IOModel {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (filename.endsWith(".bin")) {
-            try {
-                ObjectInputStream is = new ObjectInputStream(new FileInputStream(filename));
-                model.setShapes((EnumMap<OSMWayType, List<Shape>>) is.readObject());
-                model.setMinLon((double) is.readObject());
-                model.setMinLat((double) is.readObject());
-                model.setMaxLon((double) is.readObject());
-                model.setMaxLat((double) is.readObject());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
         }
+
+        // Always save data after a new map has been loaded.
+        save();
+    }
+
+    /** Helper that loads files from binary format */
+    private void loadBinary() {
+        // Deserialize models
+        model.deserialize();
+        mapModel.deserialize();
     }
 }

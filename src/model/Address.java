@@ -1,6 +1,8 @@
 package model;
 
-public class Address {
+import java.io.Serializable;
+
+public class Address implements Serializable {
     private String street, house, postcode, city;
     private Coordinates coordinates;
 
@@ -26,7 +28,11 @@ public class Address {
 
     /** Helper that converts an address to a key to be used in the data-structure */
     public String toKey() {
-        return (street + postcode + (house != null ? house : "")).toLowerCase();
+        return (street + (house != null ? house : "") + (postcode != null ? postcode : "")).toLowerCase();
+    }
+
+    public String toString() {
+        return street + " " + (house != null ? house : "") + ", " + (postcode != null ? postcode : "") + " " + (city != null ? city : "");
     }
 
     /** Getters */

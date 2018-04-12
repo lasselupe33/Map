@@ -12,7 +12,5 @@ public class OSMNode {
         return lon;
     }
 
-    public double getLat() {
-        return lat;
-    }
+    public double getLat() { return lat; }
 }
