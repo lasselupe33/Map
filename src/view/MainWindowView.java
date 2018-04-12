@@ -192,17 +192,22 @@ public class MainWindowView {
 
         JMenu subShowMenu = new JMenu("Farveindstillinger");
         showMenu.add(subShowMenu);
+        ButtonGroup colorGroup = new ButtonGroup();
 
-        JMenuItem standardItem = new JMenuItem("Standard");
+        JMenuItem standardItem = new JRadioButtonMenuItem("Standard");
         standardItem.addActionListener((ActionEvent e) -> menuController.standardMode());
+        standardItem.setSelected(true);
+        colorGroup.add(standardItem);
         subShowMenu.add(standardItem);
 
-        JMenuItem colorBlindItem = new JMenuItem("Farveblind (Protanopia)");
+        JMenuItem colorBlindItem = new JRadioButtonMenuItem("Farveblind (Protanopia)");
         colorBlindItem.addActionListener((ActionEvent e) -> menuController.colorBlindMode());
+        colorGroup.add(colorBlindItem);
         subShowMenu.add(colorBlindItem);
 
-        JMenuItem grayscaleItem = new JMenuItem("Gråskala");
+        JMenuItem grayscaleItem = new JRadioButtonMenuItem("Gråskala");
         grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());
+        colorGroup.add(grayscaleItem);
         subShowMenu.add(grayscaleItem);
 
         /*

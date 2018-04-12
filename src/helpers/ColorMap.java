@@ -13,26 +13,13 @@ public class ColorMap {
     private static EnumMap<OSMWayType, Color> colorBlindMode = null;
     private static int mode;
     private static Color standardRoadColor = new Color(255,255,255);
+    private static Color coastlineColor = new Color(237,237,237);
 
     public static Color getColor(OSMWayType type) {
         if (standardMode == null) initializeStandard();
         if (colorBlindMode == null) initializeColorBlind();
         if (colorMap == null) initializeMap();
-        /*switch (MenuController.getMode()) {
-            case STANDARD:
-                return standardMode.get(type);
-            case COLORBLIND:
-                return colorBlindMode.get(type);
-            default:
-                break;
-        }*/
-        //return standardMode.get(type);
         Color[] c = colorMap.get(type);
-        /*
-        if (MenuController.getMode() == Mode.GRAYSCALE) mode = 2;
-        else if(MenuController.getMode() == Mode.COLORBLIND) mode = 1;
-        else mode = 0;
-        */
         switch (MenuController.getMode()) {
             case STANDARD:
                 mode = 0;
@@ -52,38 +39,33 @@ public class ColorMap {
 
     private static void initializeMap() {
         colorMap = new EnumMap<>(OSMWayType.class);
-        colorMap.put(OSMWayType.COASTLINE, new Color[] {new Color(237, 237, 237),
-                new Color(249, 230, 189),
-                new Color(237, 237, 237)});
+        colorMap.put(OSMWayType.COASTLINE, new Color[] {coastlineColor,coastlineColor,coastlineColor});
 
-        colorMap.put(OSMWayType.PLACE, new Color[] {new Color(237, 237, 237),
-                new Color(249, 230, 189),
-                new Color(237, 237, 237)});
+        colorMap.put(OSMWayType.PLACE, new Color[] {coastlineColor,coastlineColor,coastlineColor});
 
-        colorMap.put(OSMWayType.RESIDENTIAL, new Color[] {new Color(234, 224, 216),
-                new Color(255, 13, 87),
-                new Color(225, 225, 225)});
+        colorMap.put(OSMWayType.RESIDENTIAL, new Color[] {coastlineColor,coastlineColor,coastlineColor});
 
         colorMap.put(OSMWayType.FORREST, new Color[] {new Color(173, 216, 176),
                 new Color(9, 180, 90),
                 new Color(188,188,188)});
 
         colorMap.put(OSMWayType.FARMLAND, new Color[] {new Color(251, 236, 215),
-                new Color(249, 120, 80),
+                new Color(255, 13, 87),
                 new Color(234,234,234)});
 
-        colorMap.put(OSMWayType.WATER, new Color[] {new Color(170, 211, 223),
-                new Color(170, 211, 223),
+        colorMap.put(OSMWayType.WATER, new Color[] {new Color(122, 199, 235),
+                new Color(94, 184, 223),
                 new Color(155,155,155)});
 
         colorMap.put(OSMWayType.UNKNOWN, new Color[] {Color.black, Color.black, Color.black});
 
-        colorMap.put(OSMWayType.BUILDING, new Color[] {new Color(223, 213, 206),
-                new Color(170, 9, 59),
+        colorMap.put(OSMWayType.BUILDING, new Color[] {new Color(215, 205, 199),
+                new Color(215, 205, 199),
                 new Color(214,214,214)});
+        //new Color(170, 9, 59)
 
         colorMap.put(OSMWayType.PITCH, new Color[] {new Color(170, 224, 203),
-                new Color(9, 180, 90),
+                new Color(7, 138, 69),
                 new Color(199,199,199)});
 
         colorMap.put(OSMWayType.ALLOMENTS, new Color[] {new Color(238, 207, 179),
@@ -97,7 +79,7 @@ public class ColorMap {
         colorMap.put(OSMWayType.PEDESTRIAN, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor});
 
         colorMap.put(OSMWayType.PARK, new Color[] {new Color(200, 250, 204),
-                new Color(9, 180, 90),
+                new Color(10, 205, 102),
                 new Color(218,218,218)});
 
         colorMap.put(OSMWayType.PLAYGROUND, new Color[] {new Color(225, 255, 233),
@@ -137,7 +119,7 @@ public class ColorMap {
                 new Color(176,176,176)});
 
         colorMap.put(OSMWayType.PLACE_OF_WORSHIP, new Color[] {new Color(175, 156, 141),
-                new Color(139, 7, 48),
+                new Color(156, 8, 54),
                 new Color(157,157,157)});
 
         colorMap.put(OSMWayType.BARRIER, new Color[] {new Color(128, 129, 122),
@@ -145,11 +127,11 @@ public class ColorMap {
                 new Color(126,126,126)});
 
         colorMap.put(OSMWayType.HEDGE, new Color[] {new Color(170, 224, 203),
-                new Color(5, 108, 54),
+                new Color(9, 182, 91),
                 new Color(199,199,199)});
 
         colorMap.put(OSMWayType.MOTORWAY, new Color[] {new Color(232, 146, 162),
-                new Color(232,239, 0),
+                new Color(0, 8, 140),
                 new Color(180,180,180)});
 
         colorMap.put(OSMWayType.DRAIN, new Color[] {new Color(60, 149, 255),
