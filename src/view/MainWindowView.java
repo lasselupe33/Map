@@ -26,6 +26,7 @@ public class MainWindowView {
     private SearchBox searchBox;
     private ZoomView zoomView;
     private NavigationView navigationView;
+    private AutoCompleteList autoCompleteList;
     private StateController stateController;
     private boolean initialRender = true;
     private FooterView footerView;
@@ -40,7 +41,8 @@ public class MainWindowView {
             ZoomView zv,
             StateController sc,
             NavigationView nv,
-            FooterView fv
+            FooterView fv,
+            AutoCompleteList al
     ) {
         menuController = mc;
         canvasView = cv;
@@ -52,6 +54,7 @@ public class MainWindowView {
         stateController = sc;
         navigationView = nv;
         footerView = fv;
+        autoCompleteList = al;
 
         // Create the window
         window = new JFrame("Danmarkskort");
@@ -98,6 +101,7 @@ public class MainWindowView {
             switch (stateController.getPrevState()) {
                 case INITIAL:
                     lpane.remove(searchBox);
+                    lpane.remove(autoCompleteList);
                     break;
 
                 case ADDRESS_ENTERED:
@@ -113,6 +117,7 @@ public class MainWindowView {
         }
 
         // Rerender components
+        autoCompleteList.update();
         searchBox.update();
         addressView.update();
 
@@ -120,6 +125,7 @@ public class MainWindowView {
         switch(stateController.getCurrentState()) {
             case INITIAL:
                 lpane.add(searchBox, 2, 2);
+                lpane.add(autoCompleteList, 3, 6);
                 break;
 
             case ADDRESS_ENTERED:
@@ -158,6 +164,7 @@ public class MainWindowView {
         zoomView.setBounds(width - 100,height - 130,70,70);
         navigationView.setBounds(0, 0, 450, height);
         footerView.setBounds(0, height - 30, width, 30);
+        autoCompleteList.setBounds(20, 52, 445, 150);
 
         // Update the previous state after render
         stateController.updatePrevState();

@@ -1,5 +1,6 @@
 package helpers;
 
+import main.Main;
 import model.Address;
 import model.MainModel;
 import model.MapElements.MapElement;
@@ -226,6 +227,7 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case "osm":
                 convertCoastlinesToPath();
+                mapModel.createTree();
             default:
                 break;
         }

@@ -1,16 +1,18 @@
 package model;
 
-import controller.CanvasController;
+import helpers.DeserializeObject;
 import helpers.KDTree;
+import helpers.SerializeObject;
 import helpers.ZoomLevelMap;
 import model.MapElements.MapElement;
 import model.osm.OSMWayType;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
+import view.MainWindowView;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -18,12 +20,19 @@ import java.util.List;
 
 public class MapModel {
     private EnumMap<OSMWayType, List<MapElement>> mapElements = initializeMap();
+    private int initializedTypes = 0;
+    private int amountOfTypes = 0;
     private KDTree tree;
     private List<MapElement> maplist = new ArrayList<>();
     private MainModel mainModel;
+    private MainWindowView mainView;
 
     public MapModel(MainModel m) {
         mainModel = m;
+    }
+
+    public void addMainView(MainWindowView mv) {
+        mainView = mv;
     }
 
     /** Public helper that initializses an empty enum-map filled with arraylist for all mapTypes */
@@ -56,21 +65,55 @@ public class MapModel {
         maplist = tmplist;
     }
 
+    /** Callback to be called once a thread has finished deserializing a mapType */
+    public void onThreadDeserializeComplete(ArrayList loadedList, String type) {
+        initializedTypes++;
+        mapElements.put(OSMWayType.valueOf(type), loadedList);
+
+        System.out.println("Loaded " + initializedTypes + " of " + amountOfTypes + " mapTypes.");
+        if (initializedTypes == amountOfTypes) {
+            System.out.println("Building tree..");
+            // Always rebuild tree, since loading the binary tree takes longer in total
+            createTree();
+
+            // Remove mapElements once tree has been build to preserve space
+            mapElements = null;
+
+            // Indicate that serialization has been completed
+            IOModel.serializationComplete();
+        }
+    }
+
     /** Serializes all data necessary to load and display the map */
     public void serialize() {
         try {
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/map.bin", "UTF-8");
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/info.bin", "UTF-8");
             FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
 
             for (OSMWayType type : OSMWayType.values()) {
-                out.writeObject(get(type));
-                out.flush();
+                List<MapElement> currList = get(type);
+                ArrayList<String> listNames = new ArrayList<>();
+
+                if (currList.size() > 200000) {
+                    int currentlyProcessed = 0;
+
+                    while (currentlyProcessed < currList.size()) {
+                        List<MapElement> tempList = new ArrayList<>(currList.subList(currentlyProcessed, Math.min(currentlyProcessed + 200000, currList.size() - 1)));
+                        currentlyProcessed += 200000;
+
+                        String name = type.toString() + "-" + currentlyProcessed;
+                        listNames.add(name);
+                        new SerializeObject(new String[] { name }, tempList);
+                    }
+
+                    out.writeObject(listNames.toArray(new String[listNames.size()]), String[].class);
+                } else {
+                    out.writeObject(new String[] { type.toString() }, String[].class);
+                    new SerializeObject(new String[] {type.toString()}, get(type));
+                }
             }
 
             out.close();
-
-            // Now that the map has been saved, we are free to remove the mapElements list in order to preserve space
-            mapElements = null;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -78,33 +121,38 @@ public class MapModel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Now that the map has been saved, we are free to remove the mapElements list in order to preserve space
+        mapElements = null;
     }
 
     /** Internal helper that deserializses the MapModel */
     public void deserialize() {
         try {
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/map.bin", "UTF-8");
-            FSTObjectInput in = new FSTObjectInput(new FileInputStream(path));
+            // Setup thread callback
+            Class[] parameterTypes = new Class[2];
+            parameterTypes[0] = ArrayList.class;
+            parameterTypes[1] = String.class;
+            Method callback = MapModel.class.getMethod("onThreadDeserializeComplete", parameterTypes);
 
-            for (OSMWayType type : OSMWayType.values()) {
-                mapElements.put(type, (List<MapElement>) in.readObject());
+            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/info.bin", "UTF-8");
+            InputStream stream = new FileInputStream(path);
+            FSTObjectInput in = new FSTObjectInput(stream);
+
+            while (true) {
+                String[] filenames = (String[]) in.readObject(String[].class);
+                new DeserializeObject(filenames, ArrayList.class, this, callback);
+                amountOfTypes++;
             }
-
-            in.close();
-
-            // Always rebuild tree, since loading the binary tree takes longer in total
-            createTree();
-
-            // Remove mapElements once tree has been build to preserve space
-            mapElements = null;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.getMessage();
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+            System.out.println("Threads started");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -119,5 +167,7 @@ public class MapModel {
     }
 
     /** Helper that creates a new KDTree based on the mapElements currently available to the MapModel */
-    public void createTree() { tree = new KDTree(mapElements, mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon()); }
+    public void createTree() {
+        tree = new KDTree(mapElements, mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon());
+    }
 }
