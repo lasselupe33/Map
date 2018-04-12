@@ -67,7 +67,7 @@ public class MapModel {
     /** Callback to be called once a thread has finished deserializing a mapType */
     public void onThreadDeserializeComplete(ArrayList loadedList, String type) {
         initializedTypes++;
-        mapElements.put(OSMWayType.valueOf(type), loadedList);
+        mapElements.put(OSMWayType.valueOf(type.split("/")[1]), loadedList);
 
         System.out.println("Loaded " + initializedTypes + " of " + amountOfTypes + " mapTypes.");
         if (initializedTypes == amountOfTypes) {

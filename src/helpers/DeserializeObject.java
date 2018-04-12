@@ -45,11 +45,8 @@ public class DeserializeObject implements Runnable {
             FSTObjectInput in = IOModel.conf.getObjectInput(stream);
 
             // Read given object
-            try {
-                callback.invoke(callbackClass, in.readObject(objectType), names[0]);
-            } catch (InvocationTargetException e) {
-                e.getCause();
-            }
+            callback.invoke(callbackClass, in.readObject(objectType), names[0]);
+
 
             stream.close();
         } catch (UnsupportedEncodingException e) {
@@ -69,13 +66,12 @@ public class DeserializeObject implements Runnable {
 
             for (String name : names) {
                 // Setup output path
-                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/data/" + name + ".bin", "UTF-8");
+                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/" + name + ".bin", "UTF-8");
                 InputStream stream = new FileInputStream(path);
                 FSTObjectInput in = IOModel.conf.getObjectInput(stream);
 
                 // Read given object
-                ArrayList<MapElement> test = (ArrayList<MapElement>) in.readObject(objectType);
-                loadedList.addAll(test);
+                loadedList.addAll((ArrayList<MapElement>) in.readObject(objectType));
 
                 stream.close();
             }
