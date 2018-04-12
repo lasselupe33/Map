@@ -19,7 +19,6 @@ public class KDTree<Value extends MapElement> implements Serializable {
     private double maxLat, minLat, maxLon, minLon;
     private Node root;
     private MapElement nearestNeighbour;
-    private static int amountOfElements = 0;
 
     public static class Comparators {
         static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getElementX);
@@ -48,7 +47,7 @@ public class KDTree<Value extends MapElement> implements Serializable {
 
         root = buildTree(list);
 
-        System.out.println(amountOfElements);
+        //System.out.println(amountOfElements);
     }
 
     /**

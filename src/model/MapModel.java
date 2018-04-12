@@ -50,7 +50,6 @@ public class MapModel {
             if (type.getPriority() <= zoomLevel) {
                 tmplist.addAll(trees[i].searchTree(p0, p1));
             }
-
             i++;
         }
         maplist = tmplist;
