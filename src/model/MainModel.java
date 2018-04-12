@@ -80,6 +80,9 @@ public class MainModel implements Serializable{
             maxLat = (double) in.readObject();
 
             in.close();
+
+            // Indicate that deserialization has completed
+            IOModel.serializationComplete();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {

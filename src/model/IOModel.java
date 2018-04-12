@@ -2,6 +2,7 @@ package model;
 
 import helpers.OSMHandler;
 import helpers.SerializeObject;
+import main.Main;
 import org.nustaq.serialization.FSTConfiguration;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -14,6 +15,8 @@ import java.net.URL;
 import java.util.zip.ZipInputStream;
 
 public class IOModel {
+    private static final int modelsToDeserialize = 2;
+    private static int deserializedModels = 0;
     public static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
     private MainModel model;
     private MapModel mapModel;
@@ -44,7 +47,6 @@ public class IOModel {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
             xmlReader.setContentHandler(new OSMHandler(model, mapModel));
             xmlReader.parse(filename);
-            mapModel.createTree();
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -98,8 +100,19 @@ public class IOModel {
         save();
     }
 
-    public void test(Object test) {
-        System.out.println("Success" + test);
+    public static void serializationComplete() {
+        deserializedModels++;
+
+        // Everything has been deserialized! Boot application
+        if (deserializedModels == modelsToDeserialize) {
+            // Indicate that data is ready
+            Main.dataLoaded = true;
+
+            // If MVC has been initialized, run application!
+            if (Main.hasInitialized) {
+                Main.run();
+            }
+        }
     }
 
     /** Helper that loads files from binary format */

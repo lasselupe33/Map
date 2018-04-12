@@ -29,6 +29,10 @@ public class Main {
     private static ZoomView zv;
     private static NavigationView nv;
 
+    // Boolean to ensure application won't be booted twice
+    public static boolean hasInitialized = false;
+    public static boolean dataLoaded = false;
+
     // Debugging
     private static long timeA;
 
@@ -40,11 +44,10 @@ public class Main {
         // Models
         model = new MainModel();
         mapModel = new MapModel(model);
+        // Attempt to load binary file if it exists, else fallback to default .osm-map
+        File binaryData = null;
 
         if (args.length == 0) {
-            // Attempt to load binary file if it exists, else fallback to default .osm-map
-            File binaryData = null;
-
             try {
                 binaryData = new File(URLDecoder.decode(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "data/main.bin", "UTF-8"));
             } catch (UnsupportedEncodingException e) {
@@ -58,10 +61,12 @@ public class Main {
                 // .. else fallback to provided .zip
                 URL data = Main.class.getResource("/data/small.zip");
                 ioModel = new IOModel(model, mapModel, data);
+                dataLoaded = true;
             }
         } else {
             // .. or, if arguments are supplied, always use these.
             ioModel = new IOModel(model, mapModel, args[0]);
+            dataLoaded = true;
         }
 
         // Controllers
@@ -81,8 +86,17 @@ public class Main {
         fv = new FooterView(cc);
         zv = new ZoomView(cc);
         nv = new NavigationView();
+
+        // Run application if data is ready
+        if (dataLoaded) {
+            Main.run();
+        }
+
+        // Indicate application MVC has been initialized
+        hasInitialized = true;
     }
 
+    /** Function to be run after all MVC classes have been initilized and data loaded */
     public static void run() {
         MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv);
 

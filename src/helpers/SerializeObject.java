@@ -12,32 +12,30 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 
 public class SerializeObject implements Runnable {
-    Object callbackClass;
-    Method callback;
     Object toSerialize;
-    String name;
+    String[] names;
 
-    public SerializeObject(String name, Object toSerialize) {
+    public SerializeObject(String[] names, Object toSerialize) {
         this.toSerialize = toSerialize;
-        this.callbackClass = callbackClass;
-        this.callback = callback;
-        this.name = name;
+        this.names = names;
 
-        new Thread(this, "serializer-" + name).start();
+        new Thread(this, "serializer-" + names[0]).start();
     }
 
     public void run() {
         try {
-            // Setup output path
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/" + name + ".bin", "UTF-8");
-            OutputStream stream = new FileOutputStream(path);
-            FSTObjectOutput out = IOModel.conf.getObjectOutput(stream);
+            for (String name : names) {
+                // Setup output path
+                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/" + name + ".bin", "UTF-8");
+                OutputStream stream = new FileOutputStream(path);
+                FSTObjectOutput out = IOModel.conf.getObjectOutput(stream);
 
-            // Write given object
-            out.writeObject(toSerialize, toSerialize.getClass());
-            out.flush();
+                // Write given object
+                out.writeObject(toSerialize, toSerialize.getClass());
+                out.flush();
 
-            stream.close();
+                stream.close();
+            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
