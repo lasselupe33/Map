@@ -1,16 +1,20 @@
 package model;
 
 import helpers.OSMHandler;
+import helpers.SerializeObject;
+import org.nustaq.serialization.FSTConfiguration;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.zip.ZipInputStream;
 
 public class IOModel {
+    public static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
     private MainModel model;
     private MapModel mapModel;
 
@@ -92,6 +96,10 @@ public class IOModel {
 
         // Always save data after a new map has been loaded.
         save();
+    }
+
+    public void test(Object test) {
+        System.out.println("Success" + test);
     }
 
     /** Helper that loads files from binary format */
