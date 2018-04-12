@@ -16,6 +16,7 @@ public class FavoritePopupView extends JOptionPane {
     public FavoritePopupView(AddressController addressController, StateController stateController){
         this.addressController = addressController;
         this.stateController = stateController;
+
     }
 
     public void addFrame(JFrame frame){
@@ -26,6 +27,15 @@ public class FavoritePopupView extends JOptionPane {
                 JOptionPane.PLAIN_MESSAGE,
                 icon,
                 null, "");
+        while(name.isEmpty()){
+            name = (String)JOptionPane.showInputDialog(
+                    frame,
+                    "Please insert a name \nName: ",
+                    "Favorite Address name",
+                    JOptionPane.PLAIN_MESSAGE,
+                    icon,
+                    null, "");
+        }
         addressController.saveAddress(name);
         stateController.updateCurrentState(ViewStates.FAVORITES);
 
