@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MapModel {
     private EnumMap<OSMWayType, List<MapElement>> mapElements = initializeMap();
-    private KDTree tree;
+    private KDTree[] trees;
     private List<MapElement> maplist = new ArrayList<>();
     private MainModel mainModel;
 
@@ -48,7 +48,7 @@ public class MapModel {
         List<MapElement> tmplist = new ArrayList<>();
         for (OSMWayType type : OSMWayType.values()) {
             if (type.getPriority() <= zoomLevel) {
-                tmplist.addAll(tree.searchTree(p0, p1, i));
+                tmplist.addAll(trees[i].searchTree(p0, p1));
             }
 
             i++;
@@ -119,5 +119,16 @@ public class MapModel {
     }
 
     /** Helper that creates a new KDTree based on the mapElements currently available to the MapModel */
-    public void createTree() { tree = new KDTree(mapElements, mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon()); }
+    public void createTree() {
+
+        trees = new KDTree[OSMWayType.values().length];
+
+        int i = 0;
+        for (OSMWayType type : OSMWayType.values()) {
+            trees[i] = new KDTree(mapElements.get(type), mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon());
+            i++;
+        }
+
+
+    }
 }

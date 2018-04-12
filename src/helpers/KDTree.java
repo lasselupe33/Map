@@ -15,9 +15,10 @@ import org.nustaq.serialization.FSTObjectOutput;
 
 import java.util.*;
 
-public class KDTree implements Serializable {
+public class KDTree<Value extends MapElement> implements Serializable {
     private double maxLat, minLat, maxLon, minLon;
-    private Node[] roots;
+    private Node root;
+    private MapElement nearestNeighbour;
     private static int amountOfElements = 0;
 
     public static class Comparators {
@@ -26,7 +27,7 @@ public class KDTree implements Serializable {
     }
 
     public class Node implements Serializable {
-        private List<MapElement> value;
+        private List<Value> value;
         private double split;
         private Node leftChild, rightChild;
 
@@ -34,25 +35,18 @@ public class KDTree implements Serializable {
             split = spl;
         }
 
-        Node(List<MapElement> val){
+        Node(List<Value> val){
             value = val;
         }
     }
 
-    public KDTree (EnumMap<OSMWayType, List<MapElement>> map, double _maxLat, double _minLat, double _maxLon, double _minLon) {
+    public KDTree (List<Value> list, double _maxLat, double _minLat, double _maxLon, double _minLon) {
         maxLat = _maxLat;
         minLat = _minLat;
         maxLon = _maxLon;
         minLon = _minLon;
 
-        roots = new Node[OSMWayType.values().length];
-
-        int i = 0;
-        for (OSMWayType type : OSMWayType.values()) {
-            amountOfElements += map.get(type).size();
-            roots[i] = buildTree(map.get(type));
-            i++;
-        }
+        root = buildTree(list);
 
         System.out.println(amountOfElements);
     }
@@ -60,14 +54,14 @@ public class KDTree implements Serializable {
     /**
      * Method to be called when one wishes to begin creating a new tree
      */
-    private Node buildTree(List<MapElement> list) {
+    private Node buildTree(List<Value> list) {
         return buildTree(list, 0);
     }
 
     /**
      * Helper that recursively builds a tree.
      */
-    private Node buildTree(List<MapElement> list, int depth){
+    private Node buildTree(List<Value> list, int depth){
         //System.out.println("Entering depth " + depth + " with list size: " + list.size());
         if (list.size() < 1000) return new Node(list);
 
@@ -93,12 +87,12 @@ public class KDTree implements Serializable {
         }
 
 
-        List<MapElement> listLeft = new ArrayList<>();
-        List<MapElement> listRight = new ArrayList<>();
+        List<Value> listLeft = new ArrayList<>();
+        List<Value> listRight = new ArrayList<>();
 
 
         for(int i = 0; i < list.size(); i++) {
-            MapElement s = list.get(i);
+            Value s = list.get(i);
 
             if (splitLine.intersects(s.getBounds())) {
                 listLeft.add(s);
@@ -120,15 +114,14 @@ public class KDTree implements Serializable {
 
 
     // search the KD Tree
-    public List<MapElement> searchTree(Point2D p0, Point2D p1, int level){
+    public List<Value> searchTree(Point2D p0, Point2D p1){
         int depth = 0;
-        Node root = getRoot(level);
         return searchTree(root, p0, p1, depth);
     }
 
-    private List<MapElement> searchTree(Node x, Point2D p0, Point2D p1, int depth){
+    private List<Value> searchTree(Node x, Point2D p0, Point2D p1, int depth){
 
-        List<MapElement> list = new ArrayList<>();
+        List<Value> list = new ArrayList<>();
 
         if(x.value != null) return x.value;
 
@@ -156,10 +149,12 @@ public class KDTree implements Serializable {
         return list;
     }
 
+    private void nearestNeighbour(List<MapElement> list){
 
-    private Node getRoot(int level) {
-        return roots[level];
     }
+
+    public MapElement getNearestNeighbour(){ return nearestNeighbour; }
+
 
 
     // check if depth is even
