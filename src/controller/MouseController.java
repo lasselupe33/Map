@@ -87,6 +87,9 @@ public class MouseController extends MouseAdapter {
     public static void thread(){
         t = new Thread() {
             public void run() {
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) { }
                 CanvasController.getInstance().updateMap();
             }
         };
