@@ -2,6 +2,7 @@ package view;
 
 import controller.*;
 import model.Favorite;
+import model.Favorites;
 import model.MainModel;
 
 import javax.swing.*;
@@ -30,6 +31,7 @@ public class MainWindowView {
     private FooterView footerView;
     private FavoriteView favoriteView;
     private FavoriteController favoriteController;
+    private Favorites favorites;
 
     public MainWindowView(
             CanvasView cv,
@@ -44,7 +46,8 @@ public class MainWindowView {
             FooterView fv,
             FavoriteView favoriteView,
             FavoriteController favoriteController,
-            AutoCompleteList al
+            AutoCompleteList al,
+            Favorites favorites
     ) {
         menuController = mc;
         canvasView = cv;
@@ -59,6 +62,7 @@ public class MainWindowView {
         this.favoriteView = favoriteView;
         this.favoriteController = favoriteController;
         autoCompleteList = al;
+        this.favorites = favorites;
 
         // Create the window
         window = new JFrame("Danmarkskort");

@@ -24,6 +24,7 @@ public class Main {
             MainModel model = new MainModel(addressesModel);
             MapModel mapModel = new MapModel(model);
             IOModel ioModel;
+            Favorites favorites = new Favorites();
 
             if (args.length == 0) {
                 // Attempt to load binary file if it exists, else fallback to default .osm-map
@@ -52,7 +53,7 @@ public class Main {
             MenuController mc = new MenuController(model);
             CanvasController cc = CanvasController.getInstance();
             StateController sc = new StateController();
-            AddressController ac = new AddressController(sc);
+            AddressController ac = new AddressController(sc, favorites);
             SearchBoxController sbc = new SearchBoxController(model, sc, ac);
             FavoriteController fc = new FavoriteController(sc);
             AutoCompleteController acc = new AutoCompleteController();
@@ -61,7 +62,6 @@ public class Main {
             CanvasView cv = new CanvasView(cc);
             cc.addDependencies(cv, mapModel);
             AddressView av = new AddressView(ac);
-            ac.addView(av);
             SearchBox sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
             FooterView fv = new FooterView(cc);
@@ -69,10 +69,11 @@ public class Main {
             NavigationView nv = new NavigationView();
             AutoCompleteList al = new AutoCompleteList(acc);
             acc.addDependencies(al, sb, addressesModel);
-            FavoriteView favoriteView = new FavoriteView(new Favorites(), fc);
+            FavoriteView favoriteView = new FavoriteView(favorites, fc);
+            ac.addView(av, favoriteView);
 
             // Pass all views to the main window view.
-            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, favoriteView, fc, al);
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, favoriteView, fc, al, favorites);
             sc.addMainView(v);
 
             new KeyboardController(v, cv, model, cc, ioModel);

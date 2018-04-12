@@ -2,11 +2,11 @@ package model;
 
 public class Favorite {
     private String name;
-    private String address;
+    private Address address;
     private Coordinates coordinates;
 
 
-    public Favorite(String name, String address, Coordinates coordinates){
+    public Favorite(String name, Address address, Coordinates coordinates){
         this.name = name;
         this.address = address;
         this.coordinates = coordinates;
@@ -21,7 +21,7 @@ public class Favorite {
     }
 
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 }

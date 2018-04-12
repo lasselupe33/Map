@@ -21,13 +21,15 @@ public class FavoriteView extends JPanel {
         setBackground(Color.WHITE);
         setOpaque(true);
         setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
-        initFavorites();
+        updateFavoritesView();
 
     }
 
-    private void initFavorites() {
-        for(Favorite f : favorites){
-            addLabelToFavorites(f);
+
+    public void updateFavoritesView() {
+        removeAll();
+        for(Favorite favorite : favorites){
+            addLabelToFavorites(favorite);
         }
     }
 
@@ -35,7 +37,7 @@ public class FavoriteView extends JPanel {
         String text = "<html><span style=\"font-size: 10px;\">" + f.getName() +
                 "</span><br><span style=\"font-size: 5px;\">"+f.getAddress()+"</span></html>";
         JLabel label = new JLabel(text);
-        label.setName(f.getAddress());
+        label.setName(f.getAddress().toString());
         label.setBorder(new EmptyBorder(10, 10, 10, 10));
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         label.addMouseListener(favoriteController);
