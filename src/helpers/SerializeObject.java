@@ -1,5 +1,6 @@
 package helpers;
 
+import main.Main;
 import model.IOModel;
 import model.MapElements.MapElement;
 import org.nustaq.serialization.FSTObjectInput;
@@ -8,6 +9,7 @@ import org.nustaq.serialization.FSTObjectOutput;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 
@@ -26,8 +28,9 @@ public class SerializeObject implements Runnable {
         try {
             for (String name : names) {
                 // Setup output path
-                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/" + name + ".bin", "UTF-8");
-                OutputStream stream = new FileOutputStream(path);
+                URL path = new URL(Main.class.getResource("/data/") + "/" + name + ".bin");
+                File file = new File(path.toURI());
+                OutputStream stream = new FileOutputStream(file);
                 FSTObjectOutput out = IOModel.conf.getObjectOutput(stream);
 
                 // Write given object

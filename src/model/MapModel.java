@@ -14,6 +14,7 @@ import view.MainWindowView;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -88,8 +89,9 @@ public class MapModel {
     /** Serializes all data necessary to load and display the map */
     public void serialize() {
         try {
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/data/info.bin", "UTF-8");
-            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
+            URL path = Main.class.getResource("/data/info.bin");
+            File file = new File(path.toURI());
+            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(file));
 
             for (OSMWayType type : OSMWayType.values()) {
                 List<MapElement> currList = get(type);
@@ -120,6 +122,8 @@ public class MapModel {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
