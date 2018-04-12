@@ -24,8 +24,18 @@ public class MenuController {
         CanvasController.repaintMap();
     }
 
-    public void colorBlindMode() {
-        mode = ColorMap.Mode.COLORBLIND;
+    public void protanopiaMode() {
+        mode = ColorMap.Mode.PROTANOPIA;
+        CanvasController.repaintMap();
+    }
+
+    public void deuteranopiaMode() {
+        mode = ColorMap.Mode.DEUTERANOPIA;
+        CanvasController.repaintMap();
+    }
+
+    public void tritanopiaMode() {
+        mode = ColorMap.Mode.TRITANOPIA;
         CanvasController.repaintMap();
     }
 

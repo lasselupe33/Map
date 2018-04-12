@@ -207,10 +207,20 @@ public class MainWindowView {
         colorGroup.add(standardItem);
         subShowMenu.add(standardItem);
 
-        JMenuItem colorBlindItem = new JRadioButtonMenuItem("Farveblind (Protanopia)");
-        colorBlindItem.addActionListener((ActionEvent e) -> menuController.colorBlindMode());
-        colorGroup.add(colorBlindItem);
-        subShowMenu.add(colorBlindItem);
+        JMenuItem protanopiaItem = new JRadioButtonMenuItem("Rødblind (Protanopia)");
+        protanopiaItem.addActionListener((ActionEvent e) -> menuController.protanopiaMode());
+        colorGroup.add(protanopiaItem);
+        subShowMenu.add(protanopiaItem);
+
+        JMenuItem deuteranopiaItem = new JRadioButtonMenuItem("Grønblind (Deuteranopia)");
+        deuteranopiaItem.addActionListener((ActionEvent e) -> menuController.deuteranopiaMode());
+        colorGroup.add(deuteranopiaItem);
+        subShowMenu.add(deuteranopiaItem);
+
+        JMenuItem tritanopiaItem = new JRadioButtonMenuItem("Blåblind (Tritanopia)");
+        tritanopiaItem.addActionListener((ActionEvent e) -> menuController.tritanopiaMode());
+        colorGroup.add(tritanopiaItem);
+        subShowMenu.add(tritanopiaItem);
 
         JMenuItem grayscaleItem = new JRadioButtonMenuItem("Gråskala");
         grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());

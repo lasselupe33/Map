@@ -6,7 +6,7 @@ public enum OSMWayType implements Serializable {
     COASTLINE(1),
     PLACE(490),
     RESIDENTIAL(300),
-    FARMLAND(490),
+    FARMLAND(370),
     AEROWAY(490),
     PARK(485),
     FORREST(370),
