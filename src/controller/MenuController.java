@@ -21,13 +21,21 @@ public class MenuController {
 
     public void standardMode() {
         mode = ColorMap.Mode.STANDARD;
+        CanvasController.repaintMap();
     }
 
-    public void colorBlindMode() { mode = ColorMap.Mode.COLORBLIND; }
+    public void colorBlindMode() {
+        mode = ColorMap.Mode.COLORBLIND;
+        CanvasController.repaintMap();
+    }
+
+    public void grayscaleMode() {
+        mode = ColorMap.Mode.GRAYSCALE;
+        CanvasController.repaintMap();
+    }
 
     public static ColorMap.Mode getMode() {
         return mode;
     }
-
 
 }

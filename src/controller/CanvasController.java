@@ -18,7 +18,7 @@ public class CanvasController {
     private static CanvasController instance = new CanvasController();
 
     private MapModel mapModel;
-    private CanvasView canvas;
+    private static CanvasView canvas;
     private AffineTransform transform = new AffineTransform();
     private boolean useAntiAliasing = false;
 
@@ -106,5 +106,9 @@ public class CanvasController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void repaintMap() {
+        canvas.repaint();
     }
 }

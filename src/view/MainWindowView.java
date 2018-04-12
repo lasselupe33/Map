@@ -190,13 +190,20 @@ public class MainWindowView {
         JMenu showMenu = new JMenu("Indstillinger");
         menubar.add(showMenu);
 
-        JMenuItem standardItem = new JMenuItem("Standard mode");
-        quitItem.addActionListener((ActionEvent e) -> menuController.standardMode());
-        showMenu.add(standardItem);
+        JMenu subShowMenu = new JMenu("Farveindstillinger");
+        showMenu.add(subShowMenu);
 
-        JMenuItem colorBlindItem = new JMenuItem("Color blind mode");
-        quitItem.addActionListener((ActionEvent e) -> menuController.colorBlindMode());
-        showMenu.add(colorBlindItem);
+        JMenuItem standardItem = new JMenuItem("Standard");
+        standardItem.addActionListener((ActionEvent e) -> menuController.standardMode());
+        subShowMenu.add(standardItem);
+
+        JMenuItem colorBlindItem = new JMenuItem("Farveblind (Protanopia)");
+        colorBlindItem.addActionListener((ActionEvent e) -> menuController.colorBlindMode());
+        subShowMenu.add(colorBlindItem);
+
+        JMenuItem grayscaleItem = new JMenuItem("Gråskala");
+        grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());
+        subShowMenu.add(grayscaleItem);
 
         /*
         JMenuItem pRoadItem = new JCheckBoxMenuItem("Primary roads", true);
