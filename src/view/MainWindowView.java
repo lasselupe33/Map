@@ -32,6 +32,7 @@ public class MainWindowView {
     private FavoriteView favoriteView;
     private FavoriteController favoriteController;
     private Favorites favorites;
+    private FavoritePopupView favoritePopupView;
 
     public MainWindowView(
             CanvasView cv,
@@ -47,7 +48,8 @@ public class MainWindowView {
             FavoriteView favoriteView,
             FavoriteController favoriteController,
             AutoCompleteList al,
-            Favorites favorites
+            Favorites favorites,
+            FavoritePopupView favoritePopupView
     ) {
         menuController = mc;
         canvasView = cv;
@@ -63,6 +65,7 @@ public class MainWindowView {
         this.favoriteController = favoriteController;
         autoCompleteList = al;
         this.favorites = favorites;
+        this.favoritePopupView = favoritePopupView;
 
         // Create the window
         window = new JFrame("Danmarkskort");
@@ -125,6 +128,9 @@ public class MainWindowView {
                     lpane.remove(favoriteView);
                     lpane.remove(searchBox);
                     break;
+                case FAVORITES_POPUP:
+                    lpane.remove(favoritePopupView);
+                    break;
             }
         }
 
@@ -154,6 +160,12 @@ public class MainWindowView {
                 lpane.add(searchBox, 2, 2);
                 lpane.add(favoriteView, 1, 5);
                 break;
+
+            case FAVORITES_POPUP:
+                favoritePopupView.addFrame(window);
+                lpane.add(favoritePopupView, 3, 7);
+                break;
+
 
             default:
                 // No other viewStates should exist!

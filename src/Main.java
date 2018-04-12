@@ -70,10 +70,11 @@ public class Main {
             AutoCompleteList al = new AutoCompleteList(acc);
             acc.addDependencies(al, sb, addressesModel);
             FavoriteView favoriteView = new FavoriteView(favorites, fc);
+            FavoritePopupView favoritePopupView = new FavoritePopupView(ac, sc);
             ac.addView(av, favoriteView);
 
             // Pass all views to the main window view.
-            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, favoriteView, fc, al, favorites);
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, favoriteView, fc, al, favorites, favoritePopupView);
             sc.addMainView(v);
 
             new KeyboardController(v, cv, model, cc, ioModel);

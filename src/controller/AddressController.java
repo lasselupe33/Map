@@ -5,6 +5,7 @@ import model.Coordinates;
 import model.Favorite;
 import model.Favorites;
 import view.AddressView;
+import view.FavoritePopupView;
 import view.FavoriteView;
 
 import java.awt.event.MouseAdapter;
@@ -23,7 +24,6 @@ public class AddressController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println(e.getComponent().getName());
         switch (e.getComponent().getName()) {
             case "navigation":
                 goToNavigation();
@@ -58,9 +58,12 @@ public class AddressController extends MouseAdapter {
     }
 
     private void bookmarkAdress() {
-        //todo save real address
-        Favorite test = new Favorite("hjem", getAddress(), new Coordinates(10, 10));
-        favorites.add(test);
+        stateController.updateCurrentState(ViewStates.FAVORITES_POPUP);
+    }
+
+    public void saveAddress(String name){
+        Favorite newFavorite = new Favorite(name, getAddress());
+        favorites.add(newFavorite);
         favoriteView.updateFavoritesView();
     }
 
@@ -68,4 +71,6 @@ public class AddressController extends MouseAdapter {
     public Address getAddress() {
         return currAddress;
     }
+
+
 }
