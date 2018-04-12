@@ -1,15 +1,12 @@
 package model;
 
-import controller.CanvasController;
 import helpers.KDTree;
 import helpers.ZoomLevelMap;
-import model.MapElements.MapElement;
 import model.osm.OSMWayType;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -17,7 +14,7 @@ import java.util.EnumMap;
 import java.util.List;
 
 public class MapModel {
-    private EnumMap<OSMWayType, List<MapElement>> mapElements = initializeMap();
+    private EnumMap<OSMWayType, List<Coordinates>> mapElements = initializeMap();
     private KDTree[] trees;
     private List<MapElement> maplist = new ArrayList<>();
     private MainModel mainModel;
@@ -27,16 +24,16 @@ public class MapModel {
     }
 
     /** Public helper that initializses an empty enum-map filled with arraylist for all mapTypes */
-    public static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
-        EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
+    public static EnumMap<OSMWayType, List<Coordinates>> initializeMap() {
+        EnumMap<OSMWayType, List<Coordinates>> map = new EnumMap<>(OSMWayType.class);
         for (OSMWayType type: OSMWayType.values()) {
             map.put(type, new ArrayList<>());
         }
         return map;
     }
 
-    /** Add a mapElement to the list. This will happen while parsing OSM-files */
-    public void add(OSMWayType type, MapElement m) {
+    /** Add a Coordinates to the list. This will happen while parsing OSM-files */
+    public void add(OSMWayType type, Coordinates m) {
         mapElements.get(type).add(m);
     }
 
@@ -68,7 +65,7 @@ public class MapModel {
 
             out.close();
 
-            // Now that the map has been saved, we are free to remove the mapElements list in order to preserve space
+            // Now that the map has been saved, we are free to remove the Coordinatess list in order to preserve space
             mapElements = null;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -86,7 +83,7 @@ public class MapModel {
             FSTObjectInput in = new FSTObjectInput(new FileInputStream(path));
 
             for (OSMWayType type : OSMWayType.values()) {
-                mapElements.put(type, (List<MapElement>) in.readObject());
+                mapElements.put(type, (List<Coordinates>) in.readObject());
             }
 
             in.close();
@@ -94,7 +91,7 @@ public class MapModel {
             // Always rebuild tree, since loading the binary tree takes longer in total
             createTree();
 
-            // Remove mapElements once tree has been build to preserve space
+            // Remove Coordinatess once tree has been build to preserve space
             mapElements = null;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -108,14 +105,12 @@ public class MapModel {
         }
     }
 
-    public List<MapElement> get(OSMWayType type) {
+    public List<Coordinates> get(OSMWayType type) {
         return mapElements.get(type);
     }
 
     /** Returns the mapData required to render the screen */
-    public List<MapElement> getMapData(){
-        return maplist;
-    }
+    public List<MapElement> getMapData(){ return maplist; }
 
     /** Helper that creates a new KDTree based on the mapElements currently available to the MapModel */
     public void createTree() {
@@ -124,10 +119,8 @@ public class MapModel {
 
         int i = 0;
         for (OSMWayType type : OSMWayType.values()) {
-            trees[i] = new KDTree(mapElements.get(type), mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon());
-            i++;
+            trees[i++] = new KDTree(mapElements.get(type), mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon());
         }
-
 
     }
 }

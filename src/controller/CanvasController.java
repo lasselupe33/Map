@@ -1,18 +1,14 @@
 package controller;
 
-import helpers.ZoomLevelMap;
-import model.MainModel;
-import model.MapElements.MapElement;
+import model.Coordinates;
+import model.MapElement;
 import model.MapModel;
-import model.osm.OSMWayType;
 import view.CanvasView;
 
-import javax.swing.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**

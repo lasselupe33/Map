@@ -2,31 +2,28 @@ package helpers;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.*;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import model.MapElements.MapElement;
-import model.osm.OSMWay;
-import model.osm.OSMWayType;
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
 
-import java.util.*;
 
-public class KDTree<Value extends MapElement> implements Serializable {
+import model.Coordinates;
+import model.MapElement;
+
+public class KDTree<Value extends Coordinates> implements Serializable {
     private double maxLat, minLat, maxLon, minLon;
     private Node root;
-    private MapElement nearestNeighbour;
+    private List<Value> currentSearchList;
 
     public static class Comparators {
-        static final Comparator<MapElement> X_COMPARATOR = Comparator.comparing(MapElement::getElementX);
-        static final Comparator<MapElement> Y_COMPARATOR = Comparator.comparing(MapElement::getElementY);
+        static final Comparator<Coordinates> X_COMPARATOR = Comparator.comparing(Coordinates::getX);
+        static final Comparator<Coordinates> Y_COMPARATOR = Comparator.comparing(Coordinates::getY);
     }
 
     public class Node implements Serializable {
-        private List<Value> value;
+        private List<Value> Value;
         private double split;
         private Node leftChild, rightChild;
 
@@ -35,7 +32,7 @@ public class KDTree<Value extends MapElement> implements Serializable {
         }
 
         Node(List<Value> val){
-            value = val;
+            Value = val;
         }
     }
 
@@ -73,12 +70,12 @@ public class KDTree<Value extends MapElement> implements Serializable {
         switch (axis) {
             case 0:
                 list.sort(Comparators.X_COMPARATOR);
-                split = list.get(median).getElementX();
+                split = list.get(median).getX();
                 splitLine = new Line2D.Double(new Point2D.Double(split, minLat), new Point2D.Double(split, maxLat));
                 break;
             case 1:
                 list.sort(Comparators.Y_COMPARATOR);
-                split = list.get(median).getElementY();
+                split = list.get(median).getY();
                 splitLine = new Line2D.Double(new Point2D.Double(minLon, split), new Point2D.Double(maxLon, split));
                 break;
             default:
@@ -89,19 +86,28 @@ public class KDTree<Value extends MapElement> implements Serializable {
         List<Value> listLeft = new ArrayList<>();
         List<Value> listRight = new ArrayList<>();
 
+         
+            for (int i = 0; i < list.size(); i++) {
+                Value s = list.get(i);
 
-        for(int i = 0; i < list.size(); i++) {
-            Value s = list.get(i);
-
-            if (splitLine.intersects(s.getBounds())) {
-                listLeft.add(s);
-                listRight.add(s);
-            } else if (i < median) {
-                listLeft.add(s);
-            } else {
-                listRight.add(s);
+                if ( s instanceof MapElement) {
+                    if (splitLine.intersects(getBounds((MapElement) s))) {
+                        listLeft.add(s);
+                        listRight.add(s);
+                    } else if (i < median) {
+                        listLeft.add(s);
+                    } else {
+                        listRight.add(s);
+                    }
+                } else {
+                    if (i < median) {
+                        listLeft.add(s);
+                    } else {
+                        listRight.add(s);
+                    }
+                }
             }
-        }
+        
 
         Node x = new Node(split);
         x.leftChild = buildTree(listLeft, depth + 1);
@@ -115,14 +121,15 @@ public class KDTree<Value extends MapElement> implements Serializable {
     // search the KD Tree
     public List<Value> searchTree(Point2D p0, Point2D p1){
         int depth = 0;
-        return searchTree(root, p0, p1, depth);
+        currentSearchList = searchTree(root, p0, p1, depth);
+        return currentSearchList;
     }
 
     private List<Value> searchTree(Node x, Point2D p0, Point2D p1, int depth){
 
         List<Value> list = new ArrayList<>();
 
-        if(x.value != null) return x.value;
+        if(x.Value != null) return x.Value;
 
         switch (axis(depth)) {
             case 0:
@@ -148,13 +155,22 @@ public class KDTree<Value extends MapElement> implements Serializable {
         return list;
     }
 
-    private void nearestNeighbour(List<MapElement> list){
+    public Value nearestNeighbour(double px, double py){
 
+        Value nearestNeighbour = null;
+        for (Value val : currentSearchList) {
+            if ( nearestNeighbour.equals(null) ) nearestNeighbour = val;
+            //if ( Math.hypot( val.getX() - px, val.getY() - py) < nearestNeighbour ) nearestNeighbour = val;
+        }
+
+        return nearestNeighbour;
     }
 
-    public MapElement getNearestNeighbour(){ return nearestNeighbour; }
 
 
+    private Rectangle2D getBounds(MapElement mapElement){
+        return mapElement.getBounds();
+    }
 
     // check if depth is even
     private int axis(int depth) {
