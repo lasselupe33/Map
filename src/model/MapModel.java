@@ -38,6 +38,12 @@ public class MapModel {
         mainView = mv;
     }
 
+    public void reset() {
+        mapElements = initializeMap();
+        maplist = new ArrayList<>();
+        tree = null;
+    }
+
     /** Public helper that initializses an empty enum-map filled with arraylist for all mapTypes */
     public static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
         EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
@@ -73,6 +79,7 @@ public class MapModel {
         mapElements.put(OSMWayType.valueOf(type.split("/")[1]), loadedList);
 
         System.out.println("Loaded " + initializedTypes + " of " + amountOfTypes + " mapTypes.");
+
         if (initializedTypes == amountOfTypes) {
             System.out.println("Building tree..");
             // Always rebuild tree, since loading the binary tree takes longer in total

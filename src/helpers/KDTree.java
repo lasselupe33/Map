@@ -47,6 +47,7 @@ public class KDTree implements Serializable {
 
         roots = new Node[OSMWayType.values().length];
 
+        amountOfElements = 0;
         int i = 0;
         for (OSMWayType type : OSMWayType.values()) {
             amountOfElements += map.get(type).size();

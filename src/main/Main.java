@@ -33,6 +33,7 @@ public class Main {
     // Boolean to ensure application won't be booted twice
     public static boolean hasInitialized = false;
     public static boolean dataLoaded = false;
+    public static boolean initialRender = true;
 
     // Debugging
     private static long timeA;
@@ -68,7 +69,7 @@ public class Main {
             }
 
             // Controllers
-            mc = new MenuController(model);
+            mc = new MenuController(model, ioModel);
             cc = CanvasController.getInstance();
             sc = new StateController();
             ac = new AddressController(sc);
@@ -76,7 +77,7 @@ public class Main {
 
             // Views
             cv = new CanvasView(cc);
-            cc.addDependencies(cv, mapModel);
+            cc.addDependencies(cv, mapModel, model);
             av = new AddressView(ac);
             ac.addView(av);
             sb = new SearchBox(sc, sbc);
@@ -105,5 +106,7 @@ public class Main {
 
         long timeB = System.currentTimeMillis();
         System.out.println("Elapsed time:" + (timeB - timeA));
+
+        initialRender = false;
     }
 }
