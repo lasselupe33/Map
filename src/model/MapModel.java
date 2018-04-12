@@ -4,6 +4,7 @@ import helpers.DeserializeObject;
 import helpers.KDTree;
 import helpers.SerializeObject;
 import helpers.ZoomLevelMap;
+import main.Main;
 import model.MapElements.MapElement;
 import model.osm.OSMWayType;
 import org.nustaq.serialization.FSTObjectInput;
@@ -13,6 +14,7 @@ import view.MainWindowView;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -134,8 +136,8 @@ public class MapModel {
             parameterTypes[1] = String.class;
             Method callback = MapModel.class.getMethod("onThreadDeserializeComplete", parameterTypes);
 
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "/data/info.bin", "UTF-8");
-            InputStream stream = new FileInputStream(path);
+            URL path = Main.class.getResource("/data/info.bin");
+            InputStream stream = path.openStream();
             FSTObjectInput in = new FSTObjectInput(stream);
 
             while (true) {

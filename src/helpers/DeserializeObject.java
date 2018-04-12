@@ -1,5 +1,6 @@
 package helpers;
 
+import main.Main;
 import model.IOModel;
 import model.MapElements.MapElement;
 import org.nustaq.serialization.FSTObjectInput;
@@ -9,6 +10,7 @@ import org.nustaq.serialization.util.FSTInputStream;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 
@@ -40,8 +42,8 @@ public class DeserializeObject implements Runnable {
     public void loadSingleObject() {
         try {
             // Setup output path
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/" + names[0] + ".bin", "UTF-8");
-            InputStream stream = new FileInputStream(path);
+            URL path = Main.class.getResource("/data/" + names[0] + ".bin");
+            InputStream stream = path.openStream();
             FSTObjectInput in = IOModel.conf.getObjectInput(stream);
 
             // Read given object

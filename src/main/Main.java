@@ -47,18 +47,12 @@ public class Main {
             model = new MainModel();
             mapModel = new MapModel(model);
             // Attempt to load binary file if it exists, else fallback to default .osm-map
-            File binaryData = null;
+            URL binaryData;
 
             if (args.length == 0) {
-                try {
+                binaryData = Main.class.getResource("/data/main.bin");
 
-                    binaryData = new File(URLDecoder.decode(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "/data/main.bin", "UTF-8"));
-                    System.out.println(binaryData);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                if (true) {
+                if (binaryData != null) {
                     // If binary data exists, use this.
                     ioModel = new IOModel(model, mapModel);
                 } else {

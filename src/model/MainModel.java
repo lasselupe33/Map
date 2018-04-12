@@ -1,9 +1,11 @@
 package model;
 
+import main.Main;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
 
 import java.io.*;
+import java.net.URL;
 import java.net.URLDecoder;
 
 public class MainModel implements Serializable{
@@ -70,8 +72,8 @@ public class MainModel implements Serializable{
     /** Internal helper that deserializses the MainModel */
     public void deserialize() {
         try {
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/main.bin", "UTF-8");
-            FSTObjectInput in = new FSTObjectInput(new FileInputStream(path));
+            URL path = Main.class.getResource("/data/main.bin");
+            FSTObjectInput in = new FSTObjectInput(path.openStream());
 
             // Add data to model
             minLon = (double) in.readObject();
