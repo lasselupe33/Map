@@ -20,8 +20,6 @@ public class ZoomView extends JPanel {
         setOpaque(false);
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         createZoomButtons();
-
-
     }
 
     public void createZoomButtons(){

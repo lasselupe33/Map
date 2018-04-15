@@ -1,14 +1,29 @@
 package controller;
 
 import helpers.ColorMap;
+import model.IOModel;
 import model.MainModel;
+import view.MainWindowView;
+
+import javax.swing.*;
 
 public class MenuController {
     private static ColorMap.Mode mode;
-    public MenuController(MainModel m) { mode = ColorMap.Mode.STANDARD; }
+    private IOModel ioModel;
+
+    public MenuController(MainModel m, IOModel iom) {
+        mode = ColorMap.Mode.STANDARD;
+        ioModel = iom;
+    }
     
-     public void load() {
-         System.out.println("Load");
+     public void load(JFrame window) {
+        // Create a fileChooser to get new OSM file
+         JFileChooser fileChooser = new JFileChooser();
+         fileChooser.setCurrentDirectory(new java.io.File("."));
+
+         if (fileChooser.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
+             ioModel.load(fileChooser.getSelectedFile().toString());
+         }
      }
 
     public void save() {

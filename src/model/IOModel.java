@@ -1,5 +1,6 @@
 package model;
 
+import controller.CanvasController;
 import helpers.OSMHandler;
 import helpers.SerializeObject;
 import main.Main;
@@ -8,6 +9,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+import view.MainWindowView;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -20,6 +22,7 @@ public class IOModel {
     public static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
     private MainModel model;
     private MapModel mapModel;
+    private MainWindowView mainView;
 
     public IOModel(MainModel m, MapModel mm, String filename) {
         model = m;
@@ -39,6 +42,10 @@ public class IOModel {
         model = m;
         mapModel = mm;
         loadBinary();
+    }
+
+    public void addView(MainWindowView mv) {
+        mainView = mv;
     }
 
     /** Internal helper that sets up the OSMHandler and begins reading from an OSM-file */
@@ -82,6 +89,9 @@ public class IOModel {
     public void load(InputStream is, String filename) {
         System.out.println(filename);
 
+        // Prepare models to recieve new data
+        mapModel.reset();
+
         if (filename.endsWith(".osm")) {
             readFromOSM(new InputSource(filename));
         } else if (filename.endsWith(".zip")) {
@@ -96,8 +106,13 @@ public class IOModel {
             }
         }
 
-        // Always save data after a new map has been loaded.
-        save();
+        if (!Main.initialRender) {
+            // If a new map has been loaded, then refresh the canvas.
+            CanvasController.getInstance().reset();
+        } else {
+            // Always save data after when a new map has been loaded
+            save();
+        }
     }
 
     public static void serializationComplete() {

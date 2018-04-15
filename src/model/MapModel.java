@@ -4,6 +4,7 @@ import helpers.DeserializeObject;
 import helpers.KDTree;
 import helpers.SerializeObject;
 import helpers.ZoomLevelMap;
+import main.Main;
 import model.MapElements.MapElement;
 import model.osm.OSMWayType;
 import org.nustaq.serialization.FSTObjectInput;
@@ -13,6 +14,8 @@ import view.MainWindowView;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -33,6 +36,12 @@ public class MapModel {
 
     public void addMainView(MainWindowView mv) {
         mainView = mv;
+    }
+
+    public void reset() {
+        mapElements = initializeMap();
+        maplist = new ArrayList<>();
+        tree = null;
     }
 
     /** Public helper that initializses an empty enum-map filled with arraylist for all mapTypes */
@@ -67,9 +76,10 @@ public class MapModel {
     /** Callback to be called once a thread has finished deserializing a mapType */
     public void onThreadDeserializeComplete(ArrayList loadedList, String type) {
         initializedTypes++;
-        mapElements.put(OSMWayType.valueOf(type), loadedList);
+        mapElements.put(OSMWayType.valueOf(type.split("/")[1]), loadedList);
 
         System.out.println("Loaded " + initializedTypes + " of " + amountOfTypes + " mapTypes.");
+
         if (initializedTypes == amountOfTypes) {
             System.out.println("Building tree..");
             // Always rebuild tree, since loading the binary tree takes longer in total
@@ -86,8 +96,9 @@ public class MapModel {
     /** Serializes all data necessary to load and display the map */
     public void serialize() {
         try {
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/info.bin", "UTF-8");
-            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
+            URL path = Main.class.getResource("/data/info.bin");
+            File file = new File(path.toURI());
+            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(file));
 
             for (OSMWayType type : OSMWayType.values()) {
                 List<MapElement> currList = get(type);
@@ -100,15 +111,15 @@ public class MapModel {
                         List<MapElement> tempList = new ArrayList<>(currList.subList(currentlyProcessed, Math.min(currentlyProcessed + 200000, currList.size() - 1)));
                         currentlyProcessed += 200000;
 
-                        String name = type.toString() + "-" + currentlyProcessed;
+                        String name = "map/" + type.toString() + "-" + currentlyProcessed;
                         listNames.add(name);
                         new SerializeObject(new String[] { name }, tempList);
                     }
 
                     out.writeObject(listNames.toArray(new String[listNames.size()]), String[].class);
                 } else {
-                    out.writeObject(new String[] { type.toString() }, String[].class);
-                    new SerializeObject(new String[] {type.toString()}, get(type));
+                    out.writeObject(new String[] { "map/" + type.toString() }, String[].class);
+                    new SerializeObject(new String[] { "map/" + type.toString()}, get(type));
                 }
             }
 
@@ -118,6 +129,8 @@ public class MapModel {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
@@ -134,8 +147,8 @@ public class MapModel {
             parameterTypes[1] = String.class;
             Method callback = MapModel.class.getMethod("onThreadDeserializeComplete", parameterTypes);
 
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/info.bin", "UTF-8");
-            InputStream stream = new FileInputStream(path);
+            URL path = Main.class.getResource("/data/info.bin");
+            InputStream stream = path.openStream();
             FSTObjectInput in = new FSTObjectInput(stream);
 
             while (true) {

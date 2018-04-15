@@ -17,6 +17,7 @@ import java.util.List;
 public class CanvasController {
     private static CanvasController instance = new CanvasController();
 
+    private MainModel mainModel;
     private MapModel mapModel;
     private CanvasView canvas;
     private AffineTransform transform = new AffineTransform();
@@ -34,7 +35,7 @@ public class CanvasController {
         return instance;
     }
 
-    public void addDependencies(CanvasView c, MapModel mm) { canvas = c; mapModel = mm; }
+    public void addDependencies(CanvasView c, MapModel mm, MainModel m) { canvas = c; mapModel = mm; mainModel = m; }
 
     /**
      * @return whether or not the view should utilise antialias
@@ -94,6 +95,26 @@ public class CanvasController {
         Point2D p0 = new Point2D.Double(0,0);
         Point2D p1 = new Point2D.Double(canvas.getWidth(), canvas.getHeight());
         mapModel.updateMap(toModelCoords(p0),toModelCoords(p1));
+    }
+
+    /** Helper method that reset the canvas when called */
+    public void reset() {
+        // Reset transform
+        transform = new AffineTransform();
+
+        // put screen to correct place on canvas
+        int height = canvas.getHeight();
+        int offsetX = (canvas.getWidth() - height) / 2;
+
+        // Pan to map
+        pan(-mainModel.getMinLon(), -mainModel.getMaxLat());
+        zoom(height / (mainModel.getMaxLon() - mainModel.getMinLon()), 0, 0);
+
+        // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
+        pan(offsetX, 0);
+
+        // Update map elements
+        updateMap();
     }
 
     public Rectangle2D getModelViewRect() {

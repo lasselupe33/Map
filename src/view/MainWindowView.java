@@ -182,7 +182,7 @@ public class MainWindowView {
         menubar.add(fileMenu);
 
         JMenuItem loadItem = new JMenuItem("Indlæs OSM-fil");
-        loadItem.addActionListener((ActionEvent e) -> menuController.load());
+        loadItem.addActionListener((ActionEvent e) -> menuController.load(window));
         fileMenu.add(loadItem);
 
         JMenuItem saveItem = new JMenuItem("Gem");

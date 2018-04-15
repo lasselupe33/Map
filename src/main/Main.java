@@ -9,6 +9,7 @@ import view.*;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -35,72 +36,71 @@ public class Main {
     // Boolean to ensure application won't be booted twice
     public static boolean hasInitialized = false;
     public static boolean dataLoaded = false;
+    public static boolean initialRender = true;
 
     // Debugging
     private static long timeA;
 
     public static void main(String[] args) {
-        System.setProperty("sun.java2d.opengl","True");
+        SwingUtilities.invokeLater(() -> {
+            System.setProperty("sun.java2d.opengl", "True");
 
-        timeA = System.currentTimeMillis();
+            timeA = System.currentTimeMillis();
 
-        // Models
-        AddressesModel addressesModel = new AddressesModel();
-        model = new MainModel(addressesModel);
-        mapModel = new MapModel(model);
-        // Attempt to load binary file if it exists, else fallback to default .osm-map
-        File binaryData = null;
+            // Models
+            AddressesModel addressesModel = new AddressesModel();
+            model = new MainModel(addressesModel);
+            mapModel = new MapModel(model);
+            // Attempt to load binary file if it exists, else fallback to default .osm-map
+            URL binaryData;
 
-        if (args.length == 0) {
-            try {
-                binaryData = new File(URLDecoder.decode(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "data/main.bin", "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            if (args.length == 0) {
+                binaryData = Main.class.getResource("/data/main.bin");
 
-            if (binaryData.exists()) {
-                // If binary data exists, use this.
-                ioModel = new IOModel(model, mapModel);
+                if (binaryData != null) {
+                    // If binary data exists, use this.
+                    ioModel = new IOModel(model, mapModel);
+                } else {
+                    // .. else fallback to provided .zip
+                    URL data = Main.class.getResource("/data/small.zip");
+                    ioModel = new IOModel(model, mapModel, data);
+                    dataLoaded = true;
+                }
             } else {
-                // .. else fallback to provided .zip
-                URL data = Main.class.getResource("/data/small.zip");
-                ioModel = new IOModel(model, mapModel, data);
+                // .. or, if arguments are supplied, always use these.
+                ioModel = new IOModel(model, mapModel, args[0]);
                 dataLoaded = true;
             }
-        } else {
-            // .. or, if arguments are supplied, always use these.
-            ioModel = new IOModel(model, mapModel, args[0]);
-            dataLoaded = true;
-        }
 
-        // Controllers
-        mc = new MenuController(model);
-        cc = CanvasController.getInstance();
-        sc = new StateController();
-        ac = new AddressController(sc);
-        sbc = new SearchBoxController(model, sc, ac);
-        acc = new AutoCompleteController();
+            // Controllers
+            mc = new MenuController(model, ioModel);
+            cc = CanvasController.getInstance();
+            sc = new StateController();
+            ac = new AddressController(sc);
+            sbc = new SearchBoxController(model, sc, ac);
+            acc = new AutoCompleteController();
 
-        // Views
-        cv = new CanvasView(cc);
-        cc.addDependencies(cv, mapModel);
-        av = new AddressView(ac);
-        ac.addView(av);
-        sb = new SearchBox(sc, sbc, acc);
-        sbc.addView(sb);
-        fv = new FooterView(cc);
-        zv = new ZoomView(cc);
-        nv = new NavigationView();
-        al = new AutoCompleteList(acc);
-        acc.addDependencies(al, sb, addressesModel);
+            // Views
+            cv = new CanvasView(cc);
+            cc.addDependencies(cv, mapModel, model);
+            av = new AddressView(ac);
+            ac.addView(av);
+            sb = new SearchBox(sc, sbc, acc);
+            sbc.addView(sb);
+            fv = new FooterView(cc);
+            zv = new ZoomView(cc);
+            nv = new NavigationView();
+            al = new AutoCompleteList(acc);
+            acc.addDependencies(al, sb, addressesModel);
 
-        // Run application if data is ready
-        if (dataLoaded) {
-            Main.run();
-        }
+            // Run application if data is ready
+            if (dataLoaded) {
+                Main.run();
+            }
 
-        // Indicate application MVC has been initialized
-        hasInitialized = true;
+            // Indicate application MVC has been initialized
+            hasInitialized = true;
+        });
     }
 
     /** Function to be run after all MVC classes have been initilized and data loaded */
@@ -113,5 +113,7 @@ public class Main {
 
         long timeB = System.currentTimeMillis();
         System.out.println("Elapsed time:" + (timeB - timeA));
+
+        initialRender = false;
     }
 }
