@@ -2,20 +2,19 @@ package controller;
 
 import helpers.AddressBuilder;
 import model.Address;
-import model.Addresses;
+import model.AddressesModel;
 import model.Coordinates;
 import model.MainModel;
 import view.SearchBox;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
 
 public class SearchBoxController extends MouseAdapter {
     StateController stateController;
     AddressController addressController;
     SearchBox searchBoxView;
-    Addresses addresses;
+    AddressesModel addresses;
 
     public SearchBoxController(MainModel m, StateController sc, AddressController ac) {
         addresses = m.getAddresses();
