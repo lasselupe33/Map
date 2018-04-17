@@ -288,6 +288,7 @@ public class OSMHandler extends DefaultHandler {
 
         // Reset fields
         street = house_no = postcode = null;
+        mapModel.addAddress(currentAddress);
     }
 
     /** Internal helper that creates a way when called (i.e. when the parser reaches the end of a way */
@@ -414,5 +415,4 @@ public class OSMHandler extends DefaultHandler {
                 break;
         }
     }
-
 }

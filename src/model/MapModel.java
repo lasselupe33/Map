@@ -17,6 +17,7 @@ public class MapModel {
     private EnumMap<OSMWayType, List<Coordinates>> mapElements = initializeMap();
     private KDTree[] trees;
     private List<MapElement> maplist = new ArrayList<>();
+    private List<Address> addresses = new ArrayList<>();
     private MainModel mainModel;
 
     public MapModel(MainModel m) {
@@ -37,6 +38,8 @@ public class MapModel {
         mapElements.get(type).add(m);
     }
 
+    public void addAddress(Address address) { addresses.add(address); }
+
     /** Internal helper that retrieves the currently required points to render the map */
     public void updateMap(Point2D p0, Point2D p1){
         int zoomLevel = ZoomLevelMap.getZoomLevel();
@@ -49,7 +52,12 @@ public class MapModel {
             }
             i++;
         }
+        //trees[i].searchTree(p0, p1);
         maplist = tmplist;
+    }
+
+    public String nearestNeighbour(double px, double py) {
+        return trees[trees.length-1].nearestNeighbour(px, py);
     }
 
     /** Serializes all data necessary to load and display the map */
@@ -115,12 +123,12 @@ public class MapModel {
     /** Helper that creates a new KDTree based on the mapElements currently available to the MapModel */
     public void createTree() {
 
-        trees = new KDTree[OSMWayType.values().length];
+        trees = new KDTree[OSMWayType.values().length + 1];
 
         int i = 0;
         for (OSMWayType type : OSMWayType.values()) {
             trees[i++] = new KDTree(mapElements.get(type), mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon());
         }
-
+        trees[i] = new KDTree(addresses);
     }
 }

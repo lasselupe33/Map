@@ -66,6 +66,8 @@ public class MouseController extends MouseAdapter {
 
     public void mouseMoved(MouseEvent e) {
         Point2D modelCoords = canvasController.toModelCoords(e.getPoint());
+        canvasController.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
+        //System.out.println(canvasController.nearestNeighbour(modelCoords.getX(), modelCoords.getY()));
     }
 
     /**

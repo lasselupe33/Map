@@ -106,6 +106,10 @@ public class CanvasController {
         return null;
     }
 
+    public String nearestNeighbour(double px, double py) {
+        return mapModel.nearestNeighbour(px,py);
+    }
+
     public static void repaintMap() {
         canvas.repaint();
     }

@@ -12,6 +12,7 @@ public class Address implements Serializable {
     }
 
     /** Constructor to be used when parsing addresses */
+
     public Address(String _street, String _house, String _postcode, String _city) {
         street = _street;
         house = _house;
@@ -51,4 +52,6 @@ public class Address implements Serializable {
     public Coordinates getCoordinates() {
         return coordinates;
     }
+
 }
+

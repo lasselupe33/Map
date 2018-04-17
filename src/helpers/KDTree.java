@@ -6,16 +6,19 @@ import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 
+import model.Address;
 import model.Coordinates;
 import model.MapElement;
 
 public class KDTree<Value extends Coordinates> implements Serializable {
     private double maxLat, minLat, maxLon, minLon;
     private Node root;
-    private List<Value> currentSearchList;
+    private HashMap<Coordinates, String> addresses;
+
 
     public static class Comparators {
         static final Comparator<Coordinates> X_COMPARATOR = Comparator.comparing(Coordinates::getX);
@@ -23,17 +26,19 @@ public class KDTree<Value extends Coordinates> implements Serializable {
     }
 
     public class Node implements Serializable {
-        private List<Value> Value;
+        private List<Value> valueList;
         private double split;
         private Node leftChild, rightChild;
+
 
         Node(double spl){
             split = spl;
         }
 
         Node(List<Value> val){
-            Value = val;
+            valueList = val;
         }
+
     }
 
     public KDTree (List<Value> list, double _maxLat, double _minLat, double _maxLon, double _minLon) {
@@ -45,6 +50,18 @@ public class KDTree<Value extends Coordinates> implements Serializable {
         root = buildTree(list);
 
         //System.out.println(amountOfElements);
+    }
+
+    public KDTree (List<Address> addr) {
+        addresses = new HashMap<>();
+        List<Value> addressCoordinates = new ArrayList<>();
+        for (Address a : addr) {
+            Coordinates c = a.getCoordinates();
+            addresses.put(c, a.toKey());
+            addressCoordinates.add((Value) c);
+
+        }
+        root = buildTree(addressCoordinates);
     }
 
     /**
@@ -64,7 +81,6 @@ public class KDTree<Value extends Coordinates> implements Serializable {
         int median = list.size()/2;
         double split = 0;
         Line2D splitLine = null;
-
 
         int axis = axis(depth);
         switch (axis) {
@@ -89,23 +105,22 @@ public class KDTree<Value extends Coordinates> implements Serializable {
          
             for (int i = 0; i < list.size(); i++) {
                 Value s = list.get(i);
-
-                if ( s instanceof MapElement) {
-                    if (splitLine.intersects(getBounds((MapElement) s))) {
-                        listLeft.add(s);
-                        listRight.add(s);
-                    } else if (i < median) {
-                        listLeft.add(s);
-                    } else {
-                        listRight.add(s);
-                    }
+            if (s instanceof MapElement) {
+                if (splitLine.intersects(getBounds((MapElement) s))) {
+                    listLeft.add(s);
+                    listRight.add(s);
+                } else if (i < median) {
+                    listLeft.add(s);
                 } else {
-                    if (i < median) {
-                        listLeft.add(s);
-                    } else {
-                        listRight.add(s);
-                    }
+                    listRight.add(s);
                 }
+            } else {
+                if (i < median) {
+                    listLeft.add(s);
+                } else {
+                    listRight.add(s);
+                }
+            }
             }
         
 
@@ -118,18 +133,19 @@ public class KDTree<Value extends Coordinates> implements Serializable {
     }
 
 
+
+
     // search the KD Tree
     public List<Value> searchTree(Point2D p0, Point2D p1){
         int depth = 0;
-        currentSearchList = searchTree(root, p0, p1, depth);
-        return currentSearchList;
+        return searchTree(root, p0, p1, depth);
     }
 
     private List<Value> searchTree(Node x, Point2D p0, Point2D p1, int depth){
 
         List<Value> list = new ArrayList<>();
 
-        if(x.Value != null) return x.Value;
+        if(x.valueList != null) { return x.valueList; }
 
         switch (axis(depth)) {
             case 0:
@@ -155,15 +171,23 @@ public class KDTree<Value extends Coordinates> implements Serializable {
         return list;
     }
 
-    public Value nearestNeighbour(double px, double py){
+    public String nearestNeighbour(double px, double py){
+        Point2D p0 = new Point2D.Double(px, py);
+        Point2D p1 = new Point2D.Double(px, py);
+        List<Value> currentSearchList = searchTree(p0, p1);
 
         Value nearestNeighbour = null;
+        double currentNeighbour = Double.MAX_VALUE;
         for (Value val : currentSearchList) {
-            if ( nearestNeighbour.equals(null) ) nearestNeighbour = val;
-            //if ( Math.hypot( val.getX() - px, val.getY() - py) < nearestNeighbour ) nearestNeighbour = val;
+            double distanceTo = Math.hypot( px - val.getX(), py - val.getY());
+            if ( distanceTo < currentNeighbour ) {
+                nearestNeighbour = val;
+                currentNeighbour = distanceTo;
+            }
         }
 
-        return nearestNeighbour;
+        System.out.println("Shortest to " + addresses.get(nearestNeighbour));
+        return addresses.get(nearestNeighbour);
     }
 
 

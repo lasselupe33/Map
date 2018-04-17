@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AddressBuilder {
+
     private String street = "Unknown", house, postcode, city;
 
     public AddressBuilder() {}
