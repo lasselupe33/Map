@@ -100,6 +100,8 @@ public class ColorMap {
 
         colorMap.put(OSMWayType.PEDESTRIAN, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
 
+        colorMap.put(OSMWayType.SQUARE, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
+
         colorMap.put(OSMWayType.PARK, new Color[] {new Color(200, 250, 204),
                 new Color(10, 205, 102),
                 new Color(11, 255, 125),
@@ -181,6 +183,15 @@ public class ColorMap {
                 new Color(66, 94, 148),
                 new Color(232, 146, 162),
                 new Color(180,180,180)});
+
+        /**
+         * @TODO color blind trunk
+         */
+        colorMap.put(OSMWayType.TRUNK, new Color[] {new Color(248, 161, 136),
+                new Color(66, 94, 148),
+                new Color(66, 94, 148),
+                new Color(248, 161, 136),
+                new Color(182, 182, 182)});
 
         colorMap.put(OSMWayType.DRAIN, new Color[] {new Color(60, 149, 255),
                 new Color(60, 149, 255),

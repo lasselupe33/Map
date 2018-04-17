@@ -1,16 +1,17 @@
 package model.osm;
 
+import model.Coordinates;
+import model.graph.Edge;
+
 public class OSMNode {
-    private double lon, lat;
+    private Coordinates coords;
 
     public OSMNode(double lon, double lat) {
-        this.lon = lon;
-        this.lat = lat;
+        coords = new Coordinates(lat, lon);
     }
 
-    public double getLon() {
-        return lon;
-    }
+    public double getLon() { return coords.getLon(); }
 
-    public double getLat() { return lat; }
+    public double getLat() { return coords.getLat(); }
+
 }

@@ -5,6 +5,7 @@ import model.AddressesModel;
 import model.IOModel;
 import model.MainModel;
 import model.MapModel;
+import model.graph.Graph;
 import view.*;
 
 import javax.swing.*;
@@ -32,6 +33,7 @@ public class Main {
     private static ZoomView zv;
     private static NavigationView nv;
     private static AutoCompleteList al;
+    private  static Graph graph;
 
     // Boolean to ensure application won't be booted twice
     public static boolean hasInitialized = false;
@@ -51,6 +53,7 @@ public class Main {
             AddressesModel addressesModel = new AddressesModel();
             model = new MainModel(addressesModel);
             mapModel = new MapModel(model);
+            graph = new Graph();
             // Attempt to load binary file if it exists, else fallback to default .osm-map
             URL binaryData;
 
@@ -59,16 +62,16 @@ public class Main {
 
                 if (binaryData != null) {
                     // If binary data exists, use this.
-                    ioModel = new IOModel(model, mapModel);
+                    ioModel = new IOModel(model, mapModel, graph);
                 } else {
                     // .. else fallback to provided .zip
                     URL data = Main.class.getResource("/data/small.zip");
-                    ioModel = new IOModel(model, mapModel, data);
+                    ioModel = new IOModel(model, mapModel, graph, data);
                     dataLoaded = true;
                 }
             } else {
                 // .. or, if arguments are supplied, always use these.
-                ioModel = new IOModel(model, mapModel, args[0]);
+                ioModel = new IOModel(model, mapModel, graph, args[0]);
                 dataLoaded = true;
             }
 

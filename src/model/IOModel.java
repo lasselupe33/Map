@@ -4,6 +4,7 @@ import controller.CanvasController;
 import helpers.OSMHandler;
 import helpers.SerializeObject;
 import main.Main;
+import model.graph.Graph;
 import org.nustaq.serialization.FSTConfiguration;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -22,25 +23,29 @@ public class IOModel {
     public static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
     private MainModel model;
     private MapModel mapModel;
+    private Graph graph;
     private MainWindowView mainView;
 
-    public IOModel(MainModel m, MapModel mm, String filename) {
+    public IOModel(MainModel m, MapModel mm, Graph g, String filename) {
         model = m;
         mapModel = mm;
+        graph = g;
         load(filename);
     }
 
     /** Constructor for loading a URL */
-    public IOModel(MainModel m, MapModel mm, URL filepath) {
+    public IOModel(MainModel m, MapModel mm, Graph g, URL filepath) {
         model = m;
         mapModel = mm;
+        graph = g;
         load(filepath);
     }
 
     /** Constructor for loading binary data */
-    public IOModel(MainModel m, MapModel mm) {
+    public IOModel(MainModel m, MapModel mm, Graph g) {
         model = m;
         mapModel = mm;
+        graph = g;
         loadBinary();
     }
 
@@ -52,7 +57,7 @@ public class IOModel {
     public void readFromOSM(InputSource filename) {
         try {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(new OSMHandler(model, mapModel));
+            xmlReader.setContentHandler(new OSMHandler(model, mapModel, graph));
             xmlReader.parse(filename);
         } catch (SAXException e) {
             e.printStackTrace();
