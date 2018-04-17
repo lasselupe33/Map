@@ -4,8 +4,9 @@ import helpers.DeserializeObject;
 import helpers.KDTree;
 import helpers.SerializeObject;
 import helpers.ZoomLevelMap;
+
 import main.Main;
-import model.MapElements.MapElement;
+import model.MapElement;
 import model.osm.OSMWayType;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
@@ -22,11 +23,12 @@ import java.util.EnumMap;
 import java.util.List;
 
 public class MapModel {
-    private EnumMap<OSMWayType, List<MapElement>> mapElements = initializeMap();
     private int initializedTypes = 0;
     private int amountOfTypes = 0;
-    private KDTree tree;
+    private EnumMap<OSMWayType, List<Coordinates>> mapElements = initializeMap();
+    private KDTree[] trees;
     private List<MapElement> maplist = new ArrayList<>();
+    private List<Address> addresses = new ArrayList<>();
     private MainModel mainModel;
     private MainWindowView mainView;
 
@@ -41,22 +43,26 @@ public class MapModel {
     public void reset() {
         mapElements = initializeMap();
         maplist = new ArrayList<>();
-        tree = null;
+        if (trees != null) {
+            for (int i = 0; i < trees.length; i++) trees[i] = null;
+        }
     }
 
     /** Public helper that initializses an empty enum-map filled with arraylist for all mapTypes */
-    public static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
-        EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
+    public static EnumMap<OSMWayType, List<Coordinates>> initializeMap() {
+        EnumMap<OSMWayType, List<Coordinates>> map = new EnumMap<>(OSMWayType.class);
         for (OSMWayType type: OSMWayType.values()) {
             map.put(type, new ArrayList<>());
         }
         return map;
     }
 
-    /** Add a mapElement to the list. This will happen while parsing OSM-files */
-    public void add(OSMWayType type, MapElement m) {
+    /** Add a Coordinates to the list. This will happen while parsing OSM-files */
+    public void add(OSMWayType type, Coordinates m) {
         mapElements.get(type).add(m);
     }
+
+    public void addAddress(Address address) { addresses.add(address); }
 
     /** Internal helper that retrieves the currently required points to render the map */
     public void updateMap(Point2D p0, Point2D p1){
@@ -66,13 +72,14 @@ public class MapModel {
         List<MapElement> tmplist = new ArrayList<>();
         for (OSMWayType type : OSMWayType.values()) {
             if (type.getPriority() <= zoomLevel) {
-                tmplist.addAll(tree.searchTree(p0, p1, i));
+                tmplist.addAll(trees[i].searchTree(p0, p1));
             }
-
             i++;
         }
+        //trees[i].searchTree(p0, p1);
         maplist = tmplist;
     }
+
 
     /** Callback to be called once a thread has finished deserializing a mapType */
     public void onThreadDeserializeComplete(ArrayList loadedList, String type) {
@@ -94,6 +101,10 @@ public class MapModel {
         }
     }
 
+    public String nearestNeighbour(double px, double py) {
+        return trees[trees.length-1].nearestNeighbour(px, py);
+    }
+
     /** Serializes all data necessary to load and display the map */
     public void serialize() {
         try {
@@ -102,14 +113,14 @@ public class MapModel {
             FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(file));
 
             for (OSMWayType type : OSMWayType.values()) {
-                List<MapElement> currList = get(type);
+                List<Coordinates> currList = get(type);
                 ArrayList<String> listNames = new ArrayList<>();
 
                 if (currList.size() > 200000) {
                     int currentlyProcessed = 0;
 
                     while (currentlyProcessed < currList.size()) {
-                        List<MapElement> tempList = new ArrayList<>(currList.subList(currentlyProcessed, Math.min(currentlyProcessed + 200000, currList.size() - 1)));
+                        List<Coordinates> tempList = new ArrayList<>(currList.subList(currentlyProcessed, Math.min(currentlyProcessed + 200000, currList.size() - 1)));
                         currentlyProcessed += 200000;
 
                         String name = "map/" + type.toString() + "-" + currentlyProcessed;
@@ -125,6 +136,7 @@ public class MapModel {
             }
 
             out.close();
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -170,17 +182,24 @@ public class MapModel {
         }
     }
 
-    public List<MapElement> get(OSMWayType type) {
+    public List<Coordinates> get(OSMWayType type) {
         return mapElements.get(type);
     }
 
     /** Returns the mapData required to render the screen */
-    public List<MapElement> getMapData(){
-        return maplist;
-    }
+    public List<MapElement> getMapData(){ return maplist; }
 
     /** Helper that creates a new KDTree based on the mapElements currently available to the MapModel */
     public void createTree() {
-        tree = new KDTree(mapElements, mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon());
+
+
+        trees = new KDTree[OSMWayType.values().length + 1];
+
+        int i = 0;
+        for (OSMWayType type : OSMWayType.values()) {
+            trees[i++] = new KDTree(mapElements.get(type), mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon());
+        }
+        trees[i] = new KDTree(addresses);
+
     }
 }
