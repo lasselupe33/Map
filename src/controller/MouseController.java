@@ -66,6 +66,8 @@ public class MouseController extends MouseAdapter {
 
     public void mouseMoved(MouseEvent e) {
         Point2D modelCoords = canvasController.toModelCoords(e.getPoint());
+        canvasController.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
+        //System.out.println(canvasController.nearestNeighbour(modelCoords.getX(), modelCoords.getY()));
     }
 
     /**
@@ -89,8 +91,11 @@ public class MouseController extends MouseAdapter {
         t = new Thread() {
             public void run() {
                 try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) { }
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    CanvasController.repaintMap();
+                    return;
+                }
                 CanvasController.getInstance().updateMap();
             }
         };

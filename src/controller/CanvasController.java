@@ -1,18 +1,15 @@
 package controller;
 
-import helpers.ZoomLevelMap;
+import model.Coordinates;
 import model.MainModel;
-import model.MapElements.MapElement;
+import model.MapElement;
 import model.MapModel;
-import model.osm.OSMWayType;
 import view.CanvasView;
 
-import javax.swing.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -129,6 +126,10 @@ public class CanvasController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String nearestNeighbour(double px, double py) {
+        return mapModel.nearestNeighbour(px,py);
     }
 
     public static void repaintMap() {

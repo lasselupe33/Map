@@ -3,7 +3,7 @@ package helpers;
 import main.Main;
 import model.Address;
 import model.MainModel;
-import model.MapElements.MapElement;
+import model.MapElement;
 import model.MapModel;
 import model.osm.OSMNode;
 import model.osm.OSMRelation;
@@ -13,6 +13,7 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 public class OSMHandler extends DefaultHandler {
@@ -289,6 +290,7 @@ public class OSMHandler extends DefaultHandler {
 
         // Reset fields
         street = house_no = postcode = null;
+        mapModel.addAddress(currentAddress);
     }
 
     /** Internal helper that creates a way when called (i.e. when the parser reaches the end of a way */
@@ -305,7 +307,6 @@ public class OSMHandler extends DefaultHandler {
         for (OSMWay way : relation) {
             path = convertWayToPath(path, way);
         }
-
         addElement(type, path);
     }
 
@@ -372,6 +373,7 @@ public class OSMHandler extends DefaultHandler {
 
 
     private void addElement(OSMWayType type, Path2D path) {
+        Rectangle2D rect = path.getBounds2D();
         switch (type) {
             case COASTLINE:
             case PLACE:
@@ -389,7 +391,7 @@ public class OSMHandler extends DefaultHandler {
             case PLACE_OF_WORSHIP:
             case AEROWAY:
             case GRASS:
-                mapModel.add(type, new MapElement(path, type,  true));
+                mapModel.add(type, new MapElement(rect.getX(), rect.getY(), path, type,  true));
                 break;
 
             case ROAD:
@@ -408,11 +410,10 @@ public class OSMHandler extends DefaultHandler {
             case HEDGE:
             case DRAIN:
             case RUNWAY:
-                mapModel.add(type, new MapElement(path, type, false));
+                mapModel.add(type, new MapElement(rect.getX(), rect.getY(), path, type, false));
                 break;
             default:
                 break;
         }
     }
-
 }

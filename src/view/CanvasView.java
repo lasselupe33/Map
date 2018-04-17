@@ -3,16 +3,12 @@ package view;
 import controller.CanvasController;
 import helpers.ColorMap;
 import helpers.StrokeMap;
-import model.MainModel;
-import model.MapElements.MapElement;
+import model.MapElement;
 import model.osm.OSMWayType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * This view draws the map.
