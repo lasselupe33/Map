@@ -305,7 +305,6 @@ public class OSMHandler extends DefaultHandler {
         for (OSMWay way : relation) {
             path = convertWayToPath(path, way);
         }
-
         addElement(type, path);
     }
 
