@@ -63,14 +63,15 @@ public class MapModel {
         int zoomLevel = ZoomLevelMap.getZoomLevel();
 
         int i = 0;
-        maplist.clear();
+        List<MapElement> tmplist = new ArrayList<>();
         for (OSMWayType type : OSMWayType.values()) {
             if (type.getPriority() <= zoomLevel) {
-                maplist.addAll(tree.searchTree(p0, p1, i));
+                tmplist.addAll(tree.searchTree(p0, p1, i));
             }
 
             i++;
         }
+        maplist = tmplist;
     }
 
     /** Callback to be called once a thread has finished deserializing a mapType */

@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * This view draws the map.
@@ -19,13 +20,17 @@ import java.awt.geom.Rectangle2D;
 public class CanvasView extends JComponent {
     private CanvasController controller;
 
+
     public CanvasView(CanvasController c) {
         controller = c;
         setFocusable(true);
     }
 
+
+
     /**
      * Draw map.
+     *
      * @param _g Graphics
      */
     @Override
@@ -46,10 +51,10 @@ public class CanvasView extends JComponent {
 
         viewRect = controller.getModelViewRect();
 
-        for (MapElement m : controller.getMapData()){
+        for (MapElement m : controller.getMapData()) {
             if (m.getShape().intersects(viewRect)) {
                 g.setPaint(ColorMap.getColor(m.getType()));
-                if (m.shouldFill()){
+                if (m.shouldFill()) {
                     g.setStroke(new BasicStroke(Float.MIN_VALUE));
                     g.fill(m.getShape());
                 } else {
@@ -58,5 +63,6 @@ public class CanvasView extends JComponent {
                 }
             }
         }
+
     }
 }

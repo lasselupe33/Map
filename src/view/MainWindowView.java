@@ -197,13 +197,35 @@ public class MainWindowView {
         JMenu showMenu = new JMenu("Indstillinger");
         menubar.add(showMenu);
 
-        JMenuItem standardItem = new JMenuItem("Standard mode");
-        quitItem.addActionListener((ActionEvent e) -> menuController.standardMode());
-        showMenu.add(standardItem);
+        JMenu subShowMenu = new JMenu("Farveindstillinger");
+        showMenu.add(subShowMenu);
+        ButtonGroup colorGroup = new ButtonGroup();
 
-        JMenuItem colorBlindItem = new JMenuItem("Color blind mode");
-        quitItem.addActionListener((ActionEvent e) -> menuController.colorBlindMode());
-        showMenu.add(colorBlindItem);
+        JMenuItem standardItem = new JRadioButtonMenuItem("Standard");
+        standardItem.addActionListener((ActionEvent e) -> menuController.standardMode());
+        standardItem.setSelected(true);
+        colorGroup.add(standardItem);
+        subShowMenu.add(standardItem);
+
+        JMenuItem protanopiaItem = new JRadioButtonMenuItem("Rødblind (Protanopia)");
+        protanopiaItem.addActionListener((ActionEvent e) -> menuController.protanopiaMode());
+        colorGroup.add(protanopiaItem);
+        subShowMenu.add(protanopiaItem);
+
+        JMenuItem deuteranopiaItem = new JRadioButtonMenuItem("Grønblind (Deuteranopia)");
+        deuteranopiaItem.addActionListener((ActionEvent e) -> menuController.deuteranopiaMode());
+        colorGroup.add(deuteranopiaItem);
+        subShowMenu.add(deuteranopiaItem);
+
+        JMenuItem tritanopiaItem = new JRadioButtonMenuItem("Blåblind (Tritanopia)");
+        tritanopiaItem.addActionListener((ActionEvent e) -> menuController.tritanopiaMode());
+        colorGroup.add(tritanopiaItem);
+        subShowMenu.add(tritanopiaItem);
+
+        JMenuItem grayscaleItem = new JRadioButtonMenuItem("Gråskala");
+        grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());
+        colorGroup.add(grayscaleItem);
+        subShowMenu.add(grayscaleItem);
 
         /*
         JMenuItem pRoadItem = new JCheckBoxMenuItem("Primary roads", true);

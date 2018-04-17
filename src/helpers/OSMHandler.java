@@ -5,7 +5,6 @@ import model.Address;
 import model.MainModel;
 import model.MapElements.MapElement;
 import model.MapModel;
-import model.ZoomLevel;
 import model.osm.OSMNode;
 import model.osm.OSMRelation;
 import model.osm.OSMWay;
@@ -24,7 +23,6 @@ public class OSMHandler extends DefaultHandler {
     MainModel model;
     MapModel mapModel;
     private double lonFactor;
-    private ZoomLevel level;
     private OSMWayType type;
     private OSMRelation relation;
 
@@ -52,13 +50,11 @@ public class OSMHandler extends DefaultHandler {
             case "way":
                 way = new OSMWay();
                 type = OSMWayType.UNKNOWN;
-                level = ZoomLevel.SIX;
                 idToWay.put(Long.parseLong(attributes.getValue("id")), way);
                 break;
             case "relation":
                 relation = new OSMRelation();
                 type = OSMWayType.UNKNOWN;
-                level = ZoomLevel.SIX;
                 break;
             case "member":
                 OSMWay w = idToWay.get(Long.parseLong(attributes.getValue("ref")));
@@ -71,6 +67,12 @@ public class OSMHandler extends DefaultHandler {
                     case "highway":
                         type = OSMWayType.ROAD;
                         if (attributes.getValue("v").equals("motorway")) {
+                            type = OSMWayType.MOTORWAY;
+                        }
+                        if (attributes.getValue("v").equals("motorway_link")) {
+                            type = OSMWayType.MOTORWAY;
+                        }
+                        if (attributes.getValue("v").equals("trunk_link")) {
                             type = OSMWayType.MOTORWAY;
                         }
                         if (attributes.getValue("v").equals("primary")) {
@@ -98,8 +100,12 @@ public class OSMHandler extends DefaultHandler {
                     case "natural":
                         if (attributes.getValue("v").equals("water")) {
                             type = OSMWayType.WATER;
-                        } else if (attributes.getValue("v").equals("coastline")) {
+                        }
+                        if (attributes.getValue("v").equals("coastline")) {
                             type = OSMWayType.COASTLINE;
+                        }
+                        if (attributes.getValue("v").equals("wood")) {
+                            type = OSMWayType.FORREST;
                         }
                         break;
                     case "route":
@@ -143,6 +149,17 @@ public class OSMHandler extends DefaultHandler {
                         if (attributes.getValue("v").equals("cemetery")) {
                             type = OSMWayType.CEMETERY;
                         }
+                        if (attributes.getValue("v").equals("grass")) {
+                            type = OSMWayType.GRASS;
+                        }
+                        break;
+                    case "aeroway":
+                        if (attributes.getValue("v").equals("aerodrome")) {
+                            type = OSMWayType.AEROWAY;
+                        }
+                        if (attributes.getValue("v").equals("runway")) {
+                            type = OSMWayType.RUNWAY;
+                        }
                         break;
                     case "place":
                         if (attributes.getValue("v").equals("island")) {
@@ -161,6 +178,11 @@ public class OSMHandler extends DefaultHandler {
                         type = OSMWayType.BARRIER;
                         if (attributes.getValue("v").equals("hedge")) {
                             type = OSMWayType.HEDGE;
+                        }
+                        break;
+                    case "waterway":
+                        if (attributes.getValue("v").equals("drain")) {
+                            type = OSMWayType.DRAIN;
                         }
                         break;
                     case "addr:street":
@@ -365,6 +387,8 @@ public class OSMHandler extends DefaultHandler {
             case PLAYGROUND:
             case CEMETERY:
             case PLACE_OF_WORSHIP:
+            case AEROWAY:
+            case GRASS:
                 mapModel.add(type, new MapElement(path, type,  true));
                 break;
 
@@ -382,9 +406,10 @@ public class OSMHandler extends DefaultHandler {
             case UNKNOWN:
             case BARRIER:
             case HEDGE:
-                mapModel.add(type, new MapElement(path, type,  false));
+            case DRAIN:
+            case RUNWAY:
+                mapModel.add(type, new MapElement(path, type, false));
                 break;
-
             default:
                 break;
         }

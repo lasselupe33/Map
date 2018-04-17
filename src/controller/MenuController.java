@@ -36,15 +36,31 @@ public class MenuController {
 
     public void standardMode() {
         mode = ColorMap.Mode.STANDARD;
+        CanvasController.repaintMap();
     }
 
-    public void colorBlindMode() {
-        mode = ColorMap.Mode.COLORBLIND;
+    public void protanopiaMode() {
+        mode = ColorMap.Mode.PROTANOPIA;
+        CanvasController.repaintMap();
+    }
+
+    public void deuteranopiaMode() {
+        mode = ColorMap.Mode.DEUTERANOPIA;
+        CanvasController.repaintMap();
+    }
+
+    public void tritanopiaMode() {
+        mode = ColorMap.Mode.TRITANOPIA;
+        CanvasController.repaintMap();
+    }
+
+    public void grayscaleMode() {
+        mode = ColorMap.Mode.GRAYSCALE;
+        CanvasController.repaintMap();
     }
 
     public static ColorMap.Mode getMode() {
         return mode;
     }
-
 
 }

@@ -32,6 +32,7 @@ public class DeserializeObject implements Runnable {
     }
 
     public void run() {
+        
         if (names.length == 1) {
             loadSingleObject();
         } else {

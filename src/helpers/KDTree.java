@@ -98,19 +98,18 @@ public class KDTree implements Serializable {
         List<MapElement> listRight = new ArrayList<>();
 
 
-            for(int i = 0; i < list.size(); i++) {
-                MapElement s = list.get(i);
+        for(int i = 0; i < list.size(); i++) {
+            MapElement s = list.get(i);
 
-                    if (splitLine.intersects(s.getBounds())) {
-                        listLeft.add(s);
-                        listRight.add(s);
-                    } else if (i < median) {
-                        listLeft.add(s);
-                    } else {
-                        listRight.add(s);
-                    }
-
+            if (splitLine.intersects(s.getBounds())) {
+                listLeft.add(s);
+                listRight.add(s);
+            } else if (i < median) {
+                listLeft.add(s);
+            } else {
+                listRight.add(s);
             }
+        }
 
         Node x = new Node(split);
         x.leftChild = buildTree(listLeft, depth + 1);
@@ -125,11 +124,11 @@ public class KDTree implements Serializable {
     public List<MapElement> searchTree(Point2D p0, Point2D p1, int level){
         int depth = 0;
         Node root = getRoot(level);
-        if ( root == null ) return Collections.EMPTY_LIST;
         return searchTree(root, p0, p1, depth);
     }
 
     private List<MapElement> searchTree(Node x, Point2D p0, Point2D p1, int depth){
+
         List<MapElement> list = new ArrayList<>();
 
         if(x.value != null) return x.value;

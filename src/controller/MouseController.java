@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Point2D;
+import java.util.Timer;
 
 import static java.lang.Math.pow;
 /**
@@ -18,6 +19,7 @@ public class MouseController extends MouseAdapter {
     private CanvasView canvas;
     private CanvasController canvasController;
     private Point2D lastMousePosition;
+    private static Thread t;
 
     public MouseController(CanvasView c, CanvasController cc) {
         canvas = c;
@@ -39,6 +41,7 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseDragged(MouseEvent e) {
+        if (t != null) t.interrupt();
         canvas.requestFocus();
         Point2D currentMousePosition = e.getPoint();
         double dx = currentMousePosition.getX() - lastMousePosition.getX();
@@ -71,8 +74,26 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
+        if (t != null) t.interrupt();
         canvas.requestFocus();
         double factor = pow(1/1.1, e.getWheelRotation());
         canvasController.zoom(factor, -e.getX(), -e.getY());
+    }
+
+    public void mouseReleased(MouseEvent e){
+        thread();
+    }
+
+
+    public static void thread(){
+        t = new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) { }
+                CanvasController.getInstance().updateMap();
+            }
+        };
+        t.start();
     }
 }
