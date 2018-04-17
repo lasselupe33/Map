@@ -6,7 +6,7 @@ import java.io.Serializable;
 public class Coordinates implements Serializable {
     private Double x, y;
 
-    public Coordinates(double x, double y) {
+    public Coordinates(double y, double x) {
         this.x = x;
         this.y = y;
     }
