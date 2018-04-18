@@ -3,14 +3,11 @@ package view;
 import controller.CanvasController;
 import controller.MenuController;
 import controller.StateController;
-import controller.ViewStates;
-import model.MainModel;
+import model.MetaModel;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 
 /**
  * This class creates the main window to display the map in.
@@ -19,7 +16,7 @@ public class MainWindowView {
     private JFrame window;
     public JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
-    private MainModel mainModel;
+    private MetaModel metaModel;
     private CanvasView canvasView;
     private CanvasController canvasController;
     private AddressView addressView;
@@ -33,7 +30,7 @@ public class MainWindowView {
 
     public MainWindowView(
             CanvasView cv,
-            MainModel m,
+            MetaModel m,
             CanvasController cc,
             MenuController mc,
             AddressView av,
@@ -46,7 +43,7 @@ public class MainWindowView {
     ) {
         menuController = mc;
         canvasView = cv;
-        mainModel = m;
+        metaModel = m;
         canvasController = cc;
         addressView = av;
         searchBox = sb;
@@ -81,8 +78,8 @@ public class MainWindowView {
         height = window.getContentPane().getHeight();
         int offsetX = (window.getContentPane().getWidth() - height) / 2;
 
-        canvasController.pan(-mainModel.getMinLon(), -mainModel.getMaxLat());
-        canvasController.zoom(height / (mainModel.getMaxLon() - mainModel.getMinLon()), 0, 0);
+        canvasController.pan(-metaModel.getMinLon(), -metaModel.getMaxLat());
+        canvasController.zoom(height / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
 
         // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
         canvasController.pan(offsetX, 0);

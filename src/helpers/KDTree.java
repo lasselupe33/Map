@@ -14,33 +14,46 @@ import model.Address;
 import model.Coordinates;
 import model.MapElement;
 
-public class KDTree<Value extends Coordinates> implements Serializable {
+public class KDTree<Value extends Coordinates> implements Externalizable {
     private double maxLat, minLat, maxLon, minLon;
     private Node root;
-    private HashMap<Coordinates, String> addresses;
-
 
     public static class Comparators {
         static final Comparator<Coordinates> X_COMPARATOR = Comparator.comparing(Coordinates::getX);
         static final Comparator<Coordinates> Y_COMPARATOR = Comparator.comparing(Coordinates::getY);
     }
 
-    public class Node implements Serializable {
+    public static class Node<Value extends Coordinates> implements Externalizable {
         private List<Value> valueList;
         private double split;
         private Node leftChild, rightChild;
 
-
-        Node(double spl){
+        public Node() {}
+        public Node(double spl){
             split = spl;
         }
-
-        Node(List<Value> val){
+        public Node(List<Value> val){
             valueList = val;
         }
 
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeObject(valueList);
+            out.writeDouble(split);
+            out.writeObject(leftChild);
+            out.writeObject(rightChild);
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            valueList = (List<Value>) in.readObject();
+            split = in.readDouble();
+            leftChild = (Node) in.readObject();
+            rightChild = (Node) in.readObject();
+        }
     }
 
+    public KDTree() {}
     public KDTree (List<Value> list, double _maxLat, double _minLat, double _maxLon, double _minLon) {
         maxLat = _maxLat;
         minLat = _minLat;
@@ -48,20 +61,9 @@ public class KDTree<Value extends Coordinates> implements Serializable {
         minLon = _minLon;
 
         root = buildTree(list);
-
-
     }
-
-    public KDTree (List<Address> addr) {
-        addresses = new HashMap<>();
-        List<Value> addressCoordinates = new ArrayList<>();
-        for (Address a : addr) {
-            Coordinates c = a.getCoordinates();
-            addresses.put(c, a.toKey());
-            addressCoordinates.add((Value) c);
-
-        }
-        root = buildTree(addressCoordinates);
+    public KDTree (List<Value> list) {
+        root = buildTree(list);
     }
 
     /**
@@ -171,7 +173,7 @@ public class KDTree<Value extends Coordinates> implements Serializable {
         return list;
     }
 
-    public String nearestNeighbour(double px, double py){
+    public Coordinates nearestNeighbour(double px, double py){
         Point2D p0 = new Point2D.Double(px, py);
         Point2D p1 = new Point2D.Double(px, py);
         List<Value> currentSearchList = searchTree(p0, p1);
@@ -186,8 +188,7 @@ public class KDTree<Value extends Coordinates> implements Serializable {
             }
         }
 
-        System.out.println("Shortest to " + addresses.get(nearestNeighbour));
-        return addresses.get(nearestNeighbour);
+        return nearestNeighbour;
     }
 
 
@@ -199,5 +200,15 @@ public class KDTree<Value extends Coordinates> implements Serializable {
     // check if depth is even
     private int axis(int depth) {
         return depth % 2;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(root);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        root = (Node) in.readObject();
     }
 }

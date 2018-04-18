@@ -3,22 +3,17 @@ package main;
 import controller.*;
 import model.AddressesModel;
 import model.IOModel;
-import model.MainModel;
+import model.MetaModel;
 import model.MapModel;
 import view.*;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
 
 public class Main {
     // Keep references to all created classes
-    private static MainModel model;
+    private static MetaModel model;
     private static MapModel mapModel;
-    private static IOModel ioModel;
     private static MenuController mc;
     private static CanvasController cc;
     private static StateController sc;
@@ -38,48 +33,48 @@ public class Main {
     public static boolean dataLoaded = false;
     public static boolean initialRender = true;
 
-    // Debugging
-    private static long timeA;
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            System.setProperty("sun.java2d.opengl", "True");
+        System.setProperty("sun.java2d.opengl", "True");
 
-            timeA = System.currentTimeMillis();
+        // Models
+        AddressesModel addressesModel = new AddressesModel();
+        model = new MetaModel();
+        mapModel = new MapModel(model);
+        IOModel.instance.addModels(model, mapModel, addressesModel);
+        fv = new FooterView(cc);
+        IOModel.instance.addView(fv);
+        // Attempt to load binary file if it exists, else fallback to default .osm-map
+        URL binaryData;
 
-            // Models
-            AddressesModel addressesModel = new AddressesModel();
-            model = new MainModel(addressesModel);
-            mapModel = new MapModel(model);
-            // Attempt to load binary file if it exists, else fallback to default .osm-map
-            URL binaryData;
+        if (args.length == 0) {
+            binaryData = Main.class.getResource("/data/meta.bin");
 
-            if (args.length == 0) {
-                binaryData = Main.class.getResource("/data/main.bin");
-
-                if (binaryData != null) {
-                    // If binary data exists, use this.
-                    ioModel = new IOModel(model, mapModel);
-                } else {
-                    // .. else fallback to provided .zip
-                    URL data = Main.class.getResource("/data/small.zip");
-                    ioModel = new IOModel(model, mapModel, data);
-                    dataLoaded = true;
-                }
+            if (binaryData != null) {
+                // If binary data exists, use this.
+                IOModel.instance.loadFromBinary();
             } else {
-                // .. or, if arguments are supplied, always use these.
-                ioModel = new IOModel(model, mapModel, args[0]);
+                // .. else fallback to provided .zip
+                URL data = Main.class.getResource("/data/small.zip");
+                IOModel.instance.loadFromURL(data);
                 dataLoaded = true;
             }
+        } else {
+            // .. or, if arguments are supplied, always use these.
+            IOModel.instance.loadFromString(args[0]);
+            dataLoaded = true;
+        }
 
-            // Controllers
-            mc = new MenuController(model, ioModel);
-            cc = CanvasController.getInstance();
-            sc = new StateController();
-            ac = new AddressController(sc);
-            sbc = new SearchBoxController(model, sc, ac);
-            acc = new AutoCompleteController();
 
+        // Controllers
+        mc = new MenuController(model);
+        cc = CanvasController.getInstance();
+        sc = new StateController();
+        ac = new AddressController(sc);
+        sbc = new SearchBoxController(model, sc, ac, addressesModel);
+        acc = new AutoCompleteController();
+
+        // Ensure views are being invoked on proper thread!
+        SwingUtilities.invokeLater(() -> {
             // Views
             cv = new CanvasView(cc);
             cc.addDependencies(cv, mapModel, model);
@@ -87,7 +82,6 @@ public class Main {
             ac.addView(av);
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
-            fv = new FooterView(cc);
             zv = new ZoomView(cc);
             nv = new NavigationView();
             al = new AutoCompleteList(acc);
@@ -105,15 +99,14 @@ public class Main {
 
     /** Function to be run after all MVC classes have been initilized and data loaded */
     public static void run() {
-        MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, al);
+        SwingUtilities.invokeLater(() -> {
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, al);
 
-        new KeyboardController(v, cv, model, cc, ioModel);
-        new MouseController(cv, cc);
-        new ResizeController(v);
+            new KeyboardController(v, cv, model, cc);
+            new MouseController(cv, cc);
+            new ResizeController(v);
 
-        long timeB = System.currentTimeMillis();
-        System.out.println("Elapsed time:" + (timeB - timeA));
-
-        initialRender = false;
+            initialRender = false;
+        });
     }
 }

@@ -3,10 +3,8 @@ package model.osm;
 import java.util.ArrayList;
 
 public class OSMWay extends ArrayList<OSMNode>{
-    private double xCoord;
-    private double yCoord;
-
-
+    private float xCoord;
+    private float yCoord;
 
     public OSMWay() {
     }

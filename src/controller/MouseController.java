@@ -1,15 +1,11 @@
 package controller;
 
-import model.MainModel;
 import view.CanvasView;
-import view.DistanceCalculation;
 
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Point2D;
-import java.util.Timer;
 
 import static java.lang.Math.pow;
 /**
@@ -61,12 +57,12 @@ public class MouseController extends MouseAdapter {
         if (e.getClickCount() == 2) {
             canvasController.zoom(1.4, -e.getX(), -e.getY());
         }
+
         lastMousePosition = e.getPoint();
     }
 
     public void mouseMoved(MouseEvent e) {
         Point2D modelCoords = canvasController.toModelCoords(e.getPoint());
-        canvasController.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
         //System.out.println(canvasController.nearestNeighbour(modelCoords.getX(), modelCoords.getY()));
     }
 

@@ -1,7 +1,6 @@
 package controller;
 
-import model.Coordinates;
-import model.MainModel;
+import model.MetaModel;
 import model.MapElement;
 import model.MapModel;
 import view.CanvasView;
@@ -18,7 +17,7 @@ import java.util.List;
 public class CanvasController {
     private static CanvasController instance = new CanvasController();
 
-    private MainModel mainModel;
+    private MetaModel metaModel;
     private MapModel mapModel;
     private static CanvasView canvas;
     private AffineTransform transform = new AffineTransform();
@@ -36,7 +35,7 @@ public class CanvasController {
         return instance;
     }
 
-    public void addDependencies(CanvasView c, MapModel mm, MainModel m) { canvas = c; mapModel = mm; mainModel = m; }
+    public void addDependencies(CanvasView c, MapModel mm, MetaModel m) { canvas = c; mapModel = mm; metaModel = m; }
 
     /**
      * @return whether or not the view should utilise antialias
@@ -98,8 +97,8 @@ public class CanvasController {
         int offsetX = (canvas.getWidth() - height) / 2;
 
         // Pan to map
-        pan(-mainModel.getMinLon(), -mainModel.getMaxLat());
-        zoom(height / (mainModel.getMaxLon() - mainModel.getMinLon()), 0, 0);
+        pan(-metaModel.getMinLon(), -metaModel.getMaxLat());
+        zoom(height / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
 
         // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
         pan(offsetX, 0);
@@ -126,10 +125,6 @@ public class CanvasController {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public String nearestNeighbour(double px, double py) {
-        return mapModel.nearestNeighbour(px,py);
     }
 
     public static void repaintMap() {
