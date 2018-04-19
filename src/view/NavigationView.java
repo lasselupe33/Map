@@ -1,5 +1,6 @@
 package view;
 
+import controller.StateController;
 import controller.TextController;
 
 import javax.swing.*;
@@ -11,9 +12,11 @@ public class NavigationView extends JPanel {
     private int width = 450;
     private JTextField startInput;
     private JTextField endInput;
+    private StateController stateController;
 
-    public NavigationView() {
+    public NavigationView(StateController stateController) {
         // Setup view
+        this.stateController = stateController;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.WHITE);
         setOpaque(true);
@@ -102,6 +105,7 @@ public class NavigationView extends JPanel {
 
         // Start input
         startInput = new JTextField("Fra:");
+        startInput.setName(startInput.getText());
         startInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
         startInput.addFocusListener(new TextController());
         inputContainer.add(startInput);
@@ -111,6 +115,7 @@ public class NavigationView extends JPanel {
 
         // End input
         endInput = new JTextField("Til:");
+        endInput.setName(endInput.getText());
         endInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
         endInput.addFocusListener(new TextController());
         inputContainer.add(endInput);
@@ -121,6 +126,10 @@ public class NavigationView extends JPanel {
         inputContainer.add(renderMiddlePanel());
 
         return inputContainer;
+    }
+
+    public JTextField getStartInput() {
+        return startInput;
     }
 
     /**

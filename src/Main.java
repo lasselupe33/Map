@@ -25,7 +25,8 @@ public class Main {
             StateController sc = new StateController();
             AddressController ac = new AddressController(sc);
             SearchBoxController sbc = new SearchBoxController(model, sc, ac);
-            FavoriteController fc = new FavoriteController(sc);
+            NavigationController nc = new NavigationController();
+            FavoriteController fc = new FavoriteController(sc, sbc, nc);
 
             // Views
             CanvasView cv = new CanvasView(model, cc);
@@ -36,7 +37,8 @@ public class Main {
             sbc.addView(sb);
             FooterView fv = new FooterView(cc);
             ZoomView zv = new ZoomView(cc);
-            NavigationView nv = new NavigationView();
+            NavigationView nv = new NavigationView(sc);
+            nc.addView(nv);
             FavoriteView favoriteView = new FavoriteView(new Favorites(), fc);
 
 
@@ -46,6 +48,7 @@ public class Main {
             new KeyboardController(v, cv, model, cc, ioModel);
             new MouseController(cv, cc);
             new ResizeController(v);
+
         });
     }
 }
