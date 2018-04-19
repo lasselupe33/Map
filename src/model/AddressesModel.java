@@ -33,6 +33,7 @@ public class AddressesModel implements Serializable {
 
     /** Helper to add an address to the trie of addresses */
     public void add(Address address) {
+        addresses.add(address);
         searchTrie.put(address.toKey(), parsingIndex);
         coordToKeyMap.put(address.getCoordinates(), parsingIndex);
 

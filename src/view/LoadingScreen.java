@@ -11,6 +11,7 @@ public class LoadingScreen extends JFrame {
     JLabel timerLabel;
     Long startTime;
     Timer timer;
+    double currProgress = 0;
 
     public LoadingScreen() {
         super("Loading...");
@@ -56,11 +57,13 @@ public class LoadingScreen extends JFrame {
     public void updateTime() {
         DecimalFormat formatter = new DecimalFormat("#.000");
         timerLabel.setText(formatter.format((System.currentTimeMillis() - startTime) / 1000.0) + " s.");
+
+        // Emulate progress
+        updateProgress(currProgress + 0.01);
     }
 
     public void updateProgress(double progress) {
-        updateTime();
-
+        currProgress = progress;
         DecimalFormat formatter = new DecimalFormat("#.00");
         progressLabel.setText("Loading... " + formatter.format(progress) + "%");
     }
