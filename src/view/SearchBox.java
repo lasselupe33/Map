@@ -1,9 +1,7 @@
 package view;
 
-import controller.SearchBoxController;
-import controller.StateController;
-import controller.TextController;
-import controller.ViewStates;
+import controller.*;
+import javafx.scene.control.ComboBox;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -11,10 +9,12 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 
 public class SearchBox extends JPanel {
     private StateController stateController;
     private SearchBoxController searchBoxController;
+    private AutoCompleteController autoCompleteController;
     private JTextField searchInput;
     private JPanel searchContainer;
     private JPanel rightButtonContainer;
@@ -22,9 +22,10 @@ public class SearchBox extends JPanel {
     private JPanel buttonsContainer;
     private boolean initialRender = true;
 
-    public SearchBox(StateController sc, SearchBoxController sbc) {
+    public SearchBox(StateController sc, SearchBoxController sbc, AutoCompleteController acc) {
         stateController = sc;
         searchBoxController = sbc;
+        autoCompleteController = acc;
         setBackground(Color.WHITE);
         setLayout(new BorderLayout());
         setBorder(null);
@@ -100,7 +101,8 @@ public class SearchBox extends JPanel {
         searchContainer.setBorder(new CompoundBorder(border, margin));
 
         // Setup icon
-        ImageIcon icon = new ImageIcon("assets/icons/search.png");
+        URL iconURL = this.getClass().getResource("/icons/search.png");
+        ImageIcon icon = new ImageIcon(iconURL);
         JLabel iconLabel = new JLabel(icon);
         iconLabel.addMouseListener(searchBoxController);
         iconLabel.setName("search");
@@ -113,6 +115,7 @@ public class SearchBox extends JPanel {
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 14));
         searchInput.setBorder(BorderFactory.createEmptyBorder());
         searchInput.addActionListener(e -> searchBoxController.onSearchInput());
+        searchInput.addKeyListener(autoCompleteController);
         searchInput.addFocusListener(new TextController());
 
         // Add to wrapper
@@ -144,12 +147,12 @@ public class SearchBox extends JPanel {
         rightButtonContainer.setPreferredSize(new Dimension(32, 32));
 
         // Create button
-        String imageURL;
+        URL imageURL;
 
         if (stateController.getCurrentState() == ViewStates.INITIAL) {
-            imageURL = "assets/icons/navigation.png";
+            imageURL = this.getClass().getResource("/icons/navigation.png");
         } else {
-            imageURL = "assets/icons/cross.png";
+            imageURL = this.getClass().getResource("/icons/cross.png");
         }
 
         ImageIcon icon = new ImageIcon(imageURL);

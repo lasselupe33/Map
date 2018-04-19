@@ -23,10 +23,13 @@ public class AddressBuilder {
             throw new IllegalArgumentException("Cannot parse empty string " + s);
         }
 
-        final String regex = "(?:(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.]*[^\\d\\s,])\\s*(?<house>\\d+[^\\,\\s\\.]?)(?:\\,*\\s*(?<floor>[\\d^]+)\\.\\s*)?(?:(?<side>[tTmM]{1}.?[VHvhfF]{1})?\\.)?)?(?:\\,+\\s*)?(?:(?:(?<postcode>\\d{4}))?\\s+(?<city>[a-zA-ZåæøÅÆØ\\s]+))?";
+        final String regex = "(?:(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.]*[^\\d\\s,])\\s*(?<house>\\d+[^\\,\\s\\.]?)?(?:\\,*\\s*(?<floor>[\\d^]+)\\.\\s*)?(?:(?<side>[tTmM]{1}.?[VHvhfF]{1})?\\.)?)?(?:\\,+\\s*)?(?:(?:(?<postcode>\\d{4}))?(?:\\d*)\\s*(?<city>[a-zA-ZåæøÅÆØ\\s]+)?)?";
+
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(s);
+
         AddressBuilder b = new AddressBuilder();
+
         if (matcher.matches()) {
             return b.city(matcher.group("city")).
                     house(matcher.group("house")).
@@ -34,6 +37,6 @@ public class AddressBuilder {
                     street(matcher.group("street")).build();
         }
 
-        throw new IllegalArgumentException("Invalid address " + s);
+        throw new Error("Address invalid!");
     }
 }

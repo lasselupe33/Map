@@ -1,14 +1,7 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
-public class Favorites extends ArrayList<Favorite>{
-
-    public Favorites(){
-        for(int i = 0; i < 10; i++){
-            Favorite favorite = new Favorite("hjem", "ituvej 28", new Coordinates(19, 19));
-            add(favorite);
-        }
-    }
-
+public class Favorites extends HashSet<Favorite>{
+    
 }

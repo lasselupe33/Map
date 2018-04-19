@@ -2,6 +2,7 @@ package view;
 
 import controller.*;
 import model.Favorite;
+import model.Favorites;
 import model.MainModel;
 
 import javax.swing.*;
@@ -24,11 +25,14 @@ public class MainWindowView {
     private SearchBox searchBox;
     private ZoomView zoomView;
     private NavigationView navigationView;
+    private AutoCompleteList autoCompleteList;
     private StateController stateController;
     private boolean initialRender = true;
     private FooterView footerView;
     private FavoriteView favoriteView;
     private FavoriteController favoriteController;
+    private Favorites favorites;
+    private FavoritePopupView favoritePopupView;
 
     public MainWindowView(
             CanvasView cv,
@@ -42,7 +46,10 @@ public class MainWindowView {
             NavigationView nv,
             FooterView fv,
             FavoriteView favoriteView,
-            FavoriteController favoriteController
+            FavoriteController favoriteController,
+            AutoCompleteList al,
+            Favorites favorites,
+            FavoritePopupView favoritePopupView
     ) {
         menuController = mc;
         canvasView = cv;
@@ -56,6 +63,9 @@ public class MainWindowView {
         footerView = fv;
         this.favoriteView = favoriteView;
         this.favoriteController = favoriteController;
+        autoCompleteList = al;
+        this.favorites = favorites;
+        this.favoritePopupView = favoritePopupView;
 
         // Create the window
         window = new JFrame("Danmarkskort");
@@ -102,6 +112,7 @@ public class MainWindowView {
             switch (stateController.getPrevState()) {
                 case INITIAL:
                     lpane.remove(searchBox);
+                    lpane.remove(autoCompleteList);
                     break;
 
                 case ADDRESS_ENTERED:
@@ -117,10 +128,14 @@ public class MainWindowView {
                     lpane.remove(favoriteView);
                     lpane.remove(searchBox);
                     break;
+                case FAVORITES_POPUP:
+                    lpane.remove(favoritePopupView);
+                    break;
             }
         }
 
         // Rerender components
+        autoCompleteList.update();
         searchBox.update();
         addressView.update();
 
@@ -128,6 +143,7 @@ public class MainWindowView {
         switch(stateController.getCurrentState()) {
             case INITIAL:
                 lpane.add(searchBox, 2, 2);
+                lpane.add(autoCompleteList, 3, 6);
                 break;
 
             case ADDRESS_ENTERED:
@@ -144,6 +160,12 @@ public class MainWindowView {
                 lpane.add(searchBox, 2, 2);
                 lpane.add(favoriteView, 1, 5);
                 break;
+
+            case FAVORITES_POPUP:
+                favoritePopupView.addFrame(window);
+                lpane.add(favoritePopupView, 3, 7);
+                break;
+
 
             default:
                 // No other viewStates should exist!
@@ -172,6 +194,7 @@ public class MainWindowView {
         navigationView.setBounds(0, 0, 450, height);
         footerView.setBounds(0, height - 30, width, 30);
         favoriteView.setBounds(0, 0, 450, height);
+        autoCompleteList.setBounds(20, 52, 445, 150);
 
         // Update the previous state after render
         stateController.updatePrevState();
@@ -203,6 +226,14 @@ public class MainWindowView {
         // create the Show menu
         JMenu showMenu = new JMenu("Indstillinger");
         menubar.add(showMenu);
+
+        JMenuItem standardItem = new JMenuItem("Standard mode");
+        quitItem.addActionListener((ActionEvent e) -> menuController.standardMode());
+        showMenu.add(standardItem);
+
+        JMenuItem colorBlindItem = new JMenuItem("Color blind mode");
+        quitItem.addActionListener((ActionEvent e) -> menuController.colorBlindMode());
+        showMenu.add(colorBlindItem);
 
         /*
         JMenuItem pRoadItem = new JCheckBoxMenuItem("Primary roads", true);
