@@ -17,9 +17,9 @@ public class Node {
         parent = null;
     }
 
-    public double getLon() { return coords.getLon(); }
+    public double getLon() { return coords.getX(); }
 
-    public double getLat() { return coords.getLat(); }
+    public double getLat() { return coords.getY(); }
 
     public double getDistTo() { return distTo; }
 

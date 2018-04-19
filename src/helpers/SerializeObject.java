@@ -2,7 +2,7 @@ package helpers;
 
 import main.Main;
 import model.IOModel;
-import model.MapElements.MapElement;
+import model.MapElement;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
 

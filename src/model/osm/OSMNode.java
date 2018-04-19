@@ -10,8 +10,8 @@ public class OSMNode {
         coords = new Coordinates(lat, lon);
     }
 
-    public double getLon() { return coords.getLon(); }
+    public double getLon() { return coords.getX(); }
 
-    public double getLat() { return coords.getLat(); }
+    public double getLat() { return coords.getY(); }
 
 }

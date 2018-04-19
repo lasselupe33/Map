@@ -1,4 +1,4 @@
-package model.MapElements;
+package model;
 
 import model.osm.OSMWayType;
 
@@ -6,36 +6,18 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
-public class MapElement implements Serializable {
+public class MapElement extends Coordinates implements Serializable {
     private Shape shape;
-    private transient double x, y;
     private transient Rectangle2D r;
     private OSMWayType type;
     boolean shouldFill;
 
-    public MapElement(Shape s, OSMWayType t, boolean sf){
+    public MapElement(double x, double y, Shape s, OSMWayType t, boolean sf){
+        super(x, y);
         shape = s;
         type = t;
         shouldFill = sf;
         r = shape.getBounds2D();
-        x = r.getX();
-        y = r.getY();
-    }
-
-    public double getElementX(){
-        if (x == 0.0) {
-            x = getBounds().getX();
-        }
-
-        return x;
-    }
-
-    public double getElementY(){
-        if (y == 0.0) {
-            y = getBounds().getY();
-        }
-
-        return y;
     }
 
     public Rectangle2D getBounds(){

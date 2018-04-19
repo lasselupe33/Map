@@ -4,19 +4,20 @@ import java.io.Serializable;
 
 /** Simple class that contains latitude and longitude coordinates */
 public class Coordinates implements Serializable {
-    private Double lat, lon;
+    private Double x, y;
 
-    public Coordinates(double lat, double lon) {
-        this.lat = lat;
-        this.lon = lon;
+    public Coordinates(double y, double x) {
+        this.x = x;
+        this.y = y;
     }
 
     /** Getters */
-    public double getLat() {
-        return lat;
+    public double getX() {
+        return x;
     }
 
-    public double getLon() {
-        return lon;
+    public double getY() {
+        return y;
     }
+
 }
