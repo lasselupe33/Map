@@ -31,7 +31,7 @@ public class StrokeMap {
                 BasicStroke.JOIN_MITER, 1.0f, dash2, 0.0f));
         strokeMap.put(OSMWayType.TERTIARYROAD, new BasicStroke(0.00009f));
         strokeMap.put(OSMWayType.SECONDARYROAD, new BasicStroke(0.00010f));
-        strokeMap.put(OSMWayType.PEDESTRIAN, new BasicStroke(0.00010f));
+        strokeMap.put(OSMWayType.RESIDENTIAL, new BasicStroke(0.00010f));
         strokeMap.put(OSMWayType.HIGHWAY, new BasicStroke(0.00020f));
         strokeMap.put(OSMWayType.MOTORWAY, new BasicStroke(0.00025f));
         strokeMap.put(OSMWayType.TRUNK, new BasicStroke(0.00025f));
