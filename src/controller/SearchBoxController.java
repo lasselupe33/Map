@@ -5,6 +5,8 @@ import model.Address;
 import model.AddressesModel;
 import model.Coordinates;
 import model.MainModel;
+import model.graph.Graph;
+import model.graph.Node;
 import view.SearchBox;
 
 import java.awt.event.MouseAdapter;
@@ -15,11 +17,15 @@ public class SearchBoxController extends MouseAdapter {
     AddressController addressController;
     SearchBox searchBoxView;
     AddressesModel addresses;
+    Graph graph;
 
-    public SearchBoxController(MainModel m, StateController sc, AddressController ac) {
+    Node test = null;
+
+    public SearchBoxController(MainModel m, StateController sc, AddressController ac, Graph g) {
         addresses = m.getAddresses();
         addressController = ac;
         stateController = sc;
+        graph = g;
     }
 
     public void addView(SearchBox view) {
@@ -48,7 +54,18 @@ public class SearchBoxController extends MouseAdapter {
         String input = searchBoxView.getSearchInput().getText();
         Address address = AddressBuilder.parse(input);
 
+        address = addresses.get(address.toKey());
+
+        if (test == null) {
+            test = graph.getNode(address.getId());
+            System.out.println(test.getLat() + " " + test.getLon() + " " + test.getEdges().size());
+        } else {
+            graph.computePath(test, graph.getNode(address.getId()));
+        }
+
+
         // Update current address and go to addressView if address exist
+        /*
         if (addresses.contains(address)) {
             // Update address
             addressController.setCurrentAddress(address);
@@ -61,6 +78,7 @@ public class SearchBoxController extends MouseAdapter {
         } else {
             // ... else retrieve and display list of nodes that match the input.
         }
+        */
     }
 
     public void onNavigationClick() {

@@ -116,7 +116,7 @@ public class IOModel {
             CanvasController.getInstance().reset();
         } else {
             // Always save data after when a new map has been loaded
-            save();
+            // save();
         }
     }
 

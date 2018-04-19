@@ -73,7 +73,11 @@ public class OSMHandler extends DefaultHandler {
             case "tag":
                 switch (attributes.getValue("k")) {
                     case "maxspeed":
-                        speedLimit = Integer.parseInt(attributes.getValue("v"));
+                        try {
+                            speedLimit = Integer.parseInt(attributes.getValue("v"));
+                        } catch (NumberFormatException e) {
+                            // Do nothing, simply continue with unset speedLimit
+                        }
                         break;
                     case "bicycle":
                         supportsBicycles = attributes.getValue("v").equals("yes");
@@ -217,6 +221,7 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case "osm":
                 convertCoastlinesToPath();
+                graph.setNodes(idToNode);
                 mapModel.createTree();
             default:
                 break;
@@ -312,18 +317,15 @@ public class OSMHandler extends DefaultHandler {
     /** Internal helper that parses a node */
     private void parseNode(Attributes attributes) {
         // Get the lon and lat of the node
-        double lon = Double.parseDouble(attributes.getValue("lon"));
-        double lat = Double.parseDouble(attributes.getValue("lat"));
+        float lon = (float) Double.parseDouble(attributes.getValue("lon"));
+        float lat = (float) Double.parseDouble(attributes.getValue("lat"));
         long id = Long.parseLong(attributes.getValue("id"));
 
         // Add node to map
-        idToNode.put(id, lonFactor * lon, -lat);
+        idToNode.put(id, (float) lonFactor * lon, -lat);
 
         // Create temp address to be used when parsing address fields
-        currentAddress = new Address(-lat, lonFactor * lon);
-
-        // Add node to graph
-        graph.addNode(new Coordinates(-lat, lonFactor * lon), new Node(lonFactor * lon, -lat));
+        currentAddress = new Address(id, -lat, lonFactor * lon);
     }
 
     /** Helper to be called when the parser reaches the coordinates of the given OSM-file */
@@ -380,7 +382,7 @@ public class OSMHandler extends DefaultHandler {
         Node from = nodes.get(0);
         for (int i = 1; i < nodes.size(); i++) {
             Node to = nodes.get(i);
-            double length = GetDistance.inKM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
+            float length = (float) GetDistance.inKM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
             Edge edge = new Edge(from, to, length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
 
             from.addEdge(edge);
@@ -456,7 +458,6 @@ public class OSMHandler extends DefaultHandler {
 
                 addElement(OSMWayType.COASTLINE, path);
             }
-
         }
     }
 
@@ -501,6 +502,7 @@ public class OSMHandler extends DefaultHandler {
             case HEDGE:
             case DRAIN:
             case RUNWAY:
+            case TRUNK:
                 mapModel.add(type, new MapElement(rect.getX(), rect.getY(), path, type, false));
                 break;
             default:

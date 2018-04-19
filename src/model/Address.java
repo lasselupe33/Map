@@ -3,11 +3,13 @@ package model;
 import java.io.Serializable;
 
 public class Address implements Serializable {
+    private long id;
     private String street, house, postcode, city;
     private Coordinates coordinates;
 
     /** Constructor to be used while parsing OSM-files */
-    public Address(double lat, double lon) {
+    public Address(long id, double lat, double lon) {
+        this.id = id;
         this.coordinates = new Coordinates(lat, lon);
     }
 
@@ -30,6 +32,10 @@ public class Address implements Serializable {
     /** Helper that converts an address to a key to be used in the data-structure */
     public String toKey() {
         return (street + (house != null ? house : "") + (postcode != null ? postcode : "")).toLowerCase();
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String toString() {

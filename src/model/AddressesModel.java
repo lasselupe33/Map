@@ -31,6 +31,10 @@ public class AddressesModel implements Serializable {
         }
     }
 
+    public Address get(String key) {
+        return addresses.get(key);
+    }
+
     /** Helper that indicates whether or not an address exists on the map */
     public boolean contains(Address address) { return addresses.contains(address.toKey()); }
 

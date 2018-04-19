@@ -80,7 +80,7 @@ public class Main {
             cc = CanvasController.getInstance();
             sc = new StateController();
             ac = new AddressController(sc);
-            sbc = new SearchBoxController(model, sc, ac);
+            sbc = new SearchBoxController(model, sc, ac, graph);
             acc = new AutoCompleteController();
 
             // Views

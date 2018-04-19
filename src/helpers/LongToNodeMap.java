@@ -4,6 +4,7 @@ import model.graph.Node;
 
 public class LongToNodeMap {
     private N[] table;
+    private int size;
     int MASK;
 
     public LongToNodeMap(int capacity) {
@@ -11,9 +12,14 @@ public class LongToNodeMap {
         MASK = table.length - 1;
     }
 
-    public void put(long id, double lon, double lat) {
+    public int size() {
+        return size;
+    }
+
+    public void put(long id, float lon, float lat) {
         int position = Long.hashCode(id) & MASK;
         table[position] = new N(id, lon, lat, table[position]);
+        size++;
     }
 
     public N get(long id) {
@@ -30,7 +36,7 @@ public class LongToNodeMap {
         long id;
         N next;
 
-        public N(long id, double lon, double lat, N n) {
+        public N(long id, float lon, float lat, N n) {
             super(lon, lat);
             this.id = id;
             this.next = n;

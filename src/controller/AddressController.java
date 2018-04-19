@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 
 public class AddressController extends MouseAdapter {
     private StateController stateController;
-    private Address currAddress = new Address(0, 0);
+    private Address currAddress = new Address(0, 0, 0);
 
     public AddressController(StateController sc) {
         stateController = sc;
