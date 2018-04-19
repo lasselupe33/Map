@@ -2,73 +2,86 @@ package model;
 
 import controller.CanvasController;
 import helpers.OSMHandler;
-import helpers.SerializeObject;
 import main.Main;
-import org.nustaq.serialization.FSTConfiguration;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
-import view.MainWindowView;
+import view.FooterView;
+import view.LoadingScreen;
 
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.zip.ZipInputStream;
 
 public class IOModel {
-    private static final int modelsToDeserialize = 2;
-    private static int deserializedModels = 0;
-    public static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
-    private MainModel model;
-    private MapModel mapModel;
-    private MainWindowView mainView;
+    public static IOModel instance = new IOModel(); // Create an instance of the IOModel
+    private int deserializedObjects = 0;
+    private int serializedObjects = 0;
+    private int objectsToSerialize = 0;
+    private int objectsToDeserialize = 0;
+    private boolean initialLoad = true;
 
-    public IOModel(MainModel m, MapModel mm, String filename) {
+    // Models and views
+    private MetaModel model;
+    private MapModel mapModel;
+    private AddressesModel addressesModel;
+    private FooterView footerView;
+    private LoadingScreen loadingScreen;
+
+    private IOModel() {}
+
+    public void addModels(MetaModel m, MapModel mm, AddressesModel am) {
         model = m;
         mapModel = mm;
-        load(filename);
+        addressesModel = am;
     }
 
-    /** Constructor for loading a URL */
-    public IOModel(MainModel m, MapModel mm, URL filepath) {
-        model = m;
-        mapModel = mm;
+    public void addView(FooterView fv) {
+        footerView = fv;
+    }
+
+
+    public void loadFromURL(URL filepath) {
+        if (initialLoad) {
+            loadingScreen = new LoadingScreen();
+            initialLoad = false;
+        }
+
         load(filepath);
     }
 
-    /** Constructor for loading binary data */
-    public IOModel(MainModel m, MapModel mm) {
-        model = m;
-        mapModel = mm;
-        loadBinary();
-    }
-
-    public void addView(MainWindowView mv) {
-        mainView = mv;
-    }
-
-    /** Internal helper that sets up the OSMHandler and begins reading from an OSM-file */
-    public void readFromOSM(InputSource filename) {
-        try {
-            XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(new OSMHandler(model, mapModel));
-            xmlReader.parse(filename);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void loadFromString(String filename) {
+        if (initialLoad) {
+            loadingScreen = new LoadingScreen();
+            initialLoad = false;
         }
+
+        load(filename);
+    }
+
+    public void loadFromBinary() {
+        if (initialLoad) {
+            loadingScreen = new LoadingScreen();
+            initialLoad = false;
+        }
+
+        loadBinary();
     }
 
     /** Helper that serializses all models */
     public void save() {
+        // Reset serialized objects before starting
+        serializedObjects = 0;
+        objectsToSerialize = 0;
+
         model.serialize();
         mapModel.serialize();
+        addressesModel.serialize();
     }
 
     /** Load data from a string */
-    public void load(String filename) {
+    private void load(String filename) {
         try {
             load(new FileInputStream(filename), filename);
         } catch (FileNotFoundException e) {
@@ -77,7 +90,7 @@ public class IOModel {
     }
 
     /** Load data from a url */
-    public void load(URL filename) {
+    private void load(URL filename) {
         try {
             load(filename.openStream(), filename.toString());
         } catch (IOException e) {
@@ -86,7 +99,7 @@ public class IOModel {
     }
 
     /** Helper that loads OSM-data from a inputStream */
-    public void load(InputStream is, String filename) {
+    private void load(InputStream is, String filename) {
         System.out.println(filename);
 
         // Prepare models to recieve new data
@@ -110,18 +123,46 @@ public class IOModel {
             // If a new map has been loaded, then refresh the canvas.
             CanvasController.getInstance().reset();
         } else {
-            // Always save data after when a new map has been loaded
+            // Always save data after launch
             save();
+        }
+
+        loadingScreen.onLoaded();
+    }
+
+    /** Helper that loads files from binary format */
+    private void loadBinary() {
+        objectsToDeserialize = 0;
+        serializedObjects = 0;
+
+        // Deserialize models
+        model.deserialize();
+        mapModel.deserialize();
+        addressesModel.deserialize();
+    }
+
+    /** Internal helper that sets up the OSMHandler and begins reading from an OSM-file */
+    private void readFromOSM(InputSource filename) {
+        try {
+            XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+            xmlReader.setContentHandler(new OSMHandler(model, mapModel, addressesModel, loadingScreen));
+            xmlReader.parse(filename);
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    public static void serializationComplete() {
-        deserializedModels++;
+    public void onObjectDeserializationComplete() {
+        deserializedObjects++;
+        loadingScreen.updateProgress(((double) deserializedObjects / objectsToDeserialize) * 100);
 
         // Everything has been deserialized! Boot application
-        if (deserializedModels == modelsToDeserialize) {
+        if (deserializedObjects == objectsToDeserialize) {
             // Indicate that data is ready
             Main.dataLoaded = true;
+            loadingScreen.onLoaded();
 
             // If MVC has been initialized, run application!
             if (Main.hasInitialized) {
@@ -130,10 +171,18 @@ public class IOModel {
         }
     }
 
-    /** Helper that loads files from binary format */
-    private void loadBinary() {
-        // Deserialize models
-        model.deserialize();
-        mapModel.deserialize();
+    /** Function to be called once an object has serialized */
+    public void onObjectSerializationComplete() {
+        serializedObjects++;
+        footerView.updateSaveStatus(((double) serializedObjects / objectsToSerialize) * 100);
+    }
+
+    public void onDeserializeStart() {
+        objectsToDeserialize++;
+    }
+
+    /** Function to be called when a new object begins to deserialize */
+    public void onSerializationStart() {
+        objectsToSerialize++;
     }
 }

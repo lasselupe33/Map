@@ -15,30 +15,33 @@ import java.util.ArrayList;
 
 public class SerializeObject implements Runnable {
     Object toSerialize;
-    String[] names;
+    String name;
 
-    public SerializeObject(String[] names, Object toSerialize) {
+    public SerializeObject(String name, Object toSerialize) {
         this.toSerialize = toSerialize;
-        this.names = names;
+        this.name = name;
 
-        new Thread(this, "serializer-" + names[0]).start();
+        // A new serialization has been started, bump amount of serializations..
+        IOModel.instance.onSerializationStart();
+
+        // Begin serializing
+        new Thread(this, "serializer-" + name).start();
     }
 
     public void run() {
         try {
-            for (String name : names) {
-                // Setup output path
-                URL path = new URL(Main.class.getResource("/data/") + "/" + name + ".bin");
-                File file = new File(path.toURI());
-                OutputStream stream = new FileOutputStream(file);
-                FSTObjectOutput out = IOModel.conf.getObjectOutput(stream);
+            // Setup output path
+            URL path = new URL(Main.class.getResource("/data/") + "/" + name + ".bin");
+            File file = new File(path.toURI());
+            OutputStream stream = new FileOutputStream(file);
+            ObjectOutputStream out = new ObjectOutputStream(stream);
 
-                // Write given object
-                out.writeObject(toSerialize, toSerialize.getClass());
-                out.flush();
+            // Write given object
+            out.writeObject(toSerialize);
+            out.close();
 
-                stream.close();
-            }
+            // Indicate that serialization has been completed!
+            IOModel.instance.onObjectSerializationComplete();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

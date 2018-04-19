@@ -1,7 +1,7 @@
 package controller;
 
 import model.IOModel;
-import model.MainModel;
+import model.MetaModel;
 import view.CanvasView;
 import view.MainWindowView;
 
@@ -11,18 +11,16 @@ import java.awt.event.KeyEvent;
  * This controller handles keyboard events (pressed keys).
  */
 public class KeyboardController extends KeyAdapter {
-    private MainModel model;
+    private MetaModel model;
     private MainWindowView view;
     private CanvasView canvas;
     private CanvasController canvasController;
-    private IOModel ioModel;
 
-    public KeyboardController(MainWindowView v, CanvasView c, MainModel m, CanvasController cc, IOModel iom) {
+    public KeyboardController(MainWindowView v, CanvasView c, MetaModel m, CanvasController cc) {
         view = v;
         canvas = c;
         model = m;
         canvasController = cc;
-        ioModel = iom;
 
         canvas.addKeyListener(this);
     }

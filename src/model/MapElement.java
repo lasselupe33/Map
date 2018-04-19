@@ -4,14 +4,15 @@ import model.osm.OSMWayType;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
+import java.io.*;
 
-public class MapElement extends Coordinates implements Serializable {
+public class MapElement extends Coordinates implements Externalizable {
     private Shape shape;
-    private transient Rectangle2D r;
+    private Rectangle2D r;
     private OSMWayType type;
     boolean shouldFill;
 
+    public MapElement() {}
     public MapElement(double x, double y, Shape s, OSMWayType t, boolean sf){
         super(x, y);
         shape = s;
@@ -33,4 +34,22 @@ public class MapElement extends Coordinates implements Serializable {
     public boolean shouldFill() { return shouldFill; }
 
     public Shape getShape(){ return shape; }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeDouble(this.getX());
+        out.writeDouble(this.getY());
+        out.writeObject(shape);
+        out.writeObject(type);
+        out.writeBoolean(shouldFill);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        this.setX(in.readDouble());
+        this.setY(in.readDouble());
+        shape = (Shape) in.readObject();
+        type = (OSMWayType) in.readObject();
+        shouldFill = in.readBoolean();
+    }
 }

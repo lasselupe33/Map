@@ -2,18 +2,15 @@ package controller;
 
 import helpers.ColorMap;
 import model.IOModel;
-import model.MainModel;
-import view.MainWindowView;
+import model.MetaModel;
 
 import javax.swing.*;
 
 public class MenuController {
     private static ColorMap.Mode mode;
-    private IOModel ioModel;
 
-    public MenuController(MainModel m, IOModel iom) {
+    public MenuController(MetaModel m) {
         mode = ColorMap.Mode.STANDARD;
-        ioModel = iom;
     }
     
      public void load(JFrame window) {
@@ -22,7 +19,7 @@ public class MenuController {
          fileChooser.setCurrentDirectory(new java.io.File("."));
 
          if (fileChooser.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
-             ioModel.load(fileChooser.getSelectedFile().toString());
+             IOModel.instance.loadFromString(fileChooser.getSelectedFile().toString());
          }
      }
 

@@ -1,16 +1,13 @@
 package helpers;
 
-import main.Main;
-import model.Address;
-import model.MainModel;
-import model.MapElement;
-import model.MapModel;
+import model.*;
 import model.osm.OSMNode;
 import model.osm.OSMRelation;
 import model.osm.OSMWay;
 import model.osm.OSMWayType;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
+import view.LoadingScreen;
 
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
@@ -20,13 +17,18 @@ public class OSMHandler extends DefaultHandler {
     LongToOSMNodeMap idToNode = new LongToOSMNodeMap(25);
     Map<Long, OSMWay> idToWay = new HashMap<>();
     HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
-    OSMWay way;
-    MainModel model;
-    MapModel mapModel;
     private double lonFactor;
+
+    // Models
+    OSMWay way;
+    MetaModel model;
+    MapModel mapModel;
+    AddressesModel addressesModel;
     private OSMWayType type;
     private OSMRelation relation;
 
+    // Views
+    LoadingScreen loadingScreen;
 
     // Fields related to created addresses
     private Address currentAddress;
@@ -34,9 +36,16 @@ public class OSMHandler extends DefaultHandler {
     private String house_no;
     private String postcode;
 
-    public OSMHandler(MainModel m, MapModel mm) {
+    // Loading related fields
+    private boolean reachedAddress = false;
+    private boolean reachedWays = false;
+    private boolean reachedRelations = false;
+
+    public OSMHandler(MetaModel m, MapModel mm, AddressesModel am, LoadingScreen ls) {
         model = m;
         mapModel = mm;
+        addressesModel = am;
+        loadingScreen = ls;
     }
 
     @Override
@@ -227,8 +236,14 @@ public class OSMHandler extends DefaultHandler {
                 createRelation();
                 break;
             case "osm":
+                loadingScreen.updateProgress(87.881);
                 convertCoastlinesToPath();
-                mapModel.createTree();
+
+                loadingScreen.updateProgress(92.963);
+                mapModel.createTrees();
+
+                loadingScreen.updateProgress(96.345);
+                addressesModel.createTree();
             default:
                 break;
         }
@@ -275,6 +290,11 @@ public class OSMHandler extends DefaultHandler {
 
     /** Internal helper that creates an address */
     private void createAddress() {
+        if (!reachedAddress) {
+            loadingScreen.updateProgress(7.254);
+            reachedAddress = true;
+        }
+
         // Create address of node if possible
         if (street == null) {
             // Bail out if street doesn't exist.
@@ -286,23 +306,31 @@ public class OSMHandler extends DefaultHandler {
         currentAddress.setAddress(street, house_no, postcode);
 
         // Add address to data-model
-        model.getAddresses().add(currentAddress);
+        addressesModel.add(currentAddress);
 
         // Reset fields
         street = house_no = postcode = null;
-        mapModel.addAddress(currentAddress);
     }
 
     /** Internal helper that creates a way when called (i.e. when the parser reaches the end of a way */
     private void createWay(OSMWay way) {
-        Path2D path = convertWayToPath(new Path2D.Double(), way);
+        if (!reachedWays) {
+            loadingScreen.updateProgress(74.278);
+            reachedWays = true;
+        }
 
+        Path2D path = convertWayToPath(new Path2D.Float(), way);
         addElement(type, path);
     }
 
     /** Internal helper that creates a relation when called (i.e. when the parser reaches the end of a relation */
     private void createRelation() {
-        Path2D path = new Path2D.Double();
+        if (!reachedRelations) {
+            loadingScreen.updateProgress(85.215);
+            reachedRelations = true;
+        }
+
+        Path2D path = new Path2D.Float();
 
         for (OSMWay way : relation) {
             path = convertWayToPath(path, way);
@@ -354,7 +382,7 @@ public class OSMHandler extends DefaultHandler {
         for (Map.Entry<OSMNode, OSMWay> coastline : coastlines.entrySet()) {
             OSMWay way = coastline.getValue();
             if (coastline.getKey() == way.from()) {
-                path = new Path2D.Double();
+                path = new Path2D.Float();
                 path.setWindingRule(Path2D.WIND_EVEN_ODD);
                 node = way.get(0);
                 path.moveTo(node.getLon(), node.getLat());
@@ -366,11 +394,8 @@ public class OSMHandler extends DefaultHandler {
 
                 addElement(OSMWayType.COASTLINE, path);
             }
-
         }
     }
-
-
 
     private void addElement(OSMWayType type, Path2D path) {
         Rectangle2D rect = path.getBounds2D();
