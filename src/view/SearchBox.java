@@ -18,6 +18,8 @@ public class SearchBox extends JPanel {
     private JTextField searchInput;
     private JPanel searchContainer;
     private JPanel rightButtonContainer;
+    private JPanel favoriteButtonContainer;
+    private JPanel buttonsContainer;
     private boolean initialRender = true;
 
     public SearchBox(StateController sc, SearchBoxController sbc, AutoCompleteController acc) {
@@ -35,24 +37,47 @@ public class SearchBox extends JPanel {
     public void update() {
         // Remove components if necessary
         if (!initialRender) {
-            if (stateController.getPrevState() != ViewStates.NAVIGATION_ACTIVE) {
-                remove(searchContainer);
+            switch(stateController.getPrevState()){
+                case INITIAL:
+                    remove(searchContainer);
+                    remove(buttonsContainer);
+                    break;
+                case ADDRESS_ENTERED:
+                    remove(searchContainer);
+                    remove(buttonsContainer);
+                    break;
+                case NAVIGATION_ACTIVE:
+                    remove(buttonsContainer);
+                    break;
+                case FAVORITES:
+                    remove(rightButtonContainer);
+                    break;
             }
-
-            remove(rightButtonContainer);
         } else {
             initialRender = false;
         }
 
         // Add required components and update bounds
-        if (stateController.getCurrentState() != ViewStates.NAVIGATION_ACTIVE) {
-            add(createSearchInput(), BorderLayout.WEST);
-            setBounds(20, 20, 445, 32);
-        } else {
-            setBounds(433, 20, 32, 32);
+        switch(stateController.getCurrentState()){
+            case INITIAL:
+                add(createSearchInput(), BorderLayout.WEST);
+                setBounds(20, 20, 477, 32);
+                add(createButtons(), BorderLayout.EAST);
+                break;
+            case ADDRESS_ENTERED:
+                add(createSearchInput(), BorderLayout.WEST);
+                setBounds(20, 20, 477, 32);
+                add(createButtons(), BorderLayout.EAST);
+                break;
+            case NAVIGATION_ACTIVE:
+                setBounds(433, 20, 64, 32);
+                add(createButtons(), BorderLayout.EAST);
+                break;
+            case FAVORITES:
+                setBounds(433, 20, 32, 32);
+                add(createRightButton(), BorderLayout.EAST);
+                break;
         }
-
-        add(createRightButton(), BorderLayout.EAST);
     }
 
     public JTextField getSearchInput() {
@@ -63,7 +88,7 @@ public class SearchBox extends JPanel {
      * Helper that creates the searchInput alongside required buttons.
      */
     public JPanel createSearchInput() {
-        // Setup wrapper
+        // Setup wrapper`
         searchContainer = new JPanel();
         searchContainer.setPreferredSize(new Dimension(415, 32));
         searchContainer.setLayout(new BorderLayout());
@@ -85,6 +110,7 @@ public class SearchBox extends JPanel {
 
         // Setup search input
         searchInput = new JTextField("Søg..");
+        searchInput.setName(searchInput.getText());
         searchInput.setPreferredSize(new Dimension(360, searchInput.getHeight()));
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 14));
         searchInput.setBorder(BorderFactory.createEmptyBorder());
@@ -97,6 +123,17 @@ public class SearchBox extends JPanel {
         searchContainer.add(iconLabel, BorderLayout.EAST);
 
         return searchContainer;
+    }
+
+    public JPanel createButtons() {
+     buttonsContainer = new JPanel();
+     buttonsContainer.setOpaque(false);
+     buttonsContainer.setLayout(new BorderLayout());
+     buttonsContainer.setPreferredSize(new Dimension(64, 60));
+     buttonsContainer.add(createRightButton(), BorderLayout.WEST);
+     buttonsContainer.add(createFavoriteButton(), BorderLayout.EAST);
+
+     return buttonsContainer;
     }
 
     /**
@@ -130,5 +167,27 @@ public class SearchBox extends JPanel {
 
         return rightButtonContainer;
     }
+    public JPanel createFavoriteButton() {
+        // Setup wrapper panel
+        favoriteButtonContainer = new JPanel();
+        favoriteButtonContainer.setOpaque(false);
+        favoriteButtonContainer.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#383838")));
+        favoriteButtonContainer.setPreferredSize(new Dimension(32, 32));
+
+        // Create button
+        URL imageURL = this.getClass().getResource("/icons/favorite.png");
+        ImageIcon icon = new ImageIcon(imageURL);
+        JLabel iconLabel = new JLabel(icon);
+        iconLabel.setVerticalAlignment(JLabel.CENTER);
+        iconLabel.setPreferredSize(new Dimension(26, 20));
+        iconLabel.addMouseListener(searchBoxController);
+        iconLabel.setName("favoriteButton");
+        iconLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        favoriteButtonContainer.add(iconLabel);
+
+        return favoriteButtonContainer;
+    }
+
 }
 

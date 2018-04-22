@@ -1,31 +1,32 @@
 package view;
 
-import controller.CanvasController;
+import controller.MapController;
 import helpers.ColorMap;
 import helpers.StrokeMap;
-import model.MainModel;
-import model.MapElements.MapElement;
-import model.osm.OSMWayType;
+import model.MapElement;
+import model.WayType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 
 /**
  * This view draws the map.
  */
 public class CanvasView extends JComponent {
-    private CanvasController controller;
+    private MapController controller;
 
-    public CanvasView(CanvasController c) {
+
+    public CanvasView(MapController c) {
         controller = c;
         setFocusable(true);
     }
 
+
+
     /**
      * Draw map.
+     *
      * @param _g Graphics
      */
     @Override
@@ -35,7 +36,7 @@ public class CanvasView extends JComponent {
         Rectangle2D viewRect = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
 
         g.setStroke(new BasicStroke(Float.MIN_VALUE));
-        g.setPaint(ColorMap.getColor(OSMWayType.WATER));
+        g.setPaint(ColorMap.getColor(WayType.WATER));
         g.fill(viewRect);
         g.transform(controller.getTransform());
 
@@ -46,10 +47,10 @@ public class CanvasView extends JComponent {
 
         viewRect = controller.getModelViewRect();
 
-        for (MapElement m : controller.getMapData()){
+        for (MapElement m : controller.getMapData()) {
             if (m.getShape().intersects(viewRect)) {
                 g.setPaint(ColorMap.getColor(m.getType()));
-                if (m.shouldFill()){
+                if (m.shouldFill()) {
                     g.setStroke(new BasicStroke(Float.MIN_VALUE));
                     g.fill(m.getShape());
                 } else {
@@ -58,5 +59,6 @@ public class CanvasView extends JComponent {
                 }
             }
         }
+
     }
 }

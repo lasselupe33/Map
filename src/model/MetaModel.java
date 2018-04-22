@@ -1,27 +1,19 @@
 package model;
 
+import helpers.io.IOHandler;
 import main.Main;
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 
-public class MainModel implements Serializable{
-    private AddressesModel addresses;
+/** This model contains required metadata of the application such as minLat and maxLat */
+public class MetaModel implements Serializable{
     private double minLat, minLon, maxLat, maxLon;
 
-    public MainModel(AddressesModel am){
-        addresses = am;
-    }
+    public MetaModel(){}
 
     /** Getters */
-    public AddressesModel getAddresses() {
-        return addresses;
-    }
-
     public double getMinLat() {
         return minLat;
     }
@@ -39,10 +31,6 @@ public class MainModel implements Serializable{
     }
 
     /** Setters */
-    public void setAddresses(AddressesModel addresses) {
-        this.addresses = addresses;
-    }
-
     public void setMinLat(double minLat){this.minLat = minLat;}
 
     public void setMinLon(double minLon){this.minLon = minLon;}
@@ -51,19 +39,19 @@ public class MainModel implements Serializable{
 
     public void setMaxLon(double maxLon){this.maxLon = maxLon;}
 
-    /** Internal helper the serializses the MainModel */
+    /** Internal helper the serializses the MetaModel */
     public void serialize() {
         try {
-            URL path = Main.class.getResource("/data/main.bin");
+            URL path = new URL(IOHandler.externalRootPath + "/data/meta.bin");
             File file = new File(path.toURI());
             OutputStream stream = new FileOutputStream(file);
-            FSTObjectOutput out = new FSTObjectOutput(stream);
+            ObjectOutputStream out = new ObjectOutputStream(stream);
 
             // Add data to model
-            out.writeObject(minLon);
-            out.writeObject(minLat);
-            out.writeObject(maxLon);
-            out.writeObject(maxLat);
+            out.writeDouble(minLon);
+            out.writeDouble(minLat);
+            out.writeDouble(maxLon);
+            out.writeDouble(maxLat);
             out.close();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -76,29 +64,32 @@ public class MainModel implements Serializable{
         }
     }
 
-    /** Internal helper that deserializses the MainModel */
+    /** Internal helper that deserializses the MetaModel */
     public void deserialize() {
         try {
-            URL path = Main.class.getResource("/data/main.bin");
-            FSTObjectInput in = new FSTObjectInput(path.openStream());
+            URL path;
+
+            // Get source
+            if (IOHandler.useExternalSource) {
+                path = new URL(IOHandler.externalRootPath + "/data/meta.bin");
+            } else {
+                path = Main.class.getResource("/data/meta.bin");
+            }
+
+            ObjectInputStream in = new ObjectInputStream(path.openStream());
 
             // Add data to model
-            minLon = (double) in.readObject();
-            minLat = (double) in.readObject();
-            maxLon = (double) in.readObject();
-            maxLat = (double) in.readObject();
+            minLon = in.readDouble();
+            minLat = in.readDouble();
+            maxLon = in.readDouble();
+            maxLat = in.readDouble();
 
             in.close();
-
-            // Indicate that deserialization has completed
-            IOModel.serializationComplete();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

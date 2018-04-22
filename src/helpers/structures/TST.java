@@ -1,6 +1,6 @@
-package helpers;
+package helpers.structures;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 /******************************************************************************
@@ -76,8 +76,7 @@ public class TST<Value> implements Serializable {
     /**
      * Initializes an empty string symbol table.
      */
-    public TST() {
-    }
+    public TST() {}
 
     /**
      * Returns the number of key-value pairs in this symbol table.

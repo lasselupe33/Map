@@ -1,6 +1,6 @@
-package helpers;
+package helpers.structures;
 
-import model.osm.OSMNode;
+import parsing.OSMNode;
 
 public class LongToOSMNodeMap {
     private Node[] table;

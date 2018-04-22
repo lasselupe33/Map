@@ -1,19 +1,17 @@
 package controller;
 
 import helpers.ColorMap;
-import model.IOModel;
-import model.MainModel;
-import view.MainWindowView;
+import helpers.io.IOHandler;
+import model.MetaModel;
+import view.LoadingScreen;
 
 import javax.swing.*;
 
 public class MenuController {
     private static ColorMap.Mode mode;
-    private IOModel ioModel;
 
-    public MenuController(MainModel m, IOModel iom) {
+    public MenuController(MetaModel m) {
         mode = ColorMap.Mode.STANDARD;
-        ioModel = iom;
     }
     
      public void load(JFrame window) {
@@ -22,12 +20,12 @@ public class MenuController {
          fileChooser.setCurrentDirectory(new java.io.File("."));
 
          if (fileChooser.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
-             ioModel.load(fileChooser.getSelectedFile().toString());
+             IOHandler.instance.loadFromString(fileChooser.getSelectedFile().toString());
          }
      }
 
     public void save() {
-        System.out.println("Save");
+        IOHandler.instance.save();
     }
 
     public void quit() {
@@ -36,15 +34,31 @@ public class MenuController {
 
     public void standardMode() {
         mode = ColorMap.Mode.STANDARD;
+        MapController.repaintMap();
     }
 
-    public void colorBlindMode() {
-        mode = ColorMap.Mode.COLORBLIND;
+    public void protanopiaMode() {
+        mode = ColorMap.Mode.PROTANOPIA;
+        MapController.repaintMap();
+    }
+
+    public void deuteranopiaMode() {
+        mode = ColorMap.Mode.DEUTERANOPIA;
+        MapController.repaintMap();
+    }
+
+    public void tritanopiaMode() {
+        mode = ColorMap.Mode.TRITANOPIA;
+        MapController.repaintMap();
+    }
+
+    public void grayscaleMode() {
+        mode = ColorMap.Mode.GRAYSCALE;
+        MapController.repaintMap();
     }
 
     public static ColorMap.Mode getMode() {
         return mode;
     }
-
 
 }

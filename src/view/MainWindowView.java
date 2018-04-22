@@ -1,16 +1,15 @@
 package view;
 
-import controller.CanvasController;
+import controller.MapController;
+import model.MetaModel;
 import controller.MenuController;
 import controller.StateController;
-import controller.ViewStates;
-import model.MainModel;
+import controller.*;
+import model.FavoritesModel;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 
 /**
  * This class creates the main window to display the map in.
@@ -19,9 +18,9 @@ public class MainWindowView {
     private JFrame window;
     public JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
-    private MainModel mainModel;
+    private MetaModel metaModel;
     private CanvasView canvasView;
-    private CanvasController canvasController;
+    private MapController mapController;
     private AddressView addressView;
     private SearchBox searchBox;
     private ZoomView zoomView;
@@ -30,11 +29,15 @@ public class MainWindowView {
     private StateController stateController;
     private boolean initialRender = true;
     private FooterView footerView;
+    private FavoriteView favoriteView;
+    private FavoriteController favoriteController;
+    private FavoritesModel favoritesModel;
+    private FavoritePopupView favoritePopupView;
 
     public MainWindowView(
             CanvasView cv,
-            MainModel m,
-            CanvasController cc,
+            MetaModel m,
+            MapController cc,
             MenuController mc,
             AddressView av,
             SearchBox sb,
@@ -42,19 +45,27 @@ public class MainWindowView {
             StateController sc,
             NavigationView nv,
             FooterView fv,
-            AutoCompleteList al
+            FavoriteView favoriteView,
+            FavoriteController favoriteController,
+            AutoCompleteList al,
+            FavoritesModel favoritesModel,
+            FavoritePopupView favoritePopupView
     ) {
         menuController = mc;
         canvasView = cv;
-        mainModel = m;
-        canvasController = cc;
+        metaModel = m;
+        mapController = cc;
         addressView = av;
         searchBox = sb;
         zoomView = zv;
         stateController = sc;
         navigationView = nv;
         footerView = fv;
+        this.favoriteView = favoriteView;
+        this.favoriteController = favoriteController;
         autoCompleteList = al;
+        this.favoritesModel = favoritesModel;
+        this.favoritePopupView = favoritePopupView;
 
         // Create the window
         window = new JFrame("Danmarkskort");
@@ -81,11 +92,11 @@ public class MainWindowView {
         height = window.getContentPane().getHeight();
         int offsetX = (window.getContentPane().getWidth() - height) / 2;
 
-        canvasController.pan(-mainModel.getMinLon(), -mainModel.getMaxLat());
-        canvasController.zoom(height / (mainModel.getMaxLon() - mainModel.getMinLon()), 0, 0);
+        mapController.pan(-metaModel.getMinLon(), -metaModel.getMaxLat());
+        mapController.zoom(height / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
 
         // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
-        canvasController.pan(offsetX, 0);
+        mapController.pan(offsetX, 0);
     }
 
     public JFrame getWindow() {
@@ -113,6 +124,13 @@ public class MainWindowView {
                     lpane.remove(searchBox);
                     lpane.remove(navigationView);
                     break;
+                case FAVORITES:
+                    lpane.remove(favoriteView);
+                    lpane.remove(searchBox);
+                    break;
+                case FAVORITES_POPUP:
+                    lpane.remove(favoritePopupView);
+                    break;
             }
         }
 
@@ -137,6 +155,17 @@ public class MainWindowView {
                 lpane.add(searchBox, 2, 2);
                 lpane.add(navigationView, 1, 4);
                 break;
+
+            case FAVORITES:
+                lpane.add(searchBox, 2, 2);
+                lpane.add(favoriteView, 1, 5);
+                break;
+
+            case FAVORITES_POPUP:
+                favoritePopupView.addFrame(window);
+                lpane.add(favoritePopupView, 3, 7);
+                break;
+
 
             default:
                 // No other viewStates should exist!
@@ -164,6 +193,7 @@ public class MainWindowView {
         zoomView.setBounds(width - 100,height - 130,70,70);
         navigationView.setBounds(0, 0, 450, height);
         footerView.setBounds(0, height - 30, width, 30);
+        favoriteView.setBounds(0, 0, 450, height);
         autoCompleteList.setBounds(20, 52, 445, 150);
 
         // Update the previous state after render
@@ -197,13 +227,35 @@ public class MainWindowView {
         JMenu showMenu = new JMenu("Indstillinger");
         menubar.add(showMenu);
 
-        JMenuItem standardItem = new JMenuItem("Standard mode");
-        quitItem.addActionListener((ActionEvent e) -> menuController.standardMode());
-        showMenu.add(standardItem);
+        JMenu subShowMenu = new JMenu("Farveindstillinger");
+        showMenu.add(subShowMenu);
+        ButtonGroup colorGroup = new ButtonGroup();
 
-        JMenuItem colorBlindItem = new JMenuItem("Color blind mode");
-        quitItem.addActionListener((ActionEvent e) -> menuController.colorBlindMode());
-        showMenu.add(colorBlindItem);
+        JMenuItem standardItem = new JRadioButtonMenuItem("Standard");
+        standardItem.addActionListener((ActionEvent e) -> menuController.standardMode());
+        standardItem.setSelected(true);
+        colorGroup.add(standardItem);
+        subShowMenu.add(standardItem);
+
+        JMenuItem protanopiaItem = new JRadioButtonMenuItem("Rødblind (Protanopia)");
+        protanopiaItem.addActionListener((ActionEvent e) -> menuController.protanopiaMode());
+        colorGroup.add(protanopiaItem);
+        subShowMenu.add(protanopiaItem);
+
+        JMenuItem deuteranopiaItem = new JRadioButtonMenuItem("Grønblind (Deuteranopia)");
+        deuteranopiaItem.addActionListener((ActionEvent e) -> menuController.deuteranopiaMode());
+        colorGroup.add(deuteranopiaItem);
+        subShowMenu.add(deuteranopiaItem);
+
+        JMenuItem tritanopiaItem = new JRadioButtonMenuItem("Blåblind (Tritanopia)");
+        tritanopiaItem.addActionListener((ActionEvent e) -> menuController.tritanopiaMode());
+        colorGroup.add(tritanopiaItem);
+        subShowMenu.add(tritanopiaItem);
+
+        JMenuItem grayscaleItem = new JRadioButtonMenuItem("Gråskala");
+        grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());
+        colorGroup.add(grayscaleItem);
+        subShowMenu.add(grayscaleItem);
 
         /*
         JMenuItem pRoadItem = new JCheckBoxMenuItem("Primary roads", true);
