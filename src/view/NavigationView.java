@@ -160,7 +160,8 @@ public class NavigationView extends JPanel {
         switchAndSubmitPanel.setLayout(new BorderLayout());
 
         //SwitchFromTo button
-        ImageIcon switchIcon = new ImageIcon("assets/icons/arrow.jpg");
+        URL switchURL = this.getClass().getResource("/icons/arrow.jpg");
+        ImageIcon switchIcon = new ImageIcon(switchURL);
         JButton switchFromTo = new JButton(switchIcon);
         //switchFromTo.setForeground(Color.decode("#4285F4"));
         switchFromTo.setBackground(Color.WHITE);
