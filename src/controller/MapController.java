@@ -84,8 +84,8 @@ public class MapController {
      * Helper that updates the list of mapElements to be rendered, based on the current transform.
      */
     public void updateMap(){
-        Point2D p0 = new Point2D.Double(0,0);
-        Point2D p1 = new Point2D.Double(canvas.getWidth(), canvas.getHeight());
+        Point2D p0 = toModelCoords(new Point2D.Double(0,0));
+        Point2D p1 = toModelCoords(new Point2D.Double(canvas.getWidth(), canvas.getHeight()));
 
         int i = 0;
         List<MapElement> tmpList = new ArrayList<>();
