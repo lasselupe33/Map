@@ -1,20 +1,15 @@
 package model;
 
 import main.Main;
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
-
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 
+/** This model contains required metadata of the application such as minLat and maxLat */
 public class MetaModel implements Serializable{
     private double minLat, minLon, maxLat, maxLon;
 
-    public MetaModel(){
-
-    }
+    public MetaModel(){}
 
     /** Getters */
     public double getMinLat() {

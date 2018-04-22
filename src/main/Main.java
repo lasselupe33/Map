@@ -1,10 +1,7 @@
 package main;
 
 import controller.*;
-import model.AddressesModel;
-import model.IOModel;
-import model.MetaModel;
-import model.MapModel;
+import model.*;
 import view.*;
 
 import javax.swing.*;
@@ -14,12 +11,15 @@ public class Main {
     // Keep references to all created classes
     private static MetaModel model;
     private static MapModel mapModel;
+    private static Favorites favoritesModel;
     private static MenuController mc;
     private static CanvasController cc;
     private static StateController sc;
     private static AddressController ac;
     private static SearchBoxController sbc;
     private static AutoCompleteController acc;
+    private static FavoriteController fc;
+    private static NavigationController nc;
     private static CanvasView cv;
     private static AddressView av;
     private static SearchBox sb;
@@ -27,6 +27,8 @@ public class Main {
     private static ZoomView zv;
     private static NavigationView nv;
     private static AutoCompleteList al;
+    private static FavoriteView fav;
+    private static FavoritePopupView favp;
 
     // Boolean to ensure application won't be booted twice
     public static boolean hasInitialized = false;
@@ -41,8 +43,12 @@ public class Main {
         model = new MetaModel();
         mapModel = new MapModel(model);
         IOModel.instance.addModels(model, mapModel, addressesModel);
+        favoritesModel = new Favorites();
+
         fv = new FooterView(cc);
         IOModel.instance.addView(fv);
+
+
         // Attempt to load binary file if it exists, else fallback to default .osm-map
         URL binaryData;
 
@@ -69,9 +75,11 @@ public class Main {
         mc = new MenuController(model);
         cc = CanvasController.getInstance();
         sc = new StateController();
-        ac = new AddressController(sc);
+        ac = new AddressController(sc, favoritesModel);
         sbc = new SearchBoxController(model, sc, ac, addressesModel);
         acc = new AutoCompleteController();
+        nc = new NavigationController();
+        fc = new FavoriteController(sc, sbc, nc);
 
         // Ensure views are being invoked on proper thread!
         SwingUtilities.invokeLater(() -> {
@@ -79,13 +87,15 @@ public class Main {
             cv = new CanvasView(cc);
             cc.addDependencies(cv, mapModel, model);
             av = new AddressView(ac);
-            ac.addView(av);
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
             zv = new ZoomView(cc);
-            nv = new NavigationView();
+            nv = new NavigationView(sc);
             al = new AutoCompleteList(acc);
+            fav = new FavoriteView(favoritesModel, fc);
+            favp = new FavoritePopupView(ac, sc);
             acc.addDependencies(al, sb, addressesModel);
+            ac.addView(av, fav);
 
             // Run application if data is ready
             if (dataLoaded) {
@@ -100,7 +110,8 @@ public class Main {
     /** Function to be run after all MVC classes have been initilized and data loaded */
     public static void run() {
         SwingUtilities.invokeLater(() -> {
-            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, al);
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, favoritesModel, favp);
+            sc.addMainView(v);
 
             new KeyboardController(v, cv, model, cc);
             new MouseController(cv, cc);
