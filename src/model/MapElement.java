@@ -1,7 +1,5 @@
 package model;
 
-import model.osm.OSMWayType;
-
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
@@ -9,11 +7,11 @@ import java.io.*;
 public class MapElement extends Coordinates implements Externalizable {
     private Shape shape;
     private Rectangle2D r;
-    private OSMWayType type;
+    private WayType type;
     boolean shouldFill;
 
     public MapElement() {}
-    public MapElement(double x, double y, Shape s, OSMWayType t, boolean sf){
+    public MapElement(double x, double y, Shape s, WayType t, boolean sf){
         super(x, y);
         shape = s;
         type = t;
@@ -29,7 +27,7 @@ public class MapElement extends Coordinates implements Externalizable {
         return r;
     }
 
-    public OSMWayType getType() { return type; }
+    public WayType getType() { return type; }
 
     public boolean shouldFill() { return shouldFill; }
 
@@ -49,7 +47,7 @@ public class MapElement extends Coordinates implements Externalizable {
         this.setX(in.readDouble());
         this.setY(in.readDouble());
         shape = (Shape) in.readObject();
-        type = (OSMWayType) in.readObject();
+        type = (WayType) in.readObject();
         shouldFill = in.readBoolean();
     }
 }

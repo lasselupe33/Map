@@ -1,6 +1,8 @@
 package model;
 
+import helpers.io.IOHandler;
 import main.Main;
+
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -40,7 +42,7 @@ public class MetaModel implements Serializable{
     /** Internal helper the serializses the MetaModel */
     public void serialize() {
         try {
-            URL path = Main.class.getResource("/data/meta.bin");
+            URL path = new URL(IOHandler.externalRootPath + "/data/meta.bin");
             File file = new File(path.toURI());
             OutputStream stream = new FileOutputStream(file);
             ObjectOutputStream out = new ObjectOutputStream(stream);
@@ -65,7 +67,15 @@ public class MetaModel implements Serializable{
     /** Internal helper that deserializses the MetaModel */
     public void deserialize() {
         try {
-            URL path = Main.class.getResource("/data/meta.bin");
+            URL path;
+
+            // Get source
+            if (IOHandler.useExternalSource) {
+                path = new URL(IOHandler.externalRootPath + "/data/meta.bin");
+            } else {
+                path = Main.class.getResource("/data/meta.bin");
+            }
+
             ObjectInputStream in = new ObjectInputStream(path.openStream());
 
             // Add data to model

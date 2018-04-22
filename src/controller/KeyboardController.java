@@ -1,6 +1,5 @@
 package controller;
 
-import model.IOModel;
 import model.MetaModel;
 import view.CanvasView;
 import view.MainWindowView;
@@ -14,13 +13,13 @@ public class KeyboardController extends KeyAdapter {
     private MetaModel model;
     private MainWindowView view;
     private CanvasView canvas;
-    private CanvasController canvasController;
+    private MapController mapController;
 
-    public KeyboardController(MainWindowView v, CanvasView c, MetaModel m, CanvasController cc) {
+    public KeyboardController(MainWindowView v, CanvasView c, MetaModel m, MapController cc) {
         view = v;
         canvas = c;
         model = m;
-        canvasController = cc;
+        mapController = cc;
 
         canvas.addKeyListener(this);
     }
@@ -33,25 +32,25 @@ public class KeyboardController extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyChar()) {
             case 'x':
-                canvasController.toggleAntiAliasing();
+                mapController.toggleAntiAliasing();
                 break;
             case 'w':
-                canvasController.pan(0, 10);
+                mapController.pan(0, 10);
                 break;
             case 'a':
-                canvasController.pan(10, 0);
+                mapController.pan(10, 0);
                 break;
             case 's':
-                canvasController.pan(0, -10);
+                mapController.pan(0, -10);
                 break;
             case 'd':
-                canvasController.pan(-10, 0);
+                mapController.pan(-10, 0);
                 break;
             case '+':
-                canvasController.zoomToCenter(1.1);
+                mapController.zoomToCenter(1.1);
                 break;
             case '-':
-                canvasController.zoomToCenter(1/1.1);
+                mapController.zoomToCenter(1/1.1);
                 break;
             default:
                 break;

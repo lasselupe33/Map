@@ -2,7 +2,7 @@ package view;
 
 import controller.FavoriteController;
 import model.Favorite;
-import model.Favorites;
+import model.FavoritesModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,11 +10,11 @@ import java.awt.*;
 
 public class FavoriteView extends JPanel {
     private int width = 450;
-    private Favorites favorites;
+    private FavoritesModel favoritesModel;
     private FavoriteController favoriteController;
 
-    public FavoriteView(Favorites favorites, FavoriteController favoriteController){
-        this.favorites = favorites;
+    public FavoriteView(FavoritesModel favoritesModel, FavoriteController favoriteController){
+        this.favoritesModel = favoritesModel;
         this.favoriteController = favoriteController;
         // Setup view
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -28,7 +28,7 @@ public class FavoriteView extends JPanel {
 
     public void updateFavoritesView() {
         removeAll();
-        for(Favorite favorite : favorites){
+        for(Favorite favorite : favoritesModel){
             addLabelToFavorites(favorite);
         }
     }

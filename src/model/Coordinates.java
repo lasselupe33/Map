@@ -32,6 +32,10 @@ public class Coordinates implements Externalizable {
         this.y = y;
     }
 
+    public String toString() {
+        return x + "-" + y;
+    }
+
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         x = in.readDouble();

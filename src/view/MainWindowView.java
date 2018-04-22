@@ -1,11 +1,11 @@
 package view;
 
-import controller.CanvasController;
+import controller.MapController;
 import model.MetaModel;
 import controller.MenuController;
 import controller.StateController;
 import controller.*;
-import model.Favorites;
+import model.FavoritesModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +20,7 @@ public class MainWindowView {
     private MenuController menuController;
     private MetaModel metaModel;
     private CanvasView canvasView;
-    private CanvasController canvasController;
+    private MapController mapController;
     private AddressView addressView;
     private SearchBox searchBox;
     private ZoomView zoomView;
@@ -31,13 +31,13 @@ public class MainWindowView {
     private FooterView footerView;
     private FavoriteView favoriteView;
     private FavoriteController favoriteController;
-    private Favorites favorites;
+    private FavoritesModel favoritesModel;
     private FavoritePopupView favoritePopupView;
 
     public MainWindowView(
             CanvasView cv,
             MetaModel m,
-            CanvasController cc,
+            MapController cc,
             MenuController mc,
             AddressView av,
             SearchBox sb,
@@ -48,13 +48,13 @@ public class MainWindowView {
             FavoriteView favoriteView,
             FavoriteController favoriteController,
             AutoCompleteList al,
-            Favorites favorites,
+            FavoritesModel favoritesModel,
             FavoritePopupView favoritePopupView
     ) {
         menuController = mc;
         canvasView = cv;
         metaModel = m;
-        canvasController = cc;
+        mapController = cc;
         addressView = av;
         searchBox = sb;
         zoomView = zv;
@@ -64,7 +64,7 @@ public class MainWindowView {
         this.favoriteView = favoriteView;
         this.favoriteController = favoriteController;
         autoCompleteList = al;
-        this.favorites = favorites;
+        this.favoritesModel = favoritesModel;
         this.favoritePopupView = favoritePopupView;
 
         // Create the window
@@ -92,11 +92,11 @@ public class MainWindowView {
         height = window.getContentPane().getHeight();
         int offsetX = (window.getContentPane().getWidth() - height) / 2;
 
-        canvasController.pan(-metaModel.getMinLon(), -metaModel.getMaxLat());
-        canvasController.zoom(height / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
+        mapController.pan(-metaModel.getMinLon(), -metaModel.getMaxLat());
+        mapController.zoom(height / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
 
         // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
-        canvasController.pan(offsetX, 0);
+        mapController.pan(offsetX, 0);
     }
 
     public JFrame getWindow() {
