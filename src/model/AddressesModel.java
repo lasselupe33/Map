@@ -20,7 +20,7 @@ public class AddressesModel implements Serializable {
     // Contain address specific data.
     private ArrayList<Address> addresses = new ArrayList<>();
     private TST<Integer> searchTrie = new TST<>();
-    private HashMap<Coordinates, Integer> coordToKeyMap = new HashMap<>();
+    private HashMap<String, Integer> coordToKeyMap = new HashMap<>();
     private KDTree addressTree; // Contain a reference to the tree storing all addresses
 
     public AddressesModel() {}
@@ -38,7 +38,7 @@ public class AddressesModel implements Serializable {
     public void add(Address address) {
         addresses.add(address);
         searchTrie.put(address.toKey(), parsingIndex);
-        coordToKeyMap.put(address.getCoordinates(), parsingIndex);
+        coordToKeyMap.put(address.getCoordinates().toString(), parsingIndex);
 
         parsingIndex++;
     }
@@ -83,7 +83,13 @@ public class AddressesModel implements Serializable {
 
     /** Internal helper that returns all available to the addresses */
     private ArrayList<Coordinates> getAllCoordinates() {
-        return new ArrayList<>(coordToKeyMap.keySet());
+        ArrayList<Coordinates> coordinates = new ArrayList<>();
+
+        for (Address address : addresses) {
+            coordinates.add(address.getCoordinates());
+        }
+
+        return coordinates;
     }
 
     /**
@@ -91,7 +97,7 @@ public class AddressesModel implements Serializable {
      * Used for nearest neighbour searching.
      */
     private Address addressFromCoordinate(Coordinates coord) {
-        return addresses.get(coordToKeyMap.get(coord));
+        return addresses.get(coordToKeyMap.get(coord.toString()));
     }
 
     /** Internal helper that serialises the mapModel */
@@ -136,7 +142,7 @@ public class AddressesModel implements Serializable {
                 break;
 
             case "address/coordToKeyMap":
-                coordToKeyMap = (HashMap<Coordinates, Integer>) loadedObject;
+                coordToKeyMap = (HashMap<String, Integer>) loadedObject;
                 break;
 
             case "address/TST":

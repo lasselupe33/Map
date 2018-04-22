@@ -1,10 +1,12 @@
 package model;
 
-import java.io.Serializable;
+import java.io.*;
 
-public class Address implements Serializable {
+public class Address implements Externalizable {
     private String street, house, postcode;
     private Coordinates coordinates;
+
+    public Address() {}
 
     /** Constructor to be used while parsing OSM-files */
     public Address(double lat, double lon) {
@@ -58,5 +60,20 @@ public class Address implements Serializable {
         return coordinates;
     }
 
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        street = (String) in.readObject();
+        house = (String) in.readObject();
+        postcode = (String) in.readObject();
+        coordinates = (Coordinates) in.readObject();
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(street);
+        out.writeObject(house);
+        out.writeObject(postcode);
+        out.writeObject(coordinates);
+    }
 }
 
