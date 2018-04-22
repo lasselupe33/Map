@@ -1,18 +1,10 @@
-package helpers;
+package helpers.io;
 
 import main.Main;
-import model.IOModel;
-import model.MapElement;
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
-import org.nustaq.serialization.util.FSTInputStream;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 
 public class DeserializeObject implements Runnable {
     Object callbackClass;
@@ -25,7 +17,7 @@ public class DeserializeObject implements Runnable {
         this.name = name;
 
         // A new deserialization has been started, bump amount of deserializations..
-        IOModel.instance.onDeserializeStart();
+        IOHandler.instance.onDeserializeStart();
 
         new Thread(this, "deserializer-" + name).start();
     }
@@ -42,7 +34,7 @@ public class DeserializeObject implements Runnable {
             in.close();
 
             // Indicate that deserialization has been completed!
-            IOModel.instance.onObjectDeserializationComplete();
+            IOHandler.instance.onObjectDeserializationComplete();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

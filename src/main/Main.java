@@ -1,6 +1,7 @@
 package main;
 
 import controller.*;
+import helpers.io.IOHandler;
 import model.*;
 import view.*;
 
@@ -11,9 +12,9 @@ public class Main {
     // Keep references to all created classes
     private static MetaModel model;
     private static MapModel mapModel;
-    private static Favorites favoritesModel;
+    private static FavoritesModel favoritesModelModel;
     private static MenuController mc;
-    private static CanvasController cc;
+    private static MapController cc;
     private static StateController sc;
     private static AddressController ac;
     private static SearchBoxController sbc;
@@ -42,11 +43,11 @@ public class Main {
         AddressesModel addressesModel = new AddressesModel();
         model = new MetaModel();
         mapModel = new MapModel(model);
-        IOModel.instance.addModels(model, mapModel, addressesModel);
-        favoritesModel = new Favorites();
+        IOHandler.instance.addModels(model, mapModel, addressesModel);
+        favoritesModelModel = new FavoritesModel();
 
         fv = new FooterView(cc);
-        IOModel.instance.addView(fv);
+        IOHandler.instance.addView(fv);
 
 
         // Attempt to load binary file if it exists, else fallback to default .osm-map
@@ -57,25 +58,25 @@ public class Main {
 
             if (binaryData != null) {
                 // If binary data exists, use this.
-                IOModel.instance.loadFromBinary();
+                IOHandler.instance.loadFromBinary();
             } else {
                 // .. else fallback to provided .zip
                 URL data = Main.class.getResource("/data/small.zip");
-                IOModel.instance.loadFromURL(data);
+                IOHandler.instance.loadFromURL(data);
                 dataLoaded = true;
             }
         } else {
             // .. or, if arguments are supplied, always use these.
-            IOModel.instance.loadFromString(args[0]);
+            IOHandler.instance.loadFromString(args[0]);
             dataLoaded = true;
         }
 
 
         // Controllers
         mc = new MenuController(model);
-        cc = CanvasController.getInstance();
+        cc = MapController.getInstance();
         sc = new StateController();
-        ac = new AddressController(sc, favoritesModel);
+        ac = new AddressController(sc, favoritesModelModel);
         sbc = new SearchBoxController(model, sc, ac, addressesModel);
         acc = new AutoCompleteController();
         nc = new NavigationController();
@@ -92,25 +93,26 @@ public class Main {
             zv = new ZoomView(cc);
             nv = new NavigationView(sc);
             al = new AutoCompleteList(acc);
-            fav = new FavoriteView(favoritesModel, fc);
+            fav = new FavoriteView(favoritesModelModel, fc);
             favp = new FavoritePopupView(ac, sc);
             acc.addDependencies(al, sb, addressesModel);
             ac.addView(av, fav);
 
-            // Run application if data is ready
-            if (dataLoaded) {
-                Main.run();
-            }
-
             // Indicate application MVC has been initialized
             hasInitialized = true;
+
+            // Run application if data is ready
+            if (dataLoaded) {
+                System.out.println(dataLoaded);
+                Main.run();
+            }
         });
     }
 
     /** Function to be run after all MVC classes have been initilized and data loaded */
     public static void run() {
         SwingUtilities.invokeLater(() -> {
-            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, favoritesModel, favp);
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, favoritesModelModel, favp);
             sc.addMainView(v);
 
             new KeyboardController(v, cv, model, cc);

@@ -1,21 +1,24 @@
 package controller;
 
+import helpers.GetDistance;
 import model.MetaModel;
 import model.MapElement;
 import model.MapModel;
+import model.WayType;
 import view.CanvasView;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This controller handles all logic and input related to the canvas that draws the map.
  */
-public class CanvasController {
-    private static CanvasController instance = new CanvasController();
+public class MapController {
+    private static MapController instance = new MapController();
 
     private MetaModel metaModel;
     private MapModel mapModel;
@@ -31,7 +34,7 @@ public class CanvasController {
         return transform;
     }
 
-    public static CanvasController getInstance() {
+    public static MapController getInstance() {
         return instance;
     }
 
@@ -78,12 +81,24 @@ public class CanvasController {
     public List<MapElement> getMapData() { return mapModel.getMapData(); }
 
     /**
-     * Helper that returns the corresponding model coordinates of a screen coordinate, based on the current transform.
+     * Helper that updates the list of mapElements to be rendered, based on the current transform.
      */
     public void updateMap(){
         Point2D p0 = new Point2D.Double(0,0);
         Point2D p1 = new Point2D.Double(canvas.getWidth(), canvas.getHeight());
-        mapModel.updateMap(toModelCoords(p0),toModelCoords(p1));
+
+        int i = 0;
+        List<MapElement> tmpList = new ArrayList<>();
+
+        for (WayType type : WayType.values()) {
+            if (type.getPriority() <= getZoomLevel()) {
+                tmpList.addAll(mapModel.getTree(i).searchTree(p0, p1));
+            }
+            i++;
+        }
+
+        mapModel.setMapData(tmpList);
+
         canvas.repaint();
     }
 
@@ -125,6 +140,18 @@ public class CanvasController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Internal helper that parses the current zoom level.
+     * This level will be between 1 and 500.
+     */
+    private int getZoomLevel() {
+        double currDist = GetDistance.PxToKm(100) * 10;
+        int maxDist = 510;
+
+        int zoomLevel = Math.max((int) ((maxDist - currDist)) + 1, 1);
+        return zoomLevel;
     }
 
     public static void repaintMap() {

@@ -1,9 +1,9 @@
 package model;
 
-import helpers.DeserializeObject;
-import helpers.KDTree;
-import helpers.SerializeObject;
-import helpers.TST;
+import helpers.io.DeserializeObject;
+import helpers.structures.KDTree;
+import helpers.io.SerializeObject;
+import helpers.structures.TST;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AddressesModel implements Serializable {
-    private int initializedFields = 0;
-    private final int fields = 3; // Used when deserializing data.
-
     private int parsingIndex = 0;
     private ArrayList<Address> addresses = new ArrayList<>();
     private TST<Integer> searchTrie = new TST<>();

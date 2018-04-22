@@ -1,7 +1,7 @@
 package controller;
 
 import helpers.ColorMap;
-import model.IOModel;
+import helpers.io.IOHandler;
 import model.MetaModel;
 
 import javax.swing.*;
@@ -19,12 +19,12 @@ public class MenuController {
          fileChooser.setCurrentDirectory(new java.io.File("."));
 
          if (fileChooser.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
-             IOModel.instance.loadFromString(fileChooser.getSelectedFile().toString());
+             IOHandler.instance.loadFromString(fileChooser.getSelectedFile().toString());
          }
      }
 
     public void save() {
-        System.out.println("Save");
+        IOHandler.instance.save();
     }
 
     public void quit() {
@@ -33,27 +33,27 @@ public class MenuController {
 
     public void standardMode() {
         mode = ColorMap.Mode.STANDARD;
-        CanvasController.repaintMap();
+        MapController.repaintMap();
     }
 
     public void protanopiaMode() {
         mode = ColorMap.Mode.PROTANOPIA;
-        CanvasController.repaintMap();
+        MapController.repaintMap();
     }
 
     public void deuteranopiaMode() {
         mode = ColorMap.Mode.DEUTERANOPIA;
-        CanvasController.repaintMap();
+        MapController.repaintMap();
     }
 
     public void tritanopiaMode() {
         mode = ColorMap.Mode.TRITANOPIA;
-        CanvasController.repaintMap();
+        MapController.repaintMap();
     }
 
     public void grayscaleMode() {
         mode = ColorMap.Mode.GRAYSCALE;
-        CanvasController.repaintMap();
+        MapController.repaintMap();
     }
 
     public static ColorMap.Mode getMode() {

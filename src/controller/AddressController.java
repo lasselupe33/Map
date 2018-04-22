@@ -1,11 +1,9 @@
 package controller;
 
 import model.Address;
-import model.Coordinates;
 import model.Favorite;
-import model.Favorites;
+import model.FavoritesModel;
 import view.AddressView;
-import view.FavoritePopupView;
 import view.FavoriteView;
 
 import java.awt.event.MouseAdapter;
@@ -14,12 +12,12 @@ import java.awt.event.MouseEvent;
 public class AddressController extends MouseAdapter {
     private StateController stateController;
     private Address currAddress = new Address(0, 0);
-    private Favorites favorites;
+    private FavoritesModel favoritesModel;
     private FavoriteView favoriteView;
 
-    public AddressController(StateController sc, Favorites favorites)  {
+    public AddressController(StateController sc, FavoritesModel favoritesModel)  {
         stateController = sc;
-        this.favorites = favorites;
+        this.favoritesModel = favoritesModel;
     }
 
     @Override
@@ -63,7 +61,7 @@ public class AddressController extends MouseAdapter {
 
     public void saveAddress(String name){
         Favorite newFavorite = new Favorite(name, getAddress());
-        favorites.add(newFavorite);
+        favoritesModel.add(newFavorite);
         favoriteView.updateFavoritesView();
     }
 

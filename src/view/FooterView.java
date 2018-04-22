@@ -1,19 +1,18 @@
 package view;
 
-import controller.CanvasController;
+import controller.MapController;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public class FooterView extends JPanel {
     public JLabel hoverAdress = new JLabel();
     private JLabel savingStatus = new JLabel();
     private DistanceCalculation distanceIcon;
 
-    public FooterView(CanvasController cc){
+    public FooterView(MapController cc){
         distanceIcon = new DistanceCalculation(cc);
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);

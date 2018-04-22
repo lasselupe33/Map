@@ -1,10 +1,8 @@
-package helpers;
+package parsing;
 
+import helpers.structures.LongToOSMNodeMap;
 import model.*;
-import model.osm.OSMNode;
-import model.osm.OSMRelation;
-import model.osm.OSMWay;
-import model.osm.OSMWayType;
+import model.WayType;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 import view.LoadingScreen;
@@ -24,7 +22,7 @@ public class OSMHandler extends DefaultHandler {
     MetaModel model;
     MapModel mapModel;
     AddressesModel addressesModel;
-    private OSMWayType type;
+    private WayType type;
     private OSMRelation relation;
 
     // Views
@@ -59,12 +57,12 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case "way":
                 way = new OSMWay();
-                type = OSMWayType.UNKNOWN;
+                type = WayType.UNKNOWN;
                 idToWay.put(Long.parseLong(attributes.getValue("id")), way);
                 break;
             case "relation":
                 relation = new OSMRelation();
-                type = OSMWayType.UNKNOWN;
+                type = WayType.UNKNOWN;
                 break;
             case "member":
                 OSMWay w = idToWay.get(Long.parseLong(attributes.getValue("ref")));
@@ -75,124 +73,124 @@ public class OSMHandler extends DefaultHandler {
             case "tag":
                 switch (attributes.getValue("k")) {
                     case "highway":
-                        type = OSMWayType.ROAD;
+                        type = WayType.ROAD;
                         if (attributes.getValue("v").equals("motorway")) {
-                            type = OSMWayType.MOTORWAY;
+                            type = WayType.MOTORWAY;
                         }
                         if (attributes.getValue("v").equals("motorway_link")) {
-                            type = OSMWayType.MOTORWAY;
+                            type = WayType.MOTORWAY;
                         }
                         if (attributes.getValue("v").equals("trunk_link")) {
-                            type = OSMWayType.MOTORWAY;
+                            type = WayType.MOTORWAY;
                         }
                         if (attributes.getValue("v").equals("primary")) {
-                            type = OSMWayType.HIGHWAY;
+                            type = WayType.HIGHWAY;
                         }
                         if (attributes.getValue("v").equals("secondary")) {
-                            type = OSMWayType.SECONDARYROAD;
+                            type = WayType.SECONDARYROAD;
                         }
                         if (attributes.getValue("v").equals("tertiary")) {
-                            type = OSMWayType.TERTIARYROAD;
+                            type = WayType.TERTIARYROAD;
                         }
                         if (attributes.getValue("v").equals("service")) {
-                            type = OSMWayType.SERVICE;
+                            type = WayType.SERVICE;
                         }
                         if (attributes.getValue("v").equals("path")) {
-                            type = OSMWayType.PATH;
+                            type = WayType.PATH;
                         }
                         if (attributes.getValue("v").equals("footway")) {
-                            type = OSMWayType.FOOTWAY;
+                            type = WayType.FOOTWAY;
                         }
                         if (attributes.getValue("v").equals("cycleway")) {
-                            type = OSMWayType.CYCLEWAY;
+                            type = WayType.CYCLEWAY;
                         }
                         break;
                     case "natural":
                         if (attributes.getValue("v").equals("water")) {
-                            type = OSMWayType.WATER;
+                            type = WayType.WATER;
                         }
                         if (attributes.getValue("v").equals("coastline")) {
-                            type = OSMWayType.COASTLINE;
+                            type = WayType.COASTLINE;
                         }
                         if (attributes.getValue("v").equals("wood")) {
-                            type = OSMWayType.FORREST;
+                            type = WayType.FORREST;
                         }
                         break;
                     case "route":
                         if (attributes.getValue("v").equals("ferry")) {
-                            type = OSMWayType.FERRY;
+                            type = WayType.FERRY;
                         }
                         break;
                     case "building":
-                        type = OSMWayType.BUILDING;
+                        type = WayType.BUILDING;
                         if (attributes.getValue("v").equals("church")) {
-                            type = OSMWayType.PLACE_OF_WORSHIP;
+                            type = WayType.PLACE_OF_WORSHIP;
                         }
                         break;
                     case "leisure":
                         if (attributes.getValue("v").equals("park")) {
-                            type = OSMWayType.PARK;
+                            type = WayType.PARK;
                         }
                         if (attributes.getValue("v").equals("pitch")) {
-                            type = OSMWayType.PITCH;
+                            type = WayType.PITCH;
                         }
                         if (attributes.getValue("v").equals("garden")) {
-                            type = OSMWayType.PARK;
+                            type = WayType.PARK;
                         }
                         if (attributes.getValue("v").equals("playground")) {
-                            type = OSMWayType.PLAYGROUND;
+                            type = WayType.PLAYGROUND;
                         }
                         break;
                     case "landuse":
                         if (attributes.getValue("v").equals("forest")) {
-                            type = OSMWayType.FORREST;
+                            type = WayType.FORREST;
                         }
                         if (attributes.getValue("v").equals("residential")) {
-                            type = OSMWayType.RESIDENTIAL;
+                            type = WayType.RESIDENTIAL;
                         }
                         if (attributes.getValue("v").equals("farmland")) {
-                            type = OSMWayType.FARMLAND;
+                            type = WayType.FARMLAND;
                         }
                         if (attributes.getValue("v").equals("allotments")) {
-                            type = OSMWayType.ALLOMENTS;
+                            type = WayType.ALLOMENTS;
                         }
                         if (attributes.getValue("v").equals("cemetery")) {
-                            type = OSMWayType.CEMETERY;
+                            type = WayType.CEMETERY;
                         }
                         if (attributes.getValue("v").equals("grass")) {
-                            type = OSMWayType.GRASS;
+                            type = WayType.GRASS;
                         }
                         break;
                     case "aeroway":
                         if (attributes.getValue("v").equals("aerodrome")) {
-                            type = OSMWayType.AEROWAY;
+                            type = WayType.AEROWAY;
                         }
                         if (attributes.getValue("v").equals("runway")) {
-                            type = OSMWayType.RUNWAY;
+                            type = WayType.RUNWAY;
                         }
                         break;
                     case "place":
                         if (attributes.getValue("v").equals("island")) {
-                            type = OSMWayType.PLACE;
+                            type = WayType.PLACE;
                         }
                         if (attributes.getValue("v").equals("square")) {
-                            type = OSMWayType.PEDESTRIAN;
+                            type = WayType.PEDESTRIAN;
                         }
                         break;
                     case "amenity":
                         if (attributes.getValue("v").equals("place_of_worship")) {
-                            type = OSMWayType.PLACE_OF_WORSHIP;
+                            type = WayType.PLACE_OF_WORSHIP;
                         }
                         break;
                     case "barrier":
-                        type = OSMWayType.BARRIER;
+                        type = WayType.BARRIER;
                         if (attributes.getValue("v").equals("hedge")) {
-                            type = OSMWayType.HEDGE;
+                            type = WayType.HEDGE;
                         }
                         break;
                     case "waterway":
                         if (attributes.getValue("v").equals("drain")) {
-                            type = OSMWayType.DRAIN;
+                            type = WayType.DRAIN;
                         }
                         break;
                     case "addr:street":
@@ -226,7 +224,7 @@ public class OSMHandler extends DefaultHandler {
                 createAddress();
                 break;
             case "way":
-                if (type == OSMWayType.COASTLINE) {
+                if (type == WayType.COASTLINE) {
                     handleCoastline();
                 } else {
                     createWay(way);
@@ -236,7 +234,7 @@ public class OSMHandler extends DefaultHandler {
                 createRelation();
                 break;
             case "osm":
-                loadingScreen.updateProgress(87.881);
+                loadingScreen.updateProgress(84.881);
                 convertCoastlinesToPath();
 
                 loadingScreen.updateProgress(92.963);
@@ -315,7 +313,7 @@ public class OSMHandler extends DefaultHandler {
     /** Internal helper that creates a way when called (i.e. when the parser reaches the end of a way */
     private void createWay(OSMWay way) {
         if (!reachedWays) {
-            loadingScreen.updateProgress(74.278);
+            loadingScreen.updateProgress(49.278);
             reachedWays = true;
         }
 
@@ -326,7 +324,7 @@ public class OSMHandler extends DefaultHandler {
     /** Internal helper that creates a relation when called (i.e. when the parser reaches the end of a relation */
     private void createRelation() {
         if (!reachedRelations) {
-            loadingScreen.updateProgress(85.215);
+            loadingScreen.updateProgress(76.215);
             reachedRelations = true;
         }
 
@@ -392,12 +390,12 @@ public class OSMHandler extends DefaultHandler {
                     path.lineTo(node.getLon(), node.getLat());
                 }
 
-                addElement(OSMWayType.COASTLINE, path);
+                addElement(WayType.COASTLINE, path);
             }
         }
     }
 
-    private void addElement(OSMWayType type, Path2D path) {
+    private void addElement(WayType type, Path2D path) {
         Rectangle2D rect = path.getBounds2D();
         switch (type) {
             case COASTLINE:

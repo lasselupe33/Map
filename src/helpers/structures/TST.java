@@ -1,4 +1,4 @@
-package helpers;
+package helpers.structures;
 
 import java.io.*;
 import java.util.*;

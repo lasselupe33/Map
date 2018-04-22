@@ -1,17 +1,9 @@
-package helpers;
+package helpers.io;
 
 import main.Main;
-import model.IOModel;
-import model.MapElement;
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 
 public class SerializeObject implements Runnable {
     Object toSerialize;
@@ -22,7 +14,7 @@ public class SerializeObject implements Runnable {
         this.name = name;
 
         // A new serialization has been started, bump amount of serializations..
-        IOModel.instance.onSerializationStart();
+        IOHandler.instance.onSerializationStart();
 
         // Begin serializing
         new Thread(this, "serializer-" + name).start();
@@ -41,7 +33,7 @@ public class SerializeObject implements Runnable {
             out.close();
 
             // Indicate that serialization has been completed!
-            IOModel.instance.onObjectSerializationComplete();
+            IOHandler.instance.onObjectSerializationComplete();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

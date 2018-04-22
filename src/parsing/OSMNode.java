@@ -1,4 +1,4 @@
-package model.osm;
+package parsing;
 
 public class OSMNode {
     private double lon, lat;

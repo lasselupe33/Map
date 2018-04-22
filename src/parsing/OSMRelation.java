@@ -1,4 +1,4 @@
-package model.osm;
+package parsing;
 
 import java.util.ArrayList;
 

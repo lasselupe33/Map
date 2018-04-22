@@ -1,7 +1,10 @@
-package model;
+package helpers.io;
 
-import controller.CanvasController;
-import helpers.OSMHandler;
+import controller.MapController;
+import model.AddressesModel;
+import model.MapModel;
+import model.MetaModel;
+import parsing.OSMHandler;
 import main.Main;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -14,8 +17,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.zip.ZipInputStream;
 
-public class IOModel {
-    public static IOModel instance = new IOModel(); // Create an instance of the IOModel
+public class IOHandler {
+    public static IOHandler instance = new IOHandler(); // Create an instance of the IOHandler
     private int deserializedObjects = 0;
     private int serializedObjects = 0;
     private int objectsToSerialize = 0;
@@ -29,7 +32,7 @@ public class IOModel {
     private FooterView footerView;
     private LoadingScreen loadingScreen;
 
-    private IOModel() {}
+    private IOHandler() {}
 
     public void addModels(MetaModel m, MapModel mm, AddressesModel am) {
         model = m;
@@ -121,10 +124,7 @@ public class IOModel {
 
         if (!Main.initialRender) {
             // If a new map has been loaded, then refresh the canvas.
-            CanvasController.getInstance().reset();
-        } else {
-            // Always save data after launch
-            save();
+            MapController.getInstance().reset();
         }
 
         loadingScreen.onLoaded();
@@ -160,14 +160,15 @@ public class IOModel {
 
         // Everything has been deserialized! Boot application
         if (deserializedObjects == objectsToDeserialize) {
-            // Indicate that data is ready
-            Main.dataLoaded = true;
             loadingScreen.onLoaded();
 
             // If MVC has been initialized, run application!
             if (Main.hasInitialized) {
                 Main.run();
             }
+
+            // Indicate that data is ready
+            Main.dataLoaded = true;
         }
     }
 
