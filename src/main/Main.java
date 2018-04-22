@@ -6,7 +6,11 @@ import model.*;
 import view.*;
 
 import javax.swing.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
     // Keep references to all created classes
@@ -50,20 +54,23 @@ public class Main {
         IOHandler.instance.addView(fv);
 
 
-        // Attempt to load binary file if it exists, else fallback to default .osm-map
-        URL binaryData;
-
+        // dataSource Priority:
+        // 1. Program arguments
+        // 2. (if .jar) external .bin
+        // 3. Internal .bin
         if (args.length == 0) {
-            binaryData = Main.class.getResource("/data/meta.bin");
-
-            if (binaryData != null) {
-                // If binary data exists, use this.
-                IOHandler.instance.loadFromBinary();
+            if (IOHandler.instance.isJar) {
+                try {
+                    if (Files.exists(Paths.get(new URI(IOHandler.externalRootPath + "/data")))) {
+                        IOHandler.instance.loadFromBinary(true);
+                    } else {
+                        IOHandler.instance.loadFromBinary(false);
+                    }
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
             } else {
-                // .. else fallback to provided .zip
-                URL data = Main.class.getResource("/data/small.zip");
-                IOHandler.instance.loadFromURL(data);
-                dataLoaded = true;
+                IOHandler.instance.loadFromBinary(false);
             }
         } else {
             // .. or, if arguments are supplied, always use these.

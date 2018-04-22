@@ -22,8 +22,15 @@ public class SerializeObject implements Runnable {
 
     public void run() {
         try {
+            URL path;
+
             // Setup output path
-            URL path = new URL(Main.class.getResource("/data/") + "/" + name + ".bin");
+            if (IOHandler.instance.isJar) {
+                path = new URL(IOHandler.externalRootPath + "/data/" + name + ".bin");
+            } else {
+                path = new URL(Main.class.getResource("/data/") + "/" + name + ".bin");
+            }
+
             File file = new File(path.toURI());
             OutputStream stream = new FileOutputStream(file);
             ObjectOutputStream out = new ObjectOutputStream(stream);
@@ -34,6 +41,8 @@ public class SerializeObject implements Runnable {
 
             // Indicate that serialization has been completed!
             IOHandler.instance.onObjectSerializationComplete();
+
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -43,5 +52,6 @@ public class SerializeObject implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 }

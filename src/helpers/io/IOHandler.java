@@ -14,11 +14,21 @@ import view.FooterView;
 import view.LoadingScreen;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.zip.ZipInputStream;
 
 public class IOHandler {
     public static IOHandler instance = new IOHandler(); // Create an instance of the IOHandler
+    public static URL internalRootPath;
+    public static URI externalRootPath;
+    public static boolean useExternalSource;
+    public boolean isJar = false;
+
     private int deserializedObjects = 0;
     private int serializedObjects = 0;
     private int objectsToSerialize = 0;
@@ -32,7 +42,22 @@ public class IOHandler {
     private FooterView footerView;
     private LoadingScreen loadingScreen;
 
-    private IOHandler() {}
+    /** Initialize IOHandler with reference to the rootPath */
+    private IOHandler() {
+        try {
+            internalRootPath = Main.class.getResource("");
+            externalRootPath = IOHandler.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+
+            // If program is being run from .jar, then trim the filename of the .jar out of the url.
+            if (externalRootPath.toString().endsWith(".jar")) {
+                isJar = true;
+                String[] temp = externalRootPath.toString().split("/");
+                externalRootPath = new URI(String.join("/", Arrays.copyOf(temp, temp.length - 1)));
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void addModels(MetaModel m, MapModel mm, AddressesModel am) {
         model = m;
@@ -44,16 +69,6 @@ public class IOHandler {
         footerView = fv;
     }
 
-
-    public void loadFromURL(URL filepath) {
-        if (initialLoad) {
-            loadingScreen = new LoadingScreen();
-            initialLoad = false;
-        }
-
-        load(filepath);
-    }
-
     public void loadFromString(String filename) {
         if (initialLoad) {
             loadingScreen = new LoadingScreen();
@@ -63,7 +78,9 @@ public class IOHandler {
         load(filename);
     }
 
-    public void loadFromBinary() {
+    public void loadFromBinary(boolean shouldUseExternalSource) {
+        useExternalSource = shouldUseExternalSource;
+
         if (initialLoad) {
             loadingScreen = new LoadingScreen();
             initialLoad = false;
@@ -78,6 +95,8 @@ public class IOHandler {
         serializedObjects = 0;
         objectsToSerialize = 0;
 
+
+        this.cleanDirs();
         model.serialize();
         mapModel.serialize();
         addressesModel.serialize();
@@ -88,15 +107,6 @@ public class IOHandler {
         try {
             load(new FileInputStream(filename), filename);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /** Load data from a url */
-    private void load(URL filename) {
-        try {
-            load(filename.openStream(), filename.toString());
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -125,9 +135,10 @@ public class IOHandler {
         if (!Main.initialRender) {
             // If a new map has been loaded, then refresh the canvas.
             MapController.getInstance().reset();
+        } else {
+            // Indicate that the application data has finished loading
+            loadingScreen.onLoaded();
         }
-
-        loadingScreen.onLoaded();
     }
 
     /** Helper that loads files from binary format */
@@ -154,6 +165,9 @@ public class IOHandler {
         }
     }
 
+    /**
+     * Callback to be called once an object has been successfully deserialized
+     */
     public void onObjectDeserializationComplete() {
         deserializedObjects++;
         loadingScreen.updateProgress(((double) deserializedObjects / objectsToDeserialize) * 100);
@@ -185,5 +199,38 @@ public class IOHandler {
     /** Function to be called when a new object begins to deserialize */
     public void onSerializationStart() {
         objectsToSerialize++;
+    }
+
+    private void cleanDirs() {
+        try {
+            // Attempt to delete the while data-folder recursively if exists
+            if (Files.exists(Paths.get(new URI(externalRootPath + "/data")))) {
+                Files.walkFileTree(Paths.get(new URI(externalRootPath + "/data")), new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
+                        // Delete file when found
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exception) throws IOException {
+                        // Delete folder after content has been cleared.
+                        new File(dir.toUri()).delete();
+
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            }
+
+            // Recreate folders in preparation for data storage
+            Files.createDirectory(Paths.get(new URI(externalRootPath + "/data")));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + "/data/address")));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + "/data/map")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 }

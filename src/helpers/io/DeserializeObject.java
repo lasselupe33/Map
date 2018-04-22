@@ -24,8 +24,15 @@ public class DeserializeObject implements Runnable {
 
     public void run() {
         try {
+            URL path;
+
             // Setup output path
-            URL path = Main.class.getResource("/data/" + name + ".bin");
+            if (IOHandler.useExternalSource) {
+                path = new URL(IOHandler.externalRootPath + "/data/" + name + ".bin");
+            } else {
+                path = Main.class.getResource("/data/" + name + ".bin");
+            }
+
             InputStream stream = path.openStream();
             ObjectInputStream in = new ObjectInputStream(stream);
 
