@@ -75,7 +75,6 @@ public class Main {
         } else {
             // .. or, if arguments are supplied, always use these.
             IOHandler.instance.loadFromString(args[0]);
-            dataLoaded = true;
         }
 
 
@@ -110,7 +109,6 @@ public class Main {
 
             // Run application if data is ready
             if (dataLoaded) {
-                System.out.println(dataLoaded);
                 Main.run();
             }
         });
@@ -119,6 +117,8 @@ public class Main {
     /** Function to be run after all MVC classes have been initilized and data loaded */
     public static void run() {
         SwingUtilities.invokeLater(() -> {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+
             MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, favoritesModelModel, favp);
             sc.addMainView(v);
 

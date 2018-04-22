@@ -3,6 +3,7 @@ package controller;
 import helpers.ColorMap;
 import helpers.io.IOHandler;
 import model.MetaModel;
+import view.LoadingScreen;
 
 import javax.swing.*;
 

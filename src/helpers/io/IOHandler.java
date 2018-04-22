@@ -70,21 +70,16 @@ public class IOHandler {
     }
 
     public void loadFromString(String filename) {
-        if (initialLoad) {
-            loadingScreen = new LoadingScreen();
-            initialLoad = false;
-        }
+        loadingScreen = new LoadingScreen();
+        initialLoad = false;
 
         load(filename);
     }
 
     public void loadFromBinary(boolean shouldUseExternalSource) {
         useExternalSource = shouldUseExternalSource;
-
-        if (initialLoad) {
-            loadingScreen = new LoadingScreen();
-            initialLoad = false;
-        }
+        loadingScreen = new LoadingScreen();
+        initialLoad = false;
 
         loadBinary();
     }
@@ -94,7 +89,6 @@ public class IOHandler {
         // Reset serialized objects before starting
         serializedObjects = 0;
         objectsToSerialize = 0;
-
 
         this.cleanDirs();
         model.serialize();
@@ -115,30 +109,40 @@ public class IOHandler {
     private void load(InputStream is, String filename) {
         System.out.println(filename);
 
-        // Prepare models to recieve new data
-        mapModel.reset();
+        Thread loaderThread = new Thread(() -> {
+            // Prepare models to recieve new data
+            mapModel.reset();
 
-        if (filename.endsWith(".osm")) {
-            readFromOSM(new InputSource(filename));
-        } else if (filename.endsWith(".zip")) {
-            try {
-                ZipInputStream zis = new ZipInputStream(is);
-                zis.getNextEntry();
-                readFromOSM(new InputSource(zis));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (filename.endsWith(".osm")) {
+                readFromOSM(new InputSource(filename));
+            } else if (filename.endsWith(".zip")) {
+                try {
+                    ZipInputStream zis = new ZipInputStream(is);
+                    zis.getNextEntry();
+                    readFromOSM(new InputSource(zis));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        if (!Main.initialRender) {
-            // If a new map has been loaded, then refresh the canvas.
-            MapController.getInstance().reset();
-        } else {
+            if (Main.initialRender) {
+                // If MVC is ready, then run application!
+                if (Main.hasInitialized) {
+                    Main.run();
+                }
+            } else {
+                // If a new map has been loaded, then refresh the canvas.
+                MapController.getInstance().reset();
+            }
+
             // Indicate that the application data has finished loading
             loadingScreen.onLoaded();
-        }
+            loadingScreen = null;
+        });
+
+        loaderThread.start();
     }
 
     /** Helper that loads files from binary format */
@@ -170,11 +174,19 @@ public class IOHandler {
      */
     public void onObjectDeserializationComplete() {
         deserializedObjects++;
-        loadingScreen.updateProgress(((double) deserializedObjects / objectsToDeserialize) * 100);
+
+        if (initialLoad) {
+            // Use loading screen on initial load
+            loadingScreen.updateProgress(((double) deserializedObjects / objectsToDeserialize) * 100);
+        } else {
+            // ... but use proper GUI on consequtive loads
+            footerView.updateProgressbar("Indlæser...", ((double) deserializedObjects / objectsToDeserialize) * 100);
+        }
 
         // Everything has been deserialized! Boot application
         if (deserializedObjects == objectsToDeserialize) {
             loadingScreen.onLoaded();
+            loadingScreen = null;
 
             // If MVC has been initialized, run application!
             if (Main.hasInitialized) {
@@ -189,7 +201,7 @@ public class IOHandler {
     /** Function to be called once an object has serialized */
     public void onObjectSerializationComplete() {
         serializedObjects++;
-        footerView.updateSaveStatus(((double) serializedObjects / objectsToSerialize) * 100);
+        footerView.updateProgressbar("Gemmer...", ((double) serializedObjects / objectsToSerialize) * 100);
     }
 
     public void onDeserializeStart() {
