@@ -3,7 +3,7 @@ package model;
 import java.io.Serializable;
 
 public class Address implements Serializable {
-    private String street, house, postcode, city;
+    private String street, house, postcode;
     private Coordinates coordinates;
 
     /** Constructor to be used while parsing OSM-files */
@@ -13,11 +13,10 @@ public class Address implements Serializable {
 
     /** Constructor to be used when parsing addresses */
 
-    public Address(String _street, String _house, String _postcode, String _city) {
+    public Address(String _street, String _house, String _postcode) {
         street = _street;
         house = _house;
         postcode = _postcode;
-        city = _city;
     }
 
     /** Helper to set the address of an addresses. To be used while parsing OSM-files */
@@ -33,6 +32,8 @@ public class Address implements Serializable {
     }
 
     public String toString() {
+        String city = getCity();
+
         return street + " " + (house != null ? house : "") + ", " + (postcode != null ? postcode : "") + " " + (city != null ? city : "");
     }
 
@@ -50,7 +51,7 @@ public class Address implements Serializable {
     }
 
     public String getCity() {
-        return city;
+        return AddressesModel.postcodeToCity.get(postcode);
     }
 
     public Coordinates getCoordinates() {

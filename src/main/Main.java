@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 
 public class Main {
     // Keep references to all created classes
+    private static AddressesModel am;
     private static MetaModel model;
     private static MapModel mapModel;
     private static FavoritesModel favoritesModelModel;
@@ -44,10 +45,10 @@ public class Main {
         System.setProperty("sun.java2d.opengl", "True");
 
         // Models
-        AddressesModel addressesModel = new AddressesModel();
+        am = new AddressesModel();
         model = new MetaModel();
         mapModel = new MapModel(model);
-        IOHandler.instance.addModels(model, mapModel, addressesModel);
+        IOHandler.instance.addModels(model, mapModel, am);
         favoritesModelModel = new FavoritesModel();
 
         fv = new FooterView(cc);
@@ -83,7 +84,7 @@ public class Main {
         cc = MapController.getInstance();
         sc = new StateController();
         ac = new AddressController(sc, favoritesModelModel);
-        sbc = new SearchBoxController(model, sc, ac, addressesModel);
+        sbc = new SearchBoxController(model, sc, ac, am);
         acc = new AutoCompleteController();
         nc = new NavigationController();
         fc = new FavoriteController(sc, sbc, nc);
@@ -101,7 +102,7 @@ public class Main {
             al = new AutoCompleteList(acc);
             fav = new FavoriteView(favoritesModelModel, fc);
             favp = new FavoritePopupView(ac, sc);
-            acc.addDependencies(al, sb, addressesModel);
+            acc.addDependencies(al, sb, am);
             ac.addView(av, fav);
 
             // Indicate application MVC has been initialized
@@ -123,7 +124,7 @@ public class Main {
             sc.addMainView(v);
 
             new KeyboardController(v, cv, model, cc);
-            new MouseController(cv, cc);
+            new MouseController(cv, cc, am, fv);
             new ResizeController(v);
 
             initialRender = false;

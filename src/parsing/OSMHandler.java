@@ -16,6 +16,7 @@ public class OSMHandler extends DefaultHandler {
     Map<Long, OSMWay> idToWay = new HashMap<>();
     HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
     private double lonFactor;
+    private HashMap<String, String> postcodeToCity = new HashMap<>();
 
     // Models
     OSMWay way;
@@ -33,6 +34,7 @@ public class OSMHandler extends DefaultHandler {
     private String street;
     private String house_no;
     private String postcode;
+    private String city;
 
     // Loading related fields
     private boolean reachedAddress = false;
@@ -205,6 +207,8 @@ public class OSMHandler extends DefaultHandler {
                         postcode = attributes.getValue("v");
                         break;
 
+                    case "addr:city":
+                        city = attributes.getValue("v");
                     default:
                         break;
                 }
@@ -242,6 +246,7 @@ public class OSMHandler extends DefaultHandler {
 
                 loadingScreen.updateProgress(96.345);
                 addressesModel.createTree();
+                addressesModel.setPostcodeToCity(postcodeToCity);
             default:
                 break;
         }
@@ -296,18 +301,24 @@ public class OSMHandler extends DefaultHandler {
         // Create address of node if possible
         if (street == null) {
             // Bail out if street doesn't exist.
-            house_no = postcode = null;
+            house_no = postcode = city = null;
 
             return;
         }
 
+        // Create address
         currentAddress.setAddress(street, house_no, postcode);
+
+        // Add city to map
+        if (city != null) {
+            postcodeToCity.put(postcode, city);
+        }
 
         // Add address to data-model
         addressesModel.add(currentAddress);
 
         // Reset fields
-        street = house_no = postcode = null;
+        street = house_no = postcode = city = null;
     }
 
     /** Internal helper that creates a way when called (i.e. when the parser reaches the end of a way */

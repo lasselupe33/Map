@@ -187,8 +187,6 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
         return nearestNeighbour;
     }
 
-
-
     private Rectangle2D getBounds(MapElement mapElement){
         return mapElement.getBounds();
     }

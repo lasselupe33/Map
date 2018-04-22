@@ -32,10 +32,6 @@ public class AddressController extends MouseAdapter {
         }
     }
 
-
-
-
-
     /** To be called as soon as the AddressView has been created in order to setup listeners */
     public void addView(AddressView av, FavoriteView favoriteView) {
         // Intercept all mouse events to ensure canvas commands won't be called when clicking on the addressView
@@ -69,6 +65,4 @@ public class AddressController extends MouseAdapter {
     public Address getAddress() {
         return currAddress;
     }
-
-
 }

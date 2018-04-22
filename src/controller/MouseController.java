@@ -1,6 +1,8 @@
 package controller;
 
+import model.AddressesModel;
 import view.CanvasView;
+import view.FooterView;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -14,12 +16,17 @@ import static java.lang.Math.pow;
 public class MouseController extends MouseAdapter {
     private CanvasView canvas;
     private MapController mapController;
+    private AddressesModel addressesModel;
+    private FooterView footerView;
+
     private Point2D lastMousePosition;
     private static Thread t;
 
-    public MouseController(CanvasView c, MapController cc) {
+    public MouseController(CanvasView c, MapController cc, AddressesModel am, FooterView fv) {
         canvas = c;
         mapController = cc;
+        addressesModel = am;
+        footerView = fv;
         canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
         canvas.addMouseMotionListener(this);
@@ -61,9 +68,12 @@ public class MouseController extends MouseAdapter {
         lastMousePosition = e.getPoint();
     }
 
+    /**
+     * Update the addresses being hovered on mousemove
+     */
     public void mouseMoved(MouseEvent e) {
         Point2D modelCoords = mapController.toModelCoords(e.getPoint());
-        //System.out.println(mapController.nearestNeighbour(modelCoords.getX(), modelCoords.getY()));
+        footerView.updateHoverAddress(addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY()).toString());
     }
 
     /**

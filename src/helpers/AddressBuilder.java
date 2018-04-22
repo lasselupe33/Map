@@ -16,7 +16,7 @@ public class AddressBuilder {
     public AddressBuilder postcode(String _postcode) { postcode = _postcode; return this; }
     public AddressBuilder city(String _city)     { city = _city;     return this; }
     public Address build() {
-        return new Address(street, house, postcode, city);
+        return new Address(street, house, postcode);
     }
 
     public static Address parse(String s) {

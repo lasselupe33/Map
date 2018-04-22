@@ -11,7 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AddressesModel implements Serializable {
+    // Expose postcodeToCity mapping
+    public static HashMap<String, String> postcodeToCity = new HashMap<>();
+
+    // Used while parsing OSM-files
     private int parsingIndex = 0;
+
+    // Contain address specific data.
     private ArrayList<Address> addresses = new ArrayList<>();
     private TST<Integer> searchTrie = new TST<>();
     private HashMap<Coordinates, Integer> coordToKeyMap = new HashMap<>();
@@ -70,6 +76,11 @@ public class AddressesModel implements Serializable {
         return matchingAddresses;
     }
 
+    /** Helper that sets the postcode to city map after OSM-parsing has been completed */
+    public void setPostcodeToCity(HashMap<String, String> postcodeToCity) {
+        this.postcodeToCity = postcodeToCity;
+    }
+
     /** Internal helper that returns all available to the addresses */
     private ArrayList<Coordinates> getAllCoordinates() {
         return new ArrayList<>(coordToKeyMap.keySet());
@@ -80,9 +91,7 @@ public class AddressesModel implements Serializable {
      * Used for nearest neighbour searching.
      */
     private Address addressFromCoordinate(Coordinates coord) {
-        String key = coord.getX() + "-" + coord.getY();
-
-        return addresses.get(coordToKeyMap.get(key));
+        return addresses.get(coordToKeyMap.get(coord));
     }
 
     /** Internal helper that serialises the mapModel */
@@ -91,6 +100,7 @@ public class AddressesModel implements Serializable {
         new SerializeObject("address/coordToKeyMap", coordToKeyMap);
         new SerializeObject("address/TST", searchTrie);
         new SerializeObject("address/addresses", addresses);
+        new SerializeObject("address/postcodeToCity", postcodeToCity);
     }
 
     /** Internal helper that deserializses the MapModel */
@@ -107,6 +117,7 @@ public class AddressesModel implements Serializable {
             new DeserializeObject("address/coordToKeyMap", this, callback);
             new DeserializeObject("address/TST", this, callback);
             new DeserializeObject("address/addresses", this, callback);
+            new DeserializeObject("address/postcodeToCity", this, callback);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -131,6 +142,9 @@ public class AddressesModel implements Serializable {
             case "address/TST":
                 searchTrie = (TST<Integer>) loadedObject;
                 break;
+
+            case "address/postcodeToCity":
+                postcodeToCity = (HashMap<String, String>) loadedObject;
         }
     }
 }
