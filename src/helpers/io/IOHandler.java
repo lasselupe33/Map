@@ -33,7 +33,6 @@ public class IOHandler {
     private int serializedObjects = 0;
     private int objectsToSerialize = 0;
     private int objectsToDeserialize = 0;
-    private boolean initialLoad = true;
 
     // Models and views
     private MetaModel model;
@@ -71,7 +70,6 @@ public class IOHandler {
 
     public void loadFromString(String filename) {
         loadingScreen = new LoadingScreen();
-        initialLoad = false;
 
         load(filename);
     }
@@ -79,7 +77,6 @@ public class IOHandler {
     public void loadFromBinary(boolean shouldUseExternalSource) {
         useExternalSource = shouldUseExternalSource;
         loadingScreen = new LoadingScreen();
-        initialLoad = false;
 
         loadBinary();
     }
@@ -175,16 +172,11 @@ public class IOHandler {
     public void onObjectDeserializationComplete() {
         deserializedObjects++;
 
-        if (initialLoad) {
-            // Use loading screen on initial load
-            loadingScreen.updateProgress(((double) deserializedObjects / objectsToDeserialize) * 100);
-        } else {
-            // ... but use proper GUI on consequtive loads
-            footerView.updateProgressbar("Indlæser...", ((double) deserializedObjects / objectsToDeserialize) * 100);
-        }
+        // Update loadingScreen progress.
+        loadingScreen.updateProgress(((double) deserializedObjects / objectsToDeserialize) * 100);
 
-        // Everything has been deserialized! Boot application
         if (deserializedObjects == objectsToDeserialize) {
+            // Everything has been deserialized! Boot application
             loadingScreen.onLoaded();
             loadingScreen = null;
 
