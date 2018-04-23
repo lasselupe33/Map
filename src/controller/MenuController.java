@@ -7,7 +7,11 @@ import model.MetaModel;
 import javax.swing.*;
 
 public class MenuController {
-    public MenuController(MetaModel m) {}
+    private ColorMap colorMap;
+
+    public MenuController(ColorMap cm) {
+        colorMap = cm;
+    }
     
      public void load(JFrame window) {
         // Create a fileChooser to get new OSM file
@@ -27,28 +31,28 @@ public class MenuController {
         System.exit(1);
     }
 
-    public static void standardMode() {
-        ColorMap.setMode(ColorMap.Mode.STANDARD);
+    public void standardMode() {
+        colorMap.setMode(ColorMap.Mode.STANDARD);
         CanvasController.repaintMap();
     }
 
     public void protanopiaMode() {
-        ColorMap.setMode(ColorMap.Mode.PROTANOPIA);
+        colorMap.setMode(ColorMap.Mode.PROTANOPIA);
         CanvasController.repaintMap();
     }
 
     public void deuteranopiaMode() {
-        ColorMap.setMode(ColorMap.Mode.DEUTERANOPIA);
+        colorMap.setMode(ColorMap.Mode.DEUTERANOPIA);
         CanvasController.repaintMap();
     }
 
     public void tritanopiaMode() {
-        ColorMap.setMode(ColorMap.Mode.TRITANOPIA);
+        colorMap.setMode(ColorMap.Mode.TRITANOPIA);
         CanvasController.repaintMap();
     }
 
     public void grayscaleMode() {
-        ColorMap.setMode(ColorMap.Mode.GRAYSCALE);
+        colorMap.setMode(ColorMap.Mode.GRAYSCALE);
         CanvasController.repaintMap();
     }
 

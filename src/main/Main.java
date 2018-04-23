@@ -1,6 +1,7 @@
 package main;
 
 import controller.*;
+import helpers.ColorMap;
 import model.AddressesModel;
 import model.IOModel;
 import model.MetaModel;
@@ -28,6 +29,8 @@ public class Main {
     private static NavigationView nv;
     private static AutoCompleteList al;
 
+    private static ColorMap cm;
+
     // Boolean to ensure application won't be booted twice
     public static boolean hasInitialized = false;
     public static boolean dataLoaded = false;
@@ -43,6 +46,8 @@ public class Main {
         IOModel.instance.addModels(model, mapModel, addressesModel);
         fv = new FooterView(cc);
         IOModel.instance.addView(fv);
+
+        cm = new ColorMap();
         // Attempt to load binary file if it exists, else fallback to default .osm-map
         URL binaryData;
 
@@ -66,7 +71,7 @@ public class Main {
 
 
         // Controllers
-        mc = new MenuController(model);
+        mc = new MenuController(cm);
         cc = CanvasController.getInstance();
         sc = new StateController();
         ac = new AddressController(sc);
@@ -76,7 +81,7 @@ public class Main {
         // Ensure views are being invoked on proper thread!
         SwingUtilities.invokeLater(() -> {
             // Views
-            cv = new CanvasView(cc);
+            cv = new CanvasView(cc, cm);
             cc.addDependencies(cv, mapModel, model);
             av = new AddressView(ac);
             ac.addView(av);

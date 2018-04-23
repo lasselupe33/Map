@@ -6,12 +6,12 @@ import java.awt.*;
 import java.util.EnumMap;
 
 public class ColorMap {
-    private static EnumMap<OSMWayType, Color[]> colorMap = null;
-    private static int mode = 0;
-    private static Color standardRoadColor = new Color(255,255,255);
-    private static Color coastlineColor = new Color(237,237,237);
+    private EnumMap<OSMWayType, Color[]> colorMap = null;
+    private int mode = 0;
+    private Color standardRoadColor = new Color(255,255,255);
+    private Color coastlineColor = new Color(237,237,237);
 
-    public static void setMode(Mode m) {
+    public void setMode(Mode m) {
         switch (m) {
             case STANDARD:
                 mode = 0;
@@ -34,13 +34,13 @@ public class ColorMap {
         }
     }
 
-    public static Color getColor(OSMWayType type) {
+    public Color getColor(OSMWayType type) {
         if (colorMap == null) initializeMap();
         Color[] c = colorMap.get(type);
         return c[mode];
     }
 
-    private static void initializeMap() {
+    private void initializeMap() {
         colorMap = new EnumMap<>(OSMWayType.class);
         colorMap.put(OSMWayType.COASTLINE, new Color[] {coastlineColor,coastlineColor,coastlineColor,coastlineColor,coastlineColor});
 

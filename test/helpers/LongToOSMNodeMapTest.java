@@ -10,7 +10,7 @@ public class LongToOSMNodeMapTest {
     private long id = 12345;
     private double lat = 55.6598896;
     private double lon = 12.5911909;
-    private long wrongId = 12345;
+    private long wrongId = 01234;
     private double wrongLat = 55.6598895;
     private double wrongLon = 12.5911908;
 
@@ -37,7 +37,7 @@ public class LongToOSMNodeMapTest {
 
         map.put(id, lon, lat);
 
-        assertEquals(null, map.get(wrongId), 0);
+        assertEquals(null, map.get(wrongId));
     }
 
 }
