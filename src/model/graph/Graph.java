@@ -24,12 +24,19 @@ public class Graph {
         PriorityQueue<Node> pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) (a.getDistToSource() - b.getDistToSource()));
         source.setDistToSource(0);
         pq.add(source);
-
         ArrayList<Node> path = new ArrayList<>();
+        Node n = nodes.get(source.getId());
+        System.out.println(n.getEdges().size());
+        System.out.println(source.getEdges().size());
+        System.out.println(pq.size());
+        System.out.println("");
+
+        n = nodes.get(18054776 );
+        System.out.println(n.getEdges().size());
+
 
         while (true) {
             Node current = pq.remove();
-            System.out.println(pq.size());
 
             if (current == null || current == dest) {
                 break;

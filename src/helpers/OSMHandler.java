@@ -383,10 +383,11 @@ public class OSMHandler extends DefaultHandler {
         for (int i = 1; i < nodes.size(); i++) {
             Node to = nodes.get(i);
             float length = (float) GetDistance.inKM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
-            Edge edge = new Edge(from, to, length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
-
-            from.addEdge(edge);
-            to.addEdge(edge);
+            Node newFrom = idToNode.get(from.getId());
+            Node newTo = idToNode.get(to.getId());
+            Edge edge = new Edge(newFrom, newTo, length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
+            newFrom.addEdge(edge);
+            newTo.addEdge(edge);
 
             from = to;
         }

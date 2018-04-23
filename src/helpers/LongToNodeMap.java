@@ -25,7 +25,7 @@ public class LongToNodeMap {
     public N get(long id) {
         int position = Long.hashCode(id) & MASK;
         for (N n = table[position]; n != null; n = n.next) {
-            if (n.id == id) {
+            if (n.getId() == id) {
                 return n;
             }
         }
@@ -33,12 +33,12 @@ public class LongToNodeMap {
     }
 
     class N extends Node {
-        long id;
+        //long id;
         N next;
 
         public N(long id, float lon, float lat, N n) {
-            super(lon, lat);
-            this.id = id;
+            super(id, lon, lat);
+            //this.id = id;
             this.next = n;
         }
 

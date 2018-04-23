@@ -1,12 +1,9 @@
 package model.graph;
 
-import model.Coordinates;
-import model.osm.OSMNode;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Node {
+    private long id;
     private float lat;
     private float lon;
     ArrayList<Edge> edges = new ArrayList<>();
@@ -14,12 +11,15 @@ public class Node {
     private Node parent;
     private boolean addedToTree = false;
 
-    public Node(float lat, float lon) {
+    public Node(long id, float lat, float lon) {
+        this.id = id;
         this.lat = lat;
         this.lon = lon;
         distTo = Float.POSITIVE_INFINITY;
         parent = null;
     }
+
+    public long getId() { return id; }
 
     public float getLon() { return lat; }
 
