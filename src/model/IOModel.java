@@ -174,7 +174,10 @@ public class IOModel {
     /** Function to be called once an object has serialized */
     public void onObjectSerializationComplete() {
         serializedObjects++;
-        footerView.updateSaveStatus(((double) serializedObjects / objectsToSerialize) * 100);
+
+        if (footerView != null) {
+            footerView.updateSaveStatus(((double) serializedObjects / objectsToSerialize) * 100);
+        }
     }
 
     public void onDeserializeStart() {
