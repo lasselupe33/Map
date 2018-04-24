@@ -1,5 +1,6 @@
 package view;
 
+import controller.NavigationController;
 import controller.StateController;
 import controller.TextController;
 
@@ -14,10 +15,12 @@ public class NavigationView extends JPanel {
     private JTextField startInput;
     private JTextField endInput;
     private StateController stateController;
+    private NavigationController navigationController;
 
-    public NavigationView(StateController stateController) {
+    public NavigationView(StateController stateController, NavigationController nc) {
         // Setup view
         this.stateController = stateController;
+        navigationController = nc;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.WHITE);
         setOpaque(true);
@@ -132,10 +135,6 @@ public class NavigationView extends JPanel {
         return inputContainer;
     }
 
-    public JTextField getStartInput() {
-        return startInput;
-    }
-
     /**
      * Helper that renders the middle panel that shows the time it takes to transport to the location and the submit-
      * button.
@@ -174,6 +173,7 @@ public class NavigationView extends JPanel {
         submitButton.setForeground(Color.decode("#4285F4"));
         submitButton.setBackground(Color.WHITE);
         submitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        submitButton.addActionListener((e) -> navigationController.onRouteSearch());
         switchAndSubmitPanel.add(submitButton, BorderLayout.EAST);
 
 
@@ -195,5 +195,12 @@ public class NavigationView extends JPanel {
             startInput.setText(endTextHolder);
             endInput.setText(startTextHolder);
         }
+    }
+
+    public JTextField getStartInput() {
+        return startInput;
+    }
+    public JTextField getEndInput() {
+        return endInput;
     }
 }

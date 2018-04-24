@@ -10,9 +10,9 @@ public class Address implements Externalizable {
     public Address() {}
 
     /** Constructor to be used while parsing OSM-files */
-    public Address(long id, double lat, double lon) {
+    public Address(long id, double lon, double lat) {
         this.id = id;
-        this.coordinates = new Coordinates(lat, lon);
+        this.coordinates = new Coordinates(lon, lat);
     }
 
     /** Constructor to be used when parsing addresses */

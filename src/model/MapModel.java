@@ -73,6 +73,45 @@ public class MapModel {
         mapElements = null;
     }
 
+    public Coordinates getNearestWay(Coordinates coords) {
+        List<Coordinates> candidates = new ArrayList<>();
+
+        int i = 0;
+        for (WayType type : WayType.values()) {
+            switch(type) {
+                case SERVICE:
+                case CYCLEWAY:
+                case MOTORWAY:
+                case TRUNK:
+                case ROAD:
+                case PEDESTRIAN:
+                case FOOTWAY:
+                case PATH:
+                case TERTIARYROAD:
+                case SECONDARYROAD:
+                case HIGHWAY:
+                    candidates.add(mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    break;
+                default:
+                    break;
+            }
+            i++;
+        }
+
+        Coordinates nearestNeighbour = null;
+        double currentNeighbour = Double.MAX_VALUE;
+        for (Coordinates val : candidates) {
+            if (val != null) {
+                double distanceTo = Math.hypot( coords.getX() - val.getX(), coords.getY() - val.getY());
+                if ( distanceTo < currentNeighbour ) {
+                    nearestNeighbour = val;
+                    currentNeighbour = distanceTo;
+                }
+            }
+        }
+        return nearestNeighbour;
+    }
+
     /** Internal helper that deserializses the MapModel */
     public void deserialize() {
         try {

@@ -16,7 +16,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 public class OSMHandler extends DefaultHandler {
-    private LongToNodeMap idToNode = new LongToNodeMap(25);
+    private HashMap<Long, String> idToCoord = new HashMap<>();
+    private LongToNodeMap coordToNode = new LongToNodeMap(25);
     private Map<Long, OSMWay> idToWay = new HashMap<>();
     private HashMap<Node, OSMWay> coastlines = new HashMap<>();
     private double lonFactor;
@@ -216,7 +217,7 @@ public class OSMHandler extends DefaultHandler {
                 }
                 break;
             case "nd":
-                way.add(idToNode.get(Long.parseLong(attributes.getValue("ref"))));
+                way.add(coordToNode.get(idToCoord.get(Long.parseLong(attributes.getValue("ref")))));
                 break;
             default:
                 break;
@@ -348,11 +349,16 @@ public class OSMHandler extends DefaultHandler {
         float lat = (float) Double.parseDouble(attributes.getValue("lat"));
         long id = Long.parseLong(attributes.getValue("id"));
 
+        // Convert to proper coordinates
+        lon = (float) lonFactor * lon;
+        lat = -lat;
+
         // Add node to map
-        idToNode.put(id, (float) lonFactor * lon, -lat);
+        idToCoord.put(id, lon + "-" + lat);
+        coordToNode.put(lon + "-" + lat, lon, lat);
 
         // Create temp address to be used when parsing address fields
-        currentAddress = new Address(id, -lat, lonFactor * lon);
+        currentAddress = new Address(id, lon, lat);
     }
 
     /** Helper to be called when the parser reaches the coordinates of the given OSM-file */

@@ -3,27 +3,25 @@ package model.graph;
 import java.util.ArrayList;
 
 public class Node {
-    private long id;
-    private float lat;
     private float lon;
+    private float lat;
     ArrayList<Edge> edges = new ArrayList<>();
     private float distTo;
     private Node parent;
     private boolean addedToTree = false;
 
-    public Node(long id, float lat, float lon) {
-        this.id = id;
-        this.lat = lat;
+    public Node(float lon, float lat) {
         this.lon = lon;
+        this.lat = lat;
         distTo = Float.POSITIVE_INFINITY;
         parent = null;
     }
 
-    public long getId() { return id; }
+    public String getId() { return lon + "-" + lat; }
 
-    public float getLon() { return lat; }
+    public float getLon() { return lon; }
 
-    public float getLat() { return lon; }
+    public float getLat() { return lat; }
 
     public void setAddedToTree() {
         addedToTree = true;

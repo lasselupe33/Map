@@ -90,7 +90,7 @@ public class Main {
         ac = new AddressController(sc, favoritesModelModel);
         sbc = new SearchBoxController(model, sc, ac, am, graph);
         acc = new AutoCompleteController();
-        nc = new NavigationController();
+        nc = new NavigationController(am, mapModel, graph);
         fc = new FavoriteController(sc, sbc, nc);
 
         // Ensure views are being invoked on proper thread!
@@ -102,7 +102,8 @@ public class Main {
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
             zv = new ZoomView(cc);
-            nv = new NavigationView(sc);
+            nv = new NavigationView(sc, nc);
+            nc.addView(nv);
             al = new AutoCompleteList(acc);
             fav = new FavoriteView(favoritesModelModel, fc);
             favp = new FavoritePopupView(ac, sc);

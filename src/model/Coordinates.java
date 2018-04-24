@@ -33,7 +33,7 @@ public class Coordinates implements Externalizable {
     }
 
     public String toString() {
-        return x + "-" + y;
+        return y + "-" + x;
     }
 
     @Override

@@ -16,8 +16,7 @@ public class Graph {
         nodes.put(node.getId(), node.getLon(), node.getLat());
     }
 
-    public Node getNode(Long id) {
-        System.out.println(nodes.get(id));
+    public Node getNode(String id) {
         return nodes.get(id);
     }
 
@@ -31,10 +30,6 @@ public class Graph {
         System.out.println("Source edges:" + source.getEdges().size());
         System.out.println("Dest edges: " + dest.getEdges().size());
         System.out.println(pq.size());
-        System.out.println("");
-        Node n = nodes.get(18054776 );
-        System.out.println(n.getEdges().size());
-
 
         while (true) {
             Node current = pq.remove();
