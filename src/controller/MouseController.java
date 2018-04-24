@@ -1,6 +1,8 @@
 package controller;
 
+import model.AddressesModel;
 import view.CanvasView;
+import view.FooterView;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,13 +15,18 @@ import static java.lang.Math.pow;
  */
 public class MouseController extends MouseAdapter {
     private CanvasView canvas;
-    private CanvasController canvasController;
+    private MapController mapController;
+    private AddressesModel addressesModel;
+    private FooterView footerView;
+
     private Point2D lastMousePosition;
     private static Thread t;
 
-    public MouseController(CanvasView c, CanvasController cc) {
+    public MouseController(CanvasView c, MapController cc, AddressesModel am, FooterView fv) {
         canvas = c;
-        canvasController = cc;
+        mapController = cc;
+        addressesModel = am;
+        footerView = fv;
         canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
         canvas.addMouseMotionListener(this);
@@ -42,7 +49,7 @@ public class MouseController extends MouseAdapter {
         Point2D currentMousePosition = e.getPoint();
         double dx = currentMousePosition.getX() - lastMousePosition.getX();
         double dy = currentMousePosition.getY() - lastMousePosition.getY();
-        canvasController.pan(dx, dy);
+        mapController.pan(dx, dy);
         lastMousePosition = currentMousePosition;
     }
 
@@ -55,15 +62,18 @@ public class MouseController extends MouseAdapter {
         canvas.requestFocus();
 
         if (e.getClickCount() == 2) {
-            canvasController.zoom(1.4, -e.getX(), -e.getY());
+            mapController.zoom(1.4, -e.getX(), -e.getY());
         }
 
         lastMousePosition = e.getPoint();
     }
 
+    /**
+     * Update the addresses being hovered on mousemove
+     */
     public void mouseMoved(MouseEvent e) {
-        Point2D modelCoords = canvasController.toModelCoords(e.getPoint());
-        //System.out.println(canvasController.nearestNeighbour(modelCoords.getX(), modelCoords.getY()));
+        Point2D modelCoords = mapController.toModelCoords(e.getPoint());
+        footerView.updateHoverAddress(addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY()).toString());
     }
 
     /**
@@ -75,7 +85,7 @@ public class MouseController extends MouseAdapter {
         if (t != null) t.interrupt();
         canvas.requestFocus();
         double factor = pow(1/1.1, e.getWheelRotation());
-        canvasController.zoom(factor, -e.getX(), -e.getY());
+        mapController.zoom(factor, -e.getX(), -e.getY());
     }
 
     public void mouseReleased(MouseEvent e){
@@ -89,10 +99,10 @@ public class MouseController extends MouseAdapter {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    CanvasController.repaintMap();
+                    MapController.repaintMap();
                     return;
                 }
-                CanvasController.getInstance().updateMap();
+                MapController.getInstance().updateMap();
             }
         };
         t.start();

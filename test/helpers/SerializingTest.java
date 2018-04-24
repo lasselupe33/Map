@@ -1,12 +1,11 @@
 package helpers;
 
+import helpers.io.SerializeObject;
 import main.Main;
-import model.AddressesModel;
 import org.junit.Test;
 
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
 
 import static org.junit.Assert.*;

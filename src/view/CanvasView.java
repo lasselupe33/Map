@@ -1,10 +1,10 @@
 package view;
 
-import controller.CanvasController;
+import controller.MapController;
 import helpers.ColorMap;
 import helpers.StrokeMap;
 import model.MapElement;
-import model.osm.OSMWayType;
+import model.WayType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,17 +14,14 @@ import java.awt.geom.Rectangle2D;
  * This view draws the map.
  */
 public class CanvasView extends JComponent {
-    private CanvasController controller;
+    private MapController controller;
     private ColorMap colorMap;
 
-
-    public CanvasView(CanvasController c, ColorMap cm) {
+    public CanvasView(MapController c, ColorMap cm) {
         controller = c;
         colorMap = cm;
         setFocusable(true);
     }
-
-
 
     /**
      * Draw map.
@@ -38,7 +35,7 @@ public class CanvasView extends JComponent {
         Rectangle2D viewRect = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
 
         g.setStroke(new BasicStroke(Float.MIN_VALUE));
-        g.setPaint(colorMap.getColor(OSMWayType.WATER));
+        g.setPaint(colorMap.getColor(WayType.WATER));
         g.fill(viewRect);
         g.transform(controller.getTransform());
 

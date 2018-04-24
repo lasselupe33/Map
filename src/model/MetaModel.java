@@ -1,20 +1,17 @@
 package model;
 
+import helpers.io.IOHandler;
 import main.Main;
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 
+/** This model contains required metadata of the application such as minLat and maxLat */
 public class MetaModel implements Serializable{
     private double minLat, minLon, maxLat, maxLon;
 
-    public MetaModel(){
-
-    }
+    public MetaModel(){}
 
     /** Getters */
     public double getMinLat() {
@@ -45,7 +42,7 @@ public class MetaModel implements Serializable{
     /** Internal helper the serializses the MetaModel */
     public void serialize() {
         try {
-            URL path = Main.class.getResource("/data/meta.bin");
+            URL path = new URL(IOHandler.externalRootPath + "/BFST18_binary/meta.bin");
             File file = new File(path.toURI());
             OutputStream stream = new FileOutputStream(file);
             ObjectOutputStream out = new ObjectOutputStream(stream);
@@ -70,7 +67,15 @@ public class MetaModel implements Serializable{
     /** Internal helper that deserializses the MetaModel */
     public void deserialize() {
         try {
-            URL path = Main.class.getResource("/data/meta.bin");
+            URL path;
+
+            // Get source
+            if (IOHandler.useExternalSource) {
+                path = new URL(IOHandler.externalRootPath + "/BFST18_binary/meta.bin");
+            } else {
+                path = Main.class.getResource("/BFST18_binary/meta.bin");
+            }
+
             ObjectInputStream in = new ObjectInputStream(path.openStream());
 
             // Add data to model

@@ -1,7 +1,6 @@
 package helpers;
 
-import controller.MenuController;
-import model.osm.OSMWayType;
+import model.WayType;
 import org.junit.Test;
 
 import java.awt.*;
@@ -15,14 +14,14 @@ public class ColorMapTest {
     //This test works alone but it doesn't pass when it is run together with the other tests
     public void testDefault() throws Exception {
         map = new ColorMap();
-        OSMWayType type = OSMWayType.GRASS;
+        WayType type = WayType.GRASS;
         assertEquals(new Color(205, 235, 176), map.getColor(type));
     }
 
     @Test
     public void getColorBuildings() throws Exception {
         map = new ColorMap();
-        OSMWayType type = OSMWayType.RESIDENTIAL;
+        WayType type = WayType.RESIDENTIAL;
         map.setMode(ColorMap.Mode.STANDARD);
         assertEquals(new Color(219, 219, 219), map.getColor(type));
         map.setMode(ColorMap.Mode.PROTANOPIA);
@@ -38,7 +37,7 @@ public class ColorMapTest {
     @Test
     public void getColorGrass() throws Exception {
         map = new ColorMap();
-        OSMWayType type = OSMWayType.GRASS;
+        WayType type = WayType.GRASS;
         map.setMode(ColorMap.Mode.STANDARD);
         assertEquals(new Color(205, 235, 176), map.getColor(type));
         map.setMode(ColorMap.Mode.PROTANOPIA);
@@ -50,5 +49,4 @@ public class ColorMapTest {
         map.setMode(ColorMap.Mode.GRAYSCALE);
         assertEquals(new Color(205,205,205), map.getColor(type));
     }
-
 }

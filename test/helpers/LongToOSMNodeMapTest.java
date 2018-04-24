@@ -1,6 +1,7 @@
 package helpers;
 
-import model.osm.OSMNode;
+import helpers.structures.LongToOSMNodeMap;
+import parsing.OSMNode;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
