@@ -17,6 +17,7 @@ public class FavoritePopupView extends JOptionPane {
         this.addressController = addressController;
         this.stateController = stateController;
 
+
     }
 
     public void addFrame(JFrame frame){

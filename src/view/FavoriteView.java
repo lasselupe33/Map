@@ -34,8 +34,8 @@ public class FavoriteView extends JPanel {
     }
 
     private void addLabelToFavorites(Favorite f) {
-        String text = "<html><span style=\"font-size: 10px;\">" + f.getName() +
-                "</span><br><span style=\"font-size: 5px;\">"+f.getAddress()+"</span></html>";
+        String text = "<html><span style=\"font-size: 12px;\">" + f.getName() +
+                "</span><br><span style=\"font-size: 10px;\">"+f.getAddress()+"</span></html>";
         JLabel label = new JLabel(text);
         label.setName(f.getAddress().toString());
         label.setBorder(new EmptyBorder(10, 10, 10, 10));
