@@ -1,122 +1,114 @@
 package model;
 
-import controller.CanvasController;
-import helpers.KDTree;
-import helpers.ZoomLevelMap;
-import model.MapElements.MapElement;
-import model.osm.OSMWayType;
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
+import helpers.io.DeserializeObject;
+import helpers.structures.KDTree;
+import helpers.io.SerializeObject;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.*;
-import java.net.URLDecoder;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
 public class MapModel {
-    private EnumMap<OSMWayType, List<MapElement>> mapElements = initializeMap();
-    private KDTree tree;
-    private List<MapElement> maplist = new ArrayList<>();
-    private MainModel mainModel;
+    private int initializedTypes = 0;
+    private int amountOfTypes = 0;
+    private EnumMap<WayType, List<Coordinates>> mapElements = initializeMap();
+    private KDTree[] mapTrees; // Contain a reference to trees containing all elements
+    private List<MapElement> currentMapData = new ArrayList<>();
+    private MetaModel metaModel;
 
-    public MapModel(MainModel m) {
-        mainModel = m;
+    public MapModel(MetaModel m) {
+        metaModel = m;
     }
 
-    /** Public helper that initializses an empty enum-map filled with arraylist for all mapTypes */
-    public static EnumMap<OSMWayType, List<MapElement>> initializeMap() {
-        EnumMap<OSMWayType, List<MapElement>> map = new EnumMap<>(OSMWayType.class);
-        for (OSMWayType type: OSMWayType.values()) {
-            map.put(type, new ArrayList<>());
+    /** Internal helper that resets the MapModel, clearing all data */
+    public void reset() {
+        mapElements = initializeMap();
+        currentMapData = new ArrayList<>();
+
+        if (mapTrees != null) {
+            for (int i = 0; i < mapTrees.length; i++) mapTrees[i] = null;
         }
-        return map;
     }
 
-    /** Add a mapElement to the list. This will happen while parsing OSM-files */
-    public void add(OSMWayType type, MapElement m) {
+    /** Add a Coordinates to the list. This will happen while parsing OSM-files */
+    public void add(WayType type, Coordinates m) {
         mapElements.get(type).add(m);
     }
 
-    /** Internal helper that retrieves the currently required points to render the map */
-    public void updateMap(Point2D p0, Point2D p1){
-        int zoomLevel = ZoomLevelMap.getZoomLevel();
+    /** Returns the mapElements of a specific type */
+    public List<Coordinates> getMapElements(WayType type) {
+        return mapElements.get(type);
+    }
 
+    public void setMapData(List<MapElement> newData) {
+        currentMapData = newData;
+    }
+
+    /** Returns the mapData required to render the screen */
+    public List<MapElement> getMapData(){ return currentMapData; }
+
+    public KDTree getTree(int index) {
+        return mapTrees[index];
+    }
+
+    /** Helper that creates new KDTrees based on the mapElements currently available to the MapModel */
+    public void createTrees() {
+        mapTrees = new KDTree[WayType.values().length];
+
+        // Loop over all map types and generate trees for all.
         int i = 0;
-        maplist.clear();
-        for (OSMWayType type : OSMWayType.values()) {
-            if (type.getPriority() <= zoomLevel) {
-                maplist.addAll(tree.searchTree(p0, p1, i));
-            }
-
-            i++;
+        for (WayType type : WayType.values()) {
+            mapTrees[i++] = new KDTree(mapElements.get(type), metaModel.getMaxLat(), metaModel.getMinLat(), metaModel.getMaxLon(), metaModel.getMinLon());
         }
     }
 
     /** Serializes all data necessary to load and display the map */
     public void serialize() {
-        try {
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/map.bin", "UTF-8");
-            FSTObjectOutput out = new FSTObjectOutput(new FileOutputStream(path));
-
-            for (OSMWayType type : OSMWayType.values()) {
-                out.writeObject(get(type));
-                out.flush();
-            }
-
-            out.close();
-
-            // Now that the map has been saved, we are free to remove the mapElements list in order to preserve space
-            mapElements = null;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (int i = 0; i < mapTrees.length; i++) {
+            new SerializeObject("map/tree-" + i, mapTrees[i]);
         }
+
+        // Now that the map has been saved, we are free to remove the mapElements list in order to preserve space
+        mapElements = null;
     }
 
     /** Internal helper that deserializses the MapModel */
     public void deserialize() {
         try {
-            String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + "data/map.bin", "UTF-8");
-            FSTObjectInput in = new FSTObjectInput(new FileInputStream(path));
+            mapTrees = new KDTree[WayType.values().length];
+            amountOfTypes = mapTrees.length;
 
-            for (OSMWayType type : OSMWayType.values()) {
-                mapElements.put(type, (List<MapElement>) in.readObject());
+            // Setup thread callback
+            Class[] parameterTypes = new Class[2];
+            parameterTypes[0] = KDTree.class;
+            parameterTypes[1] = String.class;
+            Method callback = MapModel.class.getMethod("onThreadDeserializeComplete", parameterTypes);
+
+            for (int i = 0; i < mapTrees.length; i++) {
+                new DeserializeObject("map/tree-" + i, this, callback);
             }
-
-            in.close();
-
-            // Always rebuild tree, since loading the binary tree takes longer in total
-            createTree();
-
-            // Remove mapElements once tree has been build to preserve space
-            mapElements = null;
-        } catch (UnsupportedEncodingException e) {
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.getMessage();
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public List<MapElement> get(OSMWayType type) {
-        return mapElements.get(type);
+    /** Callback to be called once a thread has finished deserializing a mapType */
+    public void onThreadDeserializeComplete(KDTree loadedTree, String name) {
+        initializedTypes++;
+
+        String index = name.split("-")[1];
+        mapTrees[Integer.parseInt(index)] = loadedTree;
     }
 
-    /** Returns the mapData required to render the screen */
-    public List<MapElement> getMapData(){
-        return maplist;
+    /** Public helper that initializses an empty enum-map filled with arraylist for all mapTypes */
+    private EnumMap<WayType, List<Coordinates>> initializeMap() {
+        EnumMap<WayType, List<Coordinates>> map = new EnumMap<>(WayType.class);
+        for (WayType type: WayType.values()) {
+            map.put(type, new ArrayList<>());
+        }
+        return map;
     }
-
-    /** Helper that creates a new KDTree based on the mapElements currently available to the MapModel */
-    public void createTree() { tree = new KDTree(mapElements, mainModel.getMaxLat(), mainModel.getMinLat(), mainModel.getMaxLon(), mainModel.getMinLon()); }
 }

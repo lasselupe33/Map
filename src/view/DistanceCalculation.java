@@ -1,24 +1,22 @@
 package view;
 
-import controller.CanvasController;
+import controller.MapController;
 import helpers.GetDistance;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-import static java.lang.StrictMath.sqrt;
-
 public class DistanceCalculation extends JComponent {
-    private CanvasController canvasController;
+    private MapController mapController;
     private final int screenDistance = 100;
     private Point2D startModelPoint;
     private Point2D endModelPoint;
     private double distance;
     private String text;
 
-    public DistanceCalculation(CanvasController cc){
-        canvasController = cc;
+    public DistanceCalculation(MapController cc){
+        mapController = cc;
         setPreferredSize(new Dimension(200, 30));
     }
 

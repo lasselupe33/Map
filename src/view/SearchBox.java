@@ -110,6 +110,7 @@ public class SearchBox extends JPanel {
 
         // Setup search input
         searchInput = new JTextField("Søg..");
+        searchInput.setName(searchInput.getText());
         searchInput.setPreferredSize(new Dimension(360, searchInput.getHeight()));
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 14));
         searchInput.setBorder(BorderFactory.createEmptyBorder());
@@ -174,9 +175,7 @@ public class SearchBox extends JPanel {
         favoriteButtonContainer.setPreferredSize(new Dimension(32, 32));
 
         // Create button
-        String imageURL = "assets/icons/favorite.png";
-
-
+        URL imageURL = this.getClass().getResource("/icons/favorite.png");
         ImageIcon icon = new ImageIcon(imageURL);
         JLabel iconLabel = new JLabel(icon);
         iconLabel.setVerticalAlignment(JLabel.CENTER);
@@ -189,7 +188,6 @@ public class SearchBox extends JPanel {
 
         return favoriteButtonContainer;
     }
-
 
 }
 
