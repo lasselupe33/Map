@@ -73,7 +73,7 @@ public class CanvasView extends JComponent {
 
     private void paintLocationIcon(Graphics2D g) {
         if (controller.getListOfLocations().isEmpty()) return;
-        g.setPaint(Color.red);
+
 
         double scale = 0.003 * GetDistance.PxToKm(100);
 
@@ -89,7 +89,12 @@ public class CanvasView extends JComponent {
             }
             path.quadTo(xValue[xValue.length-1]+scale/2, yValue[yValue.length-1]-scale/2, xValue[xValue.length-1], yValue[yValue.length-1]);
 
+            Ellipse2D circle = new Ellipse2D.Double(coord.getX()-scale/6, coord.getY()-scale, scale/3, scale/3);
+
+            g.setPaint(Color.red);
             g.fill(path);
+            g.setPaint(new Color(124, 17, 19));
+            g.fill(circle);
         }
     }
 
