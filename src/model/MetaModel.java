@@ -42,7 +42,8 @@ public class MetaModel implements Serializable{
     /** Internal helper the serializses the MetaModel */
     public void serialize() {
         try {
-            URL path = new URL(IOHandler.externalRootPath + "/BFST18_binary/meta.bin");
+            String folderName = "/BFST18_binary" + (IOHandler.instance.testMode ? "_test" : "") + "/";
+            URL path = new URL(IOHandler.externalRootPath + folderName + "meta.bin");
             File file = new File(path.toURI());
             OutputStream stream = new FileOutputStream(file);
             ObjectOutputStream out = new ObjectOutputStream(stream);
@@ -68,12 +69,13 @@ public class MetaModel implements Serializable{
     public void deserialize() {
         try {
             URL path;
+            String folderName = "/BFST18_binary" + (IOHandler.instance.testMode ? "_test" : "") + "/";
 
             // Get source
             if (IOHandler.useExternalSource) {
-                path = new URL(IOHandler.externalRootPath + "/BFST18_binary/meta.bin");
+                path = new URL(IOHandler.externalRootPath + folderName + "meta.bin");
             } else {
-                path = Main.class.getResource("/BFST18_binary/meta.bin");
+                path = Main.class.getResource(folderName + "meta.bin");
             }
 
             ObjectInputStream in = new ObjectInputStream(path.openStream());

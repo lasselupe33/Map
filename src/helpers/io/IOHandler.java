@@ -27,6 +27,7 @@ public class IOHandler {
     public static URL internalRootPath;
     public static URI externalRootPath;
     public static boolean useExternalSource;
+    public boolean testMode = false;
     public boolean isJar = false;
 
     private int deserializedObjects = 0;
@@ -212,9 +213,11 @@ public class IOHandler {
 
     private void cleanDirs() {
         try {
+            String folderName = "/BFST18_binary" + (IOHandler.instance.testMode ? "_test" : "");
+
             // Attempt to delete the while data-folder recursively if exists
-            if (Files.exists(Paths.get(new URI(externalRootPath + "/BFST18_binary")))) {
-                Files.walkFileTree(Paths.get(new URI(externalRootPath + "/BFST18_binary")), new SimpleFileVisitor<>() {
+            if (Files.exists(Paths.get(new URI(externalRootPath + folderName)))) {
+                Files.walkFileTree(Paths.get(new URI(externalRootPath + folderName)), new SimpleFileVisitor<>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
                         // Delete file when found
@@ -233,9 +236,9 @@ public class IOHandler {
             }
 
             // Recreate folders in preparation for data storage
-            Files.createDirectory(Paths.get(new URI(externalRootPath + "/BFST18_binary")));
-            Files.createDirectory(Paths.get(new URI(externalRootPath + "/BFST18_binary/address")));
-            Files.createDirectory(Paths.get(new URI(externalRootPath + "/BFST18_binary/map")));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + folderName)));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/address")));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/map")));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
