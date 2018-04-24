@@ -1,31 +1,32 @@
 package main;
 
 import controller.*;
-import model.AddressesModel;
-import model.IOModel;
-import model.MainModel;
-import model.MapModel;
+import helpers.io.IOHandler;
+import model.*;
 import model.graph.Graph;
 import view.*;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
     // Keep references to all created classes
-    private static MainModel model;
+    private static AddressesModel am;
+    private static MetaModel model;
     private static MapModel mapModel;
-    private static IOModel ioModel;
+    private static FavoritesModel favoritesModelModel;
     private static MenuController mc;
-    private static CanvasController cc;
+    private static MapController cc;
     private static StateController sc;
     private static AddressController ac;
     private static SearchBoxController sbc;
     private static AutoCompleteController acc;
+    private static FavoriteController fc;
+    private static NavigationController nc;
     private static CanvasView cv;
     private static AddressView av;
     private static SearchBox sb;
@@ -33,90 +34,104 @@ public class Main {
     private static ZoomView zv;
     private static NavigationView nv;
     private static AutoCompleteList al;
-    private  static Graph graph;
+    private static Graph graph;
+    private static FavoriteView fav;
+    private static FavoritePopupView favp;
 
     // Boolean to ensure application won't be booted twice
     public static boolean hasInitialized = false;
     public static boolean dataLoaded = false;
     public static boolean initialRender = true;
 
-    // Debugging
-    private static long timeA;
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            System.setProperty("sun.java2d.opengl", "True");
+        System.setProperty("sun.java2d.opengl", "True");
 
-            timeA = System.currentTimeMillis();
+        // Models
+        model = new MetaModel();
+        mapModel = new MapModel(model);
+        am = new AddressesModel();
+        graph = new Graph();
+        IOHandler.instance.addModels(model, mapModel, am, graph);
+        favoritesModelModel = new FavoritesModel();
 
-            // Models
-            AddressesModel addressesModel = new AddressesModel();
-            model = new MainModel(addressesModel);
-            mapModel = new MapModel(model);
-            graph = new Graph();
-            // Attempt to load binary file if it exists, else fallback to default .osm-map
-            URL binaryData;
 
-            if (args.length == 0) {
-                binaryData = Main.class.getResource("/data/main.bin");
+        fv = new FooterView(cc);
+        IOHandler.instance.addView(fv);
 
-                if (binaryData != null) {
-                    // If binary data exists, use this.
-                    ioModel = new IOModel(model, mapModel, graph);
-                } else {
-                    // .. else fallback to provided .zip
-                    URL data = Main.class.getResource("/data/small.zip");
-                    ioModel = new IOModel(model, mapModel, graph, data);
-                    dataLoaded = true;
+
+        // dataSource Priority:
+        // 1. Program arguments
+        // 2. (if .jar) external .bin
+        // 3. Internal .bin
+        if (args.length == 0) {
+            if (IOHandler.instance.isJar) {
+                try {
+                    if (Files.exists(Paths.get(new URI(IOHandler.externalRootPath + "/data")))) {
+                        IOHandler.instance.loadFromBinary(true);
+                    } else {
+                        IOHandler.instance.loadFromBinary(false);
+                    }
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
                 }
             } else {
-                // .. or, if arguments are supplied, always use these.
-                ioModel = new IOModel(model, mapModel, graph, args[0]);
-                dataLoaded = true;
+                IOHandler.instance.loadFromBinary(false);
             }
+        } else {
+            // .. or, if arguments are supplied, always use these.
+            IOHandler.instance.loadFromString(args[0]);
+        }
 
-            // Controllers
-            mc = new MenuController(model, ioModel);
-            cc = CanvasController.getInstance();
-            sc = new StateController();
-            ac = new AddressController(sc);
-            sbc = new SearchBoxController(model, sc, ac, graph);
-            acc = new AutoCompleteController();
 
+        // Controllers
+        mc = new MenuController(model);
+        cc = MapController.getInstance();
+        sc = new StateController();
+        ac = new AddressController(sc, favoritesModelModel);
+        sbc = new SearchBoxController(model, sc, ac, am, graph);
+        acc = new AutoCompleteController();
+        nc = new NavigationController();
+        fc = new FavoriteController(sc, sbc, nc);
+
+        // Ensure views are being invoked on proper thread!
+        SwingUtilities.invokeLater(() -> {
             // Views
             cv = new CanvasView(cc);
             cc.addDependencies(cv, mapModel, model);
             av = new AddressView(ac);
-            ac.addView(av);
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
-            fv = new FooterView(cc);
             zv = new ZoomView(cc);
-            nv = new NavigationView();
+            nv = new NavigationView(sc);
             al = new AutoCompleteList(acc);
-            acc.addDependencies(al, sb, addressesModel);
+            fav = new FavoriteView(favoritesModelModel, fc);
+            favp = new FavoritePopupView(ac, sc);
+            acc.addDependencies(al, sb, am);
+            ac.addView(av, fav);
+
+            // Indicate application MVC has been initialized
+            hasInitialized = true;
 
             // Run application if data is ready
             if (dataLoaded) {
                 Main.run();
             }
-
-            // Indicate application MVC has been initialized
-            hasInitialized = true;
         });
     }
 
     /** Function to be run after all MVC classes have been initilized and data loaded */
     public static void run() {
-        MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, al);
+        SwingUtilities.invokeLater(() -> {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
-        new KeyboardController(v, cv, model, cc, ioModel);
-        new MouseController(cv, cc);
-        new ResizeController(v);
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, favoritesModelModel, favp);
+            sc.addMainView(v);
 
-        long timeB = System.currentTimeMillis();
-        System.out.println("Elapsed time:" + (timeB - timeA));
+            new KeyboardController(v, cv, model, cc);
+            new MouseController(cv, cc, am, fv);
+            new ResizeController(v);
 
-        initialRender = false;
+            initialRender = false;
+        });
     }
 }

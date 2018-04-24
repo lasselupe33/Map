@@ -1,10 +1,8 @@
 package model.graph;
 
-import helpers.LongToNodeMap;
-import model.Coordinates;
+import helpers.structures.LongToNodeMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class Graph {
@@ -19,6 +17,7 @@ public class Graph {
     }
 
     public Node getNode(Long id) {
+        System.out.println(nodes.get(id));
         return nodes.get(id);
     }
 

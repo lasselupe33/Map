@@ -1,14 +1,15 @@
 package helpers;
 
-import controller.CanvasController;
+import controller.MapController;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 
+/** Helper class that can convert model coordinates to distance */
 public class GetDistance {
     public static double PxToKm(int px) {
-        Point2D startModelPoint = CanvasController.getInstance().toModelCoords(new Point(0, 0));
-        Point2D endModelPoint = CanvasController.getInstance().toModelCoords(new Point(px, 0));
+        Point2D startModelPoint = MapController.getInstance().toModelCoords(new Point(0, 0));
+        Point2D endModelPoint = MapController.getInstance().toModelCoords(new Point(px, 0));
         return GetDistance.inKM(startModelPoint.getX(), startModelPoint.getY(), endModelPoint.getX(), endModelPoint.getY());
     }
 

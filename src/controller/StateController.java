@@ -11,11 +11,14 @@ public class StateController {
     private ViewStates currentState;
     private MainWindowView mainView;
     private ViewStates prevState;
+    private ViewStates prevPanel;
 
     public StateController() {
         // Setup initial state
         currentState = ViewStates.INITIAL;
         prevState = ViewStates.INITIAL;
+        prevPanel = ViewStates.INITIAL;
+
     }
 
     public void addMainView(MainWindowView view) {
@@ -28,6 +31,8 @@ public class StateController {
 
     public ViewStates getPrevState() { return prevState; }
 
+    public  ViewStates getPrevPanel() {return prevPanel; }
+
     public void updateCurrentState(ViewStates newState) {
         currentState = newState;
         mainView.update();
@@ -35,6 +40,14 @@ public class StateController {
     }
 
     public void updatePrevState() {
+        updatePrevPanel();
+
         prevState = currentState;
+
+    }
+    public void updatePrevPanel(){
+        if (prevPanel != prevState){
+            prevPanel = prevState;
+        }
     }
 }

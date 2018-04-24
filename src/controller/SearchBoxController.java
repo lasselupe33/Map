@@ -4,25 +4,27 @@ import helpers.AddressBuilder;
 import model.Address;
 import model.AddressesModel;
 import model.Coordinates;
-import model.MainModel;
+
 import model.graph.Graph;
 import model.graph.Node;
+import model.MetaModel;
 import view.SearchBox;
 
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class SearchBoxController extends MouseAdapter {
     StateController stateController;
     AddressController addressController;
+    AddressesModel addressesModel;
     SearchBox searchBoxView;
     AddressesModel addresses;
     Graph graph;
 
-    Node test = null;
 
-    public SearchBoxController(MainModel m, StateController sc, AddressController ac, Graph g) {
-        addresses = m.getAddresses();
+    public SearchBoxController(MetaModel m, StateController sc, AddressController ac, AddressesModel am, Graph g) {
+        addressesModel = am;
         addressController = ac;
         stateController = sc;
         graph = g;
@@ -46,6 +48,9 @@ public class SearchBoxController extends MouseAdapter {
                     onCloseClick();
                 }
                 break;
+            case "favoriteButton":
+                onFavoritesClick();
+                break;
         }
     }
 
@@ -54,15 +59,15 @@ public class SearchBoxController extends MouseAdapter {
         String input = searchBoxView.getSearchInput().getText();
         Address address = AddressBuilder.parse(input);
 
-        address = addresses.get(address.toKey());
+        address = addresses.getAddress(address.toKey());
 
         // Update current address and go to addressView if address exist
-        if (addresses.contains(address)) {
+        if (addressesModel.contains(address)) {
             // Update address
             addressController.setCurrentAddress(address);
 
             // Go to proper position on map
-            Coordinates coordinates = addresses.getCoordinates(address);
+            Coordinates coordinates = addressesModel.getCoordinates(address);
 
             // Update view to reflect changes
             stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
@@ -70,6 +75,11 @@ public class SearchBoxController extends MouseAdapter {
             // ... else retrieve and display list of nodes that match the input.
         }
     }
+    public void setSearchInput(String s){
+        searchBoxView.getSearchInput().setText(s);
+    }
+
+    public String getSearchInput() {return searchBoxView.getSearchInput().getText();}
 
     public void onNavigationClick() {
         stateController.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
@@ -77,5 +87,9 @@ public class SearchBoxController extends MouseAdapter {
 
     public void onCloseClick() {
         stateController.updateCurrentState(ViewStates.INITIAL);
+    }
+
+    public void onFavoritesClick() {
+        stateController.updateCurrentState(ViewStates.FAVORITES);
     }
 }
