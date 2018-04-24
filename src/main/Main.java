@@ -1,6 +1,7 @@
 package main;
 
 import controller.*;
+import helpers.ColorMap;
 import helpers.io.IOHandler;
 import model.*;
 import view.*;
@@ -35,6 +36,7 @@ public class Main {
     private static AutoCompleteList al;
     private static FavoriteView fav;
     private static FavoritePopupView favp;
+    private static ColorMap colorMap;
 
     // Boolean to ensure application won't be booted twice
     public static boolean hasInitialized = false;
@@ -43,6 +45,7 @@ public class Main {
 
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "True");
+        colorMap = new ColorMap();
 
         // Models
         am = new AddressesModel();
@@ -80,7 +83,7 @@ public class Main {
 
 
         // Controllers
-        mc = new MenuController(model);
+        mc = new MenuController(colorMap);
         cc = MapController.getInstance();
         sc = new StateController();
         ac = new AddressController(sc, favoritesModelModel);
@@ -92,7 +95,7 @@ public class Main {
         // Ensure views are being invoked on proper thread!
         SwingUtilities.invokeLater(() -> {
             // Views
-            cv = new CanvasView(cc);
+            cv = new CanvasView(cc, colorMap);
             cc.addDependencies(cv, mapModel, model);
             av = new AddressView(ac);
             sb = new SearchBox(sc, sbc, acc);

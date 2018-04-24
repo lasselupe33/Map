@@ -8,10 +8,10 @@ import view.LoadingScreen;
 import javax.swing.*;
 
 public class MenuController {
-    private static ColorMap.Mode mode;
+    private ColorMap colorMap;
 
-    public MenuController(MetaModel m) {
-        mode = ColorMap.Mode.STANDARD;
+    public MenuController(ColorMap cm) {
+        colorMap = cm;
     }
     
      public void load(JFrame window) {
@@ -33,32 +33,28 @@ public class MenuController {
     }
 
     public void standardMode() {
-        mode = ColorMap.Mode.STANDARD;
+        colorMap.setMode(ColorMap.Mode.STANDARD);
         MapController.repaintMap();
     }
 
     public void protanopiaMode() {
-        mode = ColorMap.Mode.PROTANOPIA;
+        colorMap.setMode(ColorMap.Mode.PROTANOPIA);
         MapController.repaintMap();
     }
 
     public void deuteranopiaMode() {
-        mode = ColorMap.Mode.DEUTERANOPIA;
+        colorMap.setMode(ColorMap.Mode.DEUTERANOPIA);
         MapController.repaintMap();
     }
 
     public void tritanopiaMode() {
-        mode = ColorMap.Mode.TRITANOPIA;
+        colorMap.setMode(ColorMap.Mode.TRITANOPIA);
         MapController.repaintMap();
     }
 
     public void grayscaleMode() {
-        mode = ColorMap.Mode.GRAYSCALE;
+        colorMap.setMode(ColorMap.Mode.GRAYSCALE);
         MapController.repaintMap();
-    }
-
-    public static ColorMap.Mode getMode() {
-        return mode;
     }
 
 }

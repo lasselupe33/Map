@@ -195,7 +195,10 @@ public class IOHandler {
     /** Function to be called once an object has serialized */
     public void onObjectSerializationComplete() {
         serializedObjects++;
-        footerView.updateProgressbar("Gemmer...", ((double) serializedObjects / objectsToSerialize) * 100);
+
+        if (footerView != null) {
+            footerView.updateProgressbar("Gemmer...", ((double) serializedObjects / objectsToSerialize) * 100);
+        }
     }
 
     public void onDeserializeStart() {
