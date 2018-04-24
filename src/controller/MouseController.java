@@ -1,6 +1,8 @@
 package controller;
 
+import model.Address;
 import model.AddressesModel;
+import model.Coordinates;
 import view.CanvasView;
 import view.FooterView;
 
@@ -61,8 +63,11 @@ public class MouseController extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
         canvas.requestFocus();
 
-        if (e.getButton() == MouseEvent.BUTTON2) {
-
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            mapController.clearListOfLocations();
+            Point2D modelCoords = mapController.toModelCoords(e.getPoint());
+            Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
+            mapController.addToListOfLocations(address);
         }
         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             mapController.zoom(1.4, -e.getX(), -e.getY());

@@ -3,18 +3,23 @@ package view;
 import controller.MapController;
 import helpers.ColorMap;
 import helpers.StrokeMap;
+import model.Address;
 import model.MapElement;
 import model.WayType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This view draws the map.
  */
 public class CanvasView extends JComponent {
     private MapController controller;
+    private List<Ellipse2D> ellipseList = new ArrayList<>();
 
 
     public CanvasView(MapController c) {
@@ -60,5 +65,24 @@ public class CanvasView extends JComponent {
             }
         }
 
+        paintLocationIcon(g);
+
+    }
+
+    private void paintLocationIcon(Graphics2D g) {
+        if (controller.getListOfLocations().isEmpty()) return;
+        g.setPaint(Color.red);
+
+        ellipseList.clear();
+        double size = 0.1 / controller.getZoomLevel();
+        //System.out.println("Size: " + 1000*size);
+        for (Address a : controller.getListOfLocations()) {
+            ellipseList.add(new Ellipse2D.Double(a.getCoordinates().getX() - size / 2,
+                    a.getCoordinates().getY() - size / 2, size, size));
+        }
+
+        for (Ellipse2D e : ellipseList) {
+            g.fill(e);
+        }
     }
 }

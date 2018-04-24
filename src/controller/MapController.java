@@ -23,6 +23,8 @@ public class MapController {
     private AffineTransform transform = new AffineTransform();
     private boolean useAntiAliasing = false;
 
+    private List<Address> listOfLocations = new ArrayList<>();
+
 
     /**
      * @return the transform to be used in the canvasView
@@ -139,6 +141,19 @@ public class MapController {
         updateMap();
     }
 
+
+
+    //Methods to handle list of locations
+    public void addToListOfLocations(Address address){ listOfLocations.add(address); }
+
+    public void removeFromListOfLocations(Address address) { listOfLocations.remove(address); }
+
+    public void clearListOfLocations() { listOfLocations.clear(); }
+
+    public List<Address> getListOfLocations() { return listOfLocations; }
+
+
+
     public Rectangle2D getModelViewRect() {
         try {
             return transform.createInverse().createTransformedShape(new Rectangle2D.Double(0, 0, canvas.getWidth(), canvas.getHeight())).getBounds2D();
@@ -163,7 +178,7 @@ public class MapController {
      * Internal helper that parses the current zoom level.
      * This level will be between 1 and 500.
      */
-    private int getZoomLevel() {
+    public int getZoomLevel() {
         double currDist = GetDistance.PxToKm(100) * 10;
         int maxDist = 510;
 

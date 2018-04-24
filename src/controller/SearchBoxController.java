@@ -59,6 +59,7 @@ public class SearchBoxController extends MouseAdapter {
 
             // Go to proper position on map
             Coordinates coordinates = addressesModel.getCoordinates(address);
+            MapController.getInstance().moveScreen(coordinates, addressesModel.getType(address));
 
             // Update view to reflect changes
             stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
