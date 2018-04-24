@@ -74,7 +74,7 @@ public class MapModel {
     }
 
     public Coordinates getNearestWay(Coordinates coords) {
-        List<Coordinates> candidates = new ArrayList<>();
+        List<MapElement> candidates = new ArrayList<>();
 
         int i = 0;
         for (WayType type : WayType.values()) {
@@ -90,7 +90,7 @@ public class MapModel {
                 case TERTIARYROAD:
                 case SECONDARYROAD:
                 case HIGHWAY:
-                    candidates.add(mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
                     break;
                 default:
                     break;
@@ -100,15 +100,19 @@ public class MapModel {
 
         Coordinates nearestNeighbour = null;
         double currentNeighbour = Double.MAX_VALUE;
-        for (Coordinates val : candidates) {
+        for (MapElement val : candidates) {
             if (val != null) {
-                double distanceTo = Math.hypot( coords.getX() - val.getX(), coords.getY() - val.getY());
-                if ( distanceTo < currentNeighbour ) {
-                    nearestNeighbour = val;
-                    currentNeighbour = distanceTo;
+                for (Coordinates nodeCoords : val.getNodes()) {
+                    double distanceTo = Math.hypot( coords.getX() - nodeCoords.getX(), coords.getY() - nodeCoords.getY());
+                    if ( distanceTo < currentNeighbour ) {
+                        nearestNeighbour = val;
+                        currentNeighbour = distanceTo;
+                    }
                 }
             }
         }
+
+        System.out.println(nearestNeighbour);
         return nearestNeighbour;
     }
 

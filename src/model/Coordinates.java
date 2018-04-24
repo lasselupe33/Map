@@ -7,44 +7,44 @@ import java.io.ObjectOutput;
 
 /** Simple class that contains latitude and longitude coordinates */
 public class Coordinates implements Externalizable {
-    private Double x, y;
+    private float x, y;
 
     public Coordinates() {}
-    public Coordinates(double x, double y) {
+    public Coordinates(float x, float y) {
         this.x = x;
         this.y = y;
     }
 
     /** Getters */
-    public double getX() {
+    public float getX() {
         return x;
     }
 
-    public double getY() {
+    public float getY() {
         return y;
     }
 
-    public void setX(double x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public void setY(double y) {
+    public void setY(float y) {
         this.y = y;
     }
 
     public String toString() {
-        return y + "-" + x;
+        return x + "-" + y;
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        x = in.readDouble();
-        y = in.readDouble();
+        x = in.readFloat();
+        y = in.readFloat();
     }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeDouble(x);
-        out.writeDouble(y);
+        out.writeFloat(x);
+        out.writeFloat(y);
     }
 }

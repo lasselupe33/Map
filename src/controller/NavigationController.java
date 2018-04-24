@@ -42,8 +42,7 @@ public class NavigationController {
         Coordinates endPointCoords = mapModel.getNearestWay(endAddressCoords);
 
         Node startingPoint = graph.getNode(startingPointCoords.toString());
-        System.out.println((float) startAddressCoords.getX() + "-" + (float) startAddressCoords.getY());
-        System.out.println(startingPoint);
+        Node endPoint = graph.getNode(endPointCoords.toString());
 
     }
 }

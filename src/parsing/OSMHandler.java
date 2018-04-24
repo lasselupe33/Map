@@ -424,7 +424,7 @@ public class OSMHandler extends DefaultHandler {
         }
 
         Path2D path = convertWayToPath(new Path2D.Float(), way);
-        addElement(type, path);
+        addElement(type, path, way.getNodes());
     }
 
     private void addToGraph(OSMWay way) {
@@ -467,7 +467,7 @@ public class OSMHandler extends DefaultHandler {
         for (OSMWay way : relation) {
             path = convertWayToPath(path, way);
         }
-        addElement(type, path);
+        addElement(type, path, way.getNodes());
     }
 
     /** Internal helper that converts a way into a path */
@@ -524,12 +524,12 @@ public class OSMHandler extends DefaultHandler {
                     path.lineTo(node.getLon(), node.getLat());
                 }
 
-                addElement(WayType.COASTLINE, path);
+                addElement(WayType.COASTLINE, path, way.getNodes());
             }
         }
     }
 
-    private void addElement(WayType type, Path2D path) {
+    private void addElement(WayType type, Path2D path, ArrayList<Node> nodes) {
         Rectangle2D rect = path.getBounds2D();
         switch (type) {
             case COASTLINE:
@@ -548,7 +548,7 @@ public class OSMHandler extends DefaultHandler {
             case PLACE_OF_WORSHIP:
             case AEROWAY:
             case GRASS:
-                mapModel.add(type, new MapElement(rect.getX(), rect.getY(), path, type,  true));
+                mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type,  true, nodes));
                 break;
 
             case ROAD:
@@ -569,7 +569,7 @@ public class OSMHandler extends DefaultHandler {
             case DRAIN:
             case RUNWAY:
             case TRUNK:
-                mapModel.add(type, new MapElement(rect.getX(), rect.getY(), path, type, false));
+                mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, false, nodes));
                 break;
             default:
                 break;
