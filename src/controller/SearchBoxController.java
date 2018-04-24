@@ -12,10 +12,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class SearchBoxController extends MouseAdapter {
-    StateController stateController;
-    AddressController addressController;
+    static StateController stateController;
+    static AddressController addressController;
     AddressesModel addressesModel;
-    SearchBox searchBoxView;
+    static SearchBox searchBoxView;
 
     public SearchBoxController(MetaModel m, StateController sc, AddressController ac, AddressesModel am) {
         addressesModel = am;
@@ -56,7 +56,6 @@ public class SearchBoxController extends MouseAdapter {
         if (addressesModel.contains(address)) {
             // Update address
             addressController.setCurrentAddress(address);
-
             // Go to proper position on map
             Coordinates coordinates = addressesModel.getCoordinates(address);
             MapController.getInstance().moveScreen(coordinates, addressesModel.getType(address));
@@ -67,8 +66,16 @@ public class SearchBoxController extends MouseAdapter {
             // ... else retrieve and display list of nodes that match the input.
         }
     }
-    public void setSearchInput(String s){
+    public static void setSearchInput(String s){
         searchBoxView.getSearchInput().setText(s);
+    }
+
+    public static void setInputOnLocationIcon(String s) {
+        setSearchInput(s);
+        String input = searchBoxView.getSearchInput().getText();
+        Address address = AddressBuilder.parse(input);
+        addressController.setCurrentAddress(address);
+        stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
 
     public String getSearchInput() {return searchBoxView.getSearchInput().getText();}
@@ -78,6 +85,7 @@ public class SearchBoxController extends MouseAdapter {
     }
 
     public void onCloseClick() {
+        MapController.getInstance().clearListOfLocations();
         stateController.updateCurrentState(ViewStates.INITIAL);
     }
 

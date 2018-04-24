@@ -2,14 +2,17 @@ package view;
 
 import controller.MapController;
 import helpers.ColorMap;
+import helpers.GetDistance;
 import helpers.StrokeMap;
 import model.Address;
+import model.Coordinates;
 import model.MapElement;
 import model.WayType;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +22,6 @@ import java.util.List;
  */
 public class CanvasView extends JComponent {
     private MapController controller;
-    private List<Ellipse2D> ellipseList = new ArrayList<>();
-
 
     public CanvasView(MapController c) {
         controller = c;
@@ -69,20 +70,27 @@ public class CanvasView extends JComponent {
 
     }
 
+
     private void paintLocationIcon(Graphics2D g) {
         if (controller.getListOfLocations().isEmpty()) return;
         g.setPaint(Color.red);
 
-        ellipseList.clear();
-        double size = 0.1 / controller.getZoomLevel();
-        //System.out.println("Size: " + 1000*size);
-        for (Address a : controller.getListOfLocations()) {
-            ellipseList.add(new Ellipse2D.Double(a.getCoordinates().getX() - size / 2,
-                    a.getCoordinates().getY() - size / 2, size, size));
-        }
+        double scale = 0.003 * GetDistance.PxToKm(100);
 
-        for (Ellipse2D e : ellipseList) {
-            g.fill(e);
+        for (Coordinates coord : controller.getListOfLocations()) {
+            Double[] xValue = new Double[] {coord.getX()-scale/2, coord.getX(), coord.getX()+scale/2, coord.getX()-scale/2};
+            Double[] yValue = new Double[] {coord.getY()-scale, coord.getY(), coord.getY()-scale, coord.getY()-scale};
+
+            Path2D path = new Path2D.Double();
+            path.moveTo(xValue[0], yValue[0]);
+
+            for(int i = 1; i < xValue.length-1; i++) {
+                path.lineTo(xValue[i], yValue[i]);
+            }
+            path.quadTo(xValue[xValue.length-1]+scale/2, yValue[yValue.length-1]-scale/2, xValue[xValue.length-1], yValue[yValue.length-1]);
+
+            g.fill(path);
         }
     }
+
 }

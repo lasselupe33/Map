@@ -23,7 +23,7 @@ public class MapController {
     private AffineTransform transform = new AffineTransform();
     private boolean useAntiAliasing = false;
 
-    private List<Address> listOfLocations = new ArrayList<>();
+    private List<Coordinates> listOfLocations = new ArrayList<>();
 
 
     /**
@@ -136,6 +136,7 @@ public class MapController {
 
         zoomToCenter(zoomscale);
 
+        addToListOfLocations(coordinates);
 
         // Update map elements
         updateMap();
@@ -144,13 +145,13 @@ public class MapController {
 
 
     //Methods to handle list of locations
-    public void addToListOfLocations(Address address){ listOfLocations.add(address); }
+    public void addToListOfLocations(Coordinates coordinates){ listOfLocations.add(coordinates); }
 
-    public void removeFromListOfLocations(Address address) { listOfLocations.remove(address); }
+    public void removeFromListOfLocations(Coordinates coordinates) { listOfLocations.remove(coordinates); }
 
     public void clearListOfLocations() { listOfLocations.clear(); }
 
-    public List<Address> getListOfLocations() { return listOfLocations; }
+    public List<Coordinates> getListOfLocations() { return listOfLocations; }
 
 
 
