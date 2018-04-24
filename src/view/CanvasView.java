@@ -4,6 +4,7 @@ import controller.MapController;
 import helpers.ColorMap;
 import helpers.StrokeMap;
 import model.MapElement;
+import model.MapModel;
 import model.WayType;
 
 import javax.swing.*;
@@ -58,6 +59,12 @@ public class CanvasView extends JComponent {
                     g.draw(m.getShape());
                 }
             }
+        }
+
+        if (MapModel.shortPath != null) {
+            g.setStroke(new BasicStroke(0.00020f));
+            g.setColor(Color.BLACK);
+            g.draw(MapModel.shortPath);
         }
 
     }

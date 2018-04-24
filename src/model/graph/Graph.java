@@ -1,7 +1,10 @@
 package model.graph;
 
 import helpers.structures.LongToNodeMap;
+import model.MapModel;
 
+import java.awt.geom.Path2D;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -32,9 +35,13 @@ public class Graph {
         System.out.println(pq.size());
 
         while (true) {
+            if (pq.size() == 0) {
+                break;
+            }
+
             Node current = pq.remove();
 
-            if (current == null || current == dest) {
+            if (current == dest) {
                 break;
             }
 
@@ -45,7 +52,7 @@ public class Graph {
 
             for (int i = 0; i < current.getEdges().size(); i++) {
                 Edge edgeToNeighbour = current.getEdges().get(i);
-                Node neighbour = edgeToNeighbour.getTo();
+                Node neighbour = edgeToNeighbour.getTo(current);
 
 
                 if (!neighbour.addedToTree()) {
@@ -60,6 +67,20 @@ public class Graph {
             }
         }
 
+        Path2D test = new Path2D.Float();
+        Node node = path.get(0);
+        test.moveTo(node.getLon(), node.getLat());
+
+        for (int i = 1; i < path.size(); i++) {
+            node = path.get(i);
+            test.lineTo(node.getLon(), node.getLat());
+        }
+
+        MapModel.shortPath = test;
+
+        for (Node n: path) {
+            System.out.println(n.toKey());
+        }
         System.out.println(path.size());
     }
 }

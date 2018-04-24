@@ -44,5 +44,6 @@ public class NavigationController {
         Node startingPoint = graph.getNode(startingPointCoords.toString());
         Node endPoint = graph.getNode(endPointCoords.toString());
 
+        graph.computePath(startingPoint, endPoint);
     }
 }

@@ -4,12 +4,14 @@ import helpers.io.DeserializeObject;
 import helpers.structures.KDTree;
 import helpers.io.SerializeObject;
 
+import java.awt.geom.Path2D;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
 public class MapModel {
+    public static Path2D shortPath = null;
     private int initializedTypes = 0;
     private int amountOfTypes = 0;
     private EnumMap<WayType, List<Coordinates>> mapElements = initializeMap();
