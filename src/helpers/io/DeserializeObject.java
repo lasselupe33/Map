@@ -28,9 +28,9 @@ public class DeserializeObject implements Runnable {
 
             // Setup output path
             if (IOHandler.useExternalSource) {
-                path = new URL(IOHandler.externalRootPath + "/data/" + name + ".bin");
+                path = new URL(IOHandler.externalRootPath + "/BFST18_binary/" + name + ".bin");
             } else {
-                path = Main.class.getResource("/data/" + name + ".bin");
+                path = Main.class.getResource("/BFST18_binary/" + name + ".bin");
             }
 
             InputStream stream = path.openStream();

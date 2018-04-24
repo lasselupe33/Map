@@ -26,9 +26,9 @@ public class SerializeObject implements Runnable {
 
             // Setup output path
             if (IOHandler.instance.isJar) {
-                path = new URL(IOHandler.externalRootPath + "/data/" + name + ".bin");
+                path = new URL(IOHandler.externalRootPath + "/BFST18_binary/" + name + ".bin");
             } else {
-                path = new URL(Main.class.getResource("/data/") + "/" + name + ".bin");
+                path = new URL(Main.class.getResource("/BFST18_binary/") + "/" + name + ".bin");
             }
 
             File file = new File(path.toURI());
