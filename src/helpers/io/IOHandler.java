@@ -123,8 +123,10 @@ public class IOHandler {
                     e.printStackTrace();
                 }
             }
+            
 
             if (Main.initialRender) {
+                Main.dataLoaded = true;
                 // If MVC is ready, then run application!
                 if (Main.hasInitialized) {
                     Main.run();
