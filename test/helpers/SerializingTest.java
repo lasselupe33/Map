@@ -22,7 +22,7 @@ public class SerializingTest {
         Thread.sleep(100);
 
         // Retrieve object
-        URL path = Main.class.getResource("/data/test.bin");
+        URL path = Main.class.getResource("/BFST18_binary/test.bin");
         InputStream stream = path.openStream();
         ObjectInputStream in = new ObjectInputStream(stream);
         String readObject = (String) in.readObject();
