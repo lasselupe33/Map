@@ -10,10 +10,12 @@ import java.util.PriorityQueue;
 public class Graph {
     LongToNodeMap nodes;
 
-    public Graph() {}
+    public Graph() {
+        nodes = new LongToNodeMap(25);
+    }
 
-    public void setNodes(LongToNodeMap map) {
-        nodes = map;
+    public void putNode(Node node) {
+        nodes.put(node.getId(), node.getLon(), node.getLat());
     }
 
     public Node getNode(Long id) {
@@ -25,13 +27,13 @@ public class Graph {
         source.setDistToSource(0);
         pq.add(source);
         ArrayList<Node> path = new ArrayList<>();
-        Node n = nodes.get(source.getId());
-        System.out.println(n.getEdges().size());
-        System.out.println(source.getEdges().size());
+
+        // TEST PRINTING
+        System.out.println("Source edges:" + source.getEdges().size());
+        System.out.println("Dest edges: " + dest.getEdges().size());
         System.out.println(pq.size());
         System.out.println("");
-
-        n = nodes.get(18054776 );
+        Node n = nodes.get(18054776 );
         System.out.println(n.getEdges().size());
 
 

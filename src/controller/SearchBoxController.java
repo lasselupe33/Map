@@ -56,16 +56,7 @@ public class SearchBoxController extends MouseAdapter {
 
         address = addresses.get(address.toKey());
 
-        if (test == null) {
-            test = graph.getNode(address.getId());
-            System.out.println(test.getLat() + " " + test.getLon() + " " + test.getEdges().size());
-        } else {
-            graph.computePath(test, graph.getNode(address.getId()));
-        }
-
-
         // Update current address and go to addressView if address exist
-        /*
         if (addresses.contains(address)) {
             // Update address
             addressController.setCurrentAddress(address);
@@ -78,7 +69,6 @@ public class SearchBoxController extends MouseAdapter {
         } else {
             // ... else retrieve and display list of nodes that match the input.
         }
-        */
     }
 
     public void onNavigationClick() {

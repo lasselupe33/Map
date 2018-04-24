@@ -25,13 +25,20 @@ public class OSMHandler extends DefaultHandler {
     private OSMWay way;
     private MainModel model;
     private MapModel mapModel;
-    private Graph graph;
     private double lonFactor;
     private OSMWayType type;
+
+    // Fields for graph
+    private Graph graph;
+    private boolean isHighway = false;
+
+    // Fields for parsing information on highways
     private int speedLimit;
     private boolean supportsCars;
     private boolean supportsBicycles;
     private boolean supportsPedestrians;
+
+
     private OSMRelation relation;
 
     // Fields related to created addresses
@@ -90,6 +97,7 @@ public class OSMHandler extends DefaultHandler {
                         break;
                     case "highway":
                         parseHighway(attributes.getValue("v"));
+                        isHighway = true;
                         break;
                     case "natural":
                         if (attributes.getValue("v").equals("water")) {
@@ -215,13 +223,16 @@ public class OSMHandler extends DefaultHandler {
                 } else {
                     createWay(way);
                 }
+                if (isHighway) {
+                    addToGraph(way);
+                }
                 break;
             case "relation":
                 createRelation();
                 break;
             case "osm":
                 convertCoastlinesToPath();
-                graph.setNodes(idToNode);
+                //graph.setNodes(idToNode);
                 mapModel.createTree();
             default:
                 break;
@@ -377,20 +388,35 @@ public class OSMHandler extends DefaultHandler {
     private void createWay(OSMWay way) {
         Path2D path = convertWayToPath(new Path2D.Double(), way);
         addElement(type, path);
+    }
 
+    private void addToGraph(OSMWay way) {
         ArrayList<Node> nodes = way.getNodes();
         Node from = nodes.get(0);
         for (int i = 1; i < nodes.size(); i++) {
             Node to = nodes.get(i);
             float length = (float) GetDistance.inKM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
-            Node newFrom = idToNode.get(from.getId());
-            Node newTo = idToNode.get(to.getId());
+
+            Node newFrom = graph.getNode(from.getId());
+            if (newFrom == null) {
+                newFrom = from;
+                graph.putNode(newFrom);
+            }
+
+            Node newTo = graph.getNode(to.getId());
+            if (newTo == null) {
+                newTo = to;
+                graph.putNode(newTo);
+            }
+
             Edge edge = new Edge(newFrom, newTo, length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
-            newFrom.addEdge(edge);
-            newTo.addEdge(edge);
+
+            graph.getNode(newFrom.getId()).addEdge(edge);
+            graph.getNode(newTo.getId()).addEdge(edge);
 
             from = to;
         }
+        isHighway = false;
     }
 
     /** Internal helper that creates a relation when called (i.e. when the parser reaches the end of a relation */
