@@ -61,7 +61,10 @@ public class MouseController extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
         canvas.requestFocus();
 
-        if (e.getClickCount() == 2) {
+        if (e.getButton() == MouseEvent.BUTTON2) {
+
+        }
+        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             mapController.zoom(1.4, -e.getX(), -e.getY());
         }
 
