@@ -1,10 +1,7 @@
 package controller;
 
 import helpers.GetDistance;
-import model.MetaModel;
-import model.MapElement;
-import model.MapModel;
-import model.WayType;
+import model.*;
 import view.CanvasView;
 
 import java.awt.geom.AffineTransform;
@@ -25,6 +22,8 @@ public class MapController {
     private static CanvasView canvas;
     private AffineTransform transform = new AffineTransform();
     private boolean useAntiAliasing = false;
+
+    private List<Coordinates> listOfLocations = new ArrayList<>();
 
 
     /**
@@ -122,6 +121,40 @@ public class MapController {
         updateMap();
     }
 
+    public void moveScreen(Coordinates coordinates, WayType type) {
+        transform = new AffineTransform();
+
+        System.out.println("x = " + coordinates.getX() + " y = " + coordinates.getY());
+        // Pan to map
+        pan(-coordinates.getX(), -coordinates.getY());
+        zoom(canvas.getHeight() / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
+        // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
+        pan(canvas.getWidth()/2, canvas.getHeight()/2);
+
+        double zoomscale = 100*(type.getPriority()-getZoomLevel())/510;
+        System.out.println(zoomscale);
+
+        zoomToCenter(zoomscale);
+
+        addToListOfLocations(coordinates);
+
+        // Update map elements
+        updateMap();
+    }
+
+
+
+    //Methods to handle list of locations
+    public void addToListOfLocations(Coordinates coordinates){ listOfLocations.add(coordinates); }
+
+    public void removeFromListOfLocations(Coordinates coordinates) { listOfLocations.remove(coordinates); }
+
+    public void clearListOfLocations() { listOfLocations.clear(); }
+
+    public List<Coordinates> getListOfLocations() { return listOfLocations; }
+
+
+
     public Rectangle2D getModelViewRect() {
         try {
             return transform.createInverse().createTransformedShape(new Rectangle2D.Double(0, 0, canvas.getWidth(), canvas.getHeight())).getBounds2D();
@@ -146,7 +179,7 @@ public class MapController {
      * Internal helper that parses the current zoom level.
      * This level will be between 1 and 500.
      */
-    private int getZoomLevel() {
+    public int getZoomLevel() {
         double currDist = GetDistance.PxToKm(100) * 10;
         int maxDist = 510;
 

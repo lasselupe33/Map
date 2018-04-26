@@ -1,12 +1,7 @@
 package controller;
 
 import model.Address;
-import model.Favorite;
-import view.SearchBox;
 
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class FavoriteController {
     StateController stateController;
@@ -27,8 +22,6 @@ public class FavoriteController {
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE){
             navigationController.setStartInput("navigation");
-
-
         }
     }
 

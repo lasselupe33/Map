@@ -5,6 +5,7 @@ import java.io.*;
 public class Address implements Externalizable {
     private String street, house, postcode;
     private Coordinates coordinates;
+    private WayType type;
 
     public Address() {}
 
@@ -27,6 +28,8 @@ public class Address implements Externalizable {
         house = _house;
         postcode = _postcode;
     }
+
+    public void setType(WayType type) { this.type = type; }
 
     /** Helper that converts an address to a key to be used in the data-structure */
     public String toKey() {
@@ -55,6 +58,8 @@ public class Address implements Externalizable {
     public String getCity() {
         return AddressesModel.postcodeToCity.get(postcode);
     }
+
+    public WayType getType() { return type; }
 
     public Coordinates getCoordinates() {
         return coordinates;
