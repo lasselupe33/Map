@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.net.URL;
 
 public class FavoriteView extends JPanel {
     private FavoritesModel favoritesModel;
@@ -51,11 +52,18 @@ public class FavoriteView extends JPanel {
                 "</span><br><span style=\"font-size: 10px;\">"+f.getAddress()+"</span></html>";
         JLabel label = new JLabel(text);
         label.setName(f.getAddress().toString());
-        label.setBorder(new EmptyBorder(10, 10, 10, 10));
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
+        Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        Border margin = BorderFactory.createEmptyBorder(5, 0, 5, 0);
+        Border combo = BorderFactory.createCompoundBorder(border, padding);
+        label.setBorder(BorderFactory.createCompoundBorder(margin, combo));
+
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         label.addMouseListener(favoriteController);
-        
+
+
         panel.add(label);
+
 
 
     }
