@@ -10,10 +10,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class SearchBoxController extends MouseAdapter {
-    static StateController stateController;
-    static AddressController addressController;
+    StateController stateController;
+    AddressController addressController;
     AddressesModel addressesModel;
-    static SearchBox searchBoxView;
+    SearchBox searchBoxView;
 
     public SearchBoxController(MetaModel m, StateController sc, AddressController ac, AddressesModel am) {
         addressesModel = am;
@@ -71,6 +71,7 @@ public class SearchBoxController extends MouseAdapter {
     }
 
 
+
     /** Helper that updates the currently entered address */
     public void updateAddress(Address address) {
         // Update address
@@ -78,21 +79,19 @@ public class SearchBoxController extends MouseAdapter {
 
         // Go to proper position on map
         Coordinates coordinates = addressesModel.getCoordinates(address);
+        WayType type = addressesModel.getType(address);
+        MapController.getInstance().moveScreen(coordinates, type);
 
         // Update view to reflect changes
         stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
-
-        WayType type = addressesModel.getType(address);
-        MapController.getInstance().moveScreen(coordinates, type);
     }
 
     public void setSearchInput(String s){
         searchBoxView.getSearchInput().setText(s);
     }
 
-    public static void setInputOnLocationIcon(String s) {
-        String input = searchBoxView.getSearchInput().getText();
-        Address address = AddressBuilder.parse(input);
+    public void setInputOnLocationIcon(Address address) {
+        setSearchInput(address.toString());
         addressController.setCurrentAddress(address);
         stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
@@ -104,7 +103,7 @@ public class SearchBoxController extends MouseAdapter {
     }
 
     public void onCloseClick() {
-        MapController.getInstance().clearListOfLocations();
+        MapController.getInstance().deleteCurrentCoordinates();
         stateController.updateCurrentState(ViewStates.INITIAL);
     }
 

@@ -20,15 +20,17 @@ public class MouseController extends MouseAdapter {
     private MapController mapController;
     private AddressesModel addressesModel;
     private FooterView footerView;
+    private SearchBoxController searchBoxController;
 
     private Point2D lastMousePosition;
     private static Thread t;
 
-    public MouseController(CanvasView c, MapController cc, AddressesModel am, FooterView fv) {
+    public MouseController(CanvasView c, MapController cc, AddressesModel am, FooterView fv, SearchBoxController sbc) {
         canvas = c;
         mapController = cc;
         addressesModel = am;
         footerView = fv;
+        searchBoxController = sbc;
         canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
         canvas.addMouseMotionListener(this);
@@ -64,11 +66,11 @@ public class MouseController extends MouseAdapter {
         canvas.requestFocus();
 
         if (e.getButton() == MouseEvent.BUTTON3) {
-            mapController.clearListOfLocations();
+            mapController.deleteCurrentCoordinates();
             Point2D modelCoords = mapController.toModelCoords(e.getPoint());
             Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
-            SearchBoxController.setInputOnLocationIcon(address.toString());
-            mapController.addToListOfLocations(address.getCoordinates());
+            searchBoxController.setInputOnLocationIcon(address);
+            mapController.updateCurrentCoordinates(address.getCoordinates());
         }
         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             mapController.zoom(1.4, -e.getX(), -e.getY());

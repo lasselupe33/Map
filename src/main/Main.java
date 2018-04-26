@@ -128,7 +128,7 @@ public class Main {
             sc.addDependencies(v, acc);
 
             new KeyboardController(v, cv, model, cc);
-            new MouseController(cv, cc, am, fv);
+            new MouseController(cv, cc, am, fv, sbc);
             new ResizeController(v);
 
             initialRender = false;

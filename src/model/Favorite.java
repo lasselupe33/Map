@@ -9,11 +9,10 @@ public class Favorite {
         this.address = address;
     }
 
+
     public String getName() {
         return name;
     }
 
-    public Address getAddress() {
-        return address;
-    }
+    public Address getAddress() { return address; }
 }

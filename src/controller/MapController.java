@@ -23,7 +23,7 @@ public class MapController {
     private AffineTransform transform = new AffineTransform();
     private boolean useAntiAliasing = false;
 
-    private List<Coordinates> listOfLocations = new ArrayList<>();
+    private static Coordinates currentCoordinates;
 
 
     /**
@@ -122,7 +122,6 @@ public class MapController {
     }
 
     public void moveScreen(Coordinates coordinates, WayType type) {
-
         transform = new AffineTransform();
         // Pan to map
         pan(-coordinates.getX(), -coordinates.getY());
@@ -135,7 +134,7 @@ public class MapController {
 
         zoomToCenter(zoomscale);
 
-        addToListOfLocations(coordinates);
+        updateCurrentCoordinates(coordinates);
 
         // Update map elements
         updateMap();
@@ -144,13 +143,11 @@ public class MapController {
 
 
     //Methods to handle list of locations
-    public void addToListOfLocations(Coordinates coordinates){ listOfLocations.add(coordinates); }
+    public static void updateCurrentCoordinates(Coordinates coordinates){ currentCoordinates = coordinates; }
 
-    public void removeFromListOfLocations(Coordinates coordinates) { listOfLocations.remove(coordinates); }
+    public static void deleteCurrentCoordinates() { currentCoordinates = null; }
 
-    public void clearListOfLocations() { listOfLocations.clear(); }
-
-    public List<Coordinates> getListOfLocations() { return listOfLocations; }
+    public static Coordinates getCurrentCoordinates() { return currentCoordinates; }
 
 
 
