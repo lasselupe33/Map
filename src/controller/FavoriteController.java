@@ -1,12 +1,14 @@
 package controller;
 
+import model.Address;
+import model.Favorite;
 import view.SearchBox;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class FavoriteController extends MouseAdapter{
+public class FavoriteController {
     StateController stateController;
     SearchBoxController searchBoxController;
     NavigationController navigationController;
@@ -18,8 +20,7 @@ public class FavoriteController extends MouseAdapter{
     this.navigationController = nc;
 
     }
-    public void mouseClicked(MouseEvent e){
-        String address = e.getComponent().getName();
+    public void mouseClicked(Address address){
         stateController.updateCurrentState(stateController.getPrevPanel());
         if(stateController.getCurrentState() == ViewStates.INITIAL){
             searchBoxController.setSearchInput("search");

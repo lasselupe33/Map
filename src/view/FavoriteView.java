@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URL;
 
 public class FavoriteView extends JPanel {
@@ -59,13 +61,13 @@ public class FavoriteView extends JPanel {
         label.setBorder(BorderFactory.createCompoundBorder(margin, combo));
 
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        label.addMouseListener(favoriteController);
-
-
+        label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                favoriteController.mouseClicked(f.getAddress());
+                }
+        });
         panel.add(label);
-
-
-
     }
 
 
