@@ -7,6 +7,7 @@ import model.Coordinates;
 import model.MainModel;
 import view.SearchBox;
 
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -65,6 +66,11 @@ public class SearchBoxController extends MouseAdapter {
             // ... else retrieve and display list of nodes that match the input.
         }
     }
+    public void setSearchInput(String s){
+        searchBoxView.getSearchInput().setText(s);
+    }
+
+    public String getSearchInput() {return searchBoxView.getSearchInput().getText();}
 
     public void onNavigationClick() {
         stateController.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);

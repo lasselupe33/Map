@@ -55,7 +55,8 @@ public class Main {
             StateController sc = new StateController();
             AddressController ac = new AddressController(sc, favorites);
             SearchBoxController sbc = new SearchBoxController(model, sc, ac);
-            FavoriteController fc = new FavoriteController(sc);
+            NavigationController nc = new NavigationController();
+            FavoriteController fc = new FavoriteController(sc, sbc, nc);
             AutoCompleteController acc = new AutoCompleteController();
 
             // Views
@@ -66,12 +67,14 @@ public class Main {
             sbc.addView(sb);
             FooterView fv = new FooterView(cc);
             ZoomView zv = new ZoomView(cc);
-            NavigationView nv = new NavigationView();
+            NavigationView nv = new NavigationView(sc);
+            nc.addView(nv);
             AutoCompleteList al = new AutoCompleteList(acc);
             acc.addDependencies(al, sb, addressesModel);
             FavoriteView favoriteView = new FavoriteView(favorites, fc);
             FavoritePopupView favoritePopupView = new FavoritePopupView(ac, sc);
             ac.addView(av, favoriteView);
+
 
             // Pass all views to the main window view.
             MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, favoriteView, fc, al, favorites, favoritePopupView);

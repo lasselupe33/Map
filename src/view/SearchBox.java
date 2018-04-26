@@ -110,6 +110,7 @@ public class SearchBox extends JPanel {
 
         // Setup search input
         searchInput = new JTextField("Søg..");
+        searchInput.setName(searchInput.getText());
         searchInput.setPreferredSize(new Dimension(360, searchInput.getHeight()));
         searchInput.setFont(new Font("Myriad Pro", Font.PLAIN, 14));
         searchInput.setBorder(BorderFactory.createEmptyBorder());
@@ -189,7 +190,6 @@ public class SearchBox extends JPanel {
 
         return favoriteButtonContainer;
     }
-
 
 }
 

@@ -38,6 +38,10 @@ public class StateController {
         mainView.update();
         mainView.lpane.repaint();
     }
+    public void forcePrevState(ViewStates state){
+        updatePrevPanel();
+        prevState = state;
+    }
 
     public void updatePrevState() {
         updatePrevPanel();
