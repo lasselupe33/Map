@@ -217,7 +217,7 @@ public class IOHandler {
 
             // Attempt to delete the while data-folder recursively if exists
             if (Files.exists(Paths.get(new URI(externalRootPath + folderName)))) {
-                Files.walkFileTree(Paths.get(new URI(externalRootPath + folderName)), new SimpleFileVisitor<>() {
+                Files.walkFileTree(Paths.get(new URI(externalRootPath + folderName)), new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
                         // Delete file when found

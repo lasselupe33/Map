@@ -102,6 +102,7 @@ public class Main {
             sbc.addView(sb);
             zv = new ZoomView(cc);
             nv = new NavigationView(sc);
+            nc.addView(nv);
             al = new AutoCompleteList(acc);
             fav = new FavoriteView(favoritesModelModel, fc);
             favp = new FavoritePopupView(ac, sc);
