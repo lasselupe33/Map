@@ -24,7 +24,6 @@ public class FavoriteView extends JPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
         panel.setOpaque(true);
-        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
         updateFavoritesView();
         scroll = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scroll);
@@ -33,7 +32,7 @@ public class FavoriteView extends JPanel {
     }
 
     public void updateBound(int height){
-        scroll.setPreferredSize(new Dimension(width, height-25));
+        scroll.setBounds(0, 0, width, height-25);
     }
 
 
