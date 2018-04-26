@@ -3,10 +3,12 @@ package view;
 import controller.NavigationController;
 import controller.StateController;
 import controller.TextController;
+import model.graph.VehicleType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.net.URL;
 
 public class NavigationView extends JPanel {
@@ -16,6 +18,8 @@ public class NavigationView extends JPanel {
     private JTextField endInput;
     private StateController stateController;
     private NavigationController navigationController;
+    private JPanel topPanel;
+    private JPanel navigationTypeContainer;
 
     public NavigationView(StateController stateController, NavigationController nc) {
         // Setup view
@@ -25,7 +29,6 @@ public class NavigationView extends JPanel {
         setBackground(Color.WHITE);
         setOpaque(true);
         setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
-
         update();
     }
 
@@ -34,13 +37,14 @@ public class NavigationView extends JPanel {
      */
     public void update() {
         if (!initialRender) {
-
+            remove(topPanel);
         } else {
             initialRender = false;
         }
 
         add(topPanel());
-
+        revalidate();
+        repaint();
     }
 
     /**
@@ -48,7 +52,7 @@ public class NavigationView extends JPanel {
      * @return
      */
     public JPanel topPanel() {
-        JPanel topPanel = new JPanel();
+        topPanel = new JPanel();
         topPanel.setOpaque(false);
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setMaximumSize(new Dimension(width, 200));
@@ -65,41 +69,63 @@ public class NavigationView extends JPanel {
      * type of travel.
      */
     public JPanel navigationTypeInputs() {
-        JPanel navigationTypeContainer = new JPanel();
+        navigationTypeContainer = new JPanel();
         navigationTypeContainer.setOpaque(false);
         navigationTypeContainer.setLayout(new GridLayout(1, 3));
         navigationTypeContainer.setBorder(new EmptyBorder(20, 150, 0, 150));
 
         // Setup Car button
-        URL carURL = this.getClass().getResource("/icons/car.png");
+        URL carURL;
+        if(navigationController.getType() == VehicleType.CAR) {
+            carURL = this.getClass().getResource("/icons/car-blue.png");
+        } else {
+            carURL = this.getClass().getResource("/icons/car.png");
+        }
         ImageIcon carIcon = new ImageIcon(carURL);
         JLabel car = new JLabel();
         car.setIcon(carIcon);
         car.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        car.setName("bookmark");
+        car.setName("car");
         car.setHorizontalAlignment(SwingConstants.CENTER);
+        car.addMouseListener(navigationController);
         navigationTypeContainer.add(car);
 
         // Setup cycle button
-        URL cycleURL = this.getClass().getResource("/icons/cycle.png");
+        URL cycleURL;
+        if(navigationController.getType() == VehicleType.BICYCLE) {
+            cycleURL = this.getClass().getResource("/icons/cycle-blue.png");
+        } else {
+            cycleURL = this.getClass().getResource("/icons/cycle.png");
+        }
         ImageIcon cycleIcon = new ImageIcon(cycleURL);
         JLabel cycle = new JLabel();
         cycle.setIcon(cycleIcon);
         cycle.setHorizontalAlignment(SwingConstants.CENTER);
         cycle.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         cycle.setName("cycle");
+        cycle.addMouseListener(navigationController);
         navigationTypeContainer.add(cycle);
 
         // Setup pedestrian button
-        URL pedestrianURL = this.getClass().getResource("/icons/pedestrian.png");
+        URL pedestrianURL;
+        if(navigationController.getType() == VehicleType.PEDESTRIAN) {
+            pedestrianURL = this.getClass().getResource("/icons/pedestrian-blue.png");
+        } else {
+            pedestrianURL = this.getClass().getResource("/icons/pedestrian.png");
+        }
         ImageIcon pedestrianIcon = new ImageIcon(pedestrianURL);
         JLabel pedestrian = new JLabel();
         pedestrian.setIcon(pedestrianIcon);
         pedestrian.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         pedestrian.setHorizontalAlignment(SwingConstants.CENTER);
         pedestrian.setName("pedestrian");
+        pedestrian.addMouseListener(navigationController);
         navigationTypeContainer.add(pedestrian);
 
+        return navigationTypeContainer;
+    }
+
+    public JPanel getNavigationTypeContainer() {
         return navigationTypeContainer;
     }
 

@@ -23,10 +23,10 @@ public class OSMHandler extends DefaultHandler {
     private HashMap<String, String> postcodeToCity = new HashMap<>();
 
     // Models
-    OSMWay way;
-    MetaModel model;
-    MapModel mapModel;
-    AddressesModel addressesModel;
+    private OSMWay way;
+    private MetaModel model;
+    private MapModel mapModel;
+    private AddressesModel addressesModel;
     private WayType type;
     private OSMRelation relation;
 
@@ -106,8 +106,8 @@ public class OSMHandler extends DefaultHandler {
                         supportsPedestrians = attributes.getValue("v").equals("yes");
                         break;
                     case "highway":
-                        parseHighway(attributes.getValue("v"));
                         isHighway = true;
+                        parseHighway(attributes.getValue("v"));
                         break;
                     case "natural":
                         if (attributes.getValue("v").equals("water")) {
