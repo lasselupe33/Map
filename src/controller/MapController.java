@@ -122,17 +122,16 @@ public class MapController {
     }
 
     public void moveScreen(Coordinates coordinates, WayType type) {
-        transform = new AffineTransform();
 
-        System.out.println("x = " + coordinates.getX() + " y = " + coordinates.getY());
+        transform = new AffineTransform();
         // Pan to map
         pan(-coordinates.getX(), -coordinates.getY());
         zoom(canvas.getHeight() / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
         // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
         pan(canvas.getWidth()/2, canvas.getHeight()/2);
 
-        double zoomscale = 100*(type.getPriority())/510;
-        System.out.println(zoomscale);
+        double zoomscale = 100.0*(type.getPriority()-getZoomLevel())/510.0;
+
 
         zoomToCenter(zoomscale);
 

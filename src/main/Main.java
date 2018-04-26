@@ -88,7 +88,7 @@ public class Main {
         sc = new StateController();
         ac = new AddressController(sc, favoritesModelModel);
         sbc = new SearchBoxController(model, sc, ac, am);
-        acc = new AutoCompleteController();
+        acc = new AutoCompleteController(sc);
         nc = new NavigationController();
         fc = new FavoriteController(sc, sbc, nc);
 
@@ -101,12 +101,12 @@ public class Main {
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
             zv = new ZoomView(cc);
-            nv = new NavigationView(sc);
+            nv = new NavigationView(acc);
             nc.addView(nv);
             al = new AutoCompleteList(acc);
             fav = new FavoriteView(favoritesModelModel, fc);
             favp = new FavoritePopupView(ac, sc);
-            acc.addDependencies(al, sb, am);
+            acc.addDependencies(al, sbc, am);
             ac.addView(av, fav);
 
             // Indicate application MVC has been initialized
@@ -125,7 +125,7 @@ public class Main {
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
             MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, favoritesModelModel, favp);
-            sc.addMainView(v);
+            sc.addDependencies(v, acc);
 
             new KeyboardController(v, cv, model, cc);
             new MouseController(cv, cc, am, fv);

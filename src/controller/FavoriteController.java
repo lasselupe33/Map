@@ -23,7 +23,6 @@ public class FavoriteController {
 
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE){
-            navigationController.setStartInput(address.toString());
         }
     }
 

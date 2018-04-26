@@ -1,5 +1,6 @@
 package controller;
 
+import model.Address;
 import view.NavigationView;
 
 public class NavigationController {
@@ -8,11 +9,18 @@ public class NavigationController {
 
     public NavigationController(){
     }
+
     public void addView(NavigationView nv){
         navigationView = nv;
     }
 
-    public void setStartInput(String s){
-        navigationView.getStartInput().setText(s);
+
+    public void setStartAddress(Address address){
+        navigationView.getStartInput().setText(address.toString());
+    }
+
+    public void setEndAddress(Address address) {
+        navigationView.getEndInput().setText(address.toString());
+
     }
 }

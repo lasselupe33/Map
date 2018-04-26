@@ -1,5 +1,6 @@
 package controller;
 
+import view.AutoCompleteList;
 import view.MainWindowView;
 
 /**
@@ -12,17 +13,18 @@ public class StateController {
     private MainWindowView mainView;
     private ViewStates prevState;
     private ViewStates prevPanel;
+    private AutoCompleteController autoCompleteController;
 
     public StateController() {
         // Setup initial state
         currentState = ViewStates.INITIAL;
         prevState = ViewStates.INITIAL;
         prevPanel = ViewStates.INITIAL;
-
     }
 
-    public void addMainView(MainWindowView view) {
+    public void addDependencies(MainWindowView view, AutoCompleteController acl) {
         mainView = view;
+        this.autoCompleteController = acl;
     }
 
     public ViewStates getCurrentState() {
@@ -34,6 +36,9 @@ public class StateController {
     public  ViewStates getPrevPanel() { return prevPanel; }
 
     public void updateCurrentState(ViewStates newState) {
+        // AutoCompleteList will always be reset on state change
+        autoCompleteController.reset();
+
         currentState = newState;
         mainView.update();
         mainView.lpane.repaint();
