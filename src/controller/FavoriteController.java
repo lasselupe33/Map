@@ -25,9 +25,7 @@ public class FavoriteController extends MouseAdapter{
             searchBoxController.setSearchInput("search");
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE){
-            navigationController.setStartInput("navigation");
-
-
+            // navigationController.setStartInput("navigation");
         }
     }
 
