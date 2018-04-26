@@ -8,6 +8,7 @@ public class NavigationController {
 
     public NavigationController(){
     }
+
     public void addView(NavigationView nv){
         navigationView = nv;
     }

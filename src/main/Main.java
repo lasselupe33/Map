@@ -124,7 +124,7 @@ public class Main {
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
             MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, favoritesModelModel, favp);
-            sc.addMainView(v);
+            sc.addDependencies(v, acc);
 
             new KeyboardController(v, cv, model, cc);
             new MouseController(cv, cc, am, fv);

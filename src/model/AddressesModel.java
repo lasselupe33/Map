@@ -56,21 +56,16 @@ public class AddressesModel implements Serializable {
         }
     }
 
-    /** Helper that returns an address matching the given key, if any. */
-    public Address getAddress(String key) {
-        return addresses.get(searchTrie.get(key));
-    }
-
     /** Helper that indicates whether or not an address exists on the map */
     public boolean contains(Address address) { return searchTrie.contains(address.toKey()); }
 
     /** Helper that returns an arrayList of addresses that matches the given prefix */
-    public ArrayList<String> getMatchingAddresses(String prefixKey) {
+    public ArrayList<Address> getMatchingAddresses(String prefixKey) {
         Iterable<String> matchingKeys = searchTrie.keysWithPrefix(prefixKey);
-        ArrayList<String> matchingAddresses = new ArrayList<>();
+        ArrayList<Address> matchingAddresses = new ArrayList<>();
 
         for (String key : matchingKeys) {
-            matchingAddresses.add(addresses.get(searchTrie.get(key)).toString());
+            matchingAddresses.add(addresses.get(searchTrie.get(key)));
         }
 
         return matchingAddresses;

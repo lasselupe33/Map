@@ -10,6 +10,7 @@ import view.SearchBox;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class SearchBoxController extends MouseAdapter {
     StateController stateController;
@@ -50,22 +51,37 @@ public class SearchBoxController extends MouseAdapter {
     /** Will be called once the a user has entered a search query */
     public void onSearchInput() {
         String input = searchBoxView.getSearchInput().getText();
-        Address address = AddressBuilder.parse(input);
 
-        // Update current address and go to addressView if address exist
-        if (addressesModel.contains(address)) {
-            // Update address
-            addressController.setCurrentAddress(address);
+        // Bail out if no input has been entered
+        if (input.length() == 0) {
+            return;
+        }
 
-            // Go to proper position on map
-            Coordinates coordinates = addressesModel.getCoordinates(address);
+        // Get matching addresses based on input
+        Address inputAddress = AddressBuilder.parse(input);
+        ArrayList<Address> matchingAddresses = addressesModel.getMatchingAddresses(inputAddress.toKey());
 
-            // Update view to reflect changes
-            stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+        if (matchingAddresses.size() != 0) {
+            // If addresses match, then always choose the first address found
+            Address address = matchingAddresses.get(0);
+            updateAddress(address);
         } else {
-            // ... else retrieve and display list of nodes that match the input.
+            // ... else do nothing. AutoCompleteList will print error message
         }
     }
+
+    /** Helper that updates the currently entered address */
+    public void updateAddress(Address address) {
+        // Update address
+        addressController.setCurrentAddress(address);
+
+        // Go to proper position on map
+        Coordinates coordinates = addressesModel.getCoordinates(address);
+
+        // Update view to reflect changes
+        stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+    }
+
     public void setSearchInput(String s){
         searchBoxView.getSearchInput().setText(s);
     }
