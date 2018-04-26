@@ -27,6 +27,7 @@ public class IOHandler {
     public static URL internalRootPath;
     public static URI externalRootPath;
     public static boolean useExternalSource;
+    public boolean testMode = false;
     public boolean isJar = false;
 
     private int deserializedObjects = 0;
@@ -123,8 +124,10 @@ public class IOHandler {
                     e.printStackTrace();
                 }
             }
+            
 
             if (Main.initialRender) {
+                Main.dataLoaded = true;
                 // If MVC is ready, then run application!
                 if (Main.hasInitialized) {
                     Main.run();
@@ -193,7 +196,10 @@ public class IOHandler {
     /** Function to be called once an object has serialized */
     public void onObjectSerializationComplete() {
         serializedObjects++;
-        footerView.updateProgressbar("Gemmer...", ((double) serializedObjects / objectsToSerialize) * 100);
+
+        if (footerView != null) {
+            footerView.updateProgressbar("Gemmer...", ((double) serializedObjects / objectsToSerialize) * 100);
+        }
     }
 
     public void onDeserializeStart() {
@@ -207,9 +213,11 @@ public class IOHandler {
 
     private void cleanDirs() {
         try {
+            String folderName = "/BFST18_binary" + (IOHandler.instance.testMode ? "_test" : "");
+
             // Attempt to delete the while data-folder recursively if exists
-            if (Files.exists(Paths.get(new URI(externalRootPath + "/data")))) {
-                Files.walkFileTree(Paths.get(new URI(externalRootPath + "/data")), new SimpleFileVisitor<>() {
+            if (Files.exists(Paths.get(new URI(externalRootPath + folderName)))) {
+                Files.walkFileTree(Paths.get(new URI(externalRootPath + folderName)), new SimpleFileVisitor<>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
                         // Delete file when found
@@ -228,9 +236,9 @@ public class IOHandler {
             }
 
             // Recreate folders in preparation for data storage
-            Files.createDirectory(Paths.get(new URI(externalRootPath + "/data")));
-            Files.createDirectory(Paths.get(new URI(externalRootPath + "/data/address")));
-            Files.createDirectory(Paths.get(new URI(externalRootPath + "/data/map")));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + folderName)));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/address")));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/map")));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {

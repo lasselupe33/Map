@@ -19,7 +19,7 @@ public class FavoriteController extends MouseAdapter{
         String address = e.getComponent().getName();
         stateController.updateCurrentState(stateController.getPrevPanel());
         if(stateController.getCurrentState() == ViewStates.INITIAL){
-            searchBoxController.setSearchInput("searchbox");
+            searchBoxController.setSearchInput("search");
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE){
             navigationController.setStartInput("navigation");

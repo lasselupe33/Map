@@ -195,7 +195,7 @@ public class MainWindowView {
         footerView.setBounds(0, height - 30, width, 30);
         favoriteView.setBounds(0, 0, 450, height);
         autoCompleteList.setBounds(20, 52, 445, 150);
-
+        favoriteView.updateBound(height);
         // Update the previous state after render
         stateController.updatePrevState();
     }
