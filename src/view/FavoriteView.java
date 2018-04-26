@@ -5,11 +5,11 @@ import model.Favorite;
 import model.FavoritesModel;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class FavoriteView extends JPanel {
-    private int width = 450;
     private FavoritesModel favoritesModel;
     private FavoriteController favoriteController;
     private JPanel panel;
@@ -25,19 +25,20 @@ public class FavoriteView extends JPanel {
         panel.setOpaque(true);
         updateFavoritesView();
         scroll = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        add(scroll);
+        setLayout(new BorderLayout());
+        add(scroll, BorderLayout.CENTER);
 
 
 
     }
 
     public void updateBound(int height){
+        int width = 450;
         scroll.setPreferredSize(new Dimension(width, height-25));
     }
 
 
     public void updateFavoritesView() {
-
         panel.removeAll();
         for(Favorite favorite : favoritesModel){
 
