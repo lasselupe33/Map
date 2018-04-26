@@ -131,7 +131,7 @@ public class MapController {
         // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
         pan(canvas.getWidth()/2, canvas.getHeight()/2);
 
-        double zoomscale = 100*(type.getPriority()-getZoomLevel())/510;
+        double zoomscale = 100*(type.getPriority())/510;
         System.out.println(zoomscale);
 
         zoomToCenter(zoomscale);

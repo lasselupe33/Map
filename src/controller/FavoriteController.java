@@ -15,13 +15,15 @@ public class FavoriteController {
     this.navigationController = nc;
 
     }
-    public void mouseClicked(Address address){
+    public void updateFavoriteInput(Address address){
         stateController.updateCurrentState(stateController.getPrevPanel());
         if(stateController.getCurrentState() == ViewStates.INITIAL){
-            searchBoxController.setSearchInput("search");
+            searchBoxController.setSearchInput(address.toString());
+            MapController.getInstance().moveScreen(address.getCoordinates(), address.getType());
+
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE){
-            navigationController.setStartInput("navigation");
+            navigationController.setStartInput(address.toString());
         }
     }
 
