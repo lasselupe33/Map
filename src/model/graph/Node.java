@@ -3,6 +3,7 @@ package model.graph;
 import java.util.ArrayList;
 
 public class Node {
+    private long id;
     private float lon;
     private float lat;
     ArrayList<Edge> edges = new ArrayList<>();
@@ -10,14 +11,15 @@ public class Node {
     private Node parent;
     private boolean addedToTree = false;
 
-    public Node(float lon, float lat) {
+    public Node(long id, float lon, float lat) {
+        this.id = id;
         this.lon = lon;
         this.lat = lat;
         distTo = Float.POSITIVE_INFINITY;
         parent = null;
     }
 
-    public String getId() { return lon + "-" + lat; }
+    public long getId() { return id; }
 
     public float getLon() { return lon; }
 

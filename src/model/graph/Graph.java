@@ -19,15 +19,11 @@ public class Graph {
         nodes.put(node.getId(), node.getLon(), node.getLat());
     }
 
-    public Node getNode(String id) {
+    public Node getNode(long id) {
         return nodes.get(id);
     }
 
     public void computePath(Node source, Node dest) {
-        System.out.println(source);
-        System.out.println(dest);
-        System.out.println(dest.getLon());
-        System.out.println(dest.getLat());
         PriorityQueue<Node> pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) (a.getDistToSource() - b.getDistToSource()));
         source.setDistToSource(0);
         pq.add(source);

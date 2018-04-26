@@ -47,10 +47,10 @@ public class Main {
         System.setProperty("sun.java2d.opengl", "True");
 
         // Models
-        model = new MetaModel();
-        mapModel = new MapModel(model);
-        am = new AddressesModel();
         graph = new Graph();
+        model = new MetaModel();
+        mapModel = new MapModel(model, graph);
+        am = new AddressesModel();
         IOHandler.instance.addModels(model, mapModel, am, graph);
         favoritesModelModel = new FavoritesModel();
 

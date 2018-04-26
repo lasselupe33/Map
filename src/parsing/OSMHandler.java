@@ -16,8 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 public class OSMHandler extends DefaultHandler {
-    private HashMap<Long, String> idToCoord = new HashMap<>();
-    private LongToNodeMap coordToNode = new LongToNodeMap(25);
+    private LongToNodeMap idToNode = new LongToNodeMap(25);
     private Map<Long, OSMWay> idToWay = new HashMap<>();
     private HashMap<Node, OSMWay> coastlines = new HashMap<>();
     private double lonFactor;
@@ -217,7 +216,7 @@ public class OSMHandler extends DefaultHandler {
                 }
                 break;
             case "nd":
-                way.add(coordToNode.get(idToCoord.get(Long.parseLong(attributes.getValue("ref")))));
+                way.add(idToNode.get(Long.parseLong(attributes.getValue("ref"))));
                 break;
             default:
                 break;
@@ -354,8 +353,7 @@ public class OSMHandler extends DefaultHandler {
         lat = -lat;
 
         // Add node to map
-        idToCoord.put(id, lon + "-" + lat);
-        coordToNode.put(lon + "-" + lat, lon, lat);
+        idToNode.put(id, lon, lat);
 
         // Create temp address to be used when parsing address fields
         currentAddress = new Address(id, lon, lat);
@@ -430,16 +428,22 @@ public class OSMHandler extends DefaultHandler {
     private void addToGraph(OSMWay way) {
         ArrayList<Node> nodes = way.getNodes();
         Node from = nodes.get(0);
+
         for (int i = 1; i < nodes.size(); i++) {
             Node to = nodes.get(i);
+
+            // Determine length of edge between current node and prev node
             float length = (float) GetDistance.inKM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
+
             Node newFrom = graph.getNode(from.getId());
+
             if (newFrom == null) {
                 newFrom = from;
                 graph.putNode(newFrom);
             }
 
             Node newTo = graph.getNode(to.getId());
+
             if (newTo == null) {
                 newTo = to;
                 graph.putNode(newTo);

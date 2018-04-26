@@ -13,17 +13,18 @@ public class MapElement extends Coordinates implements Externalizable {
     private Rectangle2D r;
     private WayType type;
     private boolean shouldFill;
-    private List<Coordinates> nodes = new ArrayList<>();
+    private List<Long> nodeIds = new ArrayList<>();
 
     public MapElement() {}
-    public MapElement(float x, float y, Shape s, WayType t, boolean sf, ArrayList<Node> ns){
+    public MapElement(float x, float y, Shape s, WayType t, boolean sf, ArrayList<Node> nodes){
         super(x, y);
         shape = s;
         type = t;
         shouldFill = sf;
         r = shape.getBounds2D();
-        for (Node n : ns) {
-            nodes.add(new Coordinates(n.getLon(), n.getLat()));
+
+        for (Node n : nodes) {
+            nodeIds.add(n.getId());
         }
     }
 
@@ -35,8 +36,8 @@ public class MapElement extends Coordinates implements Externalizable {
         return r;
     }
 
-    public List<Coordinates> getNodes() {
-            return nodes;
+    public List<Long> getNodeIds() {
+            return nodeIds;
     }
 
     public WayType getType() { return type; }

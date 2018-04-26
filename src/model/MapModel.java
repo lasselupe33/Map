@@ -3,6 +3,8 @@ package model;
 import helpers.io.DeserializeObject;
 import helpers.structures.KDTree;
 import helpers.io.SerializeObject;
+import model.graph.Graph;
+import model.graph.Node;
 
 import java.awt.geom.Path2D;
 import java.lang.reflect.Method;
@@ -18,8 +20,10 @@ public class MapModel {
     private KDTree[] mapTrees; // Contain a reference to trees containing all elements
     private List<MapElement> currentMapData = new ArrayList<>();
     private MetaModel metaModel;
+    private Graph graph;
 
-    public MapModel(MetaModel m) {
+    public MapModel(MetaModel m, Graph g) {
+        graph = g;
         metaModel = m;
     }
 
@@ -75,7 +79,7 @@ public class MapModel {
         mapElements = null;
     }
 
-    public Coordinates getNearestWay(Coordinates coords) {
+    public long getNearestNodeId(Coordinates coords) {
         List<MapElement> candidates = new ArrayList<>();
 
         int i = 0;
@@ -100,21 +104,22 @@ public class MapModel {
             i++;
         }
 
-        Coordinates nearestNeighbour = null;
+        long nearestNeighbour = 0;
+
         double currentNeighbour = Double.MAX_VALUE;
-        for (MapElement val : candidates) {
-            if (val != null) {
-                for (Coordinates nodeCoords : val.getNodes()) {
-                    double distanceTo = Math.hypot( coords.getX() - nodeCoords.getX(), coords.getY() - nodeCoords.getY());
+        for (MapElement way : candidates) {
+            if (way != null) {
+                for (long nodeId : way.getNodeIds()) {
+                    Node node = graph.getNode(nodeId);
+                    double distanceTo = Math.hypot( coords.getX() - node.getLon(), coords.getY() - node.getLat());
                     if ( distanceTo < currentNeighbour ) {
-                        nearestNeighbour = val;
+                        nearestNeighbour = nodeId;
                         currentNeighbour = distanceTo;
                     }
                 }
             }
         }
 
-        System.out.println(nearestNeighbour);
         return nearestNeighbour;
     }
 

@@ -38,11 +38,12 @@ public class NavigationController {
         Coordinates startAddressCoords = addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()).getCoordinates();
         Coordinates endAddressCoords = addressesModel.getAddress(AddressBuilder.parse(endInput).toKey()).getCoordinates();
 
-        Coordinates startingPointCoords = mapModel.getNearestWay(startAddressCoords);
-        Coordinates endPointCoords = mapModel.getNearestWay(endAddressCoords);
+        long startingPointId = mapModel.getNearestNodeId(startAddressCoords);
+        long endPointId = mapModel.getNearestNodeId(endAddressCoords);
 
-        Node startingPoint = graph.getNode(startingPointCoords.toString());
-        Node endPoint = graph.getNode(endPointCoords.toString());
+        System.out.println(startingPointId);
+        Node startingPoint = graph.getNode(startingPointId);
+        Node endPoint = graph.getNode(endPointId);
 
         graph.computePath(startingPoint, endPoint);
     }
