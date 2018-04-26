@@ -30,6 +30,7 @@ public class Node {
     public void setDistToSource(float newDist) {
         distTo = newDist;
     }
+
     public float getDistToSource() { return distTo; }
 
     public Node getParent() { return parent; }

@@ -32,4 +32,8 @@ public class Edge {
     public float getLength() {
         return length;
     }
+
+    public boolean supportsCars() { return supportsCars;}
+    public boolean supportsBicycles() { return supportsBicycles;}
+    public boolean supportsPedestrians() { return supportsPedestrians; }
 }

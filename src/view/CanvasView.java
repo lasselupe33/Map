@@ -62,7 +62,7 @@ public class CanvasView extends JComponent {
         }
 
         if (MapModel.shortPath != null) {
-            g.setStroke(new BasicStroke(0.00020f));
+            g.setStroke(new BasicStroke(0.00002f));
             g.setColor(Color.BLACK);
             g.draw(MapModel.shortPath);
         }

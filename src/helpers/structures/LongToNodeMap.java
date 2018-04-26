@@ -2,7 +2,10 @@ package helpers.structures;
 
 import model.graph.Node;
 
+import java.util.ArrayList;
+
 public class LongToNodeMap {
+    private ArrayList<String> ids = new ArrayList<>();
     private N[] table;
     private int size;
     int MASK;
@@ -16,10 +19,15 @@ public class LongToNodeMap {
         return size;
     }
 
+    public ArrayList<String> getIds() {
+        return ids;
+    }
+
     public void put(String id, float lon, float lat) {
         int position = id.hashCode() & MASK;
         table[position] = new N(lon, lat, table[position]);
         size++;
+        ids.add(id);
     }
 
     public N get(String id) {
