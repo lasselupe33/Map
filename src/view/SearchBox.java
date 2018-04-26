@@ -1,8 +1,6 @@
 package view;
 
 import controller.*;
-import javafx.scene.control.ComboBox;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
