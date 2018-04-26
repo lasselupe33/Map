@@ -31,7 +31,7 @@ public class StateController {
 
     public ViewStates getPrevState() { return prevState; }
 
-    public  ViewStates getPrevPanel() {return prevPanel; }
+    public  ViewStates getPrevPanel() { return prevPanel; }
 
     public void updateCurrentState(ViewStates newState) {
         currentState = newState;
@@ -39,12 +39,18 @@ public class StateController {
         mainView.lpane.repaint();
     }
 
+    public void forcePrevState(ViewStates state) {
+        updatePrevPanel();
+
+        prevState = state;
+    }
+
     public void updatePrevState() {
         updatePrevPanel();
 
         prevState = currentState;
-
     }
+
     public void updatePrevPanel(){
         if (prevPanel != prevState){
             prevPanel = prevState;

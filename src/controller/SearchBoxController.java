@@ -1,10 +1,7 @@
 package controller;
 
 import helpers.AddressBuilder;
-import model.Address;
-import model.AddressesModel;
-import model.Coordinates;
-import model.MetaModel;
+import model.*;
 import view.SearchBox;
 
 import javax.swing.*;
@@ -58,7 +55,8 @@ public class SearchBoxController extends MouseAdapter {
             addressController.setCurrentAddress(address);
             // Go to proper position on map
             Coordinates coordinates = addressesModel.getCoordinates(address);
-            MapController.getInstance().moveScreen(coordinates, addressesModel.getType(address));
+            WayType type = addressesModel.getType(address);
+            MapController.getInstance().moveScreen(coordinates, type);
 
             // Update view to reflect changes
             stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
@@ -78,7 +76,7 @@ public class SearchBoxController extends MouseAdapter {
         stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
 
-    public String getSearchInput() {return searchBoxView.getSearchInput().getText();}
+    public String getSearchInput() { return searchBoxView.getSearchInput().getText(); }
 
     public void onNavigationClick() {
         stateController.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);

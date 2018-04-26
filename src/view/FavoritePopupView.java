@@ -39,6 +39,7 @@ public class FavoritePopupView extends JOptionPane {
         name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         addressController.saveAddress(name);
         stateController.updateCurrentState(ViewStates.FAVORITES);
+        stateController.forcePrevState(ViewStates.INITIAL);
 
 
     }

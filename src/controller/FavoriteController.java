@@ -1,8 +1,5 @@
 package controller;
 
-import view.SearchBox;
-
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -19,15 +16,13 @@ public class FavoriteController extends MouseAdapter{
 
     }
     public void mouseClicked(MouseEvent e){
-        String adress = e.getComponent().getName();
+        String address = e.getComponent().getName();
         stateController.updateCurrentState(stateController.getPrevPanel());
         if(stateController.getCurrentState() == ViewStates.INITIAL){
             searchBoxController.setSearchInput("searchbox");
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE){
             navigationController.setStartInput("navigation");
-
-
         }
     }
 
