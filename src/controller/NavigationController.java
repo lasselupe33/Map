@@ -18,10 +18,8 @@ public class NavigationController extends MouseAdapter {
     private AddressesModel addressesModel;
     private MapModel mapModel;
     private Graph graph;
-    private VehicleType type;
 
     public NavigationController(AddressesModel am, MapModel mm, Graph g){
-        type = VehicleType.CAR;
         addressesModel = am;
         mapModel = mm;
         graph = g;
@@ -51,20 +49,17 @@ public class NavigationController extends MouseAdapter {
     }
 
     private void onCarClick() {
-        System.out.println("Car");
-        type = VehicleType.CAR;
+        graph.setVehicleType(VehicleType.CAR);
         updateView();
     }
 
     private void onCycleClick() {
-        System.out.println("Cycle");
-        type = VehicleType.BICYCLE;
+        graph.setVehicleType(VehicleType.BICYCLE);
         updateView();
     }
 
     private void onPedestrianClick() {
-        System.out.println("Pedestrian");
-        type = VehicleType.PEDESTRIAN;
+        graph.setVehicleType(VehicleType.PEDESTRIAN);
         updateView();
     }
 
@@ -89,7 +84,7 @@ public class NavigationController extends MouseAdapter {
         graph.computePath(startingPoint, endPoint);
     }
 
-    public VehicleType getType() {
-        return type;
+    public VehicleType getVehicleType() {
+        return graph.getType();
     }
 }

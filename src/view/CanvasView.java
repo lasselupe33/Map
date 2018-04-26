@@ -6,6 +6,8 @@ import helpers.StrokeMap;
 import model.MapElement;
 import model.MapModel;
 import model.WayType;
+import model.graph.Graph;
+import model.graph.VehicleType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,10 +18,12 @@ import java.awt.geom.Rectangle2D;
  */
 public class CanvasView extends JComponent {
     private MapController controller;
+    private Graph graph;
 
 
-    public CanvasView(MapController c) {
+    public CanvasView(MapController c, Graph g) {
         controller = c;
+        graph = g;
         setFocusable(true);
     }
 
@@ -62,8 +66,12 @@ public class CanvasView extends JComponent {
         }
 
         if (MapModel.shortPath != null) {
-            g.setStroke(new BasicStroke(0.00002f));
-            g.setColor(Color.BLACK);
+            if(graph.getType() == VehicleType.CAR) {
+                g.setStroke(new BasicStroke(0.00010f));
+            } else {
+                g.setStroke(new BasicStroke(0.00003f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
+            }
+            g.setColor(new Color(66, 133, 244));
             g.draw(MapModel.shortPath);
         }
 

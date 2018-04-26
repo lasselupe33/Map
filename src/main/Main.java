@@ -96,7 +96,7 @@ public class Main {
         // Ensure views are being invoked on proper thread!
         SwingUtilities.invokeLater(() -> {
             // Views
-            cv = new CanvasView(cc);
+            cv = new CanvasView(cc, graph);
             cc.addDependencies(cv, mapModel, model);
             av = new AddressView(ac);
             sb = new SearchBox(sc, sbc, acc);

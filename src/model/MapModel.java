@@ -5,6 +5,7 @@ import helpers.structures.KDTree;
 import helpers.io.SerializeObject;
 import model.graph.Graph;
 import model.graph.Node;
+import model.graph.VehicleType;
 
 import java.awt.geom.Path2D;
 import java.lang.reflect.Method;
@@ -82,26 +83,18 @@ public class MapModel {
     public long getNearestNodeId(Coordinates coords) {
         List<MapElement> candidates = new ArrayList<>();
 
-        int i = 0;
-        for (WayType type : WayType.values()) {
-            switch(type) {
-                case SERVICE:
-                case CYCLEWAY:
-                case MOTORWAY:
-                case TRUNK:
-                case ROAD:
-                case PEDESTRIAN:
-                case FOOTWAY:
-                case PATH:
-                case TERTIARYROAD:
-                case SECONDARYROAD:
-                case HIGHWAY:
-                    candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
-                    break;
-                default:
-                    break;
-            }
-            i++;
+        switch(graph.getType()) {
+            case CAR:
+                addCandidatesCar(coords, candidates);
+                break;
+            case BICYCLE:
+                addCandidatesBicycle(coords, candidates);
+                break;
+            case PEDESTRIAN:
+                addCandidatesPedestrian(coords, candidates);
+                break;
+            default:
+                break;
         }
 
         long nearestNeighbour = 0;
@@ -121,6 +114,68 @@ public class MapModel {
         }
 
         return nearestNeighbour;
+    }
+
+    private void addCandidatesCar(Coordinates coords, List<MapElement> candidates) {
+        int i = 0;
+        for (WayType type : WayType.values()) {
+            switch(type) {
+                case SERVICE:
+                case MOTORWAY:
+                case TRUNK:
+                case ROAD:
+                case TERTIARYROAD:
+                case SECONDARYROAD:
+                case HIGHWAY:
+                    candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    break;
+                default:
+                    break;
+            }
+            i++;
+        }
+    }
+
+    private void addCandidatesBicycle(Coordinates coords, List<MapElement> candidates) {
+        int i = 0;
+        for (WayType type : WayType.values()) {
+            switch(type) {
+                case SERVICE:
+                case CYCLEWAY:
+                case ROAD:
+                case PEDESTRIAN:
+                case PATH:
+                case TERTIARYROAD:
+                case SECONDARYROAD:
+                case HIGHWAY:
+                    candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    break;
+                default:
+                    break;
+            }
+            i++;
+        }
+    }
+
+    private void addCandidatesPedestrian(Coordinates coords, List<MapElement> candidates) {
+        int i = 0;
+        for (WayType type : WayType.values()) {
+            switch(type) {
+                case SERVICE:
+                case ROAD:
+                case PEDESTRIAN:
+                case FOOTWAY:
+                case PATH:
+                case TERTIARYROAD:
+                case SECONDARYROAD:
+                case HIGHWAY:
+                    candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    break;
+                default:
+                    break;
+            }
+            i++;
+        }
     }
 
     /** Internal helper that deserializses the MapModel */

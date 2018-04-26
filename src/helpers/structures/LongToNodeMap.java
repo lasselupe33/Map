@@ -7,7 +7,8 @@ import java.util.ArrayList;
 public class LongToNodeMap {
     private N[] table;
     private int size;
-    int MASK;
+    private int MASK;
+    private ArrayList<Long> ids = new ArrayList<>();
 
     public LongToNodeMap(int capacity) {
         table = new N[1 << capacity]; // there are 2^{capacity} table cells
@@ -18,9 +19,14 @@ public class LongToNodeMap {
         return size;
     }
 
+    public ArrayList<Long> getIds() {
+        return ids;
+    }
+
     public void put(long id, float lon, float lat) {
         int position = Long.hashCode(id) & MASK;
         table[position] = new N(id, lon, lat, table[position]);
+        ids.add(id);
         size++;
     }
 

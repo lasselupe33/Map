@@ -76,7 +76,7 @@ public class NavigationView extends JPanel {
 
         // Setup Car button
         URL carURL;
-        if(navigationController.getType() == VehicleType.CAR) {
+        if(navigationController.getVehicleType() == VehicleType.CAR) {
             carURL = this.getClass().getResource("/icons/car-blue.png");
         } else {
             carURL = this.getClass().getResource("/icons/car.png");
@@ -92,7 +92,7 @@ public class NavigationView extends JPanel {
 
         // Setup cycle button
         URL cycleURL;
-        if(navigationController.getType() == VehicleType.BICYCLE) {
+        if(navigationController.getVehicleType() == VehicleType.BICYCLE) {
             cycleURL = this.getClass().getResource("/icons/cycle-blue.png");
         } else {
             cycleURL = this.getClass().getResource("/icons/cycle.png");
@@ -108,7 +108,7 @@ public class NavigationView extends JPanel {
 
         // Setup pedestrian button
         URL pedestrianURL;
-        if(navigationController.getType() == VehicleType.PEDESTRIAN) {
+        if(navigationController.getVehicleType() == VehicleType.PEDESTRIAN) {
             pedestrianURL = this.getClass().getResource("/icons/pedestrian-blue.png");
         } else {
             pedestrianURL = this.getClass().getResource("/icons/pedestrian.png");
