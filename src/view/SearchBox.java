@@ -66,7 +66,7 @@ public class SearchBox extends JPanel {
                 break;
             case ADDRESS_ENTERED:
                 add(createSearchInput(), BorderLayout.WEST);
-                setBounds(20, 20, 477, 32);
+                setBounds(20, 20, 477 , 32);
                 add(createButtons(), BorderLayout.EAST);
                 break;
             case NAVIGATION_ACTIVE:
@@ -116,7 +116,7 @@ public class SearchBox extends JPanel {
         searchInput.setBorder(BorderFactory.createEmptyBorder());
         searchInput.addActionListener(e -> searchBoxController.onSearchInput());
         searchInput.addKeyListener(autoCompleteController);
-        searchInput.addFocusListener(new TextController());
+        searchInput.addFocusListener(new TextController("Søg.."));
 
         // Add to wrapper
         searchContainer.add(searchInput, BorderLayout.WEST);
@@ -171,7 +171,7 @@ public class SearchBox extends JPanel {
         // Setup wrapper panel
         favoriteButtonContainer = new JPanel();
         favoriteButtonContainer.setOpaque(false);
-        favoriteButtonContainer.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#383838")));
+        favoriteButtonContainer.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.decode("#383838")));
         favoriteButtonContainer.setPreferredSize(new Dimension(32, 32));
 
         // Create button

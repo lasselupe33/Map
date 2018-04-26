@@ -117,11 +117,13 @@ public class MainWindowView {
 
                 case ADDRESS_ENTERED:
                     lpane.remove(searchBox);
+                    lpane.remove(autoCompleteList);
                     lpane.remove(addressView);
                     break;
 
                 case NAVIGATION_ACTIVE:
                     lpane.remove(searchBox);
+                    lpane.remove(autoCompleteList);
                     lpane.remove(navigationView);
                     break;
                 case FAVORITES:
@@ -148,11 +150,13 @@ public class MainWindowView {
 
             case ADDRESS_ENTERED:
                 lpane.add(searchBox, 2, 2);
+                lpane.add(autoCompleteList, 3, 6);
                 lpane.add(addressView, 1, 3);
                 break;
 
             case NAVIGATION_ACTIVE:
                 lpane.add(searchBox, 2, 2);
+                lpane.add(autoCompleteList, 3, 6);
                 lpane.add(navigationView, 1, 4);
                 break;
 

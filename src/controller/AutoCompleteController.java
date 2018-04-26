@@ -45,6 +45,9 @@ public class AutoCompleteController extends KeyAdapter {
                 case ADDRESS_ENTERED:
                     searchBoxController.updateAddress(address);
                     break;
+
+                case NAVIGATION_ACTIVE:
+
             }
         }
     }
@@ -70,6 +73,18 @@ public class AutoCompleteController extends KeyAdapter {
             case ADDRESS_ENTERED:
                 list.setBounds(20, 52, 477, 160);
                 text = searchBoxController.searchBoxView.getSearchInput().getText();
+                break;
+
+            case NAVIGATION_ACTIVE:
+                JTextField source = (JTextField) e.getSource();
+                text = source.getText();
+
+                if (source.getName().equals("startInput")) {
+                    list.setBounds(400, 50, 477, 160);
+                } else {
+                    // Only the endInput will be reached here.
+                    list.setBounds(800, 50, 477, 160);
+                }
                 break;
         }
 
