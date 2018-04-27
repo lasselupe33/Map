@@ -39,10 +39,6 @@ public class AutoCompleteList extends JPanel {
         this.setVisible(isVisible);
     }
 
-    public void updatePosition() {
-        setBounds(20, 52, 445, 150);
-    }
-
     public void update() {
         if (autoCompleteController.getMatchingAddresses().size() == 0) {
             list.setListData(new String[] {"Ingen addresser fundet..."});

@@ -4,6 +4,7 @@ import helpers.AddressBuilder;
 import model.Address;
 import model.AddressesModel;
 import view.AutoCompleteList;
+import view.NavigationView;
 import view.SearchBox;
 
 import javax.swing.*;
@@ -14,15 +15,18 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class AutoCompleteController extends KeyAdapter {
-    AutoCompleteList list;
-    SearchBoxController searchBoxController;
-    AddressesModel addresses;
-    StateController stateController;
+    private AutoCompleteList list;
+    private SearchBoxController searchBoxController;
+    private NavigationController navigationController;
+    private AddressesModel addresses;
+    private StateController stateController;
+    private String currentInput;
 
     ArrayList<Address> matchingAddresses = new ArrayList<>();
 
-    public AutoCompleteController(StateController sc) {
+    public AutoCompleteController(StateController sc, NavigationController nc) {
         stateController = sc;
+        navigationController = nc;
     }
 
     /** Helper to add dependencies once they have been created */
@@ -40,15 +44,21 @@ public class AutoCompleteController extends KeyAdapter {
             Address address = matchingAddresses.get(index);
 
             // Based on where we currently are, act accordingly
-            switch (stateController.getCurrentState()) {
-                case INITIAL:
-                case ADDRESS_ENTERED:
+            switch (currentInput) {
+                case "searchBox":
                     searchBoxController.updateAddress(address);
                     break;
 
-                case NAVIGATION_ACTIVE:
+                case "startInput":
+                    navigationController.setStartAddress(address);
+                    break;
 
+                case "endInput":
+                    navigationController.setEndAddress(address);
+                    break;
             }
+
+            list.setVisibility(false);
         }
     }
 
@@ -71,6 +81,7 @@ public class AutoCompleteController extends KeyAdapter {
         switch (stateController.getCurrentState()) {
             case INITIAL:
             case ADDRESS_ENTERED:
+                currentInput = "searchBox";
                 list.setBounds(20, 52, 477, 160);
                 text = searchBoxController.searchBoxView.getSearchInput().getText();
                 break;
@@ -78,12 +89,13 @@ public class AutoCompleteController extends KeyAdapter {
             case NAVIGATION_ACTIVE:
                 JTextField source = (JTextField) e.getSource();
                 text = source.getText();
+                currentInput = source.getName();
 
-                if (source.getName().equals("startInput")) {
-                    list.setBounds(400, 50, 477, 160);
+                if (currentInput.equals("startInput")) {
+                    list.setBounds(20, 92, 409, 160);
                 } else {
                     // Only the endInput will be reached here.
-                    list.setBounds(800, 50, 477, 160);
+                    list.setBounds(20, 130, 409, 160);
                 }
                 break;
         }

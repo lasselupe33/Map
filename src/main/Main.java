@@ -88,8 +88,8 @@ public class Main {
         sc = new StateController();
         ac = new AddressController(sc, favoritesModelModel);
         sbc = new SearchBoxController(model, sc, ac, am);
-        acc = new AutoCompleteController(sc);
         nc = new NavigationController();
+        acc = new AutoCompleteController(sc, nc);
         fc = new FavoriteController(sc, sbc, nc);
 
         // Ensure views are being invoked on proper thread!
