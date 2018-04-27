@@ -33,6 +33,7 @@ public class OSMHandler extends DefaultHandler {
     // Fields for graph
     private Graph graph;
     private boolean isHighway = false;
+    private String temp;
 
     // Fields for parsing information on highways
     private int speedLimit;
@@ -75,6 +76,7 @@ public class OSMHandler extends DefaultHandler {
             case "way":
                 way = new OSMWay();
                 type = WayType.UNKNOWN;
+                speedLimit = 50;
                 idToWay.put(Long.parseLong(attributes.getValue("id")), way);
                 break;
             case "relation":
@@ -259,6 +261,7 @@ public class OSMHandler extends DefaultHandler {
         switch (tag) {
             case "motorway":
             case "motorway_link":
+            case "motorway_junction":
                 type = WayType.MOTORWAY;
                 speedLimit = 130;
                 supportsCars = true;
@@ -298,6 +301,10 @@ public class OSMHandler extends DefaultHandler {
                 supportsPedestrians = true;
                 break;
             case "residential":
+            case "unclassified":
+            case "living_street":
+            case "road":
+            case "turning_circle":
                 type = WayType.ROAD;
                 speedLimit = 50;
                 supportsCars = true;
@@ -324,6 +331,8 @@ public class OSMHandler extends DefaultHandler {
                 supportsPedestrians = true;
                 break;
             case "footway":
+            case "steps":
+            case "crossing":
                 type = WayType.FOOTWAY;
                 supportsCars = false;
                 supportsBicycles = false;

@@ -22,7 +22,7 @@ public class Edge {
     public float time() {  return length/speedLimit; }
 
     public Node getTo(Node from) {
-        if (from == node1) {
+        if (from.getId() == node1.getId()) {
             return node2;
         } else {
             return node1;
@@ -30,7 +30,8 @@ public class Edge {
     }
 
     public float getLength() {
-        return length;
+        System.out.println(length / speedLimit);
+        return length * 1000 / 80;
     }
 
     public boolean supportsCars() { return supportsCars;}

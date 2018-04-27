@@ -22,6 +22,7 @@ public class MapModel {
     private List<MapElement> currentMapData = new ArrayList<>();
     private MetaModel metaModel;
     private Graph graph;
+    public static Path2D temp;
 
     public MapModel(MetaModel m, Graph g) {
         graph = g;
@@ -112,6 +113,10 @@ public class MapModel {
                 }
             }
         }
+
+        temp = new Path2D.Float();
+        temp.moveTo(graph.getNode(nearestNeighbour).getLat(), graph.getNode(nearestNeighbour).getLon());
+        temp.lineTo(graph.getNode(nearestNeighbour).getLat() + 0.0001, graph.getNode(nearestNeighbour).getLon() + 0.0001);
 
         return nearestNeighbour;
     }

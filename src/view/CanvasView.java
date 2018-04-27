@@ -74,6 +74,8 @@ public class CanvasView extends JComponent {
             }
             g.setColor(new Color(66, 133, 244));
             g.draw(MapModel.shortPath);
+
+            g.draw(MapModel.temp);
         }
 
     }
