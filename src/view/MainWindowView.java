@@ -142,6 +142,7 @@ public class MainWindowView {
         // Add components
         switch(stateController.getCurrentState()) {
             case INITIAL:
+                canvasView.removeRoute();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(autoCompleteList, 3, 6);
                 break;
@@ -152,6 +153,7 @@ public class MainWindowView {
                 break;
 
             case NAVIGATION_ACTIVE:
+                navigationView.setDefault();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(navigationView, 1, 4);
                 break;

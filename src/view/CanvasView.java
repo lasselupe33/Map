@@ -11,6 +11,7 @@ import model.graph.VehicleType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -19,6 +20,7 @@ import java.awt.geom.Rectangle2D;
 public class CanvasView extends JComponent {
     private MapController controller;
     private Graph graph;
+    private Path2D route = null;
 
 
     public CanvasView(MapController c, Graph g) {
@@ -65,15 +67,24 @@ public class CanvasView extends JComponent {
             }
         }
 
-        if (MapModel.shortPath != null) {
+        if (graph.getShortestPath() != null) {
             if(graph.getType() == VehicleType.CAR) {
-                g.setStroke(new BasicStroke(0.00010f));
+                g.setStroke(new BasicStroke(0.00007f));
             } else {
-                g.setStroke(new BasicStroke(0.00003f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
+                g.setStroke(new BasicStroke(0.00004f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
             }
             g.setColor(new Color(66, 133, 244));
-            g.draw(MapModel.shortPath);
+            route = graph.getShortestPath();
+            g.draw(route);
+            repaint();
         }
 
+    }
+
+    public void removeRoute() {
+        if (route != null) {
+            route.reset();
+            repaint();
+        }
     }
 }

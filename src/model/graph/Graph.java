@@ -1,5 +1,6 @@
 package model.graph;
 
+import helpers.GetDistance;
 import helpers.structures.LongToNodeMap;
 import model.MapModel;
 
@@ -9,8 +10,9 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class Graph {
-    LongToNodeMap nodes;
+    private LongToNodeMap nodes;
     private VehicleType type;
+    private Path2D shortestPath = new Path2D.Float();
 
     public Graph() {
         nodes = new LongToNodeMap(25);
@@ -37,9 +39,11 @@ public class Graph {
         for (Long id : nodes.getIds()) {
             Node n = nodes.get(id);
             n.setDistToSource(Float.POSITIVE_INFINITY);
+            n.setEstimateToDest((float) GetDistance.inKM(n.getLat(), n.getLon(), dest.getLat(), dest.getLon()));
         }
+        shortestPath = null;
 
-        PriorityQueue<Node> pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) (a.getDistToSource() - b.getDistToSource()));
+        PriorityQueue<Node> pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) ((a.getDistToSource()+a.getEstimateToDest()) - (b.getDistToSource()+b.getEstimateToDest())));
         source.setDistToSource(0);
         pq.add(source);
         ArrayList<Node> path = new ArrayList<>();
@@ -95,15 +99,18 @@ public class Graph {
             }
         }
 
-        Path2D test = new Path2D.Float();
+        Path2D sp = new Path2D.Float();
         Node node = dest;
-        test.moveTo(node.getLon(), node.getLat());
+        sp.moveTo(node.getLon(), node.getLat());
 
         while(node.getParent() != null) {
             node = node.getParent();
-            test.lineTo(node.getLon(), node.getLat());
+            sp.lineTo(node.getLon(), node.getLat());
         }
+        shortestPath = sp;
+    }
 
-        MapModel.shortPath = test;
+    public Path2D getShortestPath() {
+        return shortestPath;
     }
 }

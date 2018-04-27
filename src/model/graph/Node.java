@@ -6,25 +6,29 @@ public class Node {
     private long id;
     private float lon;
     private float lat;
-    ArrayList<Edge> edges = new ArrayList<>();
+    private ArrayList<Edge> edges;
     private float distTo;
     private Node parent;
     private boolean addedToTree = false;
+    private float estimateToDest;
 
     public Node(long id, float lon, float lat) {
         this.id = id;
         this.lon = lon;
         this.lat = lat;
+        edges = new ArrayList<>();
         distTo = Float.POSITIVE_INFINITY;
         parent = null;
     }
 
+    // Getters
     public long getId() { return id; }
 
     public float getLon() { return lon; }
 
     public float getLat() { return lat; }
 
+    // For navigation
     public void setAddedToTree() {
         addedToTree = true;
     }
@@ -35,6 +39,10 @@ public class Node {
 
     public float getDistToSource() { return distTo; }
 
+    public void setParent(Node parent) {
+        this.parent = parent;
+    }
+
     public Node getParent() { return parent; }
 
     public void addEdge(Edge edge) {
@@ -43,12 +51,14 @@ public class Node {
 
     public ArrayList<Edge> getEdges() { return edges; }
 
-    public void setParent(Node parent) {
-        this.parent = parent;
-    }
-
     public boolean addedToTree() {
         return addedToTree;
+    }
+
+    public void setEstimateToDest(float estimate) { estimateToDest = estimate; }
+
+    public float getEstimateToDest() {
+        return estimateToDest;
     }
 
     public String toKey() { return lat + "-" + lon; }

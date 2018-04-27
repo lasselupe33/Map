@@ -20,6 +20,8 @@ public class NavigationView extends JPanel {
     private NavigationController navigationController;
     private JPanel topPanel;
     private JPanel navigationTypeContainer;
+    private String startInputText = "Fra:";
+    private String endInputText = "Til:";
 
     public NavigationView(StateController stateController, NavigationController nc) {
         // Setup view
@@ -41,7 +43,6 @@ public class NavigationView extends JPanel {
         } else {
             initialRender = false;
         }
-
         add(topPanel());
         revalidate();
         repaint();
@@ -137,7 +138,8 @@ public class NavigationView extends JPanel {
         inputContainer.setPreferredSize(new Dimension(width, 125));
 
         // Start input
-        startInput = new JTextField("Fra:");
+        startInput = new JTextField(startInputText);
+        //startInput.setText(startInputText);
         startInput.setName(startInput.getText());
         startInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
         startInput.addFocusListener(new TextController());
@@ -147,7 +149,8 @@ public class NavigationView extends JPanel {
         inputContainer.add(Box.createVerticalStrut(10));
 
         // End input
-        endInput = new JTextField("Til:");
+        endInput = new JTextField(endInputText);
+        //endInput.setText(endInputText);
         endInput.setName(endInput.getText());
         endInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
         endInput.addFocusListener(new TextController());
@@ -228,5 +231,13 @@ public class NavigationView extends JPanel {
     }
     public JTextField getEndInput() {
         return endInput;
+    }
+    public void setStartInputText(String text) { startInputText = text; }
+    public void setEndInputText(String text) { endInputText = text; }
+    public void setDefault() {
+        startInputText = "Fra:";
+        endInputText = "Til:";
+        navigationController.setVehicleType(VehicleType.CAR);
+        update();
     }
 }

@@ -50,17 +50,25 @@ public class NavigationController extends MouseAdapter {
 
     private void onCarClick() {
         graph.setVehicleType(VehicleType.CAR);
+        setInputText();
         updateView();
     }
 
     private void onCycleClick() {
         graph.setVehicleType(VehicleType.BICYCLE);
+        setInputText();
         updateView();
     }
 
     private void onPedestrianClick() {
         graph.setVehicleType(VehicleType.PEDESTRIAN);
+        setInputText();
         updateView();
+    }
+
+    private void setInputText() {
+        navigationView.setStartInputText(navigationView.getStartInput().getText());
+        navigationView.setEndInputText(navigationView.getEndInput().getText());
     }
 
     private void updateView() {
@@ -86,5 +94,9 @@ public class NavigationController extends MouseAdapter {
 
     public VehicleType getVehicleType() {
         return graph.getType();
+    }
+
+    public void setVehicleType(VehicleType type) {
+        graph.setVehicleType(type);
     }
 }

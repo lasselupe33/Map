@@ -14,7 +14,6 @@ import java.util.EnumMap;
 import java.util.List;
 
 public class MapModel {
-    public static Path2D shortPath = null;
     private int initializedTypes = 0;
     private int amountOfTypes = 0;
     private EnumMap<WayType, List<Coordinates>> mapElements = initializeMap();
