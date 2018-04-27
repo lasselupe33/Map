@@ -21,15 +21,16 @@ public class CanvasView extends JComponent {
     private MapController controller;
     private Graph graph;
     private Path2D route = null;
+    private ColorMap colorMap;
 
 
-    public CanvasView(MapController c, Graph g) {
+    public CanvasView(MapController c, Graph g, ColorMap cm) {
         controller = c;
+        colorMap = cm;
         graph = g;
+
         setFocusable(true);
     }
-
-
 
     /**
      * Draw map.
@@ -43,7 +44,7 @@ public class CanvasView extends JComponent {
         Rectangle2D viewRect = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
 
         g.setStroke(new BasicStroke(Float.MIN_VALUE));
-        g.setPaint(ColorMap.getColor(WayType.WATER));
+        g.setPaint(colorMap.getColor(WayType.WATER));
         g.fill(viewRect);
         g.transform(controller.getTransform());
 
@@ -56,7 +57,7 @@ public class CanvasView extends JComponent {
 
         for (MapElement m : controller.getMapData()) {
             if (m.getShape().intersects(viewRect)) {
-                g.setPaint(ColorMap.getColor(m.getType()));
+                g.setPaint(colorMap.getColor(m.getType()));
                 if (m.shouldFill()) {
                     g.setStroke(new BasicStroke(Float.MIN_VALUE));
                     g.fill(m.getShape());

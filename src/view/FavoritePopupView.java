@@ -17,6 +17,7 @@ public class FavoritePopupView extends JOptionPane {
         this.addressController = addressController;
         this.stateController = stateController;
 
+
     }
 
     public void addFrame(JFrame frame){
@@ -39,6 +40,7 @@ public class FavoritePopupView extends JOptionPane {
         name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         addressController.saveAddress(name);
         stateController.updateCurrentState(ViewStates.FAVORITES);
+        stateController.forcePrevState(ViewStates.INITIAL);
 
 
     }

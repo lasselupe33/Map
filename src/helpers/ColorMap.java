@@ -1,21 +1,18 @@
 package helpers;
 
-import controller.MenuController;
 import model.WayType;
 
 import java.awt.*;
 import java.util.EnumMap;
 
 public class ColorMap {
-    private static EnumMap<WayType, Color[]> colorMap = null;
-    private static int mode;
-    private static Color standardRoadColor = new Color(255,255,255);
-    private static Color coastlineColor = new Color(237,237,237);
+    private EnumMap<WayType, Color[]> colorMap = null;
+    private int mode = 0;
+    private Color standardRoadColor = new Color(255,255,255);
+    private Color coastlineColor = new Color(237,237,237);
 
-    public static Color getColor(WayType type) {
-        if (colorMap == null) initializeMap();
-        Color[] c = colorMap.get(type);
-        switch (MenuController.getMode()) {
+    public void setMode(Mode m) {
+        switch (m) {
             case STANDARD:
                 mode = 0;
                 break;
@@ -32,13 +29,18 @@ public class ColorMap {
                 mode = 4;
                 break;
             default:
+                mode = 0;
                 break;
         }
-        return c[mode];
-        //return colorBlindMode.get(type);
     }
 
-    private static void initializeMap() {
+    public Color getColor(WayType type) {
+        if (colorMap == null) initializeMap();
+        Color[] c = colorMap.get(type);
+        return c[mode];
+    }
+
+    private void initializeMap() {
         colorMap = new EnumMap<>(WayType.class);
         colorMap.put(WayType.COASTLINE, new Color[] {coastlineColor,coastlineColor,coastlineColor,coastlineColor,coastlineColor});
 

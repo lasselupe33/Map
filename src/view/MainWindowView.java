@@ -117,11 +117,13 @@ public class MainWindowView {
 
                 case ADDRESS_ENTERED:
                     lpane.remove(searchBox);
+                    lpane.remove(autoCompleteList);
                     lpane.remove(addressView);
                     break;
 
                 case NAVIGATION_ACTIVE:
                     lpane.remove(searchBox);
+                    lpane.remove(autoCompleteList);
                     lpane.remove(navigationView);
                     break;
                 case FAVORITES:
@@ -149,12 +151,14 @@ public class MainWindowView {
 
             case ADDRESS_ENTERED:
                 lpane.add(searchBox, 2, 2);
+                lpane.add(autoCompleteList, 3, 6);
                 lpane.add(addressView, 1, 3);
                 break;
 
             case NAVIGATION_ACTIVE:
                 navigationView.setDefault();
                 lpane.add(searchBox, 2, 2);
+                lpane.add(autoCompleteList, 3, 6);
                 lpane.add(navigationView, 1, 4);
                 break;
 
@@ -196,7 +200,7 @@ public class MainWindowView {
         navigationView.setBounds(0, 0, 450, height);
         footerView.setBounds(0, height - 30, width, 30);
         favoriteView.setBounds(0, 0, 450, height);
-        autoCompleteList.setBounds(20, 52, 445, 150);
+        favoriteView.updateBound(height);
 
         // Update the previous state after render
         stateController.updatePrevState();
