@@ -1,14 +1,13 @@
 package view;
 
 import controller.NavigationController;
-import controller.StateController;
+import controller.AutoCompleteController;
 import controller.TextController;
 import model.graph.VehicleType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseListener;
 import java.net.URL;
 
 public class NavigationView extends JPanel {
@@ -16,15 +15,17 @@ public class NavigationView extends JPanel {
     private int width = 450;
     private JTextField startInput;
     private JTextField endInput;
-    private StateController stateController;
     private NavigationController navigationController;
     private JPanel topPanel;
     private JPanel navigationTypeContainer;
+    private AutoCompleteController autoCompleteController;
 
-    public NavigationView(StateController stateController, NavigationController nc) {
-        // Setup view
-        this.stateController = stateController;
+
+    public NavigationView(NavigationController nc, AutoCompleteController acc) {
         navigationController = nc;
+        autoCompleteController = acc;
+
+        // Setup view
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.WHITE);
         setOpaque(true);
@@ -138,9 +139,10 @@ public class NavigationView extends JPanel {
 
         // Start input
         startInput = new JTextField("Fra:");
-        startInput.setName(startInput.getText());
+        startInput.setName("startInput");
         startInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
-        startInput.addFocusListener(new TextController());
+        startInput.addFocusListener(new TextController("Fra:"));
+        startInput.addKeyListener(autoCompleteController);
         inputContainer.add(startInput);
 
         // Add margin between inputs
@@ -148,9 +150,10 @@ public class NavigationView extends JPanel {
 
         // End input
         endInput = new JTextField("Til:");
-        endInput.setName(endInput.getText());
+        endInput.setName("endInput");
         endInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
-        endInput.addFocusListener(new TextController());
+        endInput.addFocusListener(new TextController("Til:"));
+        endInput.addKeyListener(autoCompleteController);
         inputContainer.add(endInput);
 
         // Add margin between inputs
@@ -165,7 +168,7 @@ public class NavigationView extends JPanel {
      * Helper that renders the middle panel that shows the time it takes to transport to the location and the submit-
      * button.
      */
-    public JPanel renderMiddlePanel() {
+    private JPanel renderMiddlePanel() {
         JPanel middlePanel = new JPanel();
         middlePanel.setOpaque(false);
         middlePanel.setLayout(new BorderLayout());

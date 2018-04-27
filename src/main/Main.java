@@ -1,6 +1,7 @@
 package main;
 
 import controller.*;
+import helpers.ColorMap;
 import helpers.io.IOHandler;
 import model.*;
 import model.graph.Graph;
@@ -37,6 +38,7 @@ public class Main {
     private static Graph graph;
     private static FavoriteView fav;
     private static FavoritePopupView favp;
+    private static ColorMap colorMap;
 
     // Boolean to ensure application won't be booted twice
     public static boolean hasInitialized = false;
@@ -45,6 +47,7 @@ public class Main {
 
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "True");
+        colorMap = new ColorMap();
 
         // Models
         graph = new Graph();
@@ -54,10 +57,8 @@ public class Main {
         IOHandler.instance.addModels(model, mapModel, am, graph);
         favoritesModelModel = new FavoritesModel();
 
-
         fv = new FooterView(cc);
         IOHandler.instance.addView(fv);
-
 
         // dataSource Priority:
         // 1. Program arguments
@@ -84,30 +85,30 @@ public class Main {
 
 
         // Controllers
-        mc = new MenuController(model);
+        mc = new MenuController(colorMap);
         cc = MapController.getInstance();
         sc = new StateController();
         ac = new AddressController(sc, favoritesModelModel);
         sbc = new SearchBoxController(model, sc, ac, am, graph);
-        acc = new AutoCompleteController();
         nc = new NavigationController(am, mapModel, graph);
+        acc = new AutoCompleteController(sc, nc);
         fc = new FavoriteController(sc, sbc, nc);
 
         // Ensure views are being invoked on proper thread!
         SwingUtilities.invokeLater(() -> {
             // Views
-            cv = new CanvasView(cc, graph);
+            cv = new CanvasView(cc, graph, colorMap);
             cc.addDependencies(cv, mapModel, model);
             av = new AddressView(ac);
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
             zv = new ZoomView(cc);
-            nv = new NavigationView(sc, nc);
+            nv = new NavigationView(nc, acc);
             nc.addView(nv);
             al = new AutoCompleteList(acc);
             fav = new FavoriteView(favoritesModelModel, fc);
             favp = new FavoritePopupView(ac, sc);
-            acc.addDependencies(al, sb, am);
+            acc.addDependencies(al, sbc, am);
             ac.addView(av, fav);
 
             // Indicate application MVC has been initialized
@@ -126,7 +127,7 @@ public class Main {
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
             MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, favoritesModelModel, favp);
-            sc.addMainView(v);
+            sc.addDependencies(v, acc);
 
             new KeyboardController(v, cv, model, cc);
             new MouseController(cv, cc, am, fv);

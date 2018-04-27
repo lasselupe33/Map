@@ -7,11 +7,11 @@ import model.MapModel;
 import model.graph.Graph;
 import model.graph.Node;
 import model.graph.VehicleType;
+import model.Address;
 import view.NavigationView;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.channels.FileChannel;
 
 public class NavigationController extends MouseAdapter {
     private NavigationView navigationView;
@@ -29,8 +29,12 @@ public class NavigationController extends MouseAdapter {
         navigationView = nv;
     }
 
-    public void setStartInput(String s){
-        navigationView.getStartInput().setText(s);
+    public void setStartAddress(Address address){
+        navigationView.getStartInput().setText(address.toString());
+    }
+
+    public void setEndAddress(Address address) {
+        navigationView.getEndInput().setText(address.toString());
     }
 
     @Override
