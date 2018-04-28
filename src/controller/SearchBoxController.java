@@ -25,7 +25,6 @@ public class SearchBoxController extends MouseAdapter {
     private NavigationController navigationController;
     private Address address;
 
-
     public SearchBoxController(MetaModel m, StateController sc, AddressController ac, AddressesModel am, Graph g, NavigationController nc) {
         addressesModel = am;
         addressController = ac;
