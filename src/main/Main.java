@@ -89,8 +89,8 @@ public class Main {
         cc = MapController.getInstance();
         sc = new StateController();
         ac = new AddressController(sc, favoritesModelModel);
-        sbc = new SearchBoxController(model, sc, ac, am, graph);
         nc = new NavigationController(am, mapModel, graph);
+        sbc = new SearchBoxController(model, sc, ac, am, graph, nc);
         acc = new AutoCompleteController(sc, nc);
         fc = new FavoriteController(sc, sbc, nc);
 

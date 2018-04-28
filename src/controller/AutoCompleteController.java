@@ -83,7 +83,7 @@ public class AutoCompleteController extends KeyAdapter {
             case ADDRESS_ENTERED:
                 currentInput = "searchBox";
                 list.setBounds(20, 52, 477, 160);
-                text = searchBoxController.searchBoxView.getSearchInput().getText();
+                text = searchBoxController.getSearchBoxView().getSearchInput().getText();
                 break;
 
             case NAVIGATION_ACTIVE:

@@ -214,7 +214,7 @@ public class OSMHandler extends DefaultHandler {
                         break;
                     case "bridge":
                         if (attributes.getValue("v").equals("yes")) {
-                            type = WayType.MANMADEBRIDGE;
+                            type = WayType.HIGHWAYBRIDGE;
                         }
                         break;
                     case "addr:street":

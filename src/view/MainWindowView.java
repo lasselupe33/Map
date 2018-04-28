@@ -122,6 +122,7 @@ public class MainWindowView {
                     break;
 
                 case NAVIGATION_ACTIVE:
+                    navigationView.setDefault();
                     lpane.remove(searchBox);
                     lpane.remove(autoCompleteList);
                     lpane.remove(navigationView);
@@ -150,13 +151,13 @@ public class MainWindowView {
                 break;
 
             case ADDRESS_ENTERED:
+                canvasView.removeRoute();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(autoCompleteList, 3, 6);
                 lpane.add(addressView, 1, 3);
                 break;
 
             case NAVIGATION_ACTIVE:
-                navigationView.setDefault();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(autoCompleteList, 3, 6);
                 lpane.add(navigationView, 1, 4);

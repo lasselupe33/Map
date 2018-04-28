@@ -39,7 +39,6 @@ public class StrokeMap {
         strokeMap.put(WayType.HEDGE, new BasicStroke(0.000007f));
         strokeMap.put(WayType.DRAIN, new BasicStroke(0.000007f));
         strokeMap.put(WayType.RUNWAY, new BasicStroke(0.000009f));
-        strokeMap.put(WayType.HIGHWAYBRIDGE, new BasicStroke(0.00009f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, dash2, 0.0f));
+        strokeMap.put(WayType.HIGHWAYBRIDGE, new BasicStroke(0.00009f));
     }
 }

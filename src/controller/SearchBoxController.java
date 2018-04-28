@@ -16,19 +16,22 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class SearchBoxController extends MouseAdapter {
-    StateController stateController;
-    AddressController addressController;
-    AddressesModel addressesModel;
-    SearchBox searchBoxView;
-    AddressesModel addresses;
-    Graph graph;
+    private StateController stateController;
+    private AddressController addressController;
+    private AddressesModel addressesModel;
+    private SearchBox searchBoxView;
+    private AddressesModel addresses;
+    private Graph graph;
+    private NavigationController navigationController;
+    private Address address;
 
 
-    public SearchBoxController(MetaModel m, StateController sc, AddressController ac, AddressesModel am, Graph g) {
+    public SearchBoxController(MetaModel m, StateController sc, AddressController ac, AddressesModel am, Graph g, NavigationController nc) {
         addressesModel = am;
         addressController = ac;
         stateController = sc;
         graph = g;
+        navigationController = nc;
     }
 
     public void addView(SearchBox view) {
@@ -41,7 +44,6 @@ public class SearchBoxController extends MouseAdapter {
             case "search":
                 onSearchInput();
                 break;
-
             case "rightButton":
                 if (stateController.getCurrentState() == ViewStates.INITIAL) {
                     onNavigationClick();
@@ -85,6 +87,9 @@ public class SearchBoxController extends MouseAdapter {
         // Go to proper position on map
         Coordinates coordinates = addressesModel.getCoordinates(address);
 
+        this.address = address;
+        navigationController.setStartAddress(address);
+
         // Update view to reflect changes
         stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
@@ -100,10 +105,21 @@ public class SearchBoxController extends MouseAdapter {
     }
 
     public void onCloseClick() {
-        stateController.updateCurrentState(ViewStates.INITIAL);
+        if (stateController.getPrevPanel() == ViewStates.ADDRESS_ENTERED) {
+            stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+            if (address != null) {
+                navigationController.setStartAddress(address);
+            }
+        } else {
+            stateController.updateCurrentState(ViewStates.INITIAL);
+        }
     }
 
     public void onFavoritesClick() {
         stateController.updateCurrentState(ViewStates.FAVORITES);
+    }
+
+    public SearchBox getSearchBoxView() {
+        return searchBoxView;
     }
 }
