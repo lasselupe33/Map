@@ -18,6 +18,8 @@ public class NavigationController extends MouseAdapter {
     private AddressesModel addressesModel;
     private MapModel mapModel;
     private Graph graph;
+    private String startInput = "";
+    private String endInput = "";
 
     public NavigationController(AddressesModel am, MapModel mm, Graph g){
         addressesModel = am;
@@ -55,18 +57,21 @@ public class NavigationController extends MouseAdapter {
     private void onCarClick() {
         graph.setVehicleType(VehicleType.CAR);
         setInputText();
+        onVehicleTypeChange();
         updateView();
     }
 
     private void onCycleClick() {
         graph.setVehicleType(VehicleType.BICYCLE);
         setInputText();
+        onVehicleTypeChange();
         updateView();
     }
 
     private void onPedestrianClick() {
         graph.setVehicleType(VehicleType.PEDESTRIAN);
         setInputText();
+        onVehicleTypeChange();
         updateView();
     }
 
@@ -75,13 +80,22 @@ public class NavigationController extends MouseAdapter {
         navigationView.setEndInputText(navigationView.getEndInput().getText());
     }
 
+    private void onVehicleTypeChange() {
+        if (!navigationView.getStartInput().getText().equals("")
+                && startInput.equals(navigationView.getStartInput().getText())
+                && !navigationView.getEndInput().getText().equals("")
+                && endInput.equals(navigationView.getEndInput().getText())) {
+            onRouteSearch();
+        }
+    }
+
     private void updateView() {
         navigationView.update();
     }
 
     public void onRouteSearch() {
-        String startInput = navigationView.getStartInput().getText();
-        String endInput = navigationView.getEndInput().getText();
+        startInput = navigationView.getStartInput().getText();
+        endInput = navigationView.getEndInput().getText();
 
         Coordinates startAddressCoords = addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()).getCoordinates();
         Coordinates endAddressCoords = addressesModel.getAddress(AddressBuilder.parse(endInput).toKey()).getCoordinates();

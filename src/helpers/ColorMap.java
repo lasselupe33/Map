@@ -77,7 +77,6 @@ public class ColorMap {
                 new Color(215, 205, 199),
                 new Color(215, 205, 199),
                 new Color(214,214,214)});
-        //new Color(170, 9, 59)
 
         colorMap.put(WayType.PITCH, new Color[] {new Color(170, 224, 203),
                 new Color(7, 138, 69),
@@ -96,7 +95,6 @@ public class ColorMap {
         colorMap.put(WayType.ROAD, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
 
         colorMap.put(WayType.PEDESTRIAN, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
-
 
         colorMap.put(WayType.SQUARE, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
 
@@ -213,6 +211,21 @@ public class ColorMap {
                 new Color(9, 180, 90),
                 new Color(205,205,205)});
 
+        colorMap.put(WayType.PIER, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
+
+        colorMap.put(WayType.HIGHWAYBRIDGE, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
+
+        colorMap.put(WayType.MANMADEBRIDGE, new Color[] {new Color(215, 205, 199),
+                new Color(215, 205, 199),
+                new Color(215, 205, 199),
+                new Color(215, 205, 199),
+                new Color(214,214,214)});
+
+        colorMap.put(WayType.SWIMMINGPOOL, new Color[] {new Color(122, 199, 235),
+                new Color(94, 184, 223),
+                new Color(122, 199, 235),
+                new Color(122, 199, 235),
+                new Color(155,155,155)});
     }
 
     public enum Mode {

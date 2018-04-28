@@ -146,6 +146,9 @@ public class OSMHandler extends DefaultHandler {
                         if (attributes.getValue("v").equals("playground")) {
                             type = WayType.PLAYGROUND;
                         }
+                        if (attributes.getValue("v").equals("swimming_pool")) {
+                            type = WayType.SWIMMINGPOOL;
+                        }
                         break;
                     case "landuse":
                         if (attributes.getValue("v").equals("forest")) {
@@ -164,6 +167,9 @@ public class OSMHandler extends DefaultHandler {
                             type = WayType.CEMETERY;
                         }
                         if (attributes.getValue("v").equals("grass")) {
+                            type = WayType.GRASS;
+                        }
+                        if (attributes.getValue("v").equals("recreation_ground")) {
                             type = WayType.GRASS;
                         }
                         break;
@@ -197,6 +203,18 @@ public class OSMHandler extends DefaultHandler {
                     case "waterway":
                         if (attributes.getValue("v").equals("drain")) {
                             type = WayType.DRAIN;
+                        }
+                        break;
+                    case "man_made":
+                        if (attributes.getValue("v").equals("bridge")) {
+                            type = WayType.MANMADEBRIDGE;
+                        } else if (attributes.getValue("v").equals("pier")) {
+                            type = WayType.PIER;
+                        }
+                        break;
+                    case "bridge":
+                        if (attributes.getValue("v").equals("yes")) {
+                            type = WayType.MANMADEBRIDGE;
                         }
                         break;
                     case "addr:street":
@@ -561,7 +579,10 @@ public class OSMHandler extends DefaultHandler {
             case PLACE_OF_WORSHIP:
             case AEROWAY:
             case GRASS:
-                mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type,  true, nodes));
+            case MANMADEBRIDGE:
+            case PIER:
+            case SWIMMINGPOOL:
+                mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, true, nodes));
                 break;
 
             case ROAD:
@@ -582,6 +603,7 @@ public class OSMHandler extends DefaultHandler {
             case DRAIN:
             case RUNWAY:
             case TRUNK:
+            case HIGHWAYBRIDGE:
                 mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, false, nodes));
                 break;
             default:

@@ -69,10 +69,19 @@ public class CanvasView extends JComponent {
         }
 
         if (graph.getShortestPath() != null) {
-            if(graph.getType() == VehicleType.CAR) {
-                g.setStroke(new BasicStroke(0.00007f));
-            } else {
-                g.setStroke(new BasicStroke(0.00004f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
+            switch (graph.getType()) {
+                case CAR:
+                    g.setStroke(new BasicStroke(0.00007f));
+                    break;
+                case BICYCLE:
+                    g.setStroke(new BasicStroke(0.00005f));
+                    break;
+                case PEDESTRIAN:
+                    g.setStroke(new BasicStroke(0.00004f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
+                    break;
+                default:
+                    // There shouldn't be other possibilities
+                    break;
             }
             g.setColor(new Color(66, 133, 244));
             route = graph.getShortestPath();
