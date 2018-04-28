@@ -3,6 +3,7 @@ package view;
 import controller.NavigationController;
 import controller.AutoCompleteController;
 import controller.TextController;
+import model.graph.RouteType;
 import model.graph.VehicleType;
 
 import javax.swing.*;
@@ -73,8 +74,8 @@ public class NavigationView extends JPanel {
     public JPanel navigationTypeInputs() {
         navigationTypeContainer = new JPanel();
         navigationTypeContainer.setOpaque(false);
-        navigationTypeContainer.setLayout(new GridLayout(1, 3));
-        navigationTypeContainer.setBorder(new EmptyBorder(20, 150, 0, 150));
+        navigationTypeContainer.setLayout(new GridLayout(1, 7));
+        navigationTypeContainer.setBorder(new EmptyBorder(20, 25, 0, 25));
 
         // Setup Car button
         URL carURL;
@@ -124,10 +125,44 @@ public class NavigationView extends JPanel {
         pedestrian.addMouseListener(navigationController);
         navigationTypeContainer.add(pedestrian);
 
-        return navigationTypeContainer;
-    }
+        // Create spacing between vehicleType and routeType by inserting an empty label into the grid
+        JLabel spacing = new JLabel();
+        navigationTypeContainer.add(spacing);
+        navigationTypeContainer.add(spacing);
 
-    public JPanel getNavigationTypeContainer() {
+        //RouteType buttons
+        // fastest
+        URL fastestURL;
+        if (navigationController.getRouteType() == RouteType.FASTEST) {
+            fastestURL = this.getClass().getResource("/icons/flash-blue.png");
+        } else {
+            fastestURL = this.getClass().getResource("/icons/flash.png");
+        }
+        ImageIcon fastestIcon = new ImageIcon(fastestURL);
+        JLabel fastestRoute = new JLabel();
+        fastestRoute.setIcon(fastestIcon);
+        fastestRoute.setName("fastest");
+        fastestRoute.setBackground(Color.WHITE);
+        fastestRoute.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        fastestRoute.addMouseListener(navigationController);
+        navigationTypeContainer.add(fastestRoute);
+
+        //shortest
+        URL nearbyURL;
+        if (navigationController.getRouteType() == RouteType.SHORTEST) {
+            nearbyURL = this.getClass().getResource("/icons/nearby-blue.png");
+        } else {
+            nearbyURL = this.getClass().getResource("/icons/nearby.png");
+        }
+        ImageIcon nearbyIcon = new ImageIcon(nearbyURL);
+        JLabel nearbyRoute = new JLabel();
+        nearbyRoute.setIcon(nearbyIcon);
+        nearbyRoute.setName("shortest");
+        nearbyRoute.setBackground(Color.WHITE);
+        nearbyRoute.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        nearbyRoute.addMouseListener(navigationController);
+        navigationTypeContainer.add(nearbyRoute);
+
         return navigationTypeContainer;
     }
 
@@ -196,7 +231,6 @@ public class NavigationView extends JPanel {
         URL switchURL = this.getClass().getResource("/icons/arrow.jpg");
         ImageIcon switchIcon = new ImageIcon(switchURL);
         JButton switchFromTo = new JButton(switchIcon);
-        //switchFromTo.setForeground(Color.decode("#4285F4"));
         switchFromTo.setBackground(Color.WHITE);
         switchFromTo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         switchFromTo.addActionListener((e) -> switchFromAndTo());
@@ -209,7 +243,6 @@ public class NavigationView extends JPanel {
         submitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         submitButton.addActionListener((e) -> navigationController.onRouteSearch());
         switchAndSubmitPanel.add(submitButton, BorderLayout.EAST);
-
 
         return switchAndSubmitPanel;
     }
@@ -239,10 +272,10 @@ public class NavigationView extends JPanel {
     }
     public void setStartInputText(String text) { startInputText = text; }
     public void setEndInputText(String text) { endInputText = text; }
+
     public void setDefault() {
         startInputText = "Fra:";
         endInputText = "Til:";
-        navigationController.setVehicleType(VehicleType.CAR);
-        update();
+        navigationController.changeVehicleType(VehicleType.CAR);
     }
 }

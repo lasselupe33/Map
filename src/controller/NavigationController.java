@@ -6,6 +6,7 @@ import model.Coordinates;
 import model.MapModel;
 import model.graph.Graph;
 import model.graph.Node;
+import model.graph.RouteType;
 import model.graph.VehicleType;
 import model.Address;
 import view.NavigationView;
@@ -43,63 +44,66 @@ public class NavigationController extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
         switch(e.getComponent().getName()) {
             case "car":
-                onCarClick();
+                changeVehicleType(VehicleType.CAR);
                 break;
             case "cycle":
-                onCycleClick();
+                changeVehicleType(VehicleType.BICYCLE);
                 break;
             case "pedestrian":
-                onPedestrianClick();
+                changeVehicleType(VehicleType.PEDESTRIAN);
+                break;
+            case "fastest":
+                changeRouteType(RouteType.FASTEST);
+                break;
+            case "shortest":
+                changeRouteType(RouteType.SHORTEST);
                 break;
         }
     }
 
-    private void onCarClick() {
-        graph.setVehicleType(VehicleType.CAR);
+    /** Update the current vehicle type */
+    public void changeVehicleType(VehicleType type) {
+        graph.setVehicleType(type);
         setInputText();
-        onVehicleTypeChange();
         updateView();
     }
 
-    private void onCycleClick() {
-        graph.setVehicleType(VehicleType.BICYCLE);
+    /** Update the current road type */
+    private void changeRouteType(RouteType type) {
+        graph.setRouteType(type);
         setInputText();
-        onVehicleTypeChange();
         updateView();
     }
 
-    private void onPedestrianClick() {
-        graph.setVehicleType(VehicleType.PEDESTRIAN);
-        setInputText();
-        onVehicleTypeChange();
-        updateView();
-    }
-
+    /**
+     * TODO: Needs documentation, why is this necessary?
+     */
     private void setInputText() {
         navigationView.setStartInputText(navigationView.getStartInput().getText());
         navigationView.setEndInputText(navigationView.getEndInput().getText());
-    }
-
-    private void onVehicleTypeChange() {
-        if (!navigationView.getStartInput().getText().equals("")
-                && startInput.equals(navigationView.getStartInput().getText())
-                && !navigationView.getEndInput().getText().equals("")
-                && endInput.equals(navigationView.getEndInput().getText())) {
-            onRouteSearch();
-        }
     }
 
     private void updateView() {
         navigationView.update();
     }
 
+    /**
+     * Method to be called once the user wishes to perform a navigation between two points
+     */
     public void onRouteSearch() {
         startInput = navigationView.getStartInput().getText();
         endInput = navigationView.getEndInput().getText();
 
+        // Check that inputs have been filled
+        if (startInput == "Fra:" || endInput == "Til:") {
+            throw new RuntimeException("Der skal være specificeret både en start og slut addresse!");
+        }
+
+        // Get source and dest coords
         Coordinates startAddressCoords = addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()).getCoordinates();
         Coordinates endAddressCoords = addressesModel.getAddress(AddressBuilder.parse(endInput).toKey()).getCoordinates();
 
+        // Retrieve nearest way-node to the address-node (we want to use roads to travel, not addresses)
         long startingPointId = mapModel.getNearestNodeId(startAddressCoords);
         long endPointId = mapModel.getNearestNodeId(endAddressCoords);
 
@@ -111,10 +115,10 @@ public class NavigationController extends MouseAdapter {
     }
 
     public VehicleType getVehicleType() {
-        return graph.getType();
+        return graph.getVehicleType();
     }
 
-    public void setVehicleType(VehicleType type) {
-        graph.setVehicleType(type);
+    public RouteType getRouteType() {
+        return graph.getRouteType();
     }
 }

@@ -19,6 +19,17 @@ public class Edge {
         this.supportsPedestrians = supportsPedestrians;
     }
 
+    /** Get the weight of the edge based on the type of vehicle and the desired route type */
+    public float getWeight(VehicleType vtype, RouteType rtype) {
+        if (rtype == RouteType.FASTEST) {
+            // If the fastest route is desired, then factor in the time to travel the road
+            return getTime(vtype);
+        } else {
+            return getLength();
+        }
+    }
+
+    /** Returns the time it takes to travel across the edge */
     public float getTime(VehicleType type) {
         switch (type) {
             case PEDESTRIAN:
@@ -26,25 +37,46 @@ public class Edge {
             case BICYCLE:
                 return length*1000/18;
             default:
-                break;
-        }
-        return length*1000/speedLimit;
-    }
-
-    public Node getTo(Node from) {
-        if (from.getId() == node1.getId()) {
-            return node2;
-        } else {
-            return node1;
+                // Default will always be car
+                return length * 1000 / speedLimit;
         }
     }
 
+    /** Returns the length of the edge */
     public float getLength() {
-        System.out.println(length / speedLimit);
         return length * 1000;
     }
 
-    public boolean supportsCars() { return supportsCars;}
-    public boolean supportsBicycles() { return supportsBicycles;}
-    public boolean supportsPedestrians() { return supportsPedestrians; }
+
+    /**
+     * Returns the opposite node of the edge from the one passed.
+     * NB: from must be one of the two nodes of the edge.
+     */
+    public Node getTo(Node from) {
+        if (from.getId() == node1.getId()) {
+            return node2;
+        } else if (from.getId() == node2.getId()) {
+            return node1;
+        } else {
+            throw new RuntimeException("The 'from' node must be one of the nodes of the current edge!");
+        }
+    }
+
+    /** Returns whether or not the passed VehicleType is supported by this edge */
+    public boolean supportsType(VehicleType type) {
+        switch (type) {
+            case CAR:
+                return supportsCars;
+
+            case BICYCLE:
+                return supportsBicycles;
+
+            case PEDESTRIAN:
+                return supportsPedestrians;
+
+            default:
+                // No other types are supported.
+                return false;
+        }
+    }
 }

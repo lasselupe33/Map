@@ -82,7 +82,7 @@ public class MapModel {
     public long getNearestNodeId(Coordinates coords) {
         List<MapElement> candidates = new ArrayList<>();
 
-        switch(graph.getType()) {
+        switch(graph.getVehicleType()) {
             case CAR:
                 addCandidatesCar(coords, candidates);
                 break;

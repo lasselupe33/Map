@@ -264,21 +264,6 @@ public class MainWindowView {
         colorGroup.add(grayscaleItem);
         subShowMenu.add(grayscaleItem);
 
-        JMenu subRouteMenu = new JMenu("Ruteindstillinger");
-        showMenu.add(subRouteMenu);
-        ButtonGroup routeGroup = new ButtonGroup();
-
-        JMenuItem fastestItem = new JRadioButtonMenuItem("Hurtigste rute");
-        fastestItem.addActionListener((ActionEvent e) -> menuController.fastestRoute());
-        fastestItem.setSelected(true);
-        routeGroup.add(fastestItem);
-        subRouteMenu.add(fastestItem);
-
-        JMenuItem shortestItem = new JRadioButtonMenuItem("Korteste rute");
-        shortestItem.addActionListener((ActionEvent e) -> menuController.shortestRoute());
-        routeGroup.add(shortestItem);
-        subRouteMenu.add(shortestItem);
-
         /*
         JMenuItem pRoadItem = new JCheckBoxMenuItem("Primary roads", true);
         pRoadItem.addActionListener(this);

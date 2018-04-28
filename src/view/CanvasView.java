@@ -69,7 +69,7 @@ public class CanvasView extends JComponent {
         }
 
         if (graph.getShortestPath() != null) {
-            switch (graph.getType()) {
+            switch (graph.getVehicleType()) {
                 case CAR:
                     g.setStroke(new BasicStroke(0.00007f));
                     break;
