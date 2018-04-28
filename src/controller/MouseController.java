@@ -93,6 +93,9 @@ public class MouseController extends MouseAdapter {
     }
 
 
+    /**
+     * TODO: Needs documentation, what is happening here, and why is it running in a separate thread?
+     */
     public static void thread(){
         t = new Thread() {
             public void run() {

@@ -3,6 +3,7 @@ package model.graph;
 import helpers.GetDistance;
 import helpers.structures.LongToNodeMap;
 import model.MapModel;
+import view.MainWindowView;
 
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Graph {
     }
 
     public void computePath(Node source, Node dest) {
+        System.out.println(nodes.size());
         this.source = source;
         this.dest = dest;
 
@@ -40,7 +42,7 @@ public class Graph {
             visitedVerticies.add(current);
 
             // No need to continue searching for dest if already found.
-            if (current == dest) {
+            if (current.getId() == dest.getId()) {
                 break;
             }
 

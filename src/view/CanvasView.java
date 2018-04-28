@@ -86,7 +86,6 @@ public class CanvasView extends JComponent {
             g.setColor(new Color(66, 133, 244));
             route = graph.getShortestPath();
             g.draw(route);
-            repaint();
         }
 
     }
