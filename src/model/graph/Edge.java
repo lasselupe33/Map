@@ -29,20 +29,30 @@ public class Edge {
         }
     }
 
-    /** Returns the time it takes to travel across the edge */
+    /**
+     * Returns the time it takes to travel across the edge.
+     *
+     * Time to travel will be returned in micro-seconds in order to ensure numbers large enough to compute path properly.
+     *
+     * NB: We assume that people walk with 5km/t and bicycle with 18km/t
+     * http://www.naturli.dk/artikel/6-forskellige-mader-at-ga-pa/
+     *
+     */
     public float getTime(VehicleType type) {
         switch (type) {
             case PEDESTRIAN:
-                return length*1000/5;
+                return length * 1000000 * 60 / 5;
             case BICYCLE:
-                return length*1000/18;
+                return length * 1000000 * 60 / 18;
             default:
                 // Default will always be car
-                return length * 1000 / speedLimit;
+                return length * 1000000 * 60 / speedLimit;
         }
     }
 
-    /** Returns the length of the edge */
+    /**
+     * Returns the length of the edge in meters
+     */
     public float getLength() {
         return length * 1000;
     }

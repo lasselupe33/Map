@@ -84,6 +84,7 @@ public class NavigationController extends MouseAdapter {
     }
 
     private void updateView() {
+        setInputText();
         navigationView.update();
     }
 
@@ -112,7 +113,8 @@ public class NavigationController extends MouseAdapter {
 
         graph.computePath(startingPoint, endPoint);
 
-        // Update map after path has been computed
+        // Update map and view after path has been computed
+        updateView();
         MapController.repaintMap(true);
     }
 
@@ -123,4 +125,8 @@ public class NavigationController extends MouseAdapter {
     public RouteType getRouteType() {
         return graph.getRouteType();
     }
+
+    public String getTime() { return graph.getTime(); }
+
+    public String getLength() { return graph.getLength(); }
 }

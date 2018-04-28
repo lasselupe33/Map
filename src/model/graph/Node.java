@@ -7,9 +7,9 @@ public class Node {
     private float lon;
     private float lat;
     private ArrayList<Edge> edges;
-    private float distTo;
+    private float lengthTo;
+    private float timeTo;
     private Node parent;
-    private boolean addedToTree = false;
     private float estimateToDest;
 
     public Node(long id, float lon, float lat) {
@@ -17,7 +17,8 @@ public class Node {
         this.lon = lon;
         this.lat = lat;
         edges = new ArrayList<>();
-        distTo = Float.POSITIVE_INFINITY;
+        lengthTo = Float.POSITIVE_INFINITY;
+        timeTo = Float.POSITIVE_INFINITY;
         parent = null;
     }
 
@@ -28,12 +29,29 @@ public class Node {
 
     public float getLat() { return lat; }
 
-    // For navigation
-    public void setDistToSource(float newDist) {
-        distTo = newDist;
+    /**
+     * The distance to source depends on the type of route desired.. I.e. if we want the fastest route we need to
+     * get the time to source.
+     */
+    public float getDistToSource(RouteType routeType) {
+        if (routeType == RouteType.FASTEST) {
+            return timeTo;
+        } else {
+            return lengthTo;
+        }
     }
 
-    public float getDistToSource() { return distTo; }
+    public float getTimeToSource() {
+        return timeTo;
+    }
+
+    public float getLengthToSource() {
+        return lengthTo;
+    }
+
+    public void setLengthToSource(float newLength) { lengthTo = newLength; }
+
+    public void setTimeToSource(float newTime) { timeTo = newTime; }
 
     public void setParent(Node parent) {
         this.parent = parent;
@@ -46,6 +64,12 @@ public class Node {
     }
 
     public ArrayList<Edge> getEdges() { return edges; }
+
+    public void reset() {
+        parent = null;
+        lengthTo = Float.POSITIVE_INFINITY;
+        timeTo = Float.POSITIVE_INFINITY;
+    }
 
     public void setEstimateToDest(float estimate) { estimateToDest = estimate; }
 

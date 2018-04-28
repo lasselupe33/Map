@@ -6,13 +6,16 @@ import model.MapModel;
 import view.MainWindowView;
 
 import java.awt.geom.Path2D;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class Graph {
     private LongToNodeMap nodes;
     private VehicleType vehicleType;
-    private Path2D shortestPath = new Path2D.Float();
+    private Path2D routePath;
+    private String length;
+    private String time;
     private PriorityQueue<Node> pq;
     private RouteType routeType = RouteType.FASTEST;
     private Node source;
@@ -29,12 +32,13 @@ public class Graph {
         this.dest = dest;
 
         // Create priorityQueue that always returns the node with the closest distance to source
-        pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) ((a.getDistToSource()) - (b.getDistToSource())));
+        pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) ((a.getDistToSource(routeType)) - (b.getDistToSource(routeType))));
 
         // Reset variables
         ArrayList<Node> visitedVerticies = new ArrayList<>();
-        shortestPath = null;
-        source.setDistToSource(0);
+        routePath = null;
+        source.setLengthToSource(0);
+        source.setTimeToSource(0);
         pq.add(source);
 
         while (pq.size() != 0) {
@@ -52,19 +56,47 @@ public class Graph {
             }
         }
 
-        Path2D sp = new Path2D.Float();
+        setRouteLength(dest);
+        setRouteTime(dest);
+        createComputedPath(dest);
+
+        // Reset all visited vertexes once the path has been computed (no need to reset vertices that never have been
+        // visited).
+        resetVerticies(visitedVerticies);
+    }
+
+    /** Internal helper that sets the route length in KM based on the computed path destination */
+    private void setRouteLength(Node dest) {
+        // Get length in KM's
+        float length = dest.getLengthToSource() / 1000;
+
+        // Nicely format distance
+        DecimalFormat formatter = new DecimalFormat("#.0");
+        this.length = formatter.format(length);
+    }
+
+    private void setRouteTime(Node dest) {
+        // Get time in minutes
+        float time = dest.getTimeToSource() / 1000000;
+
+        // We always round the time up
+        this.time = (int) time + "min " + (int) ((time % 1) * 60) + "sek";
+    }
+
+    /** Internal helper that creates the path of the found path between two nodes */
+    private void createComputedPath(Node dest) {
         Node node = dest;
+
+        // Prepare drawing route path
+        Path2D sp = new Path2D.Float();
         sp.moveTo(node.getLon(), node.getLat());
 
         while(node.getParent() != null) {
             node = node.getParent();
             sp.lineTo(node.getLon(), node.getLat());
         }
-        shortestPath = sp;
 
-        // Reset all visited vertexes once the path has been computed (no need to reset vertices that never have been
-        // visited).
-        resetVerticies(visitedVerticies);
+        routePath = sp;
     }
 
     /**
@@ -78,9 +110,10 @@ public class Graph {
 
         Node neighbour = nodes.get(edgeToNeighbour.getTo(current).getId());
 
-        if (neighbour.getDistToSource() > current.getDistToSource() + edgeToNeighbour.getWeight(vehicleType, routeType)) {
+        if (neighbour.getDistToSource(routeType) > current.getDistToSource(routeType) + edgeToNeighbour.getWeight(vehicleType, routeType)) {
             // We found a shorter path for the neighbour! Relax neighbour node.
-            neighbour.setDistToSource(current.getDistToSource() + edgeToNeighbour.getLength());
+            neighbour.setLengthToSource(current.getLengthToSource() + edgeToNeighbour.getLength());
+            neighbour.setTimeToSource(current.getTimeToSource() + edgeToNeighbour.getTime(vehicleType));
             neighbour.setParent(current);
             pq.add(neighbour);
         }
@@ -89,8 +122,7 @@ public class Graph {
     /** Internal helper that resets all visited vertexes of the map */
     private void resetVerticies(ArrayList<Node> vertexes) {
         for (Node node : vertexes) {
-            node.setDistToSource(Float.POSITIVE_INFINITY);
-            node.setParent(null);
+            node.reset();
         }
     }
 
@@ -106,7 +138,7 @@ public class Graph {
     }
 
     public Path2D getRoutePath() {
-        return shortestPath;
+        return routePath;
     }
 
     /** Getters and setters */
@@ -133,4 +165,8 @@ public class Graph {
     public void setRouteType(RouteType routeType) {
         this.routeType = routeType;
     }
+
+    public String getLength() { return length; }
+
+    public String getTime() { return time; }
 }

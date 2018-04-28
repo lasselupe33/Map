@@ -175,11 +175,7 @@ public class NavigationView extends JPanel {
 
         // Start input
         startInput = new JTextField(startInputText);
-        startInput.setName(startInput.getText());
-
-
         startInput.setName("startInput");
-
         startInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
         startInput.addFocusListener(new TextController("Fra:"));
         startInput.addKeyListener(autoCompleteController);
@@ -214,8 +210,10 @@ public class NavigationView extends JPanel {
         middlePanel.setLayout(new BorderLayout());
 
         // Time label
-        JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>5 min</span> <span style='font-size:12px;color:#4285F4;'>(1,9 km)</span></html>");
-        middlePanel.add(timeLabel, BorderLayout.WEST);
+        if (navigationController.getLength() != null && navigationController.getTime() != null) {
+            JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>" + navigationController.getTime() + "</span> <span style='font-size:12px;color:#4285F4;'>(" + navigationController.getLength() + "km)</span></html>");
+            middlePanel.add(timeLabel, BorderLayout.WEST);
+        }
 
         middlePanel.add(renderSwitchAndSubmitButtons(), BorderLayout.EAST);
 
