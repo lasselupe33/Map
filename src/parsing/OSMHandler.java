@@ -331,6 +331,7 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case "pedestrian":
                 type = WayType.PEDESTRIAN;
+                speedLimit = 5;
                 supportsCars = false;
                 supportsBicycles = false;
                 supportsPedestrians = true;
@@ -344,6 +345,7 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case "path":
                 type = WayType.PATH;
+                speedLimit = 5;
                 supportsCars = false;
                 supportsBicycles = true;
                 supportsPedestrians = true;
@@ -352,12 +354,14 @@ public class OSMHandler extends DefaultHandler {
             case "steps":
             case "crossing":
                 type = WayType.FOOTWAY;
+                speedLimit = 5;
                 supportsCars = false;
                 supportsBicycles = false;
                 supportsPedestrians = true;
                 break;
             case "cycleway":
                 type = WayType.CYCLEWAY;
+                speedLimit = 18;
                 supportsCars = false;
                 supportsBicycles = true;
                 supportsPedestrians = false;

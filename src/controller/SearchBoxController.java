@@ -112,6 +112,7 @@ public class SearchBoxController extends MouseAdapter {
         } else {
             stateController.updateCurrentState(ViewStates.INITIAL);
         }
+        graph.setSourceAndDest(null, null);
     }
 
     public void onFavoritesClick() {

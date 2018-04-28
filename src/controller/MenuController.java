@@ -3,15 +3,19 @@ package controller;
 import helpers.ColorMap;
 import helpers.io.IOHandler;
 import model.MetaModel;
+import model.graph.Graph;
+import model.graph.RouteType;
 import view.LoadingScreen;
 
 import javax.swing.*;
 
 public class MenuController {
     private ColorMap colorMap;
+    private Graph graph;
 
-    public MenuController(ColorMap cm) {
+    public MenuController(ColorMap cm, Graph g) {
         colorMap = cm;
+        graph = g;
     }
     
      public void load(JFrame window) {
@@ -57,4 +61,13 @@ public class MenuController {
         MapController.repaintMap();
     }
 
+    public void fastestRoute() {
+        graph.setRouteType(RouteType.FASTEST);
+        graph.recalculatePath();
+    }
+
+    public void shortestRoute() {
+        graph.setRouteType(RouteType.SHORTEST);
+        graph.recalculatePath();
+    }
 }

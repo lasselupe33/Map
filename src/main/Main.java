@@ -85,7 +85,7 @@ public class Main {
 
 
         // Controllers
-        mc = new MenuController(colorMap);
+        mc = new MenuController(colorMap, graph);
         cc = MapController.getInstance();
         sc = new StateController();
         ac = new AddressController(sc, favoritesModelModel);

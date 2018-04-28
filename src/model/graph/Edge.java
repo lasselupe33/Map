@@ -19,7 +19,17 @@ public class Edge {
         this.supportsPedestrians = supportsPedestrians;
     }
 
-    public float time() {  return length/speedLimit; }
+    public float getTime(VehicleType type) {
+        switch (type) {
+            case PEDESTRIAN:
+                return length*1000/5;
+            case BICYCLE:
+                return length*1000/18;
+            default:
+                break;
+        }
+        return length*1000/speedLimit;
+    }
 
     public Node getTo(Node from) {
         if (from.getId() == node1.getId()) {
@@ -31,7 +41,7 @@ public class Edge {
 
     public float getLength() {
         System.out.println(length / speedLimit);
-        return length * 1000 / 80;
+        return length * 1000;
     }
 
     public boolean supportsCars() { return supportsCars;}

@@ -13,6 +13,9 @@ public class Graph {
     private VehicleType type;
     private Path2D shortestPath = new Path2D.Float();
     private PriorityQueue<Node> pq;
+    private RouteType routeType = RouteType.FASTEST;
+    private Node source;
+    private Node dest;
 
     public Graph() {
         nodes = new LongToNodeMap(25);
@@ -35,20 +38,32 @@ public class Graph {
         return type;
     }
 
+    public RouteType getRouteType() {
+        return routeType;
+    }
+
+    public void setRouteType(RouteType routeType) {
+        this.routeType = routeType;
+    }
+
     public void resetVertexes(Node dest) {
         for (Long id : nodes.getIds()) {
-            Node n = (Node) nodes.get(id);
+            Node n = nodes.get(id);
             n.setDistToSource(Float.POSITIVE_INFINITY);
+            n.setTimeToSource(Float.POSITIVE_INFINITY);
             n.setParent(null);
             n.setEstimateToDest((float) GetDistance.inKM(n.getLat(), n.getLon(), dest.getLat(), dest.getLon()));
         }
     }
 
     public void computePath(Node source, Node dest) {
-        pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) ((a.getDistToSource()+a.getEstimateToDest()) - (b.getDistToSource()+b.getEstimateToDest())));
+        this.source = source;
+        this.dest = dest;
+        pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) ((a.getDistToSource()+a.getEstimateToDest(routeType, type)) - (b.getDistToSource()+b.getEstimateToDest(routeType, type))));
         resetVertexes(dest);
         shortestPath = null;
         source.setDistToSource(0);
+        source.setTimeToSource(0);
         pq.add(source);
 
         ArrayList<Node> path = new ArrayList<>();
@@ -90,10 +105,18 @@ public class Graph {
 
                 Node neighbour = nodes.get(edgeToNeighbour.getTo(current).getId());
 
-                if (neighbour.getDistToSource() > current.getDistToSource() + edgeToNeighbour.getLength()) {
-                    neighbour.setDistToSource(current.getDistToSource() + edgeToNeighbour.getLength());
-                    neighbour.setParent(current);
-                    pq.add(neighbour);
+                if (routeType == RouteType.SHORTEST) {
+                    if (neighbour.getDistToSource() > current.getDistToSource() + edgeToNeighbour.getLength()) {
+                        neighbour.setDistToSource(current.getDistToSource() + edgeToNeighbour.getLength());
+                        neighbour.setParent(current);
+                        pq.add(neighbour);
+                    }
+                } else {
+                    if (neighbour.getTimeToSource() > current.getTimeToSource() + edgeToNeighbour.getTime(type)) {
+                        neighbour.setTimeToSource(current.getTimeToSource() + edgeToNeighbour.getTime(type));
+                        neighbour.setParent(current);
+                        pq.add(neighbour);
+                    }
                 }
             }
         }
@@ -109,7 +132,19 @@ public class Graph {
         shortestPath = sp;
     }
 
+    public void setSourceAndDest(Node s, Node d) {
+        source = s;
+        dest = d;
+    }
+
+    public void recalculatePath() {
+        if (source != null && dest != null) {
+            computePath(source, dest);
+        }
+    }
+
     public Path2D getShortestPath() {
         return shortestPath;
     }
+
 }
