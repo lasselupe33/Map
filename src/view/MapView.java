@@ -17,14 +17,14 @@ import java.awt.geom.Rectangle2D;
 /**
  * This view draws the map.
  */
-public class CanvasView extends JComponent {
+public class MapView extends JComponent {
     private MapController controller;
     private Graph graph;
     private Path2D route = null;
     private ColorMap colorMap;
 
 
-    public CanvasView(MapController c, Graph g, ColorMap cm) {
+    public MapView(MapController c, Graph g, ColorMap cm) {
         controller = c;
         colorMap = cm;
         graph = g;
@@ -41,13 +41,14 @@ public class CanvasView extends JComponent {
     public void paint(Graphics _g) {
         Graphics2D g = (Graphics2D) _g;
 
+        // Setup initial values
         Rectangle2D viewRect = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
-
         g.setStroke(new BasicStroke(Float.MIN_VALUE));
         g.setPaint(colorMap.getColor(WayType.WATER));
         g.fill(viewRect);
         g.transform(controller.getTransform());
 
+        // Determine antialiasing
         if (controller.shouldAntiAlias()) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
@@ -55,6 +56,7 @@ public class CanvasView extends JComponent {
 
         viewRect = controller.getModelViewRect();
 
+        // Draw all mapData required for current screen
         for (MapElement m : controller.getMapData()) {
             if (m.getShape().intersects(viewRect)) {
                 g.setPaint(colorMap.getColor(m.getType()));
@@ -68,7 +70,8 @@ public class CanvasView extends JComponent {
             }
         }
 
-        if (graph.getShortestPath() != null) {
+        // Draw navigation path if any
+        if (graph.getRoutePath() != null) {
             switch (graph.getVehicleType()) {
                 case CAR:
                     g.setStroke(new BasicStroke(0.00007f));
@@ -84,8 +87,7 @@ public class CanvasView extends JComponent {
                     break;
             }
             g.setColor(new Color(66, 133, 244));
-            route = graph.getShortestPath();
-            g.draw(route);
+            g.draw(graph.getRoutePath());
         }
 
     }

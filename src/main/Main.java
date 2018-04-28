@@ -10,7 +10,6 @@ import view.*;
 import javax.swing.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -28,7 +27,7 @@ public class Main {
     private static AutoCompleteController acc;
     private static FavoriteController fc;
     private static NavigationController nc;
-    private static CanvasView cv;
+    private static MapView cv;
     private static AddressView av;
     private static SearchBox sb;
     private static FooterView fv;
@@ -97,7 +96,7 @@ public class Main {
         // Ensure views are being invoked on proper thread!
         SwingUtilities.invokeLater(() -> {
             // Views
-            cv = new CanvasView(cc, graph, colorMap);
+            cv = new MapView(cc, graph, colorMap);
             cc.addDependencies(cv, mapModel, model);
             av = new AddressView(ac);
             sb = new SearchBox(sc, sbc, acc);

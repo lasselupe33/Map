@@ -19,7 +19,7 @@ public class MainWindowView {
     public JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
     private MetaModel metaModel;
-    private CanvasView canvasView;
+    private MapView mapView;
     private MapController mapController;
     private AddressView addressView;
     private SearchBox searchBox;
@@ -35,7 +35,7 @@ public class MainWindowView {
     private FavoritePopupView favoritePopupView;
 
     public MainWindowView(
-            CanvasView cv,
+            MapView cv,
             MetaModel m,
             MapController cc,
             MenuController mc,
@@ -52,7 +52,7 @@ public class MainWindowView {
             FavoritePopupView favoritePopupView
     ) {
         menuController = mc;
-        canvasView = cv;
+        mapView = cv;
         metaModel = m;
         mapController = cc;
         addressView = av;
@@ -145,13 +145,13 @@ public class MainWindowView {
         // Add components
         switch(stateController.getCurrentState()) {
             case INITIAL:
-                canvasView.removeRoute();
+                mapView.removeRoute();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(autoCompleteList, 3, 6);
                 break;
 
             case ADDRESS_ENTERED:
-                canvasView.removeRoute();
+                mapView.removeRoute();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(autoCompleteList, 3, 6);
                 lpane.add(addressView, 1, 3);
@@ -179,7 +179,7 @@ public class MainWindowView {
         }
 
         if (initialRender) {
-            lpane.add(canvasView, 0, 0);
+            lpane.add(mapView, 0, 0);
             lpane.add(zoomView, 3, 1);
             lpane.add(footerView, 4, 5);
         }
@@ -196,7 +196,7 @@ public class MainWindowView {
 
         // Setup bounds once the screen size has been determined
         lpane.setBounds(0, 0, width, height);
-        canvasView.setBounds(0, 0, width, height);
+        mapView.setBounds(0, 0, width, height);
         zoomView.setBounds(width - 100,height - 130,70,70);
         navigationView.setBounds(0, 0, 450, height);
         footerView.setBounds(0, height - 30, width, 30);

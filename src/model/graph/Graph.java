@@ -105,7 +105,7 @@ public class Graph {
         }
     }
 
-    public Path2D getShortestPath() {
+    public Path2D getRoutePath() {
         return shortestPath;
     }
 

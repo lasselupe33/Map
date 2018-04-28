@@ -38,27 +38,27 @@ public class MenuController {
 
     public void standardMode() {
         colorMap.setMode(ColorMap.Mode.STANDARD);
-        MapController.repaintMap();
+        MapController.repaintMap(true);
     }
 
     public void protanopiaMode() {
         colorMap.setMode(ColorMap.Mode.PROTANOPIA);
-        MapController.repaintMap();
+        MapController.repaintMap(true);
     }
 
     public void deuteranopiaMode() {
         colorMap.setMode(ColorMap.Mode.DEUTERANOPIA);
-        MapController.repaintMap();
+        MapController.repaintMap(true);
     }
 
     public void tritanopiaMode() {
         colorMap.setMode(ColorMap.Mode.TRITANOPIA);
-        MapController.repaintMap();
+        MapController.repaintMap(true);
     }
 
     public void grayscaleMode() {
         colorMap.setMode(ColorMap.Mode.GRAYSCALE);
-        MapController.repaintMap();
+        MapController.repaintMap(true);
     }
 
     public void fastestRoute() {

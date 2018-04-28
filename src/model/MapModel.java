@@ -79,22 +79,11 @@ public class MapModel {
         mapElements = null;
     }
 
+    /** Internal helper that returns the id of the nearest way-node from a given coord */
     public long getNearestNodeId(Coordinates coords) {
+        // Loop through relevant KD-tree for current vehicleType and get nearest way node ids
         List<MapElement> candidates = new ArrayList<>();
-
-        switch(graph.getVehicleType()) {
-            case CAR:
-                addCandidatesCar(coords, candidates);
-                break;
-            case BICYCLE:
-                addCandidatesBicycle(coords, candidates);
-                break;
-            case PEDESTRIAN:
-                addCandidatesPedestrian(coords, candidates);
-                break;
-            default:
-                break;
-        }
+        addCandidatesForNearestNode(candidates, coords, graph.getVehicleType());
 
         long nearestNeighbour = 0;
 
@@ -115,12 +104,12 @@ public class MapModel {
         return nearestNeighbour;
     }
 
-    private void addCandidatesCar(Coordinates coords, List<MapElement> candidates) {
+    /** Internal helper that adds all the nearest way node ids from relevant KD trees based on passed vehicleType */
+    private void addCandidatesForNearestNode(List<MapElement> candidates, Coordinates coords, VehicleType vehicleType) {
         int i = 0;
-        for (WayType type : WayType.values()) {
-            switch(type) {
+        for (WayType wayType : WayType.values()) {
+            switch (wayType) {
                 case SERVICE:
-                case MOTORWAY:
                 case TRUNK:
                 case ROAD:
                 case TERTIARYROAD:
@@ -128,49 +117,34 @@ public class MapModel {
                 case HIGHWAY:
                     candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
                     break;
-                default:
-                    break;
-            }
-            i++;
-        }
-    }
 
-    private void addCandidatesBicycle(Coordinates coords, List<MapElement> candidates) {
-        int i = 0;
-        for (WayType type : WayType.values()) {
-            switch(type) {
-                case SERVICE:
+                case MOTORWAY:
+                    // Only add motorway for cars
+                    if (vehicleType == VehicleType.CAR) {
+                        candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    }
+                    break;
+
                 case CYCLEWAY:
-                case ROAD:
-                case PEDESTRIAN:
-                case PATH:
-                case TERTIARYROAD:
-                case SECONDARYROAD:
-                case HIGHWAY:
-                    candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    // Add bicycle only paths
+                    if (vehicleType == VehicleType.BICYCLE) {
+                        candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    }
                     break;
-                default:
-                    break;
-            }
-            i++;
-        }
-    }
 
-    private void addCandidatesPedestrian(Coordinates coords, List<MapElement> candidates) {
-        int i = 0;
-        for (WayType type : WayType.values()) {
-            switch(type) {
-                case SERVICE:
-                case ROAD:
-                case PEDESTRIAN:
                 case FOOTWAY:
-                case PATH:
-                case TERTIARYROAD:
-                case SECONDARYROAD:
-                case HIGHWAY:
-                    candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    // Add pedestrian only paths
+                    if (vehicleType == VehicleType.PEDESTRIAN) {
+                        candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    }
                     break;
-                default:
+
+                case PEDESTRIAN:
+                case PATH:
+                    // Add paths only pedestrians and bicycles can use
+                    if (vehicleType != VehicleType.CAR) {
+                        candidates.add((MapElement) mapTrees[i].nearestNeighbour(coords.getX(), coords.getY()));
+                    }
                     break;
             }
             i++;

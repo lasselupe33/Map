@@ -5,7 +5,7 @@ import model.MetaModel;
 import model.MapElement;
 import model.MapModel;
 import model.WayType;
-import view.CanvasView;
+import view.MapView;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -13,18 +13,22 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * This controller handles all logic and input related to the canvas that draws the map.
  */
 public class MapController {
     private static MapController instance = new MapController();
+    private static MapView canvas;
+    private static boolean useAntiAliasing = true;
+    private static Timer timer = new Timer();
+    private static long lastAction = 0;
 
     private MetaModel metaModel;
     private MapModel mapModel;
-    private static CanvasView canvas;
     private AffineTransform transform = new AffineTransform();
-    private boolean useAntiAliasing = false;
 
 
     /**
@@ -38,7 +42,7 @@ public class MapController {
         return instance;
     }
 
-    public void addDependencies(CanvasView c, MapModel mm, MetaModel m) { canvas = c; mapModel = mm; metaModel = m; }
+    public void addDependencies(MapView c, MapModel mm, MetaModel m) { canvas = c; mapModel = mm; metaModel = m; }
 
     /**
      * @return whether or not the view should utilise antialias
@@ -98,8 +102,7 @@ public class MapController {
         }
 
         mapModel.setMapData(tmpList);
-
-        canvas.repaint();
+        repaintMap(false);
     }
 
     /** Helper method that reset the canvas when called */
@@ -154,7 +157,28 @@ public class MapController {
         return zoomLevel;
     }
 
-    public static void repaintMap() {
+    public static void repaintMap(boolean forceAntialias) {
         canvas.repaint();
+
+        if (forceAntialias) {
+            useAntiAliasing = true;
+        } else {
+            useAntiAliasing = false;
+            lastAction = System.currentTimeMillis();
+
+            // Only use antialiasing when idle in order to preserve performance
+            timer.schedule(
+                    new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (System.currentTimeMillis() - lastAction >= 100) {
+                                useAntiAliasing = true;
+                                canvas.repaint();
+                            }
+                        }
+                    },
+                    100
+            );
+        }
     }
 }

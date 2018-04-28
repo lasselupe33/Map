@@ -107,11 +107,13 @@ public class NavigationController extends MouseAdapter {
         long startingPointId = mapModel.getNearestNodeId(startAddressCoords);
         long endPointId = mapModel.getNearestNodeId(endAddressCoords);
 
-        System.out.println(startingPointId);
         Node startingPoint = graph.getNode(startingPointId);
         Node endPoint = graph.getNode(endPointId);
 
         graph.computePath(startingPoint, endPoint);
+
+        // Update map after path has been computed
+        MapController.repaintMap(true);
     }
 
     public VehicleType getVehicleType() {
