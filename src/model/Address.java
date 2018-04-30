@@ -4,13 +4,15 @@ import java.io.*;
 
 public class Address implements Externalizable {
     private String street, house, postcode;
+    private long id;
     private Coordinates coordinates;
 
     public Address() {}
 
     /** Constructor to be used while parsing OSM-files */
-    public Address(double lat, double lon) {
-        this.coordinates = new Coordinates(lat, lon);
+    public Address(long id, float lon, float lat) {
+        this.id = id;
+        this.coordinates = new Coordinates(lon, lat);
     }
 
     /** Constructor to be used when parsing addresses */
@@ -31,6 +33,10 @@ public class Address implements Externalizable {
     /** Helper that converts an address to a key to be used in the data-structure */
     public String toKey() {
         return (street + (house != null ? house : "") + (postcode != null ? postcode : "")).toLowerCase();
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String toString() {

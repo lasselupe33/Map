@@ -3,15 +3,19 @@ package controller;
 import helpers.ColorMap;
 import helpers.io.IOHandler;
 import model.MetaModel;
+import model.graph.Graph;
+import model.graph.RouteType;
 import view.LoadingScreen;
 
 import javax.swing.*;
 
 public class MenuController {
-    private static ColorMap.Mode mode;
+    private ColorMap colorMap;
+    private Graph graph;
 
-    public MenuController(MetaModel m) {
-        mode = ColorMap.Mode.STANDARD;
+    public MenuController(ColorMap cm, Graph g) {
+        colorMap = cm;
+        graph = g;
     }
     
      public void load(JFrame window) {
@@ -33,32 +37,37 @@ public class MenuController {
     }
 
     public void standardMode() {
-        mode = ColorMap.Mode.STANDARD;
-        MapController.repaintMap();
+        colorMap.setMode(ColorMap.Mode.STANDARD);
+        MapController.repaintMap(true);
     }
 
     public void protanopiaMode() {
-        mode = ColorMap.Mode.PROTANOPIA;
-        MapController.repaintMap();
+        colorMap.setMode(ColorMap.Mode.PROTANOPIA);
+        MapController.repaintMap(true);
     }
 
     public void deuteranopiaMode() {
-        mode = ColorMap.Mode.DEUTERANOPIA;
-        MapController.repaintMap();
+        colorMap.setMode(ColorMap.Mode.DEUTERANOPIA);
+        MapController.repaintMap(true);
     }
 
     public void tritanopiaMode() {
-        mode = ColorMap.Mode.TRITANOPIA;
-        MapController.repaintMap();
+        colorMap.setMode(ColorMap.Mode.TRITANOPIA);
+        MapController.repaintMap(true);
     }
 
     public void grayscaleMode() {
-        mode = ColorMap.Mode.GRAYSCALE;
-        MapController.repaintMap();
+        colorMap.setMode(ColorMap.Mode.GRAYSCALE);
+        MapController.repaintMap(true);
     }
 
-    public static ColorMap.Mode getMode() {
-        return mode;
+    public void fastestRoute() {
+        graph.setRouteType(RouteType.FASTEST);
+        graph.recalculatePath();
     }
 
+    public void shortestRoute() {
+        graph.setRouteType(RouteType.SHORTEST);
+        graph.recalculatePath();
+    }
 }

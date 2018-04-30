@@ -1,25 +1,18 @@
 package helpers;
 
-import controller.MenuController;
 import model.WayType;
 
 import java.awt.*;
 import java.util.EnumMap;
 
 public class ColorMap {
-    private static EnumMap<WayType, Color[]> colorMap = null;
-    private static EnumMap<WayType, Color> standardMode = null;
-    private static EnumMap<WayType, Color> colorBlindMode = null;
-    private static int mode;
-    private static Color standardRoadColor = new Color(255,255,255);
-    private static Color coastlineColor = new Color(237,237,237);
+    private EnumMap<WayType, Color[]> colorMap = null;
+    private int mode = 0;
+    private Color standardRoadColor = new Color(255,255,255);
+    private Color coastlineColor = new Color(237,237,237);
 
-    public static Color getColor(WayType type) {
-        if (standardMode == null) initializeStandard();
-        if (colorBlindMode == null) initializeColorBlind();
-        if (colorMap == null) initializeMap();
-        Color[] c = colorMap.get(type);
-        switch (MenuController.getMode()) {
+    public void setMode(Mode m) {
+        switch (m) {
             case STANDARD:
                 mode = 0;
                 break;
@@ -36,13 +29,18 @@ public class ColorMap {
                 mode = 4;
                 break;
             default:
+                mode = 0;
                 break;
         }
-        return c[mode];
-        //return colorBlindMode.get(type);
     }
 
-    private static void initializeMap() {
+    public Color getColor(WayType type) {
+        if (colorMap == null) initializeMap();
+        Color[] c = colorMap.get(type);
+        return c[mode];
+    }
+
+    private void initializeMap() {
         colorMap = new EnumMap<>(WayType.class);
         colorMap.put(WayType.COASTLINE, new Color[] {coastlineColor,coastlineColor,coastlineColor,coastlineColor,coastlineColor});
 
@@ -79,7 +77,6 @@ public class ColorMap {
                 new Color(215, 205, 199),
                 new Color(215, 205, 199),
                 new Color(214,214,214)});
-        //new Color(170, 9, 59)
 
         colorMap.put(WayType.PITCH, new Color[] {new Color(170, 224, 203),
                 new Color(7, 138, 69),
@@ -98,6 +95,8 @@ public class ColorMap {
         colorMap.put(WayType.ROAD, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
 
         colorMap.put(WayType.PEDESTRIAN, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
+
+        colorMap.put(WayType.SQUARE, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
 
         colorMap.put(WayType.PARK, new Color[] {new Color(200, 250, 204),
                 new Color(10, 205, 102),
@@ -180,7 +179,14 @@ public class ColorMap {
                 new Color(66, 94, 148),
                 new Color(232, 146, 162),
                 new Color(180,180,180)});
-
+        /**
+         * @TODO color blind trunk
+         */
+        colorMap.put(WayType.TRUNK, new Color[] {new Color(248, 161, 136),
+                new Color(66, 94, 148),
+                new Color(66, 94, 148),
+                new Color(248, 161, 136),
+                new Color(182, 182, 182)});
         colorMap.put(WayType.DRAIN, new Color[] {new Color(60, 149, 255),
                 new Color(60, 149, 255),
                 new Color(60, 149, 255),
@@ -205,79 +211,21 @@ public class ColorMap {
                 new Color(9, 180, 90),
                 new Color(205,205,205)});
 
-    }
+        colorMap.put(WayType.PIER, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
 
-    private static void initializeStandard() {
-        standardMode = new EnumMap<>(WayType.class);
-        standardMode.put(WayType.COASTLINE, new Color(237, 237, 237));
-        standardMode.put(WayType.PLACE, new Color(0, 239, 233));
-        standardMode.put(WayType.RESIDENTIAL, new Color(234, 224, 216));
-        standardMode.put(WayType.FORREST, new Color(173, 216, 176));
-        standardMode.put(WayType.FARMLAND, new Color(251, 236, 215));
-        standardMode.put(WayType.WATER, new Color(60, 149, 255));
-        standardMode.put(WayType.UNKNOWN, Color.black);
-        standardMode.put(WayType.BUILDING, new Color(223, 213, 206));
-        standardMode.put(WayType.PITCH, new Color(170, 224, 203));
-        standardMode.put(WayType.ALLOMENTS, new Color(238, 207, 179));
-        standardMode.put(WayType.SERVICE, new Color(255, 255, 255));
-        standardMode.put(WayType.ROAD, new Color(255, 255, 255));
-        standardMode.put(WayType.PEDESTRIAN, new Color(255, 255, 255));
-        standardMode.put(WayType.PARK, new Color(200, 250, 204));
-        standardMode.put(WayType.PLAYGROUND, new Color(225, 255, 233));
-        standardMode.put(WayType.CEMETERY, new Color(193, 219, 200));
-        standardMode.put(WayType.FOOTWAY, new Color(250, 128, 114));
-        standardMode.put(WayType.PATH, new Color(250, 128, 114));
-        standardMode.put(WayType.FERRY, new Color(125, 139, 244));
-        standardMode.put(WayType.SUBWAY, new Color(168, 172, 190));
-        standardMode.put(WayType.CYCLEWAY, new Color(125, 139, 244));
-        standardMode.put(WayType.TERTIARYROAD, new Color(255, 255, 255));
-        standardMode.put(WayType.SECONDARYROAD, new Color(255, 255, 255));
-        standardMode.put(WayType.HIGHWAY, new Color(252, 214, 164));
-        standardMode.put(WayType.PLACE_OF_WORSHIP, new Color(175, 156, 141));
-        standardMode.put(WayType.BARRIER, new Color(128, 129, 122));
-        standardMode.put(WayType.HEDGE, new Color(170, 224, 203));
-        standardMode.put(WayType.MOTORWAY, new Color(232, 146, 162));
-        standardMode.put(WayType.DRAIN, new Color(60, 149, 255));
-        standardMode.put(WayType.AEROWAY, new Color(233, 209, 255));
-        standardMode.put(WayType.RUNWAY, new Color(187, 187, 204));
-        standardMode.put(WayType.GRASS, new Color(205, 235, 176));
-    }
+        colorMap.put(WayType.HIGHWAYBRIDGE, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
 
-    private static void initializeColorBlind() {
-        colorBlindMode = new EnumMap<>(WayType.class);
-        //Color.decode("#3c8eff")
-        colorBlindMode.put(WayType.COASTLINE, new Color(249, 230, 189));
-        colorBlindMode.put(WayType.PLACE, new Color(249, 230, 189));
-        colorBlindMode.put(WayType.RESIDENTIAL, new Color(255, 13, 87));
-        colorBlindMode.put(WayType.FORREST, new Color(9, 180, 90));
-        colorBlindMode.put(WayType.FARMLAND, new Color(249, 120, 80));
-        colorBlindMode.put(WayType.WATER, new Color(60, 149, 255));
-        colorBlindMode.put(WayType.UNKNOWN, Color.black);
-        colorBlindMode.put(WayType.BUILDING, new Color(170, 9, 59));
-        colorBlindMode.put(WayType.PITCH, new Color(9, 180, 90));
-        colorBlindMode.put(WayType.ALLOMENTS, new Color(249, 120, 80));
-        colorBlindMode.put(WayType.SERVICE, new Color(255, 255, 255));
-        colorBlindMode.put(WayType.ROAD, new Color(255, 255, 255));
-        colorBlindMode.put(WayType.PEDESTRIAN, new Color(255, 255, 255));
-        colorBlindMode.put(WayType.PARK, new Color(9, 180, 90));
-        colorBlindMode.put(WayType.PLAYGROUND, new Color(9, 180, 90));
-        colorBlindMode.put(WayType.CEMETERY, new Color(9, 180, 90));
-        colorBlindMode.put(WayType.FOOTWAY, new Color(249, 120, 249));
-        colorBlindMode.put(WayType.PATH, new Color(249, 120, 249));
-        colorBlindMode.put(WayType.FERRY, new Color(0,90,199));
-        colorBlindMode.put(WayType.SUBWAY, new Color(0,9,130));
-        colorBlindMode.put(WayType.CYCLEWAY, new Color(0,90,199));
-        colorBlindMode.put(WayType.TERTIARYROAD, new Color(255, 255, 255));
-        colorBlindMode.put(WayType.SECONDARYROAD, new Color(255, 255, 255));
-        colorBlindMode.put(WayType.HIGHWAY, new Color(232,239, 0));
-        colorBlindMode.put(WayType.PLACE_OF_WORSHIP, new Color(139, 7, 48));
-        colorBlindMode.put(WayType.BARRIER, new Color(62, 62, 59));
-        colorBlindMode.put(WayType.HEDGE, new Color(5, 108, 54));
-        colorBlindMode.put(WayType.MOTORWAY, new Color(239,239,49));
-        colorBlindMode.put(WayType.DRAIN, new Color(60, 149, 255));
-        //colorBlindMode.put(WayType.AEROWAY, new Color(233, 209, 255));
-        //colorBlindMode.put(WayType.RUNWAY, new Color(187, 187, 204));
-        colorBlindMode.put(WayType.GRASS, new Color(9, 180, 90));
+        colorMap.put(WayType.MANMADEBRIDGE, new Color[] {new Color(215, 205, 199),
+                new Color(215, 205, 199),
+                new Color(215, 205, 199),
+                new Color(215, 205, 199),
+                new Color(214,214,214)});
+
+        colorMap.put(WayType.SWIMMINGPOOL, new Color[] {new Color(122, 199, 235),
+                new Color(94, 184, 223),
+                new Color(122, 199, 235),
+                new Color(122, 199, 235),
+                new Color(155,155,155)});
     }
 
     public enum Mode {

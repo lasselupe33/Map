@@ -5,44 +5,65 @@ import model.Favorite;
 import model.FavoritesModel;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.net.URL;
 
 public class FavoriteView extends JPanel {
-    private int width = 450;
     private FavoritesModel favoritesModel;
     private FavoriteController favoriteController;
+    private JPanel panel;
+    private JScrollPane scroll;
 
     public FavoriteView(FavoritesModel favoritesModel, FavoriteController favoriteController){
         this.favoritesModel = favoritesModel;
         this.favoriteController = favoriteController;
+        panel = new JPanel();
         // Setup view
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(Color.WHITE);
-        setOpaque(true);
-        setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(Color.WHITE);
+        panel.setOpaque(true);
         updateFavoritesView();
+        scroll = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        setLayout(new BorderLayout());
+        add(scroll, BorderLayout.CENTER);
 
+
+
+    }
+
+    public void updateBound(int height){
+        int width = 450;
+        scroll.setPreferredSize(new Dimension(width, height-25));
     }
 
 
     public void updateFavoritesView() {
-        removeAll();
+        panel.removeAll();
         for(Favorite favorite : favoritesModel){
+
             addLabelToFavorites(favorite);
         }
     }
 
     private void addLabelToFavorites(Favorite f) {
-        String text = "<html><span style=\"font-size: 10px;\">" + f.getName() +
-                "</span><br><span style=\"font-size: 5px;\">"+f.getAddress()+"</span></html>";
+        String text = "<html><span style=\"font-size: 12px;\">" + f.getName() +
+                "</span><br><span style=\"font-size: 10px;\">"+f.getAddress()+"</span></html>";
         JLabel label = new JLabel(text);
         label.setName(f.getAddress().toString());
-        label.setBorder(new EmptyBorder(10, 10, 10, 10));
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
+        Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        Border margin = BorderFactory.createEmptyBorder(5, 0, 5, 0);
+        Border combo = BorderFactory.createCompoundBorder(border, padding);
+        label.setBorder(BorderFactory.createCompoundBorder(margin, combo));
+
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         label.addMouseListener(favoriteController);
-        
-        add(label);
+
+
+        panel.add(label);
+
 
 
     }

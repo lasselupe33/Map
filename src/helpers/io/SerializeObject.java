@@ -23,12 +23,13 @@ public class SerializeObject implements Runnable {
     public void run() {
         try {
             URL path;
+            String folderName = "/BFST18_binary" + (IOHandler.instance.testMode ? "_test" : "") + "/";
 
             // Setup output path
             if (IOHandler.instance.isJar) {
-                path = new URL(IOHandler.externalRootPath + "/data/" + name + ".bin");
+                path = new URL(IOHandler.externalRootPath + folderName + name + ".bin");
             } else {
-                path = new URL(Main.class.getResource("/data/") + "/" + name + ".bin");
+                path = new URL(Main.class.getResource(folderName) + "/" + name + ".bin");
             }
 
             File file = new File(path.toURI());

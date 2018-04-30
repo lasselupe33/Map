@@ -169,7 +169,7 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
         return list;
     }
 
-    public Coordinates nearestNeighbour(double px, double py){
+    public Value nearestNeighbour(double px, double py){
         Point2D p0 = new Point2D.Double(px, py);
         Point2D p1 = new Point2D.Double(px, py);
         List<Value> currentSearchList = searchTree(p0, p1);

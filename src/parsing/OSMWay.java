@@ -1,22 +1,23 @@
 package parsing;
 
-import parsing.OSMNode;
-
+import model.graph.Node;
 import java.util.ArrayList;
 
-public class OSMWay extends ArrayList<OSMNode>{
+public class OSMWay extends ArrayList<Node>{
     private float xCoord;
     private float yCoord;
 
     public OSMWay() {
     }
 
-    public OSMNode from() {
+    public Node from() {
         return get(0);
     }
 
-    public OSMNode to() {
+    public Node to() {
         return get(size() - 1);
     }
+
+    public ArrayList<Node> getNodes() { return this;}
 
 }

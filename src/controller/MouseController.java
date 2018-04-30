@@ -1,7 +1,7 @@
 package controller;
 
 import model.AddressesModel;
-import view.CanvasView;
+import view.MapView;
 import view.FooterView;
 
 import java.awt.event.MouseAdapter;
@@ -14,7 +14,7 @@ import static java.lang.Math.pow;
  * This controller handles mouse events.
  */
 public class MouseController extends MouseAdapter {
-    private CanvasView canvas;
+    private MapView canvas;
     private MapController mapController;
     private AddressesModel addressesModel;
     private FooterView footerView;
@@ -22,7 +22,7 @@ public class MouseController extends MouseAdapter {
     private Point2D lastMousePosition;
     private static Thread t;
 
-    public MouseController(CanvasView c, MapController cc, AddressesModel am, FooterView fv) {
+    public MouseController(MapView c, MapController cc, AddressesModel am, FooterView fv) {
         canvas = c;
         mapController = cc;
         addressesModel = am;
@@ -93,13 +93,16 @@ public class MouseController extends MouseAdapter {
     }
 
 
+    /**
+     * TODO: Needs documentation, what is happening here, and why is it running in a separate thread?
+     */
     public static void thread(){
         t = new Thread() {
             public void run() {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    MapController.repaintMap();
+                    MapController.repaintMap(false);
                     return;
                 }
                 MapController.getInstance().updateMap();

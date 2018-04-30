@@ -4,23 +4,31 @@ import helpers.AddressBuilder;
 import model.Address;
 import model.AddressesModel;
 import model.Coordinates;
+
+import model.graph.Graph;
+import model.graph.Node;
 import model.MetaModel;
 import view.SearchBox;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class SearchBoxController extends MouseAdapter {
-    StateController stateController;
-    AddressController addressController;
-    AddressesModel addressesModel;
-    SearchBox searchBoxView;
+    private StateController stateController;
+    private AddressController addressController;
+    private AddressesModel addressesModel;
+    private SearchBox searchBoxView;
+    private Graph graph;
+    private NavigationController navigationController;
 
-    public SearchBoxController(MetaModel m, StateController sc, AddressController ac, AddressesModel am) {
+    public SearchBoxController(StateController sc, AddressController ac, AddressesModel am, Graph g, NavigationController nc) {
         addressesModel = am;
         addressController = ac;
         stateController = sc;
+        graph = g;
+        navigationController = nc;
     }
 
     public void addView(SearchBox view) {
@@ -33,7 +41,6 @@ public class SearchBoxController extends MouseAdapter {
             case "search":
                 onSearchInput();
                 break;
-
             case "rightButton":
                 if (stateController.getCurrentState() == ViewStates.INITIAL) {
                     onNavigationClick();
@@ -50,22 +57,39 @@ public class SearchBoxController extends MouseAdapter {
     /** Will be called once the a user has entered a search query */
     public void onSearchInput() {
         String input = searchBoxView.getSearchInput().getText();
-        Address address = AddressBuilder.parse(input);
 
-        // Update current address and go to addressView if address exist
-        if (addressesModel.contains(address)) {
-            // Update address
-            addressController.setCurrentAddress(address);
+        // Bail out if no input has been entered
+        if (input.length() == 0) {
+            return;
+        }
 
-            // Go to proper position on map
-            Coordinates coordinates = addressesModel.getCoordinates(address);
+        // Get matching addresses based on input
+        Address inputAddress = AddressBuilder.parse(input);
+        ArrayList<Address> matchingAddresses = addressesModel.getMatchingAddresses(inputAddress.toKey());
 
-            // Update view to reflect changes
-            stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+        if (matchingAddresses.size() != 0) {
+            // If addresses match, then always choose the first address found
+            Address address = matchingAddresses.get(0);
+            updateAddress(address);
         } else {
-            // ... else retrieve and display list of nodes that match the input.
+            // ... else do nothing. AutoCompleteList will print error message
         }
     }
+
+    /** Helper that updates the currently entered address */
+    public void updateAddress(Address address) {
+        // Update address
+        addressController.setCurrentAddress(address);
+
+        // Go to proper position on map
+        Coordinates coordinates = addressesModel.getCoordinates(address);
+
+        navigationController.setStartAddress(address);
+
+        // Update view to reflect changes
+        stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+    }
+
     public void setSearchInput(String s){
         searchBoxView.getSearchInput().setText(s);
     }
@@ -77,10 +101,20 @@ public class SearchBoxController extends MouseAdapter {
     }
 
     public void onCloseClick() {
-        stateController.updateCurrentState(ViewStates.INITIAL);
+        if (stateController.getPrevPanel() == ViewStates.ADDRESS_ENTERED) {
+            stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+            navigationController.reset();
+        } else {
+            stateController.updateCurrentState(ViewStates.INITIAL);
+        }
+        graph.setSourceAndDest(null, null);
     }
 
     public void onFavoritesClick() {
         stateController.updateCurrentState(ViewStates.FAVORITES);
+    }
+
+    public SearchBox getSearchBoxView() {
+        return searchBoxView;
     }
 }
