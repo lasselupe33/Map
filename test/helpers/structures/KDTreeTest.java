@@ -43,9 +43,10 @@ public class KDTreeTest {
     @Test
     public void nearestNeighbour() throws Exception {
 
-
+        /* Expected results */
         Coordinates expected = new Coordinates(10, 10);
 
+        /* Actual results */
         List<Coordinates> list = new ArrayList<>();
         for (int i = 0; i < 100000; i++) {
             list.add(new Coordinates(i, i));
@@ -53,6 +54,8 @@ public class KDTreeTest {
         KDTree<Coordinates> tree = new KDTree(list);
         Coordinates actual = tree.nearestNeighbour(9.99, 10.5);
 
+
+        /* Are they equal? */
         assertEquals("" + expected, "" + actual);
     }
 }
