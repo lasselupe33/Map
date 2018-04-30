@@ -268,12 +268,7 @@ public class NavigationView extends JPanel {
     public JTextField getEndInput() {
         return endInput;
     }
+
     public void setStartInputText(String text) { startInputText = text; }
     public void setEndInputText(String text) { endInputText = text; }
-
-    public void setDefault() {
-        startInputText = "Fra:";
-        endInputText = "Til:";
-        navigationController.changeVehicleType(VehicleType.CAR);
-    }
 }

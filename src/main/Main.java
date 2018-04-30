@@ -87,9 +87,9 @@ public class Main {
         mc = new MenuController(colorMap, graph);
         cc = MapController.getInstance();
         sc = new StateController();
-        ac = new AddressController(sc, favoritesModelModel);
         nc = new NavigationController(am, mapModel, graph);
-        sbc = new SearchBoxController(model, sc, ac, am, graph, nc);
+        ac = new AddressController(sc, favoritesModelModel, nc);
+        sbc = new SearchBoxController(sc, ac, am, graph, nc);
         acc = new AutoCompleteController(sc, nc);
         fc = new FavoriteController(sc, sbc, nc);
 
@@ -97,7 +97,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             // Views
             cv = new MapView(cc, graph, colorMap);
-            cc.addDependencies(cv, mapModel, model);
+            cc.addDependencies(cv, mapModel, model, graph);
             av = new AddressView(ac);
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);

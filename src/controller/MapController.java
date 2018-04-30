@@ -5,6 +5,7 @@ import model.MetaModel;
 import model.MapElement;
 import model.MapModel;
 import model.WayType;
+import model.graph.Graph;
 import view.MapView;
 
 import java.awt.geom.AffineTransform;
@@ -30,6 +31,8 @@ public class MapController {
     private MapModel mapModel;
     private AffineTransform transform = new AffineTransform();
 
+    private Graph graph;
+
 
     /**
      * @return the transform to be used in the canvasView
@@ -42,7 +45,12 @@ public class MapController {
         return instance;
     }
 
-    public void addDependencies(MapView c, MapModel mm, MetaModel m) { canvas = c; mapModel = mm; metaModel = m; }
+    public void addDependencies(MapView c, MapModel mm, MetaModel m, Graph g) {
+        canvas = c;
+        mapModel = mm;
+        metaModel = m;
+        graph = g;
+    }
 
     /**
      * @return whether or not the view should utilise antialias
@@ -180,5 +188,10 @@ public class MapController {
                     100
             );
         }
+    }
+
+    public void removeRoute() {
+        graph.resetRoute();
+        repaintMap(true);
     }
 }

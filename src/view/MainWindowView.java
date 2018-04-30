@@ -122,7 +122,7 @@ public class MainWindowView {
                     break;
 
                 case NAVIGATION_ACTIVE:
-                    navigationView.setDefault();
+                    mapController.removeRoute();
                     lpane.remove(searchBox);
                     lpane.remove(autoCompleteList);
                     lpane.remove(navigationView);
@@ -141,17 +141,16 @@ public class MainWindowView {
         autoCompleteList.update();
         searchBox.update();
         addressView.update();
+        navigationView.update();
 
         // Add components
         switch(stateController.getCurrentState()) {
             case INITIAL:
-                mapView.removeRoute();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(autoCompleteList, 3, 6);
                 break;
 
             case ADDRESS_ENTERED:
-                mapView.removeRoute();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(autoCompleteList, 3, 6);
                 lpane.add(addressView, 1, 3);
@@ -263,28 +262,6 @@ public class MainWindowView {
         grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());
         colorGroup.add(grayscaleItem);
         subShowMenu.add(grayscaleItem);
-
-        /*
-        JMenuItem pRoadItem = new JCheckBoxMenuItem("Primary roads", true);
-        pRoadItem.addActionListener(this);
-        showMenu.add(pRoadItem);
-
-        JMenuItem sRoadItem = new JCheckBoxMenuItem("Secondary roads", true);
-        sRoadItem.addActionListener(this);
-        showMenu.add(sRoadItem);
-
-        JMenuItem pathsItem = new JCheckBoxMenuItem("Paths", true);
-        pathsItem.addActionListener(this);
-        showMenu.add(pathsItem);
-
-        JMenuItem buildingsItem = new JCheckBoxMenuItem("Buildings", true);
-        buildingsItem.addActionListener(this);
-        showMenu.add(buildingsItem);
-
-        JMenuItem antiAItem = new JCheckBoxMenuItem("Antialiasing", true);
-        antiAItem.addActionListener(this);
-        showMenu.add(antiAItem);
-        */
 
         // create the Help menu
         JMenu helpMenu = new JMenu("Help");

@@ -71,7 +71,7 @@ public class Graph {
         float length = dest.getLengthToSource() / 1000;
 
         // Nicely format distance
-        DecimalFormat formatter = new DecimalFormat("#.0");
+        DecimalFormat formatter = new DecimalFormat("0.0");
         this.length = formatter.format(length);
     }
 
@@ -140,6 +140,12 @@ public class Graph {
     public Path2D getRoutePath() {
         return routePath;
     }
+
+    public void resetRoute() {
+        routePath = null;
+        time = null;
+        length = null;
+    };
 
     /** Getters and setters */
     public void putNode(Node node) {

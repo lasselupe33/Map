@@ -20,12 +20,10 @@ public class SearchBoxController extends MouseAdapter {
     private AddressController addressController;
     private AddressesModel addressesModel;
     private SearchBox searchBoxView;
-    private AddressesModel addresses;
     private Graph graph;
     private NavigationController navigationController;
-    private Address address;
 
-    public SearchBoxController(MetaModel m, StateController sc, AddressController ac, AddressesModel am, Graph g, NavigationController nc) {
+    public SearchBoxController(StateController sc, AddressController ac, AddressesModel am, Graph g, NavigationController nc) {
         addressesModel = am;
         addressController = ac;
         stateController = sc;
@@ -86,7 +84,6 @@ public class SearchBoxController extends MouseAdapter {
         // Go to proper position on map
         Coordinates coordinates = addressesModel.getCoordinates(address);
 
-        this.address = address;
         navigationController.setStartAddress(address);
 
         // Update view to reflect changes
@@ -106,9 +103,7 @@ public class SearchBoxController extends MouseAdapter {
     public void onCloseClick() {
         if (stateController.getPrevPanel() == ViewStates.ADDRESS_ENTERED) {
             stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
-            if (address != null) {
-                navigationController.setStartAddress(address);
-            }
+            navigationController.reset();
         } else {
             stateController.updateCurrentState(ViewStates.INITIAL);
         }

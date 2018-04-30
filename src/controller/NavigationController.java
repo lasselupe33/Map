@@ -30,10 +30,16 @@ public class NavigationController extends MouseAdapter {
 
     public void addView(NavigationView nv){
         navigationView = nv;
+
+        // Intercept all mouse events to ensure canvas commands won't be called when clicking on the addressView
+        navigationView.addMouseListener(this);
+        navigationView.addMouseWheelListener(this);
+        navigationView.addMouseMotionListener(this);
     }
 
     public void setStartAddress(Address address){
-        navigationView.getStartInput().setText(address.toString());
+        //navigationView.getStartInput().setText(address.toString());
+        navigationView.setStartInputText(address.toString());
     }
 
     public void setEndAddress(Address address) {
@@ -64,14 +70,15 @@ public class NavigationController extends MouseAdapter {
     /** Update the current vehicle type */
     public void changeVehicleType(VehicleType type) {
         graph.setVehicleType(type);
-        setInputText();
+        //setInputText();
+        onRouteSearch();
         updateView();
     }
 
     /** Update the current road type */
     private void changeRouteType(RouteType type) {
         graph.setRouteType(type);
-        setInputText();
+        onRouteSearch();
         updateView();
     }
 
@@ -96,8 +103,8 @@ public class NavigationController extends MouseAdapter {
         endInput = navigationView.getEndInput().getText();
 
         // Check that inputs have been filled
-        if (startInput == "Fra:" || endInput == "Til:") {
-            throw new RuntimeException("Der skal være specificeret både en start og slut addresse!");
+        if (startInput.equals("Fra:") || endInput.equals("Til:") || startInput.equals("") || endInput.equals("")) {
+            return;
         }
 
         // Get source and dest coords
@@ -129,4 +136,10 @@ public class NavigationController extends MouseAdapter {
     public String getTime() { return graph.getTime(); }
 
     public String getLength() { return graph.getLength(); }
+
+    public void reset() {
+        navigationView.setStartInputText("Fra:");
+        navigationView.setEndInputText("Til:");
+        graph.setVehicleType(VehicleType.CAR);
+    }
 }

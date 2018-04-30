@@ -20,7 +20,6 @@ import java.awt.geom.Rectangle2D;
 public class MapView extends JComponent {
     private MapController controller;
     private Graph graph;
-    private Path2D route = null;
     private ColorMap colorMap;
 
 
@@ -90,12 +89,5 @@ public class MapView extends JComponent {
             g.draw(graph.getRoutePath());
         }
 
-    }
-
-    public void removeRoute() {
-        if (route != null) {
-            route.reset();
-            repaint();
-        }
     }
 }
