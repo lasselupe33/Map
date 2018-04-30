@@ -3,6 +3,7 @@ package helpers;
 import helpers.io.IOHandler;
 import helpers.structures.KDTree;
 import model.*;
+import model.graph.Graph;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,14 +14,17 @@ public class OSMHandlerTest {
     private static MetaModel m;
     private static MapModel mm;
     private static AddressesModel am;
+    private static Graph g;
 
     @BeforeClass
     public static void setup() throws Exception {
+        g = new Graph();
         m = new MetaModel();
-        mm = new MapModel(m);
+        mm = new MapModel(m, g);
         am = new AddressesModel();
 
-        IOHandler.instance.addModels(m, mm, am);
+
+        IOHandler.instance.addModels(m, mm, am, g);
         IOHandler.instance.loadFromString("./test/data/tiny.osm");
 
         // Give time to parse osm on another thread

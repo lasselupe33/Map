@@ -56,6 +56,11 @@ public class AddressesModel implements Serializable {
         }
     }
 
+    /** Helper that returns an address matching the given key, if any. */
+    public Address getAddress(String key) {
+        return addresses.get(searchTrie.get(key));
+    }
+
     /** Helper that indicates whether or not an address exists on the map */
     public boolean contains(Address address) { return searchTrie.contains(address.toKey()); }
 

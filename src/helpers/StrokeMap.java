@@ -31,11 +31,14 @@ public class StrokeMap {
                 BasicStroke.JOIN_MITER, 1.0f, dash2, 0.0f));
         strokeMap.put(WayType.TERTIARYROAD, new BasicStroke(0.00009f));
         strokeMap.put(WayType.SECONDARYROAD, new BasicStroke(0.00010f));
+        strokeMap.put(WayType.RESIDENTIAL, new BasicStroke(0.00010f));
         strokeMap.put(WayType.HIGHWAY, new BasicStroke(0.00020f));
         strokeMap.put(WayType.MOTORWAY, new BasicStroke(0.00025f));
+        strokeMap.put(WayType.TRUNK, new BasicStroke(0.00025f));
         strokeMap.put(WayType.BARRIER, new BasicStroke(0.000007f));
         strokeMap.put(WayType.HEDGE, new BasicStroke(0.000007f));
         strokeMap.put(WayType.DRAIN, new BasicStroke(0.000007f));
         strokeMap.put(WayType.RUNWAY, new BasicStroke(0.000009f));
+        strokeMap.put(WayType.HIGHWAYBRIDGE, new BasicStroke(0.00009f));
     }
 }

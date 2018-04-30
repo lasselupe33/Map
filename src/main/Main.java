@@ -4,12 +4,12 @@ import controller.*;
 import helpers.ColorMap;
 import helpers.io.IOHandler;
 import model.*;
+import model.graph.Graph;
 import view.*;
 
 import javax.swing.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -27,13 +27,14 @@ public class Main {
     private static AutoCompleteController acc;
     private static FavoriteController fc;
     private static NavigationController nc;
-    private static CanvasView cv;
+    private static MapView cv;
     private static AddressView av;
     private static SearchBox sb;
     private static FooterView fv;
     private static ZoomView zv;
     private static NavigationView nv;
     private static AutoCompleteList al;
+    private static Graph graph;
     private static FavoriteView fav;
     private static FavoritePopupView favp;
     private static ColorMap colorMap;
@@ -48,15 +49,15 @@ public class Main {
         colorMap = new ColorMap();
 
         // Models
-        am = new AddressesModel();
+        graph = new Graph();
         model = new MetaModel();
-        mapModel = new MapModel(model);
-        IOHandler.instance.addModels(model, mapModel, am);
+        mapModel = new MapModel(model, graph);
+        am = new AddressesModel();
+        IOHandler.instance.addModels(model, mapModel, am, graph);
         favoritesModelModel = new FavoritesModel();
 
         fv = new FooterView(cc);
         IOHandler.instance.addView(fv);
-
 
         // dataSource Priority:
         // 1. Program arguments
@@ -83,25 +84,25 @@ public class Main {
 
 
         // Controllers
-        mc = new MenuController(colorMap);
+        mc = new MenuController(colorMap, graph);
         cc = MapController.getInstance();
         sc = new StateController();
-        ac = new AddressController(sc, favoritesModelModel);
-        sbc = new SearchBoxController(model, sc, ac, am);
-        nc = new NavigationController();
+        nc = new NavigationController(am, mapModel, graph);
+        ac = new AddressController(sc, favoritesModelModel, nc);
+        sbc = new SearchBoxController(sc, ac, am, graph, nc);
         acc = new AutoCompleteController(sc, nc);
         fc = new FavoriteController(sc, sbc, nc);
 
         // Ensure views are being invoked on proper thread!
         SwingUtilities.invokeLater(() -> {
             // Views
-            cv = new CanvasView(cc, colorMap);
-            cc.addDependencies(cv, mapModel, model);
+            cv = new MapView(cc, graph, colorMap);
+            cc.addDependencies(cv, mapModel, model, graph);
             av = new AddressView(ac);
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
             zv = new ZoomView(cc);
-            nv = new NavigationView(acc);
+            nv = new NavigationView(nc, acc, sc);
             nc.addView(nv);
             al = new AutoCompleteList(acc);
             fav = new FavoriteView(favoritesModelModel, fc);

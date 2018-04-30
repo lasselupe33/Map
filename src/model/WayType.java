@@ -16,12 +16,16 @@ public enum WayType implements Serializable {
     ALLOMENTS(495),
     GRASS(485),
     SERVICE(490),
+    HIGHWAYBRIDGE(450),
     CYCLEWAY(508),
     MOTORWAY(1),
+    TRUNK(390),
     ROAD(490),
     PEDESTRIAN(500),
+    SQUARE(500),
     PLAYGROUND(490),
     CEMETERY(500),
+    MANMADEBRIDGE(450),
     FOOTWAY(509),
     PATH(509),
     FERRY(490),
@@ -29,12 +33,13 @@ public enum WayType implements Serializable {
     TERTIARYROAD(450),
     SECONDARYROAD(450),
     HIGHWAY(390),
+    PIER(490),
     PLACE_OF_WORSHIP(490),
     BARRIER(509),
     DRAIN(490),
     RUNWAY(490),
     HEDGE(509),
-    UNKNOWN(510);
+    UNKNOWN(510), SWIMMINGPOOL(485);
 
     /**
      * The priority of a mapElement specifies when it'll be rendered on the map.

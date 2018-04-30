@@ -1,8 +1,8 @@
 package view;
 
-import controller.AutoCompleteController;
-import controller.StateController;
-import controller.TextController;
+import controller.*;
+import model.graph.RouteType;
+import model.graph.VehicleType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,37 +14,47 @@ public class NavigationView extends JPanel {
     private int width = 450;
     private JTextField startInput;
     private JTextField endInput;
+    private NavigationController navigationController;
+    private JPanel topPanel;
+    private JPanel navigationTypeContainer;
+    private String startInputText = "Fra:";
+    private String endInputText = "Til:";
     private AutoCompleteController autoCompleteController;
+    private StateController stateController;
 
-    public NavigationView(AutoCompleteController acc) {
+
+    public NavigationView(NavigationController nc, AutoCompleteController acc, StateController sc) {
+        navigationController = nc;
         autoCompleteController = acc;
+        stateController = sc;
 
         // Setup view
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.WHITE);
         setOpaque(true);
         setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
-
         update();
     }
-
-    public JTextField getStartInput() {
-        return startInput;
-    }
-    public JTextField getEndInput() { return endInput; }
 
     /**
      * Helper that updates the state of the navigation view
      */
     public void update() {
         if (!initialRender) {
-
+            remove(topPanel);
         } else {
             initialRender = false;
         }
 
-        add(topPanel());
+        if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+            setBounds(0, 0, 450, getParent().getHeight());
+        } else {
+            setBounds(0, 0, 450, 200);
+        }
 
+        add(topPanel());
+        revalidate();
+        repaint();
     }
 
     /**
@@ -52,11 +62,16 @@ public class NavigationView extends JPanel {
      * @return
      */
     public JPanel topPanel() {
-        JPanel topPanel = new JPanel();
+        topPanel = new JPanel();
         topPanel.setOpaque(false);
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setMaximumSize(new Dimension(width, 200));
-        topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.decode("#a7a7a7")));
+
+        if (navigationController.isNavigationActive()) {
+            topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.decode("#a7a7a7")));
+        } else {
+            topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.decode("#000000")));
+        }
 
         topPanel.add(navigationTypeInputs());
         topPanel.add(renderInputs());
@@ -68,46 +83,102 @@ public class NavigationView extends JPanel {
      * Helper that renders the navigationType inputs. I.e. the panel that contains the icons that specifies the chosen
      * type of travel.
      */
-     private JPanel navigationTypeInputs() {
-        JPanel navigationTypeContainer = new JPanel();
+    public JPanel navigationTypeInputs() {
+        navigationTypeContainer = new JPanel();
         navigationTypeContainer.setOpaque(false);
-        navigationTypeContainer.setLayout(new GridLayout(1, 3));
-        navigationTypeContainer.setBorder(new EmptyBorder(20, 150, 0, 150));
+        navigationTypeContainer.setLayout(new GridLayout(1, 7));
+        navigationTypeContainer.setBorder(new EmptyBorder(20, 25, 0, 25));
 
         // Setup Car button
-        URL carURL = this.getClass().getResource("/icons/car.png");
+        URL carURL;
+        if(navigationController.getVehicleType() == VehicleType.CAR) {
+            carURL = this.getClass().getResource("/icons/car-blue.png");
+        } else {
+            carURL = this.getClass().getResource("/icons/car.png");
+        }
         ImageIcon carIcon = new ImageIcon(carURL);
         JLabel car = new JLabel();
         car.setIcon(carIcon);
         car.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        car.setName("bookmark");
+        car.setName("car");
         car.setHorizontalAlignment(SwingConstants.CENTER);
+        car.addMouseListener(navigationController);
         navigationTypeContainer.add(car);
 
         // Setup cycle button
-        URL cycleURL = this.getClass().getResource("/icons/cycle.png");
+        URL cycleURL;
+        if(navigationController.getVehicleType() == VehicleType.BICYCLE) {
+            cycleURL = this.getClass().getResource("/icons/cycle-blue.png");
+        } else {
+            cycleURL = this.getClass().getResource("/icons/cycle.png");
+        }
         ImageIcon cycleIcon = new ImageIcon(cycleURL);
         JLabel cycle = new JLabel();
         cycle.setIcon(cycleIcon);
         cycle.setHorizontalAlignment(SwingConstants.CENTER);
         cycle.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         cycle.setName("cycle");
+        cycle.addMouseListener(navigationController);
         navigationTypeContainer.add(cycle);
 
         // Setup pedestrian button
-        URL pedestrianURL = this.getClass().getResource("/icons/pedestrian.png");
+        URL pedestrianURL;
+        if(navigationController.getVehicleType() == VehicleType.PEDESTRIAN) {
+            pedestrianURL = this.getClass().getResource("/icons/pedestrian-blue.png");
+        } else {
+            pedestrianURL = this.getClass().getResource("/icons/pedestrian.png");
+        }
         ImageIcon pedestrianIcon = new ImageIcon(pedestrianURL);
         JLabel pedestrian = new JLabel();
         pedestrian.setIcon(pedestrianIcon);
         pedestrian.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         pedestrian.setHorizontalAlignment(SwingConstants.CENTER);
         pedestrian.setName("pedestrian");
+        pedestrian.addMouseListener(navigationController);
         navigationTypeContainer.add(pedestrian);
+
+        // Create spacing between vehicleType and routeType by inserting an empty label into the grid
+        JLabel spacing = new JLabel();
+        navigationTypeContainer.add(spacing);
+        navigationTypeContainer.add(spacing);
+
+        //RouteType buttons
+        // fastest
+        URL fastestURL;
+        if (navigationController.getRouteType() == RouteType.FASTEST) {
+            fastestURL = this.getClass().getResource("/icons/flash-blue.png");
+        } else {
+            fastestURL = this.getClass().getResource("/icons/flash.png");
+        }
+        ImageIcon fastestIcon = new ImageIcon(fastestURL);
+        JLabel fastestRoute = new JLabel();
+        fastestRoute.setIcon(fastestIcon);
+        fastestRoute.setName("fastest");
+        fastestRoute.setBackground(Color.WHITE);
+        fastestRoute.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        fastestRoute.addMouseListener(navigationController);
+        navigationTypeContainer.add(fastestRoute);
+
+        //shortest
+        URL nearbyURL;
+        if (navigationController.getRouteType() == RouteType.SHORTEST) {
+            nearbyURL = this.getClass().getResource("/icons/nearby-blue.png");
+        } else {
+            nearbyURL = this.getClass().getResource("/icons/nearby.png");
+        }
+        ImageIcon nearbyIcon = new ImageIcon(nearbyURL);
+        JLabel nearbyRoute = new JLabel();
+        nearbyRoute.setIcon(nearbyIcon);
+        nearbyRoute.setName("shortest");
+        nearbyRoute.setBackground(Color.WHITE);
+        nearbyRoute.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        nearbyRoute.addMouseListener(navigationController);
+        navigationTypeContainer.add(nearbyRoute);
 
         return navigationTypeContainer;
     }
 
-    private JPanel renderInputs() {
+    public JPanel renderInputs() {
         JPanel inputContainer = new JPanel();
         inputContainer.setOpaque(false);
         inputContainer.setLayout(new BoxLayout(inputContainer, BoxLayout.Y_AXIS));
@@ -115,7 +186,7 @@ public class NavigationView extends JPanel {
         inputContainer.setPreferredSize(new Dimension(width, 125));
 
         // Start input
-        startInput = new JTextField("Fra:");
+        startInput = new JTextField(startInputText);
         startInput.setName("startInput");
         startInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
         startInput.addFocusListener(new TextController("Fra:"));
@@ -126,7 +197,7 @@ public class NavigationView extends JPanel {
         inputContainer.add(Box.createVerticalStrut(10));
 
         // End input
-        endInput = new JTextField("Til:");
+        endInput = new JTextField(endInputText);
         endInput.setName("endInput");
         endInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
         endInput.addFocusListener(new TextController("Til:"));
@@ -151,8 +222,10 @@ public class NavigationView extends JPanel {
         middlePanel.setLayout(new BorderLayout());
 
         // Time label
-        JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>5 min</span> <span style='font-size:12px;color:#4285F4;'>(1,9 km)</span></html>");
-        middlePanel.add(timeLabel, BorderLayout.WEST);
+        if (navigationController.getLength() != null && navigationController.getTime() != null) {
+            JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>" + navigationController.getTime() + "</span> <span style='font-size:12px;color:#4285F4;'>(" + navigationController.getLength() + "km)</span></html>");
+            middlePanel.add(timeLabel, BorderLayout.WEST);
+        }
 
         middlePanel.add(renderSwitchAndSubmitButtons(), BorderLayout.EAST);
 
@@ -168,7 +241,6 @@ public class NavigationView extends JPanel {
         URL switchURL = this.getClass().getResource("/icons/arrow.jpg");
         ImageIcon switchIcon = new ImageIcon(switchURL);
         JButton switchFromTo = new JButton(switchIcon);
-        //switchFromTo.setForeground(Color.decode("#4285F4"));
         switchFromTo.setBackground(Color.WHITE);
         switchFromTo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         switchFromTo.addActionListener((e) -> switchFromAndTo());
@@ -179,8 +251,8 @@ public class NavigationView extends JPanel {
         submitButton.setForeground(Color.decode("#4285F4"));
         submitButton.setBackground(Color.WHITE);
         submitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        submitButton.addActionListener((e) -> navigationController.onRouteSearch());
         switchAndSubmitPanel.add(submitButton, BorderLayout.EAST);
-
 
         return switchAndSubmitPanel;
     }
@@ -201,4 +273,14 @@ public class NavigationView extends JPanel {
             endInput.setText(startTextHolder);
         }
     }
+
+    public JTextField getStartInput() {
+        return startInput;
+    }
+    public JTextField getEndInput() {
+        return endInput;
+    }
+
+    public void setStartInputText(String text) { startInputText = text; }
+    public void setEndInputText(String text) { endInputText = text; }
 }

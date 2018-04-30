@@ -6,6 +6,7 @@ import main.Main;
 import model.AddressesModel;
 import model.MapModel;
 import model.MetaModel;
+import model.graph.Graph;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,15 +20,17 @@ public class SerializingTest {
     private static MetaModel m;
     private static MapModel mm;
     private static AddressesModel am;
+    private static Graph g;
 
     @BeforeClass
     public static void setup() throws Exception {
+        g = new Graph();
         m = new MetaModel();
-        mm = new MapModel(m);
+        mm = new MapModel(m, g);
         am = new AddressesModel();
 
         IOHandler.instance.testMode = true;
-        IOHandler.instance.addModels(m, mm, am);
+        IOHandler.instance.addModels(m, mm, am, g);
         IOHandler.instance.loadFromString("./test/data/tiny.osm");
 
         // Give time to parse osm on another thread

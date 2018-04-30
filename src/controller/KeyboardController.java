@@ -1,7 +1,7 @@
 package controller;
 
 import model.MetaModel;
-import view.CanvasView;
+import view.MapView;
 import view.MainWindowView;
 
 import java.awt.event.KeyAdapter;
@@ -12,10 +12,10 @@ import java.awt.event.KeyEvent;
 public class KeyboardController extends KeyAdapter {
     private MetaModel model;
     private MainWindowView view;
-    private CanvasView canvas;
+    private MapView canvas;
     private MapController mapController;
 
-    public KeyboardController(MainWindowView v, CanvasView c, MetaModel m, MapController cc) {
+    public KeyboardController(MainWindowView v, MapView c, MetaModel m, MapController cc) {
         view = v;
         canvas = c;
         model = m;

@@ -19,7 +19,7 @@ public class MainWindowView {
     public JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
     private MetaModel metaModel;
-    private CanvasView canvasView;
+    private MapView mapView;
     private MapController mapController;
     private AddressView addressView;
     private SearchBox searchBox;
@@ -35,7 +35,7 @@ public class MainWindowView {
     private FavoritePopupView favoritePopupView;
 
     public MainWindowView(
-            CanvasView cv,
+            MapView cv,
             MetaModel m,
             MapController cc,
             MenuController mc,
@@ -52,7 +52,7 @@ public class MainWindowView {
             FavoritePopupView favoritePopupView
     ) {
         menuController = mc;
-        canvasView = cv;
+        mapView = cv;
         metaModel = m;
         mapController = cc;
         addressView = av;
@@ -122,6 +122,7 @@ public class MainWindowView {
                     break;
 
                 case NAVIGATION_ACTIVE:
+                    mapController.removeRoute();
                     lpane.remove(searchBox);
                     lpane.remove(autoCompleteList);
                     lpane.remove(navigationView);
@@ -140,6 +141,7 @@ public class MainWindowView {
         autoCompleteList.update();
         searchBox.update();
         addressView.update();
+        navigationView.update();
 
         // Add components
         switch(stateController.getCurrentState()) {
@@ -176,7 +178,7 @@ public class MainWindowView {
         }
 
         if (initialRender) {
-            lpane.add(canvasView, 0, 0);
+            lpane.add(mapView, 0, 0);
             lpane.add(zoomView, 3, 1);
             lpane.add(footerView, 4, 5);
         }
@@ -193,9 +195,8 @@ public class MainWindowView {
 
         // Setup bounds once the screen size has been determined
         lpane.setBounds(0, 0, width, height);
-        canvasView.setBounds(0, 0, width, height);
+        mapView.setBounds(0, 0, width, height);
         zoomView.setBounds(width - 100,height - 130,70,70);
-        navigationView.setBounds(0, 0, 450, height);
         footerView.setBounds(0, height - 30, width, 30);
         favoriteView.setBounds(0, 0, 450, height);
         favoriteView.updateBound(height);
@@ -260,28 +261,6 @@ public class MainWindowView {
         grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());
         colorGroup.add(grayscaleItem);
         subShowMenu.add(grayscaleItem);
-
-        /*
-        JMenuItem pRoadItem = new JCheckBoxMenuItem("Primary roads", true);
-        pRoadItem.addActionListener(this);
-        showMenu.add(pRoadItem);
-
-        JMenuItem sRoadItem = new JCheckBoxMenuItem("Secondary roads", true);
-        sRoadItem.addActionListener(this);
-        showMenu.add(sRoadItem);
-
-        JMenuItem pathsItem = new JCheckBoxMenuItem("Paths", true);
-        pathsItem.addActionListener(this);
-        showMenu.add(pathsItem);
-
-        JMenuItem buildingsItem = new JCheckBoxMenuItem("Buildings", true);
-        buildingsItem.addActionListener(this);
-        showMenu.add(buildingsItem);
-
-        JMenuItem antiAItem = new JCheckBoxMenuItem("Antialiasing", true);
-        antiAItem.addActionListener(this);
-        showMenu.add(antiAItem);
-        */
 
         // create the Help menu
         JMenu helpMenu = new JMenu("Help");

@@ -11,13 +11,15 @@ import java.awt.event.MouseEvent;
 
 public class AddressController extends MouseAdapter {
     private StateController stateController;
-    private Address currAddress = new Address(0, 0);
+    private Address currAddress = new Address(0, 0, 0);
     private FavoritesModel favoritesModel;
     private FavoriteView favoriteView;
+    private NavigationController navigationController;
 
-    public AddressController(StateController sc, FavoritesModel favoritesModel)  {
+    public AddressController(StateController sc, FavoritesModel favoritesModel, NavigationController nc)  {
         stateController = sc;
         this.favoritesModel = favoritesModel;
+        navigationController = nc;
     }
 
     @Override
@@ -48,6 +50,7 @@ public class AddressController extends MouseAdapter {
 
     /** To be called when the user wishes to go to the navigation view */
     public void goToNavigation() {
+        navigationController.setStartAddress(currAddress);
         stateController.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
     }
 

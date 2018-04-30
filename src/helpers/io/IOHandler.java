@@ -4,6 +4,7 @@ import controller.MapController;
 import model.AddressesModel;
 import model.MapModel;
 import model.MetaModel;
+import model.graph.Graph;
 import parsing.OSMHandler;
 import main.Main;
 import org.xml.sax.InputSource;
@@ -41,6 +42,7 @@ public class IOHandler {
     private AddressesModel addressesModel;
     private FooterView footerView;
     private LoadingScreen loadingScreen;
+    private Graph graph;
 
     /** Initialize IOHandler with reference to the rootPath */
     private IOHandler() {
@@ -59,10 +61,11 @@ public class IOHandler {
         }
     }
 
-    public void addModels(MetaModel m, MapModel mm, AddressesModel am) {
+    public void addModels(MetaModel m, MapModel mm, AddressesModel am, Graph g) {
         model = m;
         mapModel = mm;
         addressesModel = am;
+        graph = g;
     }
 
     public void addView(FooterView fv) {
@@ -128,6 +131,7 @@ public class IOHandler {
 
             if (Main.initialRender) {
                 Main.dataLoaded = true;
+
                 // If MVC is ready, then run application!
                 if (Main.hasInitialized) {
                     Main.run();
@@ -160,7 +164,7 @@ public class IOHandler {
     private void readFromOSM(InputSource filename) {
         try {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(new OSMHandler(model, mapModel, addressesModel, loadingScreen));
+            xmlReader.setContentHandler(new OSMHandler(model, mapModel, addressesModel, loadingScreen, graph));
             xmlReader.parse(filename);
         } catch (SAXException e) {
             e.printStackTrace();

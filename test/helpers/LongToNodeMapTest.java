@@ -1,26 +1,26 @@
 package helpers;
 
-import helpers.structures.LongToOSMNodeMap;
-import parsing.OSMNode;
+import helpers.structures.LongToNodeMap;
+import model.graph.Node;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class LongToOSMNodeMapTest {
-    private LongToOSMNodeMap map;
+public class LongToNodeMapTest {
+    private LongToNodeMap map;
     private long id = 12345;
-    private double lat = 55.6598896;
-    private double lon = 12.5911909;
+    private float lat = (float) 55.6598896;
+    private float lon = (float) 12.5911909;
     private long wrongId = 01234;
-    private double wrongLat = 55.6598895;
-    private double wrongLon = 12.5911908;
+    private float wrongLat = (float) 55.6598895;
+    private float wrongLon = (float) 12.5911908;
 
     @Test
     public void putAndGet() throws Exception {
-        map = new LongToOSMNodeMap(2);
+        map = new LongToNodeMap(2);
 
         map.put(id, lon, lat);
-        OSMNode node = map.get(id);
+        Node node = map.get(id);
 
         assertEquals(lat, node.getLat(), 0);
         assertEquals(lon, node.getLon(), 0);
@@ -34,7 +34,7 @@ public class LongToOSMNodeMapTest {
 
     @Test
     public void wrongID() throws Exception {
-        map = new LongToOSMNodeMap(2);
+        map = new LongToNodeMap(2);
 
         map.put(id, lon, lat);
 
