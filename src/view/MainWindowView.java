@@ -197,7 +197,6 @@ public class MainWindowView {
         lpane.setBounds(0, 0, width, height);
         mapView.setBounds(0, 0, width, height);
         zoomView.setBounds(width - 100,height - 130,70,70);
-        navigationView.setBounds(0, 0, 450, height);
         footerView.setBounds(0, height - 30, width, 30);
         favoriteView.setBounds(0, 0, 450, height);
         favoriteView.updateBound(height);

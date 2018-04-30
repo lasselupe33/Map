@@ -102,7 +102,7 @@ public class Main {
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
             zv = new ZoomView(cc);
-            nv = new NavigationView(nc, acc);
+            nv = new NavigationView(nc, acc, sc);
             nc.addView(nv);
             al = new AutoCompleteList(acc);
             fav = new FavoriteView(favoritesModelModel, fc);

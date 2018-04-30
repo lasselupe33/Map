@@ -1,8 +1,6 @@
 package view;
 
-import controller.NavigationController;
-import controller.AutoCompleteController;
-import controller.TextController;
+import controller.*;
 import model.graph.RouteType;
 import model.graph.VehicleType;
 
@@ -22,11 +20,13 @@ public class NavigationView extends JPanel {
     private String startInputText = "Fra:";
     private String endInputText = "Til:";
     private AutoCompleteController autoCompleteController;
+    private StateController stateController;
 
 
-    public NavigationView(NavigationController nc, AutoCompleteController acc) {
+    public NavigationView(NavigationController nc, AutoCompleteController acc, StateController sc) {
         navigationController = nc;
         autoCompleteController = acc;
+        stateController = sc;
 
         // Setup view
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -45,6 +45,13 @@ public class NavigationView extends JPanel {
         } else {
             initialRender = false;
         }
+
+        if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+            setBounds(0, 0, 450, getParent().getHeight());
+        } else {
+            setBounds(0, 0, 450, 200);
+        }
+
         add(topPanel());
         revalidate();
         repaint();
@@ -59,7 +66,12 @@ public class NavigationView extends JPanel {
         topPanel.setOpaque(false);
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setMaximumSize(new Dimension(width, 200));
-        topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.decode("#a7a7a7")));
+
+        if (navigationController.isNavigationActive()) {
+            topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.decode("#a7a7a7")));
+        } else {
+            topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.decode("#000000")));
+        }
 
         topPanel.add(navigationTypeInputs());
         topPanel.add(renderInputs());

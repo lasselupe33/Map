@@ -21,6 +21,7 @@ public class NavigationController extends MouseAdapter {
     private Graph graph;
     private String startInput = "";
     private String endInput = "";
+    private boolean navigationActive = false;
 
     public NavigationController(AddressesModel am, MapModel mm, Graph g){
         addressesModel = am;
@@ -38,12 +39,13 @@ public class NavigationController extends MouseAdapter {
     }
 
     public void setStartAddress(Address address){
-        //navigationView.getStartInput().setText(address.toString());
+        navigationView.getStartInput().setText(address.toString());
         navigationView.setStartInputText(address.toString());
     }
 
     public void setEndAddress(Address address) {
         navigationView.getEndInput().setText(address.toString());
+        navigationView.setEndInputText(address.toString());
     }
 
     @Override
@@ -121,6 +123,7 @@ public class NavigationController extends MouseAdapter {
         graph.computePath(startingPoint, endPoint);
 
         // Update map and view after path has been computed
+        navigationActive = true;
         updateView();
         MapController.repaintMap(true);
     }
@@ -137,7 +140,12 @@ public class NavigationController extends MouseAdapter {
 
     public String getLength() { return graph.getLength(); }
 
+    public boolean isNavigationActive() {
+        return navigationActive;
+
+    }
     public void reset() {
+        navigationActive = false;
         navigationView.setStartInputText("Fra:");
         navigationView.setEndInputText("Til:");
         graph.setVehicleType(VehicleType.CAR);
