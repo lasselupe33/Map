@@ -2,18 +2,24 @@ package model.graph;
 
 import parsing.OSMNode;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 
-public class Node extends OSMNode {
-    private ArrayList<Edge> edges;
+public class Node extends OSMNode implements Externalizable {
+    private Edge[] edges;
+    private ArrayList<Edge> tempEdges; // Contains edges until map has been completely parsed
     private float lengthTo;
     private float timeTo;
     private Node parent;
     private float estimateToDest;
 
+    public Node() {}
     public Node(long id, float lon, float lat) {
         super(id, lon, lat);
-        edges = new ArrayList<>();
+        tempEdges = new ArrayList<>();
         lengthTo = Float.POSITIVE_INFINITY;
         timeTo = Float.POSITIVE_INFINITY;
         parent = null;
@@ -50,10 +56,10 @@ public class Node extends OSMNode {
     public Node getParent() { return parent; }
 
     public void addEdge(Edge edge) {
-        edges.add(edge);
+        tempEdges.add(edge);
     }
 
-    public ArrayList<Edge> getEdges() { return edges; }
+    public Edge[] getEdges() { return edges; }
 
     public void reset() {
         parent = null;
@@ -80,4 +86,26 @@ public class Node extends OSMNode {
     }
 
     public String toKey() { return super.getLat() + "-" + super.getLon(); }
+
+    public void finalizeEdges() {
+        edges = tempEdges.toArray(new Edge[tempEdges.size()]);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeLong(super.getId());
+        out.writeFloat(super.getLat());
+        out.writeFloat(super.getLon());
+        out.writeObject(edges);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super.setId(in.readLong());
+        super.setLat(in.readFloat());
+        super.setLon(in.readFloat());
+        lengthTo = Float.POSITIVE_INFINITY;
+        timeTo = Float.POSITIVE_INFINITY;
+        edges = (Edge[]) in.readObject();
+    }
 }

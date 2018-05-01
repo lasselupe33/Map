@@ -3,15 +3,17 @@ package helpers.structures;
 import model.graph.Node;
 import parsing.OSMNode;
 
+import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class LongToNodeMap<Value extends OSMNode> {
+public class LongToNodeMap<Value extends OSMNode> implements Externalizable {
     private Node[] table;
     private int size;
     private int MASK;
     private ArrayList<Long> ids = new ArrayList<>();
 
+    public LongToNodeMap() {}
     public LongToNodeMap(int capacity) {
         table = (Node[]) Array.newInstance(Node.class, 1 << capacity); // there are 2^{capacity} table cells
         MASK = table.length - 1;
@@ -42,15 +44,30 @@ public class LongToNodeMap<Value extends OSMNode> {
         return null;
     }
 
-    class Node {
-        //long id;
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(table);
+        out.writeInt(size);
+        out.writeInt(MASK);
+        out.writeObject(ids);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        table = (Node[]) in.readObject();
+        size = in.readInt();
+        MASK = in.readInt();
+        ids = (ArrayList<Long>) in.readObject();
+    }
+
+    private class Node implements Serializable {
         Node next;
         Value value;
 
+        public Node() {}
         public Node(Value v, Node n) {
             this.value = v;
             this.next = n;
         }
-
     }
 }

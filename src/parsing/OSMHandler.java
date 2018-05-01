@@ -17,7 +17,6 @@ import java.util.*;
 
 public class OSMHandler extends DefaultHandler {
     private LongToNodeMap idToNode = new LongToNodeMap(25);
-    private LongToNodeMap idToGraphNode = new LongToNodeMap(25);
     private Map<Long, OSMWay> idToWay = new HashMap<>();
     private HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
     private double lonFactor;
@@ -124,6 +123,7 @@ public class OSMHandler extends DefaultHandler {
                 loadingScreen.updateProgress(96.345);
                 addressesModel.createTree();
                 addressesModel.setPostcodeToCity(postcodeToCity);
+                graph.finalizeNodes();
             default:
                 break;
         }
@@ -500,7 +500,7 @@ public class OSMHandler extends DefaultHandler {
             }
 
             // Create edge between converted nodes and add the edge to them.
-            Edge edge = new Edge(convertedFromNode, convertedToNode, length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
+            Edge edge = new Edge(convertedFromNode.getId(), convertedToNode.getId(), length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
 
             graph.getNode(convertedFromNode.getId()).addEdge(edge);
             graph.getNode(convertedToNode.getId()).addEdge(edge);

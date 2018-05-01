@@ -1,15 +1,21 @@
 package model.graph;
 
-public class Edge {
-    private Node node1;
-    private Node node2;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
+public class Edge implements Externalizable {
+    private long node1;
+    private long node2;
     private float length; //in km
     private int speedLimit;
     private boolean supportsCars;
     private boolean supportsBicycles;
     private boolean supportsPedestrians;
 
-    public Edge(Node node1, Node node2, float length, int speedLimit, boolean supportsCars, boolean supportsBicycles, boolean supportsPedestrians) {
+    public Edge() {}
+    public Edge(long node1, long node2, float length, int speedLimit, boolean supportsCars, boolean supportsBicycles, boolean supportsPedestrians) {
         this.node1 = node1;
         this.node2 = node2;
         this.length = length;
@@ -62,10 +68,10 @@ public class Edge {
      * Returns the opposite node of the edge from the one passed.
      * NB: from must be one of the two nodes of the edge.
      */
-    public Node getTo(Node from) {
-        if (from.getId() == node1.getId()) {
+    public long getTo(Node from) {
+        if (from.getId() == node1) {
             return node2;
-        } else if (from.getId() == node2.getId()) {
+        } else if (from.getId() == node2) {
             return node1;
         } else {
             throw new RuntimeException("The 'from' node must be one of the nodes of the current edge!");
@@ -88,5 +94,27 @@ public class Edge {
                 // No other types are supported.
                 return false;
         }
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeLong(node1);
+        out.writeLong(node2);
+        out.writeFloat(length);
+        out.writeInt(speedLimit);
+        out.writeBoolean(supportsCars);
+        out.writeBoolean(supportsBicycles);
+        out.writeBoolean(supportsPedestrians);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        node1 = in.readLong();
+        node2 = in.readLong();
+        length = in.readFloat();
+        speedLimit = in.readInt();
+        supportsCars = in.readBoolean();
+        supportsBicycles = in.readBoolean();
+        supportsPedestrians = in.readBoolean();
     }
 }

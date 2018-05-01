@@ -69,16 +69,6 @@ public class MapModel {
         }
     }
 
-    /** Serializes all data necessary to load and display the map */
-    public void serialize() {
-        for (int i = 0; i < mapTrees.length; i++) {
-            new SerializeObject("map/tree-" + i, mapTrees[i]);
-        }
-
-        // Now that the map has been saved, we are free to remove the mapElements list in order to preserve space
-        mapElements = null;
-    }
-
     /** Internal helper that returns the id of the nearest way-node from a given coord */
     public long getNearestNodeId(Coordinates coords) {
         // Loop through relevant KD-tree for current vehicleType and get nearest way node ids
@@ -149,6 +139,16 @@ public class MapModel {
             }
             i++;
         }
+    }
+
+    /** Serializes all data necessary to load and display the map */
+    public void serialize() {
+        for (int i = 0; i < mapTrees.length; i++) {
+            new SerializeObject("map/tree-" + i, mapTrees[i]);
+        }
+
+        // Now that the map has been saved, we are free to remove the mapElements list in order to preserve space
+        mapElements = null;
     }
 
     /** Internal helper that deserializses the MapModel */

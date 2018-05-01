@@ -1,17 +1,27 @@
 package model.graph;
 
 import helpers.GetDistance;
+import helpers.io.DeserializeObject;
+import helpers.io.SerializeObject;
+import helpers.structures.KDTree;
 import helpers.structures.LongToNodeMap;
 import model.MapModel;
+import model.WayType;
 import view.MainWindowView;
 
 import java.awt.geom.Path2D;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class Graph {
-    private LongToNodeMap<Node> nodes;
+    private HashMap<Long, Node> nodes;
     private VehicleType vehicleType;
     private Path2D routePath;
     private String length;
@@ -22,12 +32,11 @@ public class Graph {
     private Node dest;
 
     public Graph() {
-        nodes = new LongToNodeMap(25);
+        nodes = new HashMap<>();
         vehicleType = VehicleType.CAR;
     }
 
     public void computePath(Node source, Node dest) {
-        System.out.println(nodes.size());
         this.source = source;
         this.dest = dest;
 
@@ -51,8 +60,8 @@ public class Graph {
             }
 
             // Go through all neighbours and relax them if possible
-            for (int i = 0; i < current.getEdges().size(); i++) {
-                relaxNeighbour(current, current.getEdges().get(i));
+            for (int i = 0; i < current.getEdges().length; i++) {
+                relaxNeighbour(current, current.getEdges()[i]);
             }
         }
 
@@ -110,7 +119,7 @@ public class Graph {
             return;
         }
 
-        Node neighbour = nodes.get(edgeToNeighbour.getTo(current).getId());
+        Node neighbour = nodes.get(edgeToNeighbour.getTo(current));
 
         if (neighbour.getDistToSource(routeType) > current.getDistToSource(routeType) + edgeToNeighbour.getWeight(vehicleType, routeType)) {
             // We found a shorter path for the neighbour! Relax neighbour node.
@@ -149,9 +158,16 @@ public class Graph {
         length = null;
     };
 
+    /** Internal helper that converts the ArrayList of edges in a node to an array once all edges have been created */
+    public void finalizeNodes() {
+        for (Node node : nodes.values()) {
+            node.finalizeEdges();
+        }
+    }
+
     /** Getters and setters */
     public void putNode(Node node) {
-        nodes.put(node);
+        nodes.put(node.getId(), node);
     }
 
     public Node getNode(long id) {
@@ -177,4 +193,31 @@ public class Graph {
     public String getLength() { return length; }
 
     public String getTime() { return time; }
+
+    /** Serializes all data necessary to load and display the map */
+    public void serialize() {
+        new SerializeObject("graph/nodes", nodes);
+    }
+
+    /** Internal helper that deserializses the MapModel */
+    public void deserialize() {
+        try {
+            // Setup thread callback
+            Class[] parameterTypes = new Class[2];
+            parameterTypes[0] = HashMap.class;
+            parameterTypes[1] = String.class;
+            Method callback = Graph.class.getMethod("onThreadDeserializeComplete", parameterTypes);
+
+            new DeserializeObject("graph/nodes", this, callback);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** Callback to be called once a thread has finished deserializing a mapType */
+    public void onThreadDeserializeComplete(HashMap<Long, Node> nodes, String name) {
+        this.nodes = nodes;
+    }
 }

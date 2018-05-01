@@ -54,6 +54,7 @@ public class MapElement extends Coordinates implements Externalizable {
         out.writeObject(shape);
         out.writeObject(type);
         out.writeBoolean(shouldFill);
+        out.writeObject(nodeIds);
     }
 
     @Override
@@ -63,5 +64,6 @@ public class MapElement extends Coordinates implements Externalizable {
         shape = (Shape) in.readObject();
         type = (WayType) in.readObject();
         shouldFill = in.readBoolean();
+        nodeIds = (ArrayList<Long>) in.readObject();
     }
 }
