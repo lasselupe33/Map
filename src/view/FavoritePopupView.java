@@ -1,6 +1,7 @@
 package view;
 
 import controller.AddressController;
+import controller.MapController;
 import controller.StateController;
 import controller.ViewStates;
 
@@ -41,7 +42,7 @@ public class FavoritePopupView extends JOptionPane {
         addressController.saveAddress(name);
         stateController.updateCurrentState(ViewStates.FAVORITES);
         stateController.forcePrevState(ViewStates.INITIAL);
-
+        MapController.deleteLocationCoordinates();
 
     }
 

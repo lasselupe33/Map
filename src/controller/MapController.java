@@ -36,7 +36,7 @@ public class MapController {
 
     private static Coordinates locationIconCoordinates;
     private static Coordinates startIconCoordinates;
-    private static List<Coordinates> listOfFavorites;
+    private static List<Coordinates> listOfFavorites = new ArrayList<>();
 
     /**
      * @return the transform to be used in the canvasView
@@ -175,7 +175,7 @@ public class MapController {
 
     public static void deleteFavoritesFromList(Coordinates coordinates) { listOfFavorites.remove(coordinates); }
 
-    public static List<Coordinates> getListOfFavorites() { return listOfFavorites; }
+    public List<Coordinates> getListOfFavorites() { return listOfFavorites; }
 
 
 
