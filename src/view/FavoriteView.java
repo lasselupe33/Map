@@ -1,6 +1,7 @@
 package view;
 
 import controller.FavoriteController;
+import controller.MapController;
 import model.Favorite;
 import model.FavoritesModel;
 
@@ -60,6 +61,7 @@ public class FavoriteView extends JPanel {
         Border combo = BorderFactory.createCompoundBorder(border, padding);
         label.setBorder(BorderFactory.createCompoundBorder(margin, combo));
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        MapController.updateListOfFavorites(f.getAddress().getCoordinates());
 
         label.addMouseListener(new MouseAdapter() {
             @Override

@@ -117,7 +117,7 @@ public class SearchBoxController extends MouseAdapter {
     }
 
     public void onCloseClick() {
-        if (stateController.getPrevPanel() == ViewStates.ADDRESS_ENTERED) {
+        if (stateController.getPrevPanel() == ViewStates.ADDRESS_ENTERED && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
             stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
             // Go to proper position on map
             Coordinates coordinates = addressesModel.getCoordinates(address);
@@ -125,11 +125,11 @@ public class SearchBoxController extends MouseAdapter {
             MapController.getInstance().moveScreen(coordinates, type);
         } else {
             stateController.updateCurrentState(ViewStates.INITIAL);
-            MapController.getInstance().deleteCurrentCoordinates();
+            MapController.deleteLocationCoordinates();
         }
         navigationController.reset();
         graph.setSourceAndDest(null, null);
-
+        MapController.deleteStartCoordinates();
     }
 
     public void onFavoritesClick() {

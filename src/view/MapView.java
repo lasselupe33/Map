@@ -14,6 +14,8 @@ import model.graph.VehicleType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
@@ -100,19 +102,25 @@ public class MapView extends JComponent {
             g.draw(navigationController.getEndAddressPath());
         }
 
-        paintLocationIcon(g);
 
+        if (!controller.getListOfFavorites().isEmpty()) {
+            for (Coordinates c : controller.getListOfFavorites()) {
+                paintLocationIcon(g, c, new Color(66, 133, 244), new Color(0, 4, 161), 0.0025);
+
+            }
+        }
+        if (controller.getLocationCoordinates() != null) paintLocationIcon(g, controller.getLocationCoordinates(), Color.red, new Color(124, 17, 19), 0.003);
+
+
+        paintStartNavigationIcon(g);
 
     }
 
 
-    private void paintLocationIcon(Graphics2D g) {
-        if (controller.getCurrentCoordinates() == null) return;
+    private void paintLocationIcon(Graphics2D g, Coordinates coord, Color icon, Color cir, double scaling) {
 
+        float scale = (float) (scaling *  GetDistance.PxToKm(100));
 
-        float scale = (float) (0.003 *  GetDistance.PxToKm(100));
-
-        Coordinates coord = controller.getCurrentCoordinates();
         float[] xValue = new float[] {coord.getX()-scale/2, coord.getX(), coord.getX()+scale/2, coord.getX()-scale/2};
         float[] yValue = new float[] {coord.getY()-scale, coord.getY(), coord.getY()-scale, coord.getY()-scale};
 
@@ -126,10 +134,28 @@ public class MapView extends JComponent {
 
         Ellipse2D circle = new Ellipse2D.Double(coord.getX()-scale/6, coord.getY()-scale, scale/3, scale/3);
 
-        g.setPaint(Color.red);
+        g.setPaint(icon);
         g.fill(path);
-        g.setPaint(new Color(124, 17, 19));
+        g.setPaint(cir);
         g.fill(circle);
+
+    }
+
+    private void paintStartNavigationIcon(Graphics2D g) {
+        if (controller.getStartCoordinates() == null) return;
+
+        Coordinates coord = controller.getStartCoordinates();
+        float scale = (float) (0.0015 *  GetDistance.PxToKm(100));
+        float scale2 = (float) (0.0022 * GetDistance.PxToKm(100));
+
+        Ellipse2D innerCircle = new Ellipse2D.Float(coord.getX()-scale/2, coord.getY()-scale/2, scale, scale);
+        Ellipse2D outerCircle = new Ellipse2D.Float(coord.getX()-scale2/2, coord.getY()-scale2/2, scale2, scale2);
+
+        g.setPaint(new Color(66, 133, 244));
+        g.fill(outerCircle);
+        g.setPaint(Color.white);
+        g.fill(innerCircle);
+
 
     }
 
