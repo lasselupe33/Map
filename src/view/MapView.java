@@ -1,6 +1,7 @@
 package view;
 
 import controller.MapController;
+import controller.NavigationController;
 import helpers.ColorMap;
 import helpers.GetDistance;
 import helpers.StrokeMap;
@@ -22,14 +23,16 @@ import java.awt.geom.Rectangle2D;
  */
 public class MapView extends JComponent {
     private MapController controller;
+    private NavigationController navigationController;
     private Graph graph;
     private ColorMap colorMap;
 
 
-    public MapView(MapController c, Graph g, ColorMap cm) {
+    public MapView(MapController c, Graph g, ColorMap cm, NavigationController nc) {
         controller = c;
         colorMap = cm;
         graph = g;
+        navigationController = nc;
 
         setFocusable(true);
     }
@@ -90,6 +93,11 @@ public class MapView extends JComponent {
             }
             g.setColor(new Color(66, 133, 244));
             g.draw(graph.getRoutePath());
+
+            g.setStroke(new BasicStroke(0.00004f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
+            g.setColor(Color.GRAY);
+            g.draw(navigationController.getStartAddressPath());
+            g.draw(navigationController.getEndAddressPath());
         }
 
         paintLocationIcon(g);

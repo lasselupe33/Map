@@ -23,6 +23,7 @@ public class SearchBoxController extends MouseAdapter {
     private SearchBox searchBoxView;
     private Graph graph;
     private NavigationController navigationController;
+    private Address address;
 
     public SearchBoxController(StateController sc, AddressController ac, AddressesModel am, Graph g, NavigationController nc) {
         addressesModel = am;
@@ -84,6 +85,7 @@ public class SearchBoxController extends MouseAdapter {
 
     /** Helper that updates the currently entered address */
     public void updateAddress(Address address) {
+        this.address = address;
         // Update address
         addressController.setCurrentAddress(address);
 
@@ -117,12 +119,17 @@ public class SearchBoxController extends MouseAdapter {
     public void onCloseClick() {
         if (stateController.getPrevPanel() == ViewStates.ADDRESS_ENTERED) {
             stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
-            navigationController.reset();
+            // Go to proper position on map
+            Coordinates coordinates = addressesModel.getCoordinates(address);
+            WayType type = addressesModel.getType(address);
+            MapController.getInstance().moveScreen(coordinates, type);
         } else {
             stateController.updateCurrentState(ViewStates.INITIAL);
+            MapController.getInstance().deleteCurrentCoordinates();
         }
+        navigationController.reset();
         graph.setSourceAndDest(null, null);
-        MapController.getInstance().deleteCurrentCoordinates();
+
     }
 
     public void onFavoritesClick() {

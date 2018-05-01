@@ -41,7 +41,7 @@ public class StateController {
 
         currentState = newState;
         mainView.update();
-        mainView.lpane.repaint();
+        mainView.getlpane().repaint();
     }
     public void forcePrevState(ViewStates state) {
         updatePrevPanel();
