@@ -28,7 +28,7 @@ public class KDTreeTest {
         /* Actual results */
         List<Coordinates> list = new ArrayList<>();
 
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 1000000; i++) {
             list.add(new Coordinates(i, i));
         }
 
@@ -84,7 +84,7 @@ public class KDTreeTest {
 
         /* Actual results */
         List<Coordinates> list = new ArrayList<>();
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 1000000; i++) {
             list.add(new Coordinates(i, i));
         }
         KDTree<Coordinates> tree = new KDTree(list);
