@@ -260,14 +260,14 @@ public class NavigationView extends JPanel {
     private void switchFromAndTo() {
         String startTextHolder = startInput.getText();
         String endTextHolder = endInput.getText();
-        if(startTextHolder.equals("Fra:") && endTextHolder.equals("Til:")){
+        if(startTextHolder.equals(startInput.getName()) && endTextHolder.equals(endInput.getName())){
             //nothing happens
-        } else if (startTextHolder.equals("Fra:")){
+        } else if (startTextHolder.equals(startInput.getName())){
             startInput.setText(endTextHolder);
-            endInput.setText("Til:");
-        } else if (endTextHolder.equals("Til:")){
+            endInput.setText(endInput.getName());
+        } else if (endTextHolder.equals(endInput.getName())){
             endInput.setText(startTextHolder);
-            startInput.setText("Fra:");
+            startInput.setText(startInput.getName());
         } else {
             startInput.setText(endTextHolder);
             endInput.setText(startTextHolder);
