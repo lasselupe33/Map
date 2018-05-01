@@ -21,10 +21,13 @@ public class FavoriteController {
             MapController.getInstance().moveScreen(address.getCoordinates(), address.getType());
             searchBoxController.setInputOnLocationIcon(address);
         }
-        if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE){
-            //if()
-            navigationController.setStartAddress(address);
-
+        if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+            if ((navigationController.getStartInput().getText() == navigationController.getStartInput().getName()) || navigationController.getStartInput().getText() == ""){
+                navigationController.setStartAddress(address);
+            }
+            else{
+                navigationController.setEndAddress(address);
+            }
         }
     }
 
