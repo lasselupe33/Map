@@ -1,5 +1,6 @@
 package controller;
 
+import model.Address;
 import model.AddressesModel;
 import view.MapView;
 import view.FooterView;
@@ -18,15 +19,17 @@ public class MouseController extends MouseAdapter {
     private MapController mapController;
     private AddressesModel addressesModel;
     private FooterView footerView;
+    private SearchBoxController searchBoxController;
 
     private Point2D lastMousePosition;
     private static Thread t;
 
-    public MouseController(MapView c, MapController cc, AddressesModel am, FooterView fv) {
+    public MouseController(MapView c, MapController cc, AddressesModel am, FooterView fv, SearchBoxController sbc) {
         canvas = c;
         mapController = cc;
         addressesModel = am;
         footerView = fv;
+        searchBoxController = sbc;
         canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
         canvas.addMouseMotionListener(this);
@@ -61,7 +64,14 @@ public class MouseController extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
         canvas.requestFocus();
 
-        if (e.getClickCount() == 2) {
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            mapController.deleteCurrentCoordinates();
+            Point2D modelCoords = mapController.toModelCoords(e.getPoint());
+            Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
+            searchBoxController.setInputOnLocationIcon(address);
+            mapController.updateCurrentCoordinates(address.getCoordinates());
+        }
+        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             mapController.zoom(1.4, -e.getX(), -e.getY());
         }
 

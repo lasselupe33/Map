@@ -8,6 +8,7 @@ import model.Coordinates;
 import model.graph.Graph;
 import model.graph.Node;
 import model.MetaModel;
+import model.*;
 import view.SearchBox;
 
 import javax.swing.*;
@@ -58,6 +59,7 @@ public class SearchBoxController extends MouseAdapter {
     public void onSearchInput() {
         String input = searchBoxView.getSearchInput().getText();
 
+
         // Bail out if no input has been entered
         if (input.length() == 0) {
             return;
@@ -66,6 +68,8 @@ public class SearchBoxController extends MouseAdapter {
         // Get matching addresses based on input
         Address inputAddress = AddressBuilder.parse(input);
         ArrayList<Address> matchingAddresses = addressesModel.getMatchingAddresses(inputAddress.toKey());
+
+
 
         if (matchingAddresses.size() != 0) {
             // If addresses match, then always choose the first address found
@@ -76,6 +80,8 @@ public class SearchBoxController extends MouseAdapter {
         }
     }
 
+
+
     /** Helper that updates the currently entered address */
     public void updateAddress(Address address) {
         // Update address
@@ -83,6 +89,8 @@ public class SearchBoxController extends MouseAdapter {
 
         // Go to proper position on map
         Coordinates coordinates = addressesModel.getCoordinates(address);
+        WayType type = addressesModel.getType(address);
+        MapController.getInstance().moveScreen(coordinates, type);
 
         navigationController.setStartAddress(address);
 
@@ -94,7 +102,13 @@ public class SearchBoxController extends MouseAdapter {
         searchBoxView.getSearchInput().setText(s);
     }
 
-    public String getSearchInput() {return searchBoxView.getSearchInput().getText();}
+    public void setInputOnLocationIcon(Address address) {
+        setSearchInput(address.toString());
+        addressController.setCurrentAddress(address);
+        stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+    }
+
+    public String getSearchInput() { return searchBoxView.getSearchInput().getText(); }
 
     public void onNavigationClick() {
         stateController.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
@@ -108,6 +122,7 @@ public class SearchBoxController extends MouseAdapter {
             stateController.updateCurrentState(ViewStates.INITIAL);
         }
         graph.setSourceAndDest(null, null);
+        MapController.getInstance().deleteCurrentCoordinates();
     }
 
     public void onFavoritesClick() {

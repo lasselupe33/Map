@@ -73,7 +73,6 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
      * Helper that recursively builds a tree.
      */
     private Node buildTree(List<Value> list, int depth){
-        //System.out.println("Entering depth " + depth + " with list size: " + list.size());
         if (list.size() < 1000) return new Node(list);
 
         int median = list.size()/2;
@@ -103,22 +102,22 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
          
             for (int i = 0; i < list.size(); i++) {
                 Value s = list.get(i);
-            if (s instanceof MapElement) {
-                if (splitLine.intersects(getBounds((MapElement) s))) {
-                    listLeft.add(s);
-                    listRight.add(s);
-                } else if (i < median) {
-                    listLeft.add(s);
+                if (s instanceof MapElement) {
+                    if (splitLine.intersects(getBounds((MapElement) s))) {
+                        listLeft.add(s);
+                        listRight.add(s);
+                    } else if (i < median) {
+                        listLeft.add(s);
+                    } else {
+                        listRight.add(s);
+                    }
                 } else {
-                    listRight.add(s);
+                    if (i < median) {
+                        listLeft.add(s);
+                    } else {
+                        listRight.add(s);
+                    }
                 }
-            } else {
-                if (i < median) {
-                    listLeft.add(s);
-                } else {
-                    listRight.add(s);
-                }
-            }
             }
         
 

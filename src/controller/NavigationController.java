@@ -38,6 +38,7 @@ public class NavigationController extends MouseAdapter {
         navigationView.addMouseMotionListener(this);
     }
 
+
     public void setStartAddress(Address address){
         navigationView.getStartInput().setText(address.toString());
         navigationView.setStartInputText(address.toString());

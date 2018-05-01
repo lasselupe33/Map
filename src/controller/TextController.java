@@ -21,7 +21,7 @@ public class TextController implements FocusListener {
         if(t.getText().equals(label)){
             t.setText("");
         }
-   }
+    }
 
     @Override
     public void focusLost(FocusEvent e) {

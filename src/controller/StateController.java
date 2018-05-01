@@ -33,7 +33,7 @@ public class StateController {
 
     public ViewStates getPrevState() { return prevState; }
 
-    public  ViewStates getPrevPanel() {return prevPanel; }
+    public  ViewStates getPrevPanel() { return prevPanel; }
 
     public void updateCurrentState(ViewStates newState) {
         // AutoCompleteList will always be reset on state change
@@ -43,8 +43,9 @@ public class StateController {
         mainView.update();
         mainView.lpane.repaint();
     }
-    public void forcePrevState(ViewStates state){
+    public void forcePrevState(ViewStates state) {
         updatePrevPanel();
+
         prevState = state;
     }
 
@@ -52,8 +53,8 @@ public class StateController {
         updatePrevPanel();
 
         prevState = currentState;
-
     }
+
     public void updatePrevPanel(){
         if (prevPanel != prevState){
             prevPanel = prevState;

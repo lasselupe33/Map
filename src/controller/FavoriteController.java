@@ -1,12 +1,9 @@
 package controller;
 
-import view.SearchBox;
+import model.Address;
 
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
-public class FavoriteController extends MouseAdapter{
+public class FavoriteController {
     StateController stateController;
     SearchBoxController searchBoxController;
     NavigationController navigationController;
@@ -18,14 +15,13 @@ public class FavoriteController extends MouseAdapter{
     this.navigationController = nc;
 
     }
-    public void mouseClicked(MouseEvent e){
-        String address = e.getComponent().getName();
+    public void updateFavoriteInput(Address address){
         stateController.updateCurrentState(stateController.getPrevPanel());
-        if(stateController.getCurrentState() == ViewStates.INITIAL){
-            searchBoxController.setSearchInput("search");
+        if(stateController.getCurrentState() == ViewStates.INITIAL || stateController.getCurrentState() == ViewStates.ADDRESS_ENTERED){
+            MapController.getInstance().moveScreen(address.getCoordinates(), address.getType());
+            searchBoxController.setInputOnLocationIcon(address);
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE){
-            // navigationController.setStartInput("navigation");
         }
     }
 

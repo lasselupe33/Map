@@ -388,6 +388,8 @@ public class OSMHandler extends DefaultHandler {
 
         // Create temp address to be used when parsing address fields
         currentAddress = new Address(id, lon, lat);
+        currentAddress.setType(type);
+
     }
 
     /** Helper to be called when the parser reaches the coordinates of the given OSM-file */

@@ -7,6 +7,7 @@ import model.MapModel;
 import model.WayType;
 import model.graph.Graph;
 import view.MapView;
+import model.*;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -33,6 +34,7 @@ public class MapController {
 
     private Graph graph;
 
+    private static Coordinates currentCoordinates;
 
     /**
      * @return the transform to be used in the canvasView
@@ -133,6 +135,36 @@ public class MapController {
         updateMap();
     }
 
+    public void moveScreen(Coordinates coordinates, WayType type) {
+        transform = new AffineTransform();
+        // Pan to map
+        pan(-coordinates.getX(), -coordinates.getY());
+        zoom(canvas.getHeight() / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
+        // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
+        pan(canvas.getWidth()/2, canvas.getHeight()/2);
+
+        double zoomscale = 100.0*(type.getPriority()-getZoomLevel())/510.0;
+
+
+        zoomToCenter(zoomscale);
+
+        updateCurrentCoordinates(coordinates);
+
+        // Update map elements
+        updateMap();
+    }
+
+
+
+    //Methods to handle list of locations
+    public static void updateCurrentCoordinates(Coordinates coordinates){ currentCoordinates = coordinates; }
+
+    public static void deleteCurrentCoordinates() { currentCoordinates = null; }
+
+    public static Coordinates getCurrentCoordinates() { return currentCoordinates; }
+
+
+
     public Rectangle2D getModelViewRect() {
         try {
             return transform.createInverse().createTransformedShape(new Rectangle2D.Double(0, 0, canvas.getWidth(), canvas.getHeight())).getBounds2D();
@@ -157,7 +189,7 @@ public class MapController {
      * Internal helper that parses the current zoom level.
      * This level will be between 1 and 500.
      */
-    private int getZoomLevel() {
+    public int getZoomLevel() {
         double currDist = GetDistance.PxToKm(100) * 10;
         int maxDist = 510;
 
