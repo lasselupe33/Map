@@ -51,6 +51,9 @@ public class NavigationController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if(e.getComponent() == null || e.getComponent().getName() == null){
+            return;
+        }
         switch(e.getComponent().getName()) {
             case "car":
                 changeVehicleType(VehicleType.CAR);
@@ -66,6 +69,9 @@ public class NavigationController extends MouseAdapter {
                 break;
             case "shortest":
                 changeRouteType(RouteType.SHORTEST);
+                break;
+            default:
+            System.out.print("test");
                 break;
         }
     }
