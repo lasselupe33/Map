@@ -51,6 +51,11 @@ public class NavigationController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        // Bail out if no component was clicked
+        if (e.getComponent() == null) {
+            return;
+        }
+
         switch(e.getComponent().getName()) {
             case "car":
                 changeVehicleType(VehicleType.CAR);

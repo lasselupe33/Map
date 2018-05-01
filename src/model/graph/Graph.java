@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class Graph {
-    private LongToNodeMap nodes;
+    private LongToNodeMap<Node> nodes;
     private VehicleType vehicleType;
     private Path2D routePath;
     private String length;
@@ -60,6 +60,8 @@ public class Graph {
         setRouteTime(dest);
         createComputedPath(dest);
 
+        System.out.println(GetDistance.inKM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
+
         // Reset all visited vertexes once the path has been computed (no need to reset vertices that never have been
         // visited).
         resetVerticies(visitedVerticies);
@@ -68,7 +70,7 @@ public class Graph {
     /** Internal helper that sets the route length in KM based on the computed path destination */
     private void setRouteLength(Node dest) {
         // Get length in KM's
-        float length = dest.getLengthToSource() / 1000;
+        float length = dest.getLengthToSource() / 1000000;
 
         // Nicely format distance
         DecimalFormat formatter = new DecimalFormat("0.0");
@@ -149,7 +151,7 @@ public class Graph {
 
     /** Getters and setters */
     public void putNode(Node node) {
-        nodes.put(node.getId(), node.getLon(), node.getLat());
+        nodes.put(node);
     }
 
     public Node getNode(long id) {

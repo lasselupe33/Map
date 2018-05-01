@@ -41,20 +41,20 @@ public class Edge {
     public float getTime(VehicleType type) {
         switch (type) {
             case PEDESTRIAN:
-                return length * 1000000 * 60 / 5;
+                return length * 60 / 5;
             case BICYCLE:
-                return length * 1000000 * 60 / 18;
+                return length * 60 / 18;
             default:
                 // Default will always be car
-                return length * 1000000 * 60 / speedLimit;
+                return length * 60 / speedLimit;
         }
     }
 
     /**
-     * Returns the length of the edge in meters
+     * Returns the length of the edge in millimeters
      */
     public float getLength() {
-        return length * 1000;
+        return length;
     }
 
 

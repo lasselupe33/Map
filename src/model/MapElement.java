@@ -1,6 +1,7 @@
 package model;
 
 import model.graph.Node;
+import parsing.OSMNode;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -16,14 +17,14 @@ public class MapElement extends Coordinates implements Externalizable {
     private List<Long> nodeIds = new ArrayList<>();
 
     public MapElement() {}
-    public MapElement(float x, float y, Shape s, WayType t, boolean sf, ArrayList<Node> nodes){
+    public MapElement(float x, float y, Shape s, WayType t, boolean sf, ArrayList<OSMNode> nodes){
         super(x, y);
         shape = s;
         type = t;
         shouldFill = sf;
         r = shape.getBounds2D();
 
-        for (Node n : nodes) {
+        for (OSMNode n : nodes) {
             nodeIds.add(n.getId());
         }
     }

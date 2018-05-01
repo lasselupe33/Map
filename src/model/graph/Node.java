@@ -1,11 +1,10 @@
 package model.graph;
 
+import parsing.OSMNode;
+
 import java.util.ArrayList;
 
-public class Node {
-    private long id;
-    private float lon;
-    private float lat;
+public class Node extends OSMNode {
     private ArrayList<Edge> edges;
     private float lengthTo;
     private float timeTo;
@@ -13,21 +12,12 @@ public class Node {
     private float estimateToDest;
 
     public Node(long id, float lon, float lat) {
-        this.id = id;
-        this.lon = lon;
-        this.lat = lat;
+        super(id, lon, lat);
         edges = new ArrayList<>();
         lengthTo = Float.POSITIVE_INFINITY;
         timeTo = Float.POSITIVE_INFINITY;
         parent = null;
     }
-
-    // Getters
-    public long getId() { return id; }
-
-    public float getLon() { return lon; }
-
-    public float getLat() { return lat; }
 
     /**
      * The distance to source depends on the type of route desired.. I.e. if we want the fastest route we need to
@@ -89,5 +79,5 @@ public class Node {
         }
     }
 
-    public String toKey() { return lat + "-" + lon; }
+    public String toKey() { return super.getLat() + "-" + super.getLon(); }
 }
