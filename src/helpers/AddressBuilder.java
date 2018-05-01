@@ -28,7 +28,7 @@ public class AddressBuilder {
         final String floor = "(?<floor>[\\d^]+)\\.\\s*)";
         final String side = "(?<side>[tTmM]{1}.?[VHvhfF]{1})";
         final String postCode = "(?<postcode>\\d{4})";
-        final String city = "(?<city>[a-zA-ZåæøÅÆØ\\s]+)"; 
+        final String city = "(?<city>[a-zA-ZåæøÅÆØ\\s]+)";
 
 
 
