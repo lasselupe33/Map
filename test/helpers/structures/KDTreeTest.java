@@ -16,7 +16,7 @@ public class KDTreeTest {
 
         /* Expected results */
         List<Coordinates> expectedResult = new ArrayList<>();
-        for (int i = 0; i < 781; i++) {
+        for (int i = 0; i < 1000; i++) {
             expectedResult.add(new Coordinates(i, i));
         }
 
@@ -29,7 +29,7 @@ public class KDTreeTest {
 
         KDTree<Coordinates> tree = new KDTree(list);
 
-        List<Coordinates> actualResult = tree.searchTree(new Point2D.Double(8, 17), new Point2D.Double(10, 19));
+        List<Coordinates> actualResult = tree.searchTree(new Point2D.Double(8, 17), new Point2D.Double(100, 190));
 
         /* Are they equal? */
         for (int i = 0; i < actualResult.size(); i++) {
@@ -53,7 +53,6 @@ public class KDTreeTest {
         }
         KDTree<Coordinates> tree = new KDTree(list);
         Coordinates actual = tree.nearestNeighbour(9.99, 10.5);
-
 
         /* Are they equal? */
         assertEquals("" + expected, "" + actual);
