@@ -90,6 +90,8 @@ public class MapView extends JComponent {
             }
             g.setColor(new Color(66, 133, 244));
             g.draw(graph.getRoutePath());
+
+            g.setColor(Color.BLACK);
         }
 
         paintLocationIcon(g);

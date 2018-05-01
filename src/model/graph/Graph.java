@@ -30,6 +30,7 @@ public class Graph {
     private RouteType routeType = RouteType.FASTEST;
     private Node source;
     private Node dest;
+    private boolean failed = false;
 
     public Graph() {
         nodes = new HashMap<>();
@@ -37,17 +38,26 @@ public class Graph {
     }
 
     public void computePath(Node source, Node dest) {
+        // Performance logs
+        long start = System.currentTimeMillis();
+
+        // Reset nodes
+        for (Node node : nodes.values()) {
+            node.reset(dest);
+        }
+
         this.source = source;
         this.dest = dest;
 
         // Create priorityQueue that always returns the node with the closest distance to source
-        pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) ((a.getDistToSource(routeType)) - (b.getDistToSource(routeType))));
+        pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) (((a.getDistToSource(routeType)) + a.getEstimateToDest(routeType, vehicleType)) - ((b.getDistToSource(routeType)) + b.getEstimateToDest(routeType, vehicleType))));
 
         // Reset variables
         ArrayList<Node> visitedVerticies = new ArrayList<>();
         routePath = null;
         source.setLengthToSource(0);
         source.setTimeToSource(0);
+        source.setEstimateToDest((float) GetDistance.inMM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
         pq.add(source);
 
         while (pq.size() != 0) {
@@ -65,15 +75,39 @@ public class Graph {
             }
         }
 
-        setRouteLength(dest);
-        setRouteTime(dest);
-        createComputedPath(dest);
+        if (dest.getParent() != null) {
+            setRouteLength(dest);
+            setRouteTime(dest);
+            createComputedPath(dest);
+            failed = false;
+        } else {
+            failed = true;
+        }
 
-        System.out.println(GetDistance.inKM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
 
-        // Reset all visited vertexes once the path has been computed (no need to reset vertices that never have been
-        // visited).
-        resetVerticies(visitedVerticies);
+        System.out.println("Distance: " + GetDistance.inKM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
+        System.out.println("Visited verticies: " + visitedVerticies.size());
+        System.out.println("Time in ms: " + (System.currentTimeMillis() - start));
+    }
+
+    /**
+     * Internal helper that relaxes the neighbour of the current node if a shorter path can be found.
+     */
+    private void relaxNeighbour(Node current, Edge edgeToNeighbour) {
+        // Ensure edge supports current vehicle type
+        if (!edgeToNeighbour.supportsType(vehicleType)) {
+            return;
+        }
+
+        Node neighbour = nodes.get(edgeToNeighbour.getTo(current));
+
+        if (neighbour.getDistToSource(routeType) > current.getDistToSource(routeType) + edgeToNeighbour.getWeight(vehicleType, routeType)) {
+            // We found a shorter path for the neighbour! Relax neighbour node.
+            neighbour.setLengthToSource(current.getLengthToSource() + edgeToNeighbour.getLength());
+            neighbour.setTimeToSource(current.getTimeToSource() + edgeToNeighbour.getTime(vehicleType));
+            neighbour.setParent(current);
+            pq.add(neighbour);
+        }
     }
 
     /** Internal helper that sets the route length in KM based on the computed path destination */
@@ -110,30 +144,10 @@ public class Graph {
         routePath = sp;
     }
 
-    /**
-     * Internal helper that relaxes the neighbour of the current node if a shorter path can be found.
-     */
-    private void relaxNeighbour(Node current, Edge edgeToNeighbour) {
-        // Ensure edge supports current vehicle type
-        if (!edgeToNeighbour.supportsType(vehicleType)) {
-            return;
-        }
-
-        Node neighbour = nodes.get(edgeToNeighbour.getTo(current));
-
-        if (neighbour.getDistToSource(routeType) > current.getDistToSource(routeType) + edgeToNeighbour.getWeight(vehicleType, routeType)) {
-            // We found a shorter path for the neighbour! Relax neighbour node.
-            neighbour.setLengthToSource(current.getLengthToSource() + edgeToNeighbour.getLength());
-            neighbour.setTimeToSource(current.getTimeToSource() + edgeToNeighbour.getTime(vehicleType));
-            neighbour.setParent(current);
-            pq.add(neighbour);
-        }
-    }
-
     /** Internal helper that resets all visited vertexes of the map */
     private void resetVerticies(ArrayList<Node> vertexes) {
         for (Node node : vertexes) {
-            node.reset();
+            node.reset(this.dest);
         }
     }
 
@@ -193,6 +207,10 @@ public class Graph {
     public String getLength() { return length; }
 
     public String getTime() { return time; }
+
+    public boolean didError() {
+        return failed;
+    }
 
     /** Serializes all data necessary to load and display the map */
     public void serialize() {

@@ -1,5 +1,6 @@
 package model.graph;
 
+import helpers.GetDistance;
 import parsing.OSMNode;
 
 import java.io.Externalizable;
@@ -61,10 +62,11 @@ public class Node extends OSMNode implements Externalizable {
 
     public Edge[] getEdges() { return edges; }
 
-    public void reset() {
+    public void reset(Node dest) {
         parent = null;
         lengthTo = Float.POSITIVE_INFINITY;
         timeTo = Float.POSITIVE_INFINITY;
+        estimateToDest = (float) GetDistance.inMM(getLat(), getLon(), dest.getLat(), dest.getLon());
     }
 
     public void setEstimateToDest(float estimate) { estimateToDest = estimate; }
@@ -74,14 +76,18 @@ public class Node extends OSMNode implements Externalizable {
             return estimateToDest;
         } else {
             switch (vType) {
-                case PEDESTRIAN:
-                    return estimateToDest / 5;
+                case CAR:
+                    return estimateToDest * 60 / 130;
+
                 case BICYCLE:
-                    return estimateToDest / 18;
+                    return estimateToDest * 60 / 18;
+
+                case PEDESTRIAN:
+                    return estimateToDest * 60 / 5;
+
                 default:
-                    break;
+                    return estimateToDest;
             }
-            return estimateToDest / 80;
         }
     }
 

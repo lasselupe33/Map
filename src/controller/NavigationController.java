@@ -22,6 +22,7 @@ public class NavigationController extends MouseAdapter {
     private String startInput = "";
     private String endInput = "";
     private boolean navigationActive = false;
+    private boolean navigationFailed = false;
 
     public NavigationController(AddressesModel am, MapModel mm, Graph g){
         addressesModel = am;
@@ -129,9 +130,18 @@ public class NavigationController extends MouseAdapter {
         graph.computePath(startingPoint, endPoint);
 
         // Update map and view after path has been computed
-        navigationActive = true;
-        updateView();
-        MapController.repaintMap(true);
+        if (!graph.didError()) {
+            navigationFailed = false;
+            navigationActive = true;
+            updateView();
+            MapController.repaintMap(true);
+        } else {
+            navigationFailed = true;
+        }
+    }
+
+    public boolean didError() {
+        return navigationFailed;
     }
 
     public VehicleType getVehicleType() {
