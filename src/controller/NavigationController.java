@@ -15,12 +15,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Path2D;
 
 public class NavigationController extends MouseAdapter {
     private NavigationView navigationView;
     private AddressesModel addressesModel;
     private MapModel mapModel;
     private Graph graph;
+    private AddressController addressController;
+    private Coordinates startAddressCoords;
+    private Coordinates endAddressCoords;
+    private Node startingPoint;
+    private Node endPoint;
     private String startInput = "";
     private String endInput = "";
     private boolean navigationActive = false;
@@ -31,6 +37,14 @@ public class NavigationController extends MouseAdapter {
         graph = g;
     }
 
+    public void addAddressController(AddressController ac) {
+        addressController = ac;
+    }
+
+    /**
+     * Add navigation view
+     * @param nv the view
+     */
     public void addView(NavigationView nv){
         navigationView = nv;
 
@@ -53,7 +67,8 @@ public class NavigationController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(e.getComponent() == null || e.getComponent().getName() == null){
+        if (e.getComponent() == null || e.getComponent().getName() == null) {
+
             return;
         }
         switch(e.getComponent().getName()) {
@@ -118,16 +133,18 @@ public class NavigationController extends MouseAdapter {
             return;
         }
 
+        addressController.setCurrentAddress(addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()));
+
         // Get source and dest coords
-        Coordinates startAddressCoords = addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()).getCoordinates();
-        Coordinates endAddressCoords = addressesModel.getAddress(AddressBuilder.parse(endInput).toKey()).getCoordinates();
+        startAddressCoords = addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()).getCoordinates();
+        endAddressCoords = addressesModel.getAddress(AddressBuilder.parse(endInput).toKey()).getCoordinates();
 
         // Retrieve nearest way-node to the address-node (we want to use roads to travel, not addresses)
         long startingPointId = mapModel.getNearestNodeId(startAddressCoords);
         long endPointId = mapModel.getNearestNodeId(endAddressCoords);
 
-        Node startingPoint = graph.getNode(startingPointId);
-        Node endPoint = graph.getNode(endPointId);
+        startingPoint = graph.getNode(startingPointId);
+        endPoint = graph.getNode(endPointId);
 
         graph.computePath(startingPoint, endPoint);
 
@@ -135,8 +152,32 @@ public class NavigationController extends MouseAdapter {
         navigationActive = true;
         updateView();
         MapController.repaintMap(true);
+        MapController.updateStartCoordinates(startAddressCoords);
+        MapController.updateLocationCoordinates(endAddressCoords);
     }
 
+    public void switchFromAndTo() {
+        String startTextHolder = navigationView.getStartInput().getText();
+        String endTextHolder = navigationView.getEndInput().getText();
+        if(startTextHolder.equals("Fra:") && endTextHolder.equals("Til:")){
+            return;
+        } else if (startTextHolder.equals("Fra:")){
+            navigationView.getStartInput().setText(endTextHolder);
+            navigationView.getEndInput().setText("Til:");
+        } else if (endTextHolder.equals("Til:")){
+            navigationView.getEndInput().setText(startTextHolder);
+            navigationView.getStartInput().setText("Fra:");
+        } else {
+            navigationView.getStartInput().setText(endTextHolder);
+            navigationView.getEndInput().setText(startTextHolder);
+            onRouteSearch();
+        }
+    }
+
+    /**
+     * Get vehicle type
+     * @return vehicle type
+     */
     public VehicleType getVehicleType() {
         return graph.getVehicleType();
     }
@@ -145,10 +186,22 @@ public class NavigationController extends MouseAdapter {
         return graph.getRouteType();
     }
 
+    /**
+     * Get the time of the route
+     * @return time
+     */
     public String getTime() { return graph.getTime(); }
 
+    /**
+     * Get length of the route in km
+     * @return length of route
+     */
     public String getLength() { return graph.getLength(); }
 
+    /**
+     * Check whether the navigation view i open
+     * @return true if view is open; else false
+     */
     public boolean isNavigationActive() {
         return navigationActive;
 
@@ -159,10 +212,35 @@ public class NavigationController extends MouseAdapter {
     public JTextField getEndInput(){
         return navigationView.getEndInput();
     }
+    /**
+     * Reset navigation view
+     */
     public void reset() {
         navigationActive = false;
         navigationView.setStartInputText(navigationView.getStartInput().getName());
         navigationView.setEndInputText(navigationView.getEndInput().getName());
         graph.setVehicleType(VehicleType.CAR);
+    }
+
+    /**
+     * Path that goes from the input start adress to the beginning of the route
+     * @return path from start adress to start of route
+     */
+    public Path2D getStartAddressPath() {
+        Path2D fromStartToRoute = new Path2D.Float();
+        fromStartToRoute.moveTo(startAddressCoords.getX(), startAddressCoords.getY());
+        fromStartToRoute.lineTo(startingPoint.getLon(), startingPoint.getLat());
+        return fromStartToRoute;
+    }
+
+    /**
+     * Path that goes from the input end adress to the end of the route
+     * @return path from end of route to end adress
+     */
+    public Path2D getEndAddressPath() {
+        Path2D fromRouteToEnd = new Path2D.Float();
+        fromRouteToEnd.moveTo(endAddressCoords.getX(), endAddressCoords.getY());
+        fromRouteToEnd.lineTo(endPoint.getLon(), endPoint.getLat());
+        return fromRouteToEnd;
     }
 }

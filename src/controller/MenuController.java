@@ -51,11 +51,6 @@ public class MenuController {
         MapController.repaintMap(true);
     }
 
-    public void tritanopiaMode() {
-        colorMap.setMode(ColorMap.Mode.TRITANOPIA);
-        MapController.repaintMap(true);
-    }
-
     public void grayscaleMode() {
         colorMap.setMode(ColorMap.Mode.GRAYSCALE);
         MapController.repaintMap(true);

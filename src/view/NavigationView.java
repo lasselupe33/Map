@@ -47,7 +47,8 @@ public class NavigationView extends JPanel {
         }
 
         if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
-            setBounds(0, 0, 450, getParent().getHeight());
+            int height = MainWindowView.getHeight();
+            setBounds(0, 0, 450, height);
         } else {
             setBounds(0, 0, 450, 200);
         }
@@ -243,7 +244,7 @@ public class NavigationView extends JPanel {
         JButton switchFromTo = new JButton(switchIcon);
         switchFromTo.setBackground(Color.WHITE);
         switchFromTo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        switchFromTo.addActionListener((e) -> switchFromAndTo());
+        switchFromTo.addActionListener((e) -> navigationController.switchFromAndTo());
         switchAndSubmitPanel.add(switchFromTo, BorderLayout.WEST);
 
         // Submit-button
@@ -256,7 +257,6 @@ public class NavigationView extends JPanel {
 
         return switchAndSubmitPanel;
     }
-
     private void switchFromAndTo() {
         String startTextHolder = startInput.getText();
         String endTextHolder = endInput.getText();
@@ -273,7 +273,6 @@ public class NavigationView extends JPanel {
             endInput.setText(startTextHolder);
         }
     }
-
     public JTextField getStartInput() {
         return startInput;
     }
