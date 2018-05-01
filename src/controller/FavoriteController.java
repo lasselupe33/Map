@@ -22,6 +22,7 @@ public class FavoriteController {
             searchBoxController.setInputOnLocationIcon(address);
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE){
+
         }
     }
 
