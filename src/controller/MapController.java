@@ -34,7 +34,9 @@ public class MapController {
 
     private Graph graph;
 
-    private static Coordinates currentCoordinates;
+    private static Coordinates locationIconCoordinates;
+    private static Coordinates startIconCoordinates;
+    private static List<Coordinates> listOfFavorites;
 
     /**
      * @return the transform to be used in the canvasView
@@ -148,7 +150,7 @@ public class MapController {
 
         zoomToCenter(zoomscale);
 
-        updateCurrentCoordinates(coordinates);
+        updateLocationCoordinates(coordinates);
 
         // Update map elements
         updateMap();
@@ -156,12 +158,25 @@ public class MapController {
 
 
 
-    //Methods to handle list of locations
-    public static void updateCurrentCoordinates(Coordinates coordinates){ currentCoordinates = coordinates; }
+    //Methods to handle list of locations where Icons should be drawn
+    public static void updateLocationCoordinates(Coordinates coordinates){ locationIconCoordinates = coordinates; }
 
-    public static void deleteCurrentCoordinates() { currentCoordinates = null; }
+    public static void deleteLocationCoordinates() { locationIconCoordinates = null; }
 
-    public static Coordinates getCurrentCoordinates() { return currentCoordinates; }
+    public Coordinates getLocationCoordinates() { return locationIconCoordinates; }
+
+    public static void updateStartCoordinates(Coordinates coordinates){ startIconCoordinates = coordinates; }
+
+    public static void deleteStartCoordinates() { startIconCoordinates = null; }
+
+    public Coordinates getStartCoordinates() { return startIconCoordinates; }
+
+    public static void updateListOfFavorites(Coordinates coordinates) { listOfFavorites.add(coordinates); }
+
+    public static void deleteFavoritesFromList(Coordinates coordinates) { listOfFavorites.remove(coordinates); }
+
+    public static List<Coordinates> getListOfFavorites() { return listOfFavorites; }
+
 
 
 

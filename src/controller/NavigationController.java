@@ -146,7 +146,8 @@ public class NavigationController extends MouseAdapter {
         navigationActive = true;
         updateView();
         MapController.repaintMap(true);
-        MapController.updateCurrentCoordinates(endAddressCoords);
+        MapController.updateStartCoordinates(startAddressCoords);
+        MapController.updateLocationCoordinates(endAddressCoords);
     }
 
     public void switchFromAndTo() {

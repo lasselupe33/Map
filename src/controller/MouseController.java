@@ -65,11 +65,10 @@ public class MouseController extends MouseAdapter {
         canvas.requestFocus();
 
         if (e.getButton() == MouseEvent.BUTTON3) {
-            mapController.deleteCurrentCoordinates();
             Point2D modelCoords = mapController.toModelCoords(e.getPoint());
             Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
             searchBoxController.setInputOnLocationIcon(address);
-            mapController.updateCurrentCoordinates(address.getCoordinates());
+            mapController.updateLocationCoordinates(address.getCoordinates());
         }
         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             mapController.zoom(1.4, -e.getX(), -e.getY());
