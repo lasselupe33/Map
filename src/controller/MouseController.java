@@ -2,6 +2,7 @@ package controller;
 
 import model.Address;
 import model.AddressesModel;
+import model.Coordinates;
 import view.MapView;
 import view.FooterView;
 
@@ -37,6 +38,7 @@ public class MouseController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+
         // Ensure keyboard events are used when the canvas has been pressed
         canvas.requestFocus();
     }
@@ -63,6 +65,13 @@ public class MouseController extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
         canvas.requestFocus();
+
+        Coordinates coord = canvas.containsCoordinate(mapController.toModelCoords(e.getPoint()));
+        if (coord != null) {
+            mapController.updateLocationCoordinates(coord);
+            searchBoxController.setInputOnLocationIcon(addressesModel.addressFromCoordinate(coord));
+        }
+
 
         if (e.getButton() == MouseEvent.BUTTON3) {
             Point2D modelCoords = mapController.toModelCoords(e.getPoint());

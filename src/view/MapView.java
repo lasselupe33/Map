@@ -7,15 +7,15 @@ import helpers.GetDistance;
 import helpers.StrokeMap;
 import model.Coordinates;
 import model.MapElement;
-import model.MapModel;
 import model.WayType;
 import model.graph.Graph;
-import model.graph.VehicleType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
@@ -28,6 +28,7 @@ public class MapView extends JComponent {
     private NavigationController navigationController;
     private Graph graph;
     private ColorMap colorMap;
+    private HashMap<Shape, Coordinates> favoriteIcons = new HashMap<>();
 
 
     public MapView(MapController c, Graph g, ColorMap cm, NavigationController nc) {
@@ -102,22 +103,19 @@ public class MapView extends JComponent {
             g.draw(navigationController.getEndAddressPath());
         }
 
+        paintStartNavigationIcon(g);
 
         if (!controller.getListOfFavorites().isEmpty()) {
             for (Coordinates c : controller.getListOfFavorites()) {
                 paintLocationIcon(g, c, new Color(66, 133, 244), new Color(0, 4, 161), 0.0025);
-
             }
         }
         if (controller.getLocationCoordinates() != null) paintLocationIcon(g, controller.getLocationCoordinates(), Color.red, new Color(124, 17, 19), 0.003);
 
-
-        paintStartNavigationIcon(g);
-
     }
 
 
-    private void paintLocationIcon(Graphics2D g, Coordinates coord, Color icon, Color cir, double scaling) {
+    private void paintLocationIcon(Graphics2D g, Coordinates coord, Color iconColor, Color circleColor, double scaling) {
 
         float scale = (float) (scaling *  GetDistance.PxToKm(100));
 
@@ -131,12 +129,13 @@ public class MapView extends JComponent {
             path.lineTo(xValue[i], yValue[i]);
         }
         path.quadTo(xValue[xValue.length-1]+scale/2, yValue[yValue.length-1]-scale/2, xValue[xValue.length-1], yValue[yValue.length-1]);
+        favoriteIcons.put(path, coord);
 
         Ellipse2D circle = new Ellipse2D.Double(coord.getX()-scale/6, coord.getY()-scale, scale/3, scale/3);
 
-        g.setPaint(icon);
+        g.setPaint(iconColor);
         g.fill(path);
-        g.setPaint(cir);
+        g.setPaint(circleColor);
         g.fill(circle);
 
     }
@@ -155,8 +154,16 @@ public class MapView extends JComponent {
         g.fill(outerCircle);
         g.setPaint(Color.white);
         g.fill(innerCircle);
+    }
 
-
+    public Coordinates containsCoordinate(Point2D p) {
+        for (Shape s : favoriteIcons.keySet()) {
+            System.out.println(s);
+            if (s.contains(p)) {
+                return favoriteIcons.get(s);
+            }
+        }
+        return null;
     }
 
 }
