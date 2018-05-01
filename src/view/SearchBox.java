@@ -114,7 +114,7 @@ public class SearchBox extends JPanel {
         searchInput.setBorder(BorderFactory.createEmptyBorder());
         searchInput.addActionListener(e -> searchBoxController.onSearchInput());
         searchInput.addKeyListener(autoCompleteController);
-        searchInput.addFocusListener(new TextController("Søg.."));
+        searchInput.addFocusListener(new TextController(searchInput.getName()));
 
         // Add to wrapper
         searchContainer.add(searchInput, BorderLayout.WEST);

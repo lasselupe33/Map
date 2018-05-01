@@ -11,6 +11,8 @@ import model.graph.VehicleType;
 import model.Address;
 import view.NavigationView;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -112,7 +114,7 @@ public class NavigationController extends MouseAdapter {
         endInput = navigationView.getEndInput().getText();
 
         // Check that inputs have been filled
-        if (startInput.equals("Fra:") || endInput.equals("Til:") || startInput.equals("") || endInput.equals("")) {
+        if (startInput.equals(navigationView.getStartInput().getName()) || endInput.equals(navigationView.getEndInput().getName()) || startInput.equals("") || endInput.equals("")) {
             return;
         }
 
@@ -153,8 +155,8 @@ public class NavigationController extends MouseAdapter {
     }
     public void reset() {
         navigationActive = false;
-        navigationView.setStartInputText("Fra:");
-        navigationView.setEndInputText("Til:");
+        navigationView.setStartInputText(navigationView.getStartInput().getName());
+        navigationView.setEndInputText(navigationView.getEndInput().getName());
         graph.setVehicleType(VehicleType.CAR);
     }
 }
