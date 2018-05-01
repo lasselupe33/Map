@@ -253,11 +253,6 @@ public class MainWindowView {
         colorGroup.add(deuteranopiaItem);
         subShowMenu.add(deuteranopiaItem);
 
-        JMenuItem tritanopiaItem = new JRadioButtonMenuItem("Blåblind (Tritanopia)");
-        tritanopiaItem.addActionListener((ActionEvent e) -> menuController.tritanopiaMode());
-        colorGroup.add(tritanopiaItem);
-        subShowMenu.add(tritanopiaItem);
-
         JMenuItem grayscaleItem = new JRadioButtonMenuItem("Gråskala");
         grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());
         colorGroup.add(grayscaleItem);
