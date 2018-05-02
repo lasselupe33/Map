@@ -74,6 +74,7 @@ public class MouseController extends MouseAdapter {
 
 
         if (e.getButton() == MouseEvent.BUTTON3) {
+            mapController.deleteStartCoordinates();
             Point2D modelCoords = mapController.toModelCoords(e.getPoint());
             Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
             searchBoxController.setInputOnLocationIcon(address);

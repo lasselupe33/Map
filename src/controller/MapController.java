@@ -202,7 +202,7 @@ public class MapController {
 
     /**
      * Internal helper that parses the current zoom level.
-     * This level will be between 1 and 500.
+     * This level will be between 1 and 510.
      */
     public int getZoomLevel() {
         double currDist = GetDistance.PxToKm(100) * 10;
