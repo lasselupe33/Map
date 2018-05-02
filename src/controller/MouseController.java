@@ -38,6 +38,22 @@ public class MouseController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        Coordinates coord = canvas.containsCoordinate(mapController.toModelCoords(e.getPoint()));
+        if (coord != null) {
+            mapController.updateLocationCoordinates(coord);
+            searchBoxController.setInputOnLocationIcon(addressesModel.addressFromCoordinate(coord));
+        }
+
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            Point2D modelCoords = mapController.toModelCoords(e.getPoint());
+            Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
+            searchBoxController.setInputOnLocationIcon(address);
+            mapController.updateLocationCoordinates(address.getCoordinates());
+        }
+
+        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+            mapController.zoom(1.4, -e.getX(), -e.getY());
+        }
 
         // Ensure keyboard events are used when the canvas has been pressed
         canvas.requestFocus();
@@ -65,24 +81,6 @@ public class MouseController extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
         canvas.requestFocus();
-
-        Coordinates coord = canvas.containsCoordinate(mapController.toModelCoords(e.getPoint()));
-        if (coord != null) {
-            mapController.updateLocationCoordinates(coord);
-            searchBoxController.setInputOnLocationIcon(addressesModel.addressFromCoordinate(coord));
-        }
-
-
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            mapController.deleteStartCoordinates();
-            Point2D modelCoords = mapController.toModelCoords(e.getPoint());
-            Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
-            searchBoxController.setInputOnLocationIcon(address);
-            mapController.updateLocationCoordinates(address.getCoordinates());
-        }
-        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-            mapController.zoom(1.4, -e.getX(), -e.getY());
-        }
 
         lastMousePosition = e.getPoint();
     }
