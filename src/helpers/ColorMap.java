@@ -15,13 +15,13 @@ public class ColorMap {
     private Color residentialColor = new Color(219, 219, 219);
     private Color buildingColor = new Color(215, 205, 199);
     private Color cemeteryColor = new Color(193, 219, 200);
-    private Color subwayColor = new Color(168, 172, 190);
     private Color pathColor = new Color(250, 128, 114);
     private Color cycleAndFerryColor = new Color(125, 139, 244);
     private Color aerowayColor = new Color(233, 209, 255);
     private Color runwayColor = new Color(187, 187, 204);
     private Color bridgeColor = new Color(206, 206, 206);
     private Color waterColor = new Color(122, 199, 235);
+    private Color railwayColor = new Color(200,200,200);
 
     // Color blind colors
     private Color colorBlindForrest = new Color(9, 180, 90);
@@ -34,6 +34,7 @@ public class ColorMap {
     private Color colorBlindBarrier = new Color(62, 62, 59);
     private Color colorBlindHedge = new Color(9, 182, 91);
     private Color colorBlindMotorWay = new Color(66, 94, 148);
+    private Color colorBlindTrunk = new Color(59, 146, 148);
     private Color protanopiaWater = new Color(94, 184, 223);
 
     //Grayscale colors
@@ -145,11 +146,6 @@ public class ColorMap {
                 colorBlindCycleAndFerry,
                 grayscaleCycleAndFerry});
 
-        colorMap.put(WayType.SUBWAY, new Color[] {subwayColor,
-                subwayColor,
-                subwayColor,
-                new Color(177,177,177)});
-
         colorMap.put(WayType.CYCLEWAY, new Color[] {cycleAndFerryColor,
                 colorBlindCycleAndFerry,
                 colorBlindCycleAndFerry,
@@ -183,12 +179,10 @@ public class ColorMap {
                 colorBlindMotorWay,
                 colorBlindMotorWay,
                 new Color(180,180,180)});
-        /**
-         * @TODO color blind trunk
-         */
+
         colorMap.put(WayType.TRUNK, new Color[] {new Color(248, 161, 136),
-                new Color(66, 94, 148),
-                new Color(66, 94, 148),
+                colorBlindTrunk,
+                colorBlindTrunk,
                 new Color(182, 182, 182)});
 
         colorMap.put(WayType.DRAIN, new Color[] {waterColor,
@@ -221,6 +215,8 @@ public class ColorMap {
                 protanopiaWater,
                 waterColor,
                 grayscaleWater});
+
+        colorMap.put(WayType.RAILWAY, new Color[] {railwayColor,railwayColor,railwayColor,railwayColor});
     }
 
     public boolean isGrayscale() {

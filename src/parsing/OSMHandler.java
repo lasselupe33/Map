@@ -217,6 +217,9 @@ public class OSMHandler extends DefaultHandler {
                             type = WayType.HIGHWAYBRIDGE;
                         }
                         break;
+                    case "railway":
+                        type = WayType.RAILWAY;
+                        break;
                     case "addr:street":
                         street = attributes.getValue("v");
                         break;
@@ -601,7 +604,6 @@ public class OSMHandler extends DefaultHandler {
             case FOOTWAY:
             case PATH:
             case FERRY:
-            case SUBWAY:
             case CYCLEWAY:
             case UNKNOWN:
             case BARRIER:
@@ -610,6 +612,7 @@ public class OSMHandler extends DefaultHandler {
             case RUNWAY:
             case TRUNK:
             case HIGHWAYBRIDGE:
+            case RAILWAY:
                 mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, false, nodes));
                 break;
             default:

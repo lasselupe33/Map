@@ -50,7 +50,6 @@ public class StrokeMap {
         strokeMap.put(WayType.FOOTWAY, 0.000015f);
         strokeMap.put(WayType.PATH, 0.000015f);
         strokeMap.put(WayType.FERRY, 0.000015f);
-        strokeMap.put(WayType.SUBWAY, 0.000015f);
         strokeMap.put(WayType.CYCLEWAY, 0.000015f);
         strokeMap.put(WayType.TERTIARYROAD, 0.00009f);
         strokeMap.put(WayType.SECONDARYROAD, 0.00010f);
@@ -60,8 +59,10 @@ public class StrokeMap {
         strokeMap.put(WayType.TRUNK, 0.00025f);
         strokeMap.put(WayType.BARRIER, 0.000007f);
         strokeMap.put(WayType.HEDGE, 0.000007f);
-        strokeMap.put(WayType.DRAIN, 0.000007f);
+        strokeMap.put(WayType.DRAIN, 0.0000015f);
         strokeMap.put(WayType.RUNWAY, 0.000009f);
         strokeMap.put(WayType.HIGHWAYBRIDGE, 0.00009f);
+        strokeMap.put(WayType.RAILWAY, 0.00002f);
+
     }
 }
