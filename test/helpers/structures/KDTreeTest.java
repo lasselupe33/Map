@@ -74,10 +74,12 @@ public class KDTreeTest {
 
             assertEquals(expected, actual);
         }
+
     }
 
     @Test
     public void nearestNeighbour() throws Exception {
+
 
         /* Expected results */
         Coordinates expected = new Coordinates(10, 10);
@@ -92,5 +94,6 @@ public class KDTreeTest {
 
         /* Are they equal? */
         assertEquals("" + expected, "" + actual);
+
     }
 }
