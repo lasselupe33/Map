@@ -34,7 +34,9 @@ public class MapController {
 
     private Graph graph;
 
-    private static Coordinates currentCoordinates;
+    private static Coordinates locationIconCoordinates;
+    private static Coordinates startIconCoordinates;
+    private static List<Coordinates> listOfFavorites = new ArrayList<>();
 
     /**
      * @return the transform to be used in the canvasView
@@ -85,10 +87,12 @@ public class MapController {
     }
 
     public void zoom(double factor, double x, double y) {
+        if (GetDistance.PxToKm(100) > 50 && factor < 1.01) factor = 1.0;
+        if (GetDistance.PxToKm(100) < 0.01 && factor > 1.0) factor = 1.0;
+        System.out.println(GetDistance.PxToKm(100));
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
-        updateMap();
     }
 
     /** Helper that returns the current data required for rendering the map */
@@ -148,7 +152,7 @@ public class MapController {
 
         zoomToCenter(zoomscale);
 
-        updateCurrentCoordinates(coordinates);
+        updateLocationCoordinates(coordinates);
 
         // Update map elements
         updateMap();
@@ -156,12 +160,25 @@ public class MapController {
 
 
 
-    //Methods to handle list of locations
-    public static void updateCurrentCoordinates(Coordinates coordinates){ currentCoordinates = coordinates; }
+    //Methods to handle list of locations where Icons should be drawn
+    public static void updateLocationCoordinates(Coordinates coordinates){ locationIconCoordinates = coordinates; }
 
-    public static void deleteCurrentCoordinates() { currentCoordinates = null; }
+    public static void deleteLocationCoordinates() { locationIconCoordinates = null; }
 
-    public static Coordinates getCurrentCoordinates() { return currentCoordinates; }
+    public Coordinates getLocationCoordinates() { return locationIconCoordinates; }
+
+    public static void updateStartCoordinates(Coordinates coordinates){ startIconCoordinates = coordinates; }
+
+    public static void deleteStartCoordinates() { startIconCoordinates = null; }
+
+    public Coordinates getStartCoordinates() { return startIconCoordinates; }
+
+    public static void updateListOfFavorites(Coordinates coordinates) { listOfFavorites.add(coordinates); }
+
+    public static void deleteFavoritesFromList(Coordinates coordinates) { listOfFavorites.remove(coordinates); }
+
+    public List<Coordinates> getListOfFavorites() { return listOfFavorites; }
+
 
 
 
@@ -187,7 +204,7 @@ public class MapController {
 
     /**
      * Internal helper that parses the current zoom level.
-     * This level will be between 1 and 500.
+     * This level will be between 1 and 510.
      */
     public int getZoomLevel() {
         double currDist = GetDistance.PxToKm(100) * 10;

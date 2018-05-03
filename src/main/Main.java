@@ -89,6 +89,7 @@ public class Main {
         sc = new StateController();
         nc = new NavigationController(am, mapModel, graph);
         ac = new AddressController(sc, favoritesModelModel, nc);
+        nc.addAddressController(ac);
         sbc = new SearchBoxController(sc, ac, am, graph, nc);
         acc = new AutoCompleteController(sc, nc);
         fc = new FavoriteController(sc, sbc, nc);
@@ -96,7 +97,7 @@ public class Main {
         // Ensure views are being invoked on proper thread!
         SwingUtilities.invokeLater(() -> {
             // Views
-            cv = new MapView(cc, graph, colorMap);
+            cv = new MapView(cc, graph, colorMap, nc);
             cc.addDependencies(cv, mapModel, model, graph);
             av = new AddressView(ac);
             sb = new SearchBox(sc, sbc, acc);

@@ -92,6 +92,10 @@ public class MapModel {
             if (way != null) {
                 for (long nodeId : way.getNodeIds()) {
                     Node node = graph.getNode(nodeId);
+                    System.out.println("x " + coords.getX());
+                    System.out.println("y " + coords.getY());
+                    System.out.println("lon " + node.getLon());
+                    System.out.println("lat " + node.getLat());
                     double distanceTo = Math.hypot( coords.getX() - node.getLon(), coords.getY() - node.getLat());
                     if ( distanceTo < currentNeighbour ) {
                         nearestNeighbour = nodeId;

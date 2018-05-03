@@ -10,6 +10,9 @@ public class StrokeMap {
     private final static float dash[] = {0.00003f};
     private final static float dash2[] = {0.00006f};
 
+    private static BasicStroke path = new BasicStroke(0.000015f, BasicStroke.CAP_BUTT,
+            BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f);
+
     public static Stroke getStroke(WayType type) {
         if (strokeMap == null) initializeStandard();
         return strokeMap.get(type);
@@ -21,13 +24,11 @@ public class StrokeMap {
         strokeMap.put(WayType.SERVICE, new BasicStroke(0.00002f));
         strokeMap.put(WayType.ROAD, new BasicStroke(0.00010f));
         strokeMap.put(WayType.PEDESTRIAN, new BasicStroke(0.00015f));
-        strokeMap.put(WayType.FOOTWAY, new BasicStroke(0.000009f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f));
-        strokeMap.put(WayType.PATH, new BasicStroke(0.000009f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, dash, 0.0f));
-        strokeMap.put(WayType.FERRY, new BasicStroke(0.000009f));
-        strokeMap.put(WayType.SUBWAY, new BasicStroke(0.000009f));
-        strokeMap.put(WayType.CYCLEWAY, new BasicStroke(0.000009f, BasicStroke.CAP_BUTT,
+        strokeMap.put(WayType.FOOTWAY, path);
+        strokeMap.put(WayType.PATH, path);
+        strokeMap.put(WayType.FERRY, new BasicStroke(0.000015f));
+        strokeMap.put(WayType.SUBWAY, new BasicStroke(0.000015f));
+        strokeMap.put(WayType.CYCLEWAY, new BasicStroke(0.000015f, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER, 1.0f, dash2, 0.0f));
         strokeMap.put(WayType.TERTIARYROAD, new BasicStroke(0.00009f));
         strokeMap.put(WayType.SECONDARYROAD, new BasicStroke(0.00010f));
