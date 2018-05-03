@@ -1,21 +1,25 @@
 package model.graph;
 
+import model.Coordinates;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 
 public class Edge implements Externalizable {
     public long node1;
     public long node2;
     private float length; //in km
     private int speedLimit;
+    private Coordinates[] path;
     private boolean supportsCars;
     private boolean supportsBicycles;
     private boolean supportsPedestrians;
 
     public Edge() {}
-    public Edge(long node1, long node2, float length, int speedLimit, boolean supportsCars, boolean supportsBicycles, boolean supportsPedestrians) {
+    public Edge(long node1, long node2, ArrayList<Coordinates> path, float length, int speedLimit, boolean supportsCars, boolean supportsBicycles, boolean supportsPedestrians) {
         this.node1 = node1;
         this.node2 = node2;
         this.length = length;
@@ -23,6 +27,7 @@ public class Edge implements Externalizable {
         this.supportsCars = supportsCars;
         this.supportsBicycles = supportsBicycles;
         this.supportsPedestrians = supportsPedestrians;
+        this.path = path.toArray(new Coordinates[path.size()]);
     }
 
     /** Get the weight of the edge based on the type of vehicle and the desired route type */
@@ -95,6 +100,8 @@ public class Edge implements Externalizable {
                 return false;
         }
     }
+
+    public Coordinates[] getPath() { return path; }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {

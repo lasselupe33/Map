@@ -2,6 +2,7 @@ package parsing;
 
 import helpers.GetDistance;
 import helpers.structures.LongToNodeMap;
+import helpers.structures.SimpleLongSet;
 import model.*;
 import model.graph.Edge;
 import model.graph.Graph;
@@ -471,7 +472,7 @@ public class OSMHandler extends DefaultHandler {
             reachedWays = true;
         }
 
-        if (isHighway && type != WayType.PEDESTRIAN) {
+        if (isHighway) {
             way.addWayInfo(speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
             OSMNode from = way.getNodes().get(0);
 
@@ -637,13 +638,12 @@ public class OSMHandler extends DefaultHandler {
                     List<MapElement> list = mapModel.getMapElements(type);
 
                     for (MapElement element : list) {
-                        HashSet tempIds = new HashSet<>();
+                        SimpleLongSet tempIds = new SimpleLongSet();
 
                         for (Long id : element.getNodeIds()) {
                             if (idToNode.get(id).getRefs().size() != 2) {
                                 tempIds.add(id);
                             }
-
                         }
 
                         element.updateNodes(tempIds);
@@ -673,7 +673,7 @@ public class OSMHandler extends DefaultHandler {
                 // If the current node has either 1 or more than 2 nodes, then we need to add it to the graph.
                 // (Nodes with exactly to references can be removed since no intersections/endpoints will ever exist
                 // there).
-                HashSet<Long> refs = node.getRefs();
+                SimpleLongSet refs = node.getRefs();
                 if (refs.size() != 2) {
                     // Start from the currently found node
                     OSMNode from = node;
@@ -696,26 +696,20 @@ public class OSMHandler extends DefaultHandler {
         Long wayId = null;
         OSMNode neighbor = idToNode.get(initialNeighborId);
         long prevNeighborId = neighbor.getId();
-        boolean found = false;
-        HashSet matchedNodes = new HashSet<>();
+        ArrayList<Coordinates> path = new ArrayList<>();
+        path.add(new Coordinates(from.getLon(), from.getLat()));
+        path.add(new Coordinates(neighbor.getLon(), neighbor.getLat()));
 
         // Continue until we find a node that cannot be removed.
-        while (!found) {
+        while (true) {
             // Go through all the nodes...
-            HashSet<Long> neighbourRefs = neighbor.getRefs();
-            if (from.getId() == 8084567 && initialNeighborId == 2073406025l) {
-                System.out.println(neighbor.getId() + " " + neighbor.getRefs() + from.getId() + " " + prevNeighborId);
-            }
+            SimpleLongSet neighbourRefs = neighbor.getRefs();
+
             if (neighbourRefs.size() != 2 || (neighbourRefs.contains(from.getId()) && neighbourRefs.contains(prevNeighborId))) {
                 break;
             }
 
-
-            for (Long id : neighbourRefs) {
-                if (from.getId() == 8084567 && initialNeighborId == 2073406025l) {
-                    System.out.println(neighbor.getId() + " " + neighbor.getRefs() + from.getId() + " " + prevNeighborId);
-                }
-                //System.out.println(matchedNodes);
+            for (Long id : neighbourRefs.getSet()) {
                 // ... and find the next node (i.e. not the previous node)
                 if (id != prevNeighborId && id != from.getId()) {
 
@@ -727,30 +721,27 @@ public class OSMHandler extends DefaultHandler {
                     // Set the current neighbor to be the neighbor we just found.
                     prevNeighborId = neighbor.getId();
                     neighbor = idToNode.get(id);
+                    path.add(new Coordinates(neighbor.getLon(), neighbor.getLat()));
                     break;
                 }
             }
         }
 
-        // If we're parsing two nodes that doesn't have any nodes inbetween, then the wayId haven't been stored yet..
+        // If we're parsing two nodes that doesn't have any nodes in between, then the wayId haven't been stored yet..
         // therefore this should be done now.
         if (wayId == null) {
             wayId = getMatchingWayId(from, neighbor);
         }
 
-        if (from.getId() == 8084567) {
-            //System.out.println(from.getId() + " " + neighbor.getId() + " " + initialNeighborId);
-        }
-
         // We now have all the information required to create an edge, do so now!
-        createEdge(from, neighbor, wayId);
+        createEdge(from, neighbor, path, wayId);
     }
 
     /**
      * This method should be called once a from and to node has been found along with the id to the way they're related
      * to.
      */
-    private void createEdge(OSMNode from, OSMNode to, Long wayId) {
+    private void createEdge(OSMNode from, OSMNode to, ArrayList<Coordinates> path, Long wayId) {
         // Get the related way
         OSMWay way = idToWay.get(wayId);
 
@@ -771,24 +762,42 @@ public class OSMHandler extends DefaultHandler {
             graph.putNode(convertedTo);
         }
 
-        // Determine the length between the two nodes
-        float length = (float) GetDistance.inMM(convertedFrom.getLat(), convertedFrom.getLon(), convertedTo.getLat(), convertedTo.getLon());
+        // Ensure that there doesn't already exist an edge between the two nodes.
+        for (Integer edgeId : convertedFrom.getTempEdges()) {
+            if (graph.getEdge(edgeId).getTo(convertedFrom) == convertedTo.getId()) {
+               return;
+            }
+        }
 
         // Create the edge with the information of the nodes and the way connecting them
-        Edge edge = new Edge(convertedFrom.getId(), convertedTo.getId(), length, way.getSpeedLimit(), way.supportsCars(), way.supportsBicycles(), way.supportPedestrians());
+        Edge edge = new Edge(convertedFrom.getId(), convertedTo.getId(), path, getEdgeLength(path), way.getSpeedLimit(), way.supportsCars(), way.supportsBicycles(), way.supportPedestrians());
 
-        // Add the edge to the nodes
+        // Add the edge to map and references to nodes
         int edgeId = graph.putEdge(edge);
+        convertedFrom.addEdge(edgeId);
+        convertedTo.addEdge(edgeId);
+    }
 
-        graph.getNode(convertedFrom.getId()).addEdge(edgeId);
-        graph.getNode(convertedTo.getId()).addEdge(edgeId);
+    /** Helper that computes the actual length between two required graph nodes (Taking hidden nodes into account) */
+    private float getEdgeLength(ArrayList<Coordinates> nodes) {
+        float length = 0;
+        Coordinates from = nodes.get(0);
+
+        for (int i = 1; i < nodes.size(); i++) {
+            Coordinates to = nodes.get(i);
+            length += (float) GetDistance.inMM(from.getX(), from.getY(), to.getX(), to.getY());
+
+            from = to;
+        }
+
+        return length;
     }
 
     /**
      * Internal helper that returns the id of the way that two nodes are a part of.
      */
     private Long getMatchingWayId(OSMNode node1, OSMNode node2) {
-        for (long fromWayId : node1.getWayIds()) {
+        for (long fromWayId : node1.getWayIds().getSet()) {
             if (idToNode.get(node2.getId()).getWayIds().contains(fromWayId)) {
                 return fromWayId;
             }

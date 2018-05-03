@@ -96,28 +96,7 @@ public class MapView extends JComponent {
             g.setColor(Color.BLACK);
         }
 
-        for (Node node : graph.nodes.values()) {
-            Path2D path = new Path2D.Float();
-
-            path.moveTo(node.getLon(), node.getLat());
-            path.lineTo(node.getLon() + 0.00002f, node.getLat() + 0.00002f);
-            g.setColor(Color.BLACK);
-            g.setStroke(new BasicStroke(0.00002f));
-            g.draw(path);
-        }
-
-        for (Edge edge : graph.edges.values()) {
-            Path2D path = new Path2D.Float();
-
-            path.moveTo(graph.getNode(edge.node1).getLon(), graph.getNode(edge.node1).getLat());
-            path.lineTo(graph.getNode(edge.node2).getLon(), graph.getNode(edge.node2).getLat());
-            g.setColor(Color.RED);
-            g.draw(path);
-        }
-
         paintLocationIcon(g);
-
-
     }
 
 

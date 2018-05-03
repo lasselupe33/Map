@@ -1,13 +1,13 @@
 package parsing;
 
-import java.util.HashSet;
+import helpers.structures.SimpleLongSet;
 
 public class OSMNode {
-    private HashSet<Long> wayIds;
     private long id;
     private float lon;
     private float lat;
-    private HashSet<Long> refs;
+    private SimpleLongSet refs;
+    private SimpleLongSet wayIds;
 
     public OSMNode() {
     }
@@ -16,8 +16,8 @@ public class OSMNode {
         this.id = id;
         this.lon = lon;
         this.lat = lat;
-        this.refs = new HashSet<>();
-        this.wayIds = new HashSet<>();
+        refs = new SimpleLongSet();
+        wayIds = new SimpleLongSet();
     }
 
     public long getId() {
@@ -50,12 +50,11 @@ public class OSMNode {
 
     public void addWayId(long wayId) {
         wayIds.add(wayId);
-
     }
 
-    public HashSet<Long> getRefs() { return refs; }
+    public SimpleLongSet getRefs() { return refs; }
 
-    public HashSet<Long> getWayIds() {
+    public SimpleLongSet getWayIds() {
         return wayIds;
     }
 }

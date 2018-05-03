@@ -14,7 +14,7 @@ public class Node extends OSMNode implements Externalizable {
     private ArrayList<Integer> tempEdges; // Contains edges until map has been completely parsed
     private float lengthTo;
     private float timeTo;
-    private Node parent;
+    private Integer parentEdge;
     private float estimateToDest;
 
     public Node() {}
@@ -23,7 +23,7 @@ public class Node extends OSMNode implements Externalizable {
         tempEdges = new ArrayList<>();
         lengthTo = Float.POSITIVE_INFINITY;
         timeTo = Float.POSITIVE_INFINITY;
-        parent = null;
+        parentEdge = null;
     }
 
     /**
@@ -50,11 +50,11 @@ public class Node extends OSMNode implements Externalizable {
 
     public void setTimeToSource(float newTime) { timeTo = newTime; }
 
-    public void setParent(Node parent) {
-        this.parent = parent;
+    public void setParentEdge(Integer parentId) {
+        this.parentEdge = parentId;
     }
 
-    public Node getParent() { return parent; }
+    public Integer getParentEdge() { return parentEdge; }
 
     public void addEdge(int edge) {
         tempEdges.add(edge);
@@ -62,8 +62,10 @@ public class Node extends OSMNode implements Externalizable {
 
     public Integer[] getEdges() { return edges; }
 
+    public ArrayList<Integer> getTempEdges() { return tempEdges; }
+
     public void reset(Node dest) {
-        parent = null;
+        parentEdge = null;
         lengthTo = Float.POSITIVE_INFINITY;
         timeTo = Float.POSITIVE_INFINITY;
         estimateToDest = (float) GetDistance.inMM(getLat(), getLon(), dest.getLat(), dest.getLon());

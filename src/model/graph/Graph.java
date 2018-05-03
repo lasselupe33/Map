@@ -5,6 +5,7 @@ import helpers.io.DeserializeObject;
 import helpers.io.SerializeObject;
 import helpers.structures.KDTree;
 import helpers.structures.LongToNodeMap;
+import model.Coordinates;
 import model.MapModel;
 import model.WayType;
 import view.MainWindowView;
@@ -21,8 +22,8 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class Graph {
-    public HashMap<Long, Node> nodes;
-    public HashMap<Integer, Edge> edges;
+    private HashMap<Long, Node> nodes;
+    private HashMap<Integer, Edge> edges;
     private int currEdgeId = 0;
     private VehicleType vehicleType;
     private Path2D routePath;
@@ -78,15 +79,11 @@ public class Graph {
 
             // Go through all neighbours and relax them if possible
             for (int i = 0; i < current.getEdges().length; i++) {
-                relaxNeighbour(current, edges.get(current.getEdges()[i]));
-            }
-
-            if (pq.size() == 0) {
-                dest = current;
+                relaxNeighbour(current, current.getEdges()[i]);
             }
         }
 
-        if (dest.getParent() != null) {
+        if (dest.getParentEdge() != null) {
             setRouteLength(dest);
             setRouteTime(dest);
             createComputedPath(dest);
@@ -104,7 +101,9 @@ public class Graph {
     /**
      * Internal helper that relaxes the neighbour of the current node if a shorter path can be found.
      */
-    private void relaxNeighbour(Node current, Edge edgeToNeighbour) {
+    private void relaxNeighbour(Node current, Integer edgeToNeighbourId) {
+        Edge edgeToNeighbour = edges.get(edgeToNeighbourId);
+
         // Ensure edge supports current vehicle type
         if (!edgeToNeighbour.supportsType(vehicleType)) {
             return;
@@ -116,7 +115,7 @@ public class Graph {
             // We found a shorter path for the neighbour! Relax neighbour node.
             neighbour.setLengthToSource(current.getLengthToSource() + edgeToNeighbour.getLength());
             neighbour.setTimeToSource(current.getTimeToSource() + edgeToNeighbour.getTime(vehicleType));
-            neighbour.setParent(current);
+            neighbour.setParentEdge(edgeToNeighbourId);
             pq.add(neighbour);
         }
     }
@@ -132,11 +131,15 @@ public class Graph {
     }
 
     private void setRouteTime(Node dest) {
-        // Get time in minutes
-        float time = dest.getTimeToSource() / 1000000;
+        // Get time in hours
+        float time = dest.getTimeToSource() / 1000000 / 60;
 
         // We always round the time up
-        this.time = (int) time + "min " + (int) ((time % 1) * 60) + "sek";
+        int hours = (int) time;
+        int min = (int) ((time % 1) * 60);
+        int seconds = (int) ((((time % 1) * 60) % 1) * 60);
+
+        this.time = (hours != 0 ? hours + "h " : "") + (min != 0 || hours != 0 ? min + "min " : "") + (seconds != 0 || min != 0 || hours != 0 ? seconds + "sek" : "");
     }
 
     /** Internal helper that creates the path of the found path between two nodes */
@@ -144,22 +147,32 @@ public class Graph {
         Node node = dest;
 
         // Prepare drawing route path
-        Path2D sp = new Path2D.Float();
-        sp.moveTo(node.getLon(), node.getLat());
+        Path2D routePath = new Path2D.Float();
+        Edge parentEdge = edges.get(node.getParentEdge());
+        routePath.moveTo(node.getLon(), node.getLat());
 
-        while(node.getParent() != null) {
-            node = node.getParent();
-            sp.lineTo(node.getLon(), node.getLat());
+        while(parentEdge != null) {
+            // Determine if we should start at the end of the edge path or the start...
+            if (parentEdge.getPath()[0].getX() == node.getLon() && parentEdge.getPath()[0].getY() == node.getLat()) {
+                // If the previous point matches with the start of the path, then go through the path forwards
+                for (int i = 1; i < parentEdge.getPath().length; i++) {
+                    Coordinates point = parentEdge.getPath()[i];
+                    routePath.lineTo(point.getX(), point.getY());
+                }
+            } else {
+                // ... else go through the path backwards
+                for (int i = parentEdge.getPath().length - 2; i >= 0; i--) {
+                    Coordinates point = parentEdge.getPath()[i];
+                    routePath.lineTo(point.getX(), point.getY());
+                }
+            }
+
+            // Go to next matched path
+            node = nodes.get(parentEdge.getTo(node));
+            parentEdge = edges.get(node.getParentEdge());
         }
 
-        routePath = sp;
-    }
-
-    /** Internal helper that resets all visited vertexes of the map */
-    private void resetVerticies(ArrayList<Node> vertexes) {
-        for (Node node : vertexes) {
-            node.reset(this.dest);
-        }
+        this.routePath = routePath;
     }
 
     public void setSourceAndDest(Node s, Node d) {
@@ -203,6 +216,8 @@ public class Graph {
     public Node getNode(long id) {
         return nodes.get(id);
     }
+
+    public Edge getEdge(int id) { return edges.get(id);}
 
     public void setVehicleType(VehicleType type) {
         this.vehicleType = type;

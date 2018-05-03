@@ -1,5 +1,6 @@
 package model;
 
+import helpers.structures.SimpleLongSet;
 import model.graph.Node;
 import parsing.OSMNode;
 
@@ -14,7 +15,7 @@ public class MapElement extends Coordinates implements Externalizable {
     private Rectangle2D r;
     private WayType type;
     private boolean shouldFill;
-    private Set<Long> nodeIds = new HashSet<>();
+    private SimpleLongSet nodeIds;
 
 
     public MapElement() {}
@@ -24,6 +25,8 @@ public class MapElement extends Coordinates implements Externalizable {
         type = t;
         shouldFill = sf;
         r = shape.getBounds2D();
+
+        nodeIds = new SimpleLongSet();
 
         for (OSMNode n : nodes) {
             nodeIds.add(n.getId());
@@ -38,11 +41,11 @@ public class MapElement extends Coordinates implements Externalizable {
         return r;
     }
 
-    public void updateNodes(HashSet ids) {
+    public void updateNodes(SimpleLongSet ids) {
         nodeIds = ids;
     }
 
-    public Set<Long> getNodeIds() {
+    public SimpleLongSet getNodeIds() {
             return nodeIds;
     }
 
@@ -69,6 +72,6 @@ public class MapElement extends Coordinates implements Externalizable {
         shape = (Shape) in.readObject();
         type = (WayType) in.readObject();
         shouldFill = in.readBoolean();
-        nodeIds = (HashSet<Long>) in.readObject();
+        nodeIds = (SimpleLongSet) in.readObject();
     }
 }
