@@ -89,7 +89,6 @@ public class MapController {
     public void zoom(double factor, double x, double y) {
         if (GetDistance.PxToKm(100) > 50 && factor < 1.01) factor = 1.0;
         if (GetDistance.PxToKm(100) < 0.01 && factor > 1.0) factor = 1.0;
-        System.out.println(GetDistance.PxToKm(100));
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
@@ -206,7 +205,7 @@ public class MapController {
      * Internal helper that parses the current zoom level.
      * This level will be between 1 and 510.
      */
-    public int getZoomLevel() {
+    public static int getZoomLevel() {
         double currDist = GetDistance.PxToKm(100) * 10;
         int maxDist = 510;
 
