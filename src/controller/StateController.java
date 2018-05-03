@@ -1,6 +1,5 @@
 package controller;
 
-import view.AutoCompleteList;
 import view.MainWindowView;
 
 /**
@@ -27,14 +26,30 @@ public class StateController {
         this.autoCompleteController = acl;
     }
 
+    /**
+     * Return the current state
+     * @return current state
+     */
     public ViewStates getCurrentState() {
         return currentState;
     }
 
+    /**
+     * Return the previous view state
+     * @return prev state
+     */
     public ViewStates getPrevState() { return prevState; }
 
+    /**
+     * Return previous panel
+     * @return panel
+     */
     public  ViewStates getPrevPanel() { return prevPanel; }
 
+    /**
+     * Update the current state
+     * @param newState the state to update to
+     */
     public void updateCurrentState(ViewStates newState) {
         // AutoCompleteList will always be reset on state change
         autoCompleteController.reset();
@@ -43,18 +58,29 @@ public class StateController {
         mainView.update();
         mainView.getlpane().repaint();
     }
+
+    /**
+     * For the previous state to be something specific
+     * @param state the state the previous state is forced to be
+     */
     public void forcePrevState(ViewStates state) {
         updatePrevPanel();
 
         prevState = state;
     }
 
+    /**
+     * Update the previous state
+     */
     public void updatePrevState() {
         updatePrevPanel();
 
         prevState = currentState;
     }
 
+    /**
+     * Update the previous panel
+     */
     public void updatePrevPanel(){
         if (prevPanel != prevState){
             prevPanel = prevState;

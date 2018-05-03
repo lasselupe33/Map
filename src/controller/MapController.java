@@ -49,15 +49,23 @@ public class MapController {
         return instance;
     }
 
-    public void addDependencies(MapView c, MapModel mm, MetaModel m, Graph g) {
-        canvas = c;
+    /**
+     * Add needed dependencies
+     * @param mv MapView
+     * @param mm MapModel
+     * @param m MetaModel
+     * @param g Graphics
+     */
+    public void addDependencies(MapView mv, MapModel mm, MetaModel m, Graph g) {
+        canvas = mv;
         mapModel = mm;
         metaModel = m;
         graph = g;
     }
 
     /**
-     * @return whether or not the view should utilise antialias
+     * Return whether or not the view should utilise antialias
+     * @return true if should; else false
      */
     public boolean shouldAntiAlias() {
         return useAntiAliasing;
@@ -69,7 +77,7 @@ public class MapController {
     }
 
     /**
-     *
+     * Pan
      * @param dx
      * @param dy
      */
@@ -94,7 +102,9 @@ public class MapController {
         pan(-x, -y);
     }
 
-    /** Helper that returns the current data required for rendering the map */
+    /**
+     * Helper that returns the current data required for rendering the map
+     */
     public List<MapElement> getMapData() { return mapModel.getMapData(); }
 
     /**
@@ -118,7 +128,9 @@ public class MapController {
         repaintMap(false);
     }
 
-    /** Helper method that reset the canvas when called */
+    /**
+     * Helper method that reset the canvas when called
+     */
     public void reset() {
         // Reset transform
         transform = new AffineTransform();
@@ -158,7 +170,6 @@ public class MapController {
     }
 
 
-
     //Methods to handle list of locations where Icons should be drawn
     public static void updateLocationCoordinates(Coordinates coordinates){ locationIconCoordinates = coordinates; }
 
@@ -177,7 +188,6 @@ public class MapController {
     public static void deleteFavoritesFromList(Coordinates coordinates) { listOfFavorites.remove(coordinates); }
 
     public List<Coordinates> getListOfFavorites() { return listOfFavorites; }
-
 
 
 
@@ -213,6 +223,10 @@ public class MapController {
         return zoomLevel;
     }
 
+    /**
+     * Repaint map
+     * @param forceAntialias
+     */
     public static void repaintMap(boolean forceAntialias) {
         canvas.repaint();
 
@@ -238,6 +252,9 @@ public class MapController {
         }
     }
 
+    /**
+     * Remove navigation route
+     */
     public void removeRoute() {
         graph.resetRoute();
         repaintMap(true);

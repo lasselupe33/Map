@@ -15,6 +15,9 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 
+/**
+ * Handle OSM data
+ */
 public class OSMHandler extends DefaultHandler {
     private LongToNodeMap idToNode = new LongToNodeMap(25);
     private Map<Long, OSMWay> idToWay = new HashMap<>();

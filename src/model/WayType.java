@@ -2,6 +2,10 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * Map element types
+ * The list of elements is ordered; elements listed first will be drawn first.
+ */
 public enum WayType implements Serializable {
     COASTLINE(1),
     PLACE(490),
@@ -42,9 +46,9 @@ public enum WayType implements Serializable {
     UNKNOWN(510), SWIMMINGPOOL(485);
 
     /**
-     * The priority of a mapElement specifies when it'll be rendered on the map.
+     * The priority of a map element specifies when it'll be rendered on the map.
      *
-     * A priority of 1 means that the mapElement will be drawn at a distance of 50km's/100px while a priority of
+     * A priority of 1 means that the map element will be drawn at a distance of 50km's/100px while a priority of
      * 500 means that the mapElement will be drawn at a distance of 100m's/100px.
      *
      * Each priority step has 100m's interval, i.e. a priority of 100 would result in rendering at a distance of 40km's/100px.
