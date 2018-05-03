@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 
 public class GetDistanceTest {
     @Test
-    public void inKM()  {
+    public void testInKM()  {
         // Correct distance retrieved from https://www.movable-type.co.uk/scripts/latlong.html
         double lat1 = 55.693215;
         double lon1 = 12.450483;
@@ -25,7 +25,7 @@ public class GetDistanceTest {
     }
 
     @Test
-    public void coordinatesWraparound()  {
+    public void testCoordinatesWraparound()  {
         // Correct distance retrieved from https://www.movable-type.co.uk/scripts/latlong.html
         double lat1 = 89.199192;
         double lon1 = 17.199212;

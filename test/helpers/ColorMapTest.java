@@ -11,7 +11,6 @@ public class ColorMapTest {
     private ColorMap map;
 
     @Test
-    //This test works alone but it doesn't pass when it is run together with the other tests
     public void testDefault() throws Exception {
         map = new ColorMap();
         WayType type = WayType.GRASS;
@@ -49,4 +48,5 @@ public class ColorMapTest {
         map.setMode(ColorMap.Mode.GRAYSCALE);
         assertEquals(new Color(205,205,205), map.getColor(type));
     }
+
 }
