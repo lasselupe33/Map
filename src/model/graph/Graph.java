@@ -22,6 +22,8 @@ import java.util.PriorityQueue;
 
 public class Graph {
     private HashMap<Long, Node> nodes;
+    private HashMap<Integer, Edge> edges;
+    private int currEdgeId = 0;
     private VehicleType vehicleType;
     private Path2D routePath;
     private String length;
@@ -75,7 +77,7 @@ public class Graph {
 
             // Go through all neighbours and relax them if possible
             for (int i = 0; i < current.getEdges().length; i++) {
-                relaxNeighbour(current, current.getEdges()[i]);
+                relaxNeighbour(current, edges.get(current.getEdges()[i]));
             }
         }
 
@@ -183,25 +185,14 @@ public class Graph {
         }
     }
 
-    /**
-     * Helper that for each node determines whether or not it needs to exist (i.e. is an intersection).
-     * If we do not need a specific node, then we simply remove it and at a reference to the corresponding edge.
-     */
-    public void flatten() {
-        for (Node node : nodes.values()) {
-            if (node.getEdges().length > 3) {
-                Node newNode = new Node(node.getId(), node.getLat(), node.getLon());
-                for (Edge edge : node.getEdges()) {
-
-                    Node neighbour = nodes.get(node.getEdges()[0].getTo(node));
-                }
-            }
-        }
-    }
-
     /** Getters and setters */
     public void putNode(Node node) {
         nodes.put(node.getId(), node);
+    }
+
+    public int putEdge(Edge edge) {
+        edges.put(currEdgeId, edge);
+        return currEdgeId++;
     }
 
     public Node getNode(long id) {

@@ -675,16 +675,19 @@ public class OSMHandler extends DefaultHandler {
      * to.
      */
     private void createEdge(OSMNode from, OSMNode to, Long wayId) {
-        // Get related way
+        // Get the related way
         OSMWay way = idToWay.get(wayId);
 
+        // Get the actual node already added to the graph
         Node convertedFrom = graph.getNode(from.getId());
 
+        // If the OSMNode hasn't been converted and added to the graph, then do so now.
         if (convertedFrom == null) {
             convertedFrom = new Node(from.getId(), from.getLon(), from.getLat());
             graph.putNode(convertedFrom);
         }
 
+        // ... Do the same with the "to"-node
         Node convertedTo = graph.getNode(to.getId());
 
         if (convertedTo == null) {
@@ -692,12 +695,16 @@ public class OSMHandler extends DefaultHandler {
             graph.putNode(convertedTo);
         }
 
+        // Determine the length between the two nodes
         float length = (float) GetDistance.inMM(convertedFrom.getLat(), convertedFrom.getLon(), convertedTo.getLat(), convertedTo.getLon());
 
+        // Create the edge with the information of the nodes and the way connecting them
         Edge edge = new Edge(convertedFrom.getId(), convertedTo.getId(), length, way.getSpeedLimit(), way.supportsCars(), way.supportsBicycles(), way.supportPedestrians());
 
-        graph.getNode(convertedFrom.getId()).addEdge(edge);
-        graph.getNode(convertedTo.getId()).addEdge(edge);
+        // Add the edge to the nodes
+        int edgeId = graph.putEdge(edge);
+        graph.getNode(convertedFrom.getId()).addEdge(edgeId);
+        graph.getNode(convertedTo.getId()).addEdge(edgeId);
     }
 
     /**
@@ -714,6 +721,7 @@ public class OSMHandler extends DefaultHandler {
     }
 
     /** Internal helper that converts an OSMNode to a Node to be used in the wayGraph */
+    /*
     private void addToGraph(OSMWay way) {
         ArrayList<OSMNode> nodes = way.getNodes();
         OSMNode from = nodes.get(0);
@@ -749,4 +757,5 @@ public class OSMHandler extends DefaultHandler {
         }
         isHighway = false;
     }
+    */
 }

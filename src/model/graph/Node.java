@@ -10,8 +10,8 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 
 public class Node extends OSMNode implements Externalizable {
-    private Edge[] edges;
-    private ArrayList<Edge> tempEdges; // Contains edges until map has been completely parsed
+    private Integer[] edges;
+    private ArrayList<Integer> tempEdges; // Contains edges until map has been completely parsed
     private float lengthTo;
     private float timeTo;
     private Node parent;
@@ -56,11 +56,11 @@ public class Node extends OSMNode implements Externalizable {
 
     public Node getParent() { return parent; }
 
-    public void addEdge(Edge edge) {
+    public void addEdge(int edge) {
         tempEdges.add(edge);
     }
 
-    public Edge[] getEdges() { return edges; }
+    public Integer[] getEdges() { return edges; }
 
     public void reset(Node dest) {
         parent = null;
@@ -94,7 +94,7 @@ public class Node extends OSMNode implements Externalizable {
     public String toKey() { return super.getLat() + "-" + super.getLon(); }
 
     public void finalizeEdges() {
-        edges = tempEdges.toArray(new Edge[tempEdges.size()]);
+        edges = tempEdges.toArray(new Integer[tempEdges.size()]);
     }
 
     @Override
@@ -112,6 +112,6 @@ public class Node extends OSMNode implements Externalizable {
         super.setLon(in.readFloat());
         lengthTo = Float.POSITIVE_INFINITY;
         timeTo = Float.POSITIVE_INFINITY;
-        edges = (Edge[]) in.readObject();
+        edges = (Integer[]) in.readObject();
     }
 }
