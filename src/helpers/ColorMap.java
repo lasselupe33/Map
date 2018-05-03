@@ -223,6 +223,11 @@ public class ColorMap {
                 grayscaleWater});
     }
 
+    public boolean isGrayscale() {
+        if (mode == 3) return true;
+        return false;
+    }
+
     public enum Mode {
         STANDARD,
         GRAYSCALE,

@@ -97,10 +97,14 @@ public class MapView extends JComponent {
                     // There shouldn't be other possibilities
                     break;
             }
-            g.setColor(new Color(66, 133, 244));
+            if (colorMap.isGrayscale()) {
+                g.setColor(new Color(30,30,30));
+            } else {
+                g.setColor(new Color(66, 133, 244));
+            }
             g.draw(graph.getRoutePath());
 
-            g.setStroke(new BasicStroke(0.00004f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
+            g.setStroke(new BasicStroke(0.00004f*factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
             g.setColor(Color.GRAY);
             g.draw(navigationController.getStartAddressPath());
             g.draw(navigationController.getEndAddressPath());
@@ -108,12 +112,24 @@ public class MapView extends JComponent {
 
         paintStartNavigationIcon(g);
 
+        Color colorMain = new Color(66, 133, 244);
+        Color colorDetail = new Color(0, 4, 161);
+        if (colorMap.isGrayscale()) {
+            colorMain = new Color(55,55,55);
+            colorDetail = new Color(148,148,148);
+        }
         if (!controller.getListOfFavorites().isEmpty()) {
             for (Coordinates c : controller.getListOfFavorites()) {
-                paintLocationIcon(g, c, new Color(66, 133, 244), new Color(0, 4, 161), 0.0025);
+                paintLocationIcon(g, c, colorMain, colorDetail, 0.0025);
             }
         }
-        if (controller.getLocationCoordinates() != null) paintLocationIcon(g, controller.getLocationCoordinates(), Color.red, new Color(124, 17, 19), 0.003);
+        colorMain = Color.red;
+        colorDetail = new Color(124, 17, 19);
+        if (colorMap.isGrayscale()) {
+            colorMain = new Color(30,30,30);
+            colorDetail = new Color(148,148,148);
+        }
+        if (controller.getLocationCoordinates() != null) paintLocationIcon(g, controller.getLocationCoordinates(), colorMain, colorDetail, 0.003);
 
     }
 
@@ -153,7 +169,11 @@ public class MapView extends JComponent {
         Ellipse2D innerCircle = new Ellipse2D.Float(coord.getX()-scale/2, coord.getY()-scale/2, scale, scale);
         Ellipse2D outerCircle = new Ellipse2D.Float(coord.getX()-scale2/2, coord.getY()-scale2/2, scale2, scale2);
 
-        g.setPaint(new Color(66, 133, 244));
+        if (colorMap.isGrayscale()) {
+            g.setPaint(new Color(30,30,30));
+        } else {
+            g.setPaint(new Color(66, 133, 244));
+        }
         g.fill(outerCircle);
         g.setPaint(Color.white);
         g.fill(innerCircle);
