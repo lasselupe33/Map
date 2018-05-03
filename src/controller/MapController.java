@@ -87,10 +87,11 @@ public class MapController {
     }
 
     public void zoom(double factor, double x, double y) {
+        if (GetDistance.PxToKm(100) > 50 && factor < 1.01) factor = 1.0;
+        if (GetDistance.PxToKm(100) < 0.01 && factor > 1.0) factor = 1.0;
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
-        updateMap();
     }
 
     /** Helper that returns the current data required for rendering the map */

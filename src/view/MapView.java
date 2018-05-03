@@ -158,9 +158,7 @@ public class MapView extends JComponent {
 
     public Coordinates containsCoordinate(Point2D p) {
         for (Shape s : favoriteIcons.keySet()) {
-            if (s.contains(p)) {
-                return favoriteIcons.get(s);
-            }
+            if (s.contains(p)) return favoriteIcons.get(s);
         }
         return null;
     }
