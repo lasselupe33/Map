@@ -51,23 +51,8 @@ public class MenuController {
         MapController.repaintMap(true);
     }
 
-    public void tritanopiaMode() {
-        colorMap.setMode(ColorMap.Mode.TRITANOPIA);
-        MapController.repaintMap(true);
-    }
-
     public void grayscaleMode() {
         colorMap.setMode(ColorMap.Mode.GRAYSCALE);
         MapController.repaintMap(true);
-    }
-
-    public void fastestRoute() {
-        graph.setRouteType(RouteType.FASTEST);
-        graph.recalculatePath();
-    }
-
-    public void shortestRoute() {
-        graph.setRouteType(RouteType.SHORTEST);
-        graph.recalculatePath();
     }
 }

@@ -108,7 +108,7 @@ public class AddressesModel implements Serializable {
      * Helper to retrieve an address from a given coordinate.
      * Used for nearest neighbour searching.
      */
-    private Address addressFromCoordinate(Coordinates coord) {
+    public Address addressFromCoordinate(Coordinates coord) {
         return addresses.get(coordToKeyMap.get(coord.toString()));
     }
 

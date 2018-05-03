@@ -15,8 +15,9 @@ import java.awt.event.ActionEvent;
  * This class creates the main window to display the map in.
  */
 public class MainWindowView {
+    private static int height;
     private JFrame window;
-    public JLayeredPane lpane = new JLayeredPane();
+    private JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
     private MetaModel metaModel;
     private MapView mapView;
@@ -190,7 +191,7 @@ public class MainWindowView {
             initialRender = false;
         }
 
-        int height = window.getContentPane().getHeight();
+        height = window.getContentPane().getHeight();
         int width = window.getContentPane().getWidth();
 
         // Setup bounds once the screen size has been determined
@@ -252,11 +253,6 @@ public class MainWindowView {
         colorGroup.add(deuteranopiaItem);
         subShowMenu.add(deuteranopiaItem);
 
-        JMenuItem tritanopiaItem = new JRadioButtonMenuItem("Blåblind (Tritanopia)");
-        tritanopiaItem.addActionListener((ActionEvent e) -> menuController.tritanopiaMode());
-        colorGroup.add(tritanopiaItem);
-        subShowMenu.add(tritanopiaItem);
-
         JMenuItem grayscaleItem = new JRadioButtonMenuItem("Gråskala");
         grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());
         colorGroup.add(grayscaleItem);
@@ -265,5 +261,13 @@ public class MainWindowView {
         // create the Help menu
         JMenu helpMenu = new JMenu("Help");
         menubar.add(helpMenu);
+    }
+
+    public static int getHeight() {
+        return height;
+    }
+
+    public JLayeredPane getlpane() {
+        return lpane;
     }
 }
