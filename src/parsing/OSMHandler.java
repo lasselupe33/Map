@@ -108,22 +108,22 @@ public class OSMHandler extends DefaultHandler {
                 } else {
                     createWay(way);
                 }
-                if (isHighway) {
-                    addToGraph(way);
-                }
                 break;
             case "relation":
                 createRelation();
                 break;
             case "osm":
-                loadingScreen.updateProgress(84.881);
+                loadingScreen.updateProgress(81.881);
                 convertCoastlinesToPath();
-                loadingScreen.updateProgress(92.963);
+                loadingScreen.updateProgress(85.963);
                 mapModel.createTrees();
-                loadingScreen.updateProgress(96.345);
+                loadingScreen.updateProgress(91.345);
                 addressesModel.createTree();
                 addressesModel.setPostcodeToCity(postcodeToCity);
-                graph.finalizeNodes();
+                loadingScreen.updateProgress(95.341);
+                buildGraph();
+                //graph.finalizeNodes();
+                //graph.flatten();
             default:
                 break;
         }
@@ -457,7 +457,7 @@ public class OSMHandler extends DefaultHandler {
 
     /** Internal helper that initializes a way then a way-tag is reached */
     private void initializeWay(long id) {
-        way = new OSMWay();
+        way = new OSMWay(id);
         type = WayType.UNKNOWN;
         speedLimit = 50;
         idToWay.put(id, way);
@@ -470,44 +470,28 @@ public class OSMHandler extends DefaultHandler {
             reachedWays = true;
         }
 
+        if (isHighway) {
+            way.addWayInfo(speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
+            OSMNode from = way.getNodes().get(0);
+
+            for (int i = 1; i < way.getNodes().size(); i++) {
+                OSMNode to = way.getNodes().get(i);
+
+                from.addRef(to.getId());
+                from.addWayId(way.getId());
+                to.addRef(from.getId());
+                to.addWayId(way.getId());
+
+                from = to;
+            }
+
+            // addToGraph(way);
+        }
+
         Path2D path = convertWayToPath(new Path2D.Float(), way);
         addElement(type, path, way.getNodes());
-    }
 
-    /** Internal helper that converts an OSMNode to a Node to be used in the wayGraph */
-    private void addToGraph(OSMWay way) {
-        ArrayList<OSMNode> nodes = way.getNodes();
-        OSMNode from = nodes.get(0);
-
-        for (int i = 1; i < nodes.size(); i++) {
-            OSMNode to = nodes.get(i);
-
-            // Determine length of edge between current node and prev node
-            float length = (float) GetDistance.inMM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
-
-            Node convertedFromNode = graph.getNode(from.getId());
-
-            if (convertedFromNode == null) {
-                convertedFromNode = new Node(from.getId(), from.getLon(), from.getLat());
-                graph.putNode(convertedFromNode);
-            }
-
-            Node convertedToNode = graph.getNode(to.getId());
-
-            if (convertedToNode == null) {
-                convertedToNode = new Node(to.getId(), to.getLon(), to.getLat());
-                graph.putNode(convertedToNode);
-            }
-
-            // Create edge between converted nodes and add the edge to them.
-            Edge edge = new Edge(convertedFromNode.getId(), convertedToNode.getId(), length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
-
-            graph.getNode(convertedFromNode.getId()).addEdge(edge);
-            graph.getNode(convertedToNode.getId()).addEdge(edge);
-
-            // Prepare for next iteration in loop
-            from = to;
-        }
+        // Reset field
         isHighway = false;
     }
 
@@ -530,6 +514,7 @@ public class OSMHandler extends DefaultHandler {
     private Path2D convertWayToPath(Path2D path, OSMWay way) {
         OSMNode node = way.get(0);
         path.moveTo(node.getLon(), node.getLat());
+
         for (int i = 1; i < way.size(); i++) {
             node = way.get(i);
             path.lineTo(node.getLon(), node.getLat());
@@ -634,5 +619,134 @@ public class OSMHandler extends DefaultHandler {
             default:
                 break;
         }
+    }
+
+    /**
+     * Helper that builds the wayGraph once all node references have build
+     */
+    private void buildGraph() {
+        ArrayList<Long> nodeIds = idToNode.getIds();
+        int counter = 0;
+        for (long nodeId : nodeIds) {
+            OSMNode node = idToNode.get(nodeId);
+            if (node.getWayIds().size() != 0) {
+                HashSet<Long> refs = node.getRefs();
+                if (refs.size() == 1 || refs.size() > 2) {
+                    OSMNode from = node;
+
+                    for (Long neighborID : refs) {
+                        Long wayId = null;
+                        OSMNode neighbor = idToNode.get(neighborID);
+                        long prevNeighborId = neighbor.getId();
+
+                        // System.out.println(neighbor.getId() == from.getId());
+
+                        while (neighbor.getRefs().size() == 2) {
+                            for (Long id : neighbor.getRefs()) {
+                                if (id != prevNeighborId && neighbor.getRefs().size() == 2) {
+                                    if (wayId == null) {
+                                        wayId = getMatchingWayId(from, neighbor);
+                                    }
+
+                                    neighbor = idToNode.get(id);
+                                }
+                            }
+
+                            prevNeighborId = neighbor.getId();
+                        }
+
+                        if (wayId == null) {
+                            wayId = getMatchingWayId(from, neighbor);
+                        }
+
+                        createEdge(from, neighbor, wayId);
+                    }
+                    counter++;
+                }
+            }
+        }
+        System.out.println(counter);
+        System.out.println(graph.size());
+
+    }
+
+    /**
+     * This method should be called once a from and to node has been found along with the id to the way they're related
+     * to.
+     */
+    private void createEdge(OSMNode from, OSMNode to, Long wayId) {
+        // Get related way
+        OSMWay way = idToWay.get(wayId);
+
+        Node convertedFrom = graph.getNode(from.getId());
+
+        if (convertedFrom == null) {
+            convertedFrom = new Node(from.getId(), from.getLon(), from.getLat());
+            graph.putNode(convertedFrom);
+        }
+
+        Node convertedTo = graph.getNode(to.getId());
+
+        if (convertedTo == null) {
+            convertedTo = new Node(to.getId(), to.getLon(), to.getLat());
+            graph.putNode(convertedTo);
+        }
+
+        float length = (float) GetDistance.inMM(convertedFrom.getLat(), convertedFrom.getLon(), convertedTo.getLat(), convertedTo.getLon());
+
+        Edge edge = new Edge(convertedFrom.getId(), convertedTo.getId(), length, way.getSpeedLimit(), way.supportsCars(), way.supportsBicycles(), way.supportPedestrians());
+
+        graph.getNode(convertedFrom.getId()).addEdge(edge);
+        graph.getNode(convertedTo.getId()).addEdge(edge);
+    }
+
+    /**
+     * Internal helper that returns the id of the way that two nodes are a part of.
+     */
+    private Long getMatchingWayId(OSMNode node1, OSMNode node2) {
+        for (long fromWayId : node1.getWayIds()) {
+            if (idToNode.get(node2.getId()).getWayIds().contains(fromWayId)) {
+                return fromWayId;
+            }
+        }
+
+        return null;
+    }
+
+    /** Internal helper that converts an OSMNode to a Node to be used in the wayGraph */
+    private void addToGraph(OSMWay way) {
+        ArrayList<OSMNode> nodes = way.getNodes();
+        OSMNode from = nodes.get(0);
+
+        for (int i = 1; i < nodes.size(); i++) {
+            OSMNode to = nodes.get(i);
+
+            // Determine length of edge between current node and prev node
+            float length = (float) GetDistance.inMM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
+
+            Node convertedFromNode = graph.getNode(from.getId());
+
+            if (convertedFromNode == null) {
+                convertedFromNode = new Node(from.getId(), from.getLon(), from.getLat());
+                graph.putNode(convertedFromNode);
+            }
+
+            Node convertedToNode = graph.getNode(to.getId());
+
+            if (convertedToNode == null) {
+                convertedToNode = new Node(to.getId(), to.getLon(), to.getLat());
+                graph.putNode(convertedToNode);
+            }
+
+            // Create edge between converted nodes and add the edge to them.
+            Edge edge = new Edge(convertedFromNode.getId(), convertedToNode.getId(), length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
+
+            graph.getNode(convertedFromNode.getId()).addEdge(edge);
+            graph.getNode(convertedToNode.getId()).addEdge(edge);
+
+            // Prepare for next iteration in loop
+            from = to;
+        }
+        isHighway = false;
     }
 }

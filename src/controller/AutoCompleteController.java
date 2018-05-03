@@ -100,7 +100,7 @@ public class AutoCompleteController extends KeyAdapter {
                 break;
         }
 
-        if (text.length() == 0) {
+        if (text.length() <= 3) {
             list.setVisibility(false);
         } else {
             list.setVisibility(true);

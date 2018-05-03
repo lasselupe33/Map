@@ -37,6 +37,10 @@ public class Graph {
         vehicleType = VehicleType.CAR;
     }
 
+    public int size() {
+        return nodes.size();
+    }
+
     public void computePath(Node source, Node dest) {
         // Performance logs
         long start = System.currentTimeMillis();
@@ -172,10 +176,26 @@ public class Graph {
         length = null;
     };
 
-    /** Internal helper that converts the ArrayList of edges in a node to an array once all edges have been created */
+    /** Helper that converts the ArrayList of edges in a node to an array once all edges have been created */
     public void finalizeNodes() {
         for (Node node : nodes.values()) {
             node.finalizeEdges();
+        }
+    }
+
+    /**
+     * Helper that for each node determines whether or not it needs to exist (i.e. is an intersection).
+     * If we do not need a specific node, then we simply remove it and at a reference to the corresponding edge.
+     */
+    public void flatten() {
+        for (Node node : nodes.values()) {
+            if (node.getEdges().length > 3) {
+                Node newNode = new Node(node.getId(), node.getLat(), node.getLon());
+                for (Edge edge : node.getEdges()) {
+
+                    Node neighbour = nodes.get(node.getEdges()[0].getTo(node));
+                }
+            }
         }
     }
 
