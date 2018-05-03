@@ -122,7 +122,8 @@ public class OSMHandler extends DefaultHandler {
                 addressesModel.setPostcodeToCity(postcodeToCity);
                 loadingScreen.updateProgress(95.341);
                 buildGraph();
-                //graph.finalizeNodes();
+                addHighwayNodeRefs();
+                graph.finalizeNodes();
                 //graph.flatten();
             default:
                 break;
@@ -470,7 +471,7 @@ public class OSMHandler extends DefaultHandler {
             reachedWays = true;
         }
 
-        if (isHighway) {
+        if (isHighway && type != WayType.PEDESTRIAN) {
             way.addWayInfo(speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
             OSMNode from = way.getNodes().get(0);
 
@@ -484,8 +485,6 @@ public class OSMHandler extends DefaultHandler {
 
                 from = to;
             }
-
-            // addToGraph(way);
         }
 
         Path2D path = convertWayToPath(new Path2D.Float(), way);
@@ -621,11 +620,46 @@ public class OSMHandler extends DefaultHandler {
         }
     }
 
+    private void addHighwayNodeRefs() {
+        for (WayType type : WayType.values()) {
+            switch (type) {
+                case SERVICE:
+                case TRUNK:
+                case ROAD:
+                case TERTIARYROAD:
+                case SECONDARYROAD:
+                case HIGHWAY:
+                case MOTORWAY:
+                case CYCLEWAY:
+                case FOOTWAY:
+                case PEDESTRIAN:
+                case PATH:
+                    List<MapElement> list = mapModel.getMapElements(type);
+
+                    for (MapElement element : list) {
+                        HashSet tempIds = new HashSet<>();
+
+                        for (Long id : element.getNodeIds()) {
+                            if (idToNode.get(id).getRefs().size() != 2) {
+                                tempIds.add(id);
+                            }
+
+                        }
+
+                        element.updateNodes(tempIds);
+                    }
+
+                    break;
+            }
+        }
+    }
+
     /**
      * Helper that builds a flattened wayGraph with only the required nodes once all node references have build.
      */
     private void buildGraph() {
         ArrayList<Long> nodeIds = idToNode.getIds();
+        int counter = 0;
 
         // Go through all parsed nodes
         for (long nodeId : nodeIds) {
@@ -634,12 +668,13 @@ public class OSMHandler extends DefaultHandler {
 
             // As long as the node is a highway (has more than 0 wayIds), then we want to process and add it to the graph.
             if (node.getWayIds().size() != 0) {
+                counter++;
 
                 // If the current node has either 1 or more than 2 nodes, then we need to add it to the graph.
                 // (Nodes with exactly to references can be removed since no intersections/endpoints will ever exist
                 // there).
                 HashSet<Long> refs = node.getRefs();
-                if (refs.size() == 1 || refs.size() > 2) {
+                if (refs.size() != 2) {
                     // Start from the currently found node
                     OSMNode from = node;
 
@@ -652,6 +687,7 @@ public class OSMHandler extends DefaultHandler {
         }
 
         System.out.println(graph.size());
+        System.out.println(counter);
     }
 
     /** Internal helper that finds the first needed neighbor node of a node and creates an edge between the two. */
@@ -660,31 +696,50 @@ public class OSMHandler extends DefaultHandler {
         Long wayId = null;
         OSMNode neighbor = idToNode.get(initialNeighborId);
         long prevNeighborId = neighbor.getId();
+        boolean found = false;
+        HashSet matchedNodes = new HashSet<>();
 
         // Continue until we find a node that cannot be removed.
-        while (neighbor.getRefs().size() == 2) {
+        while (!found) {
             // Go through all the nodes...
-            for (Long id : neighbor.getRefs()) {
+            HashSet<Long> neighbourRefs = neighbor.getRefs();
+            if (from.getId() == 8084567 && initialNeighborId == 2073406025l) {
+                System.out.println(neighbor.getId() + " " + neighbor.getRefs() + from.getId() + " " + prevNeighborId);
+            }
+            if (neighbourRefs.size() != 2 || (neighbourRefs.contains(from.getId()) && neighbourRefs.contains(prevNeighborId))) {
+                break;
+            }
+
+
+            for (Long id : neighbourRefs) {
+                if (from.getId() == 8084567 && initialNeighborId == 2073406025l) {
+                    System.out.println(neighbor.getId() + " " + neighbor.getRefs() + from.getId() + " " + prevNeighborId);
+                }
+                //System.out.println(matchedNodes);
                 // ... and find the next node (i.e. not the previous node)
-                if (id != prevNeighborId) {
+                if (id != prevNeighborId && id != from.getId()) {
+
                     // If we haven't stored the wayId yet, do so new.
                     if (wayId == null) {
                         wayId = getMatchingWayId(from, neighbor);
                     }
 
                     // Set the current neighbor to be the neighbor we just found.
+                    prevNeighborId = neighbor.getId();
                     neighbor = idToNode.get(id);
+                    break;
                 }
             }
-
-            // Update previous neighbour id
-            prevNeighborId = neighbor.getId();
         }
 
         // If we're parsing two nodes that doesn't have any nodes inbetween, then the wayId haven't been stored yet..
         // therefore this should be done now.
         if (wayId == null) {
             wayId = getMatchingWayId(from, neighbor);
+        }
+
+        if (from.getId() == 8084567) {
+            //System.out.println(from.getId() + " " + neighbor.getId() + " " + initialNeighborId);
         }
 
         // We now have all the information required to create an edge, do so now!
@@ -724,6 +779,7 @@ public class OSMHandler extends DefaultHandler {
 
         // Add the edge to the nodes
         int edgeId = graph.putEdge(edge);
+
         graph.getNode(convertedFrom.getId()).addEdge(edgeId);
         graph.getNode(convertedTo.getId()).addEdge(edgeId);
     }

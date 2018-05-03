@@ -6,8 +6,8 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 public class Edge implements Externalizable {
-    private long node1;
-    private long node2;
+    public long node1;
+    public long node2;
     private float length; //in km
     private int speedLimit;
     private boolean supportsCars;

@@ -6,7 +6,7 @@ import parsing.OSMNode;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class MapElement extends Coordinates implements Externalizable {
@@ -14,7 +14,8 @@ public class MapElement extends Coordinates implements Externalizable {
     private Rectangle2D r;
     private WayType type;
     private boolean shouldFill;
-    private List<Long> nodeIds = new ArrayList<>();
+    private Set<Long> nodeIds = new HashSet<>();
+
 
     public MapElement() {}
     public MapElement(float x, float y, Shape s, WayType t, boolean sf, ArrayList<OSMNode> nodes){
@@ -37,7 +38,11 @@ public class MapElement extends Coordinates implements Externalizable {
         return r;
     }
 
-    public List<Long> getNodeIds() {
+    public void updateNodes(HashSet ids) {
+        nodeIds = ids;
+    }
+
+    public Set<Long> getNodeIds() {
             return nodeIds;
     }
 
@@ -64,6 +69,6 @@ public class MapElement extends Coordinates implements Externalizable {
         shape = (Shape) in.readObject();
         type = (WayType) in.readObject();
         shouldFill = in.readBoolean();
-        nodeIds = (ArrayList<Long>) in.readObject();
+        nodeIds = (HashSet<Long>) in.readObject();
     }
 }

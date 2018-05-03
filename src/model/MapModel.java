@@ -16,7 +16,7 @@ import java.util.List;
 public class MapModel {
     private int initializedTypes = 0;
     private int amountOfTypes = 0;
-    private EnumMap<WayType, List<Coordinates>> mapElements = initializeMap();
+    private EnumMap<WayType, List<MapElement>> mapElements = initializeMap();
     private KDTree[] mapTrees; // Contain a reference to trees containing all elements
     private List<MapElement> currentMapData = new ArrayList<>();
     private MetaModel metaModel;
@@ -38,12 +38,12 @@ public class MapModel {
     }
 
     /** Add a Coordinates to the list. This will happen while parsing OSM-files */
-    public void add(WayType type, Coordinates m) {
+    public void add(WayType type, MapElement m) {
         mapElements.get(type).add(m);
     }
 
     /** Returns the mapElements of a specific type */
-    public List<Coordinates> getMapElements(WayType type) {
+    public List<MapElement> getMapElements(WayType type) {
         return mapElements.get(type);
     }
 
@@ -82,10 +82,13 @@ public class MapModel {
             if (way != null) {
                 for (long nodeId : way.getNodeIds()) {
                     Node node = graph.getNode(nodeId);
-                    double distanceTo = Math.hypot( coords.getX() - node.getLon(), coords.getY() - node.getLat());
-                    if ( distanceTo < currentNeighbour ) {
-                        nearestNeighbour = nodeId;
-                        currentNeighbour = distanceTo;
+
+                    if (node != null) {
+                        double distanceTo = Math.hypot( coords.getX() - node.getLon(), coords.getY() - node.getLat());
+                        if ( distanceTo < currentNeighbour ) {
+                            nearestNeighbour = nodeId;
+                            currentNeighbour = distanceTo;
+                        }
                     }
                 }
             }
@@ -182,8 +185,8 @@ public class MapModel {
     }
 
     /** Public helper that initializses an empty enum-map filled with arraylist for all mapTypes */
-    private EnumMap<WayType, List<Coordinates>> initializeMap() {
-        EnumMap<WayType, List<Coordinates>> map = new EnumMap<>(WayType.class);
+    private EnumMap<WayType, List<MapElement>> initializeMap() {
+        EnumMap<WayType, List<MapElement>> map = new EnumMap<>(WayType.class);
         for (WayType type: WayType.values()) {
             map.put(type, new ArrayList<>());
         }

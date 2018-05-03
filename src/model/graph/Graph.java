@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class Graph {
-    private HashMap<Long, Node> nodes;
-    private HashMap<Integer, Edge> edges;
+    public HashMap<Long, Node> nodes;
+    public HashMap<Integer, Edge> edges;
     private int currEdgeId = 0;
     private VehicleType vehicleType;
     private Path2D routePath;
@@ -36,6 +36,7 @@ public class Graph {
 
     public Graph() {
         nodes = new HashMap<>();
+        edges = new HashMap<>();
         vehicleType = VehicleType.CAR;
     }
 
@@ -78,6 +79,10 @@ public class Graph {
             // Go through all neighbours and relax them if possible
             for (int i = 0; i < current.getEdges().length; i++) {
                 relaxNeighbour(current, edges.get(current.getEdges()[i]));
+            }
+
+            if (pq.size() == 0) {
+                dest = current;
             }
         }
 
