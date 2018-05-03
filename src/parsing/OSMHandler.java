@@ -622,52 +622,73 @@ public class OSMHandler extends DefaultHandler {
     }
 
     /**
-     * Helper that builds the wayGraph once all node references have build
+     * Helper that builds a flattened wayGraph with only the required nodes once all node references have build.
      */
     private void buildGraph() {
         ArrayList<Long> nodeIds = idToNode.getIds();
-        int counter = 0;
+
+        // Go through all parsed nodes
         for (long nodeId : nodeIds) {
+            // Store the node that is being currently worked on.
             OSMNode node = idToNode.get(nodeId);
+
+            // As long as the node is a highway (has more than 0 wayIds), then we want to process and add it to the graph.
             if (node.getWayIds().size() != 0) {
+
+                // If the current node has either 1 or more than 2 nodes, then we need to add it to the graph.
+                // (Nodes with exactly to references can be removed since no intersections/endpoints will ever exist
+                // there).
                 HashSet<Long> refs = node.getRefs();
                 if (refs.size() == 1 || refs.size() > 2) {
+                    // Start from the currently found node
                     OSMNode from = node;
 
+                    // Go through all of its neighbours and create required edges
                     for (Long neighborID : refs) {
-                        Long wayId = null;
-                        OSMNode neighbor = idToNode.get(neighborID);
-                        long prevNeighborId = neighbor.getId();
-
-                        // System.out.println(neighbor.getId() == from.getId());
-
-                        while (neighbor.getRefs().size() == 2) {
-                            for (Long id : neighbor.getRefs()) {
-                                if (id != prevNeighborId && neighbor.getRefs().size() == 2) {
-                                    if (wayId == null) {
-                                        wayId = getMatchingWayId(from, neighbor);
-                                    }
-
-                                    neighbor = idToNode.get(id);
-                                }
-                            }
-
-                            prevNeighborId = neighbor.getId();
-                        }
-
-                        if (wayId == null) {
-                            wayId = getMatchingWayId(from, neighbor);
-                        }
-
-                        createEdge(from, neighbor, wayId);
+                        createEdgeToNeighbor(from, neighborID);
                     }
-                    counter++;
                 }
             }
         }
-        System.out.println(counter);
-        System.out.println(graph.size());
 
+        System.out.println(graph.size());
+    }
+
+    /** Internal helper that finds the first needed neighbor node of a node and creates an edge between the two. */
+    private void createEdgeToNeighbor(OSMNode from, Long initialNeighborId) {
+        // Get initial values
+        Long wayId = null;
+        OSMNode neighbor = idToNode.get(initialNeighborId);
+        long prevNeighborId = neighbor.getId();
+
+        // Continue until we find a node that cannot be removed.
+        while (neighbor.getRefs().size() == 2) {
+            // Go through all the nodes...
+            for (Long id : neighbor.getRefs()) {
+                // ... and find the next node (i.e. not the previous node)
+                if (id != prevNeighborId) {
+                    // If we haven't stored the wayId yet, do so new.
+                    if (wayId == null) {
+                        wayId = getMatchingWayId(from, neighbor);
+                    }
+
+                    // Set the current neighbor to be the neighbor we just found.
+                    neighbor = idToNode.get(id);
+                }
+            }
+
+            // Update previous neighbour id
+            prevNeighborId = neighbor.getId();
+        }
+
+        // If we're parsing two nodes that doesn't have any nodes inbetween, then the wayId haven't been stored yet..
+        // therefore this should be done now.
+        if (wayId == null) {
+            wayId = getMatchingWayId(from, neighbor);
+        }
+
+        // We now have all the information required to create an edge, do so now!
+        createEdge(from, neighbor, wayId);
     }
 
     /**
