@@ -80,15 +80,18 @@ public class MapView extends JComponent {
 
         // Draw navigation path if any
         if (graph.getRoutePath() != null) {
+            float zoomLevel = MapController.getZoomLevel();
+            float factor = (511 - zoomLevel);
+
             switch (graph.getVehicleType()) {
                 case CAR:
-                    g.setStroke(new BasicStroke(0.00007f));
+                    g.setStroke(new BasicStroke(0.00005f*factor));
                     break;
                 case BICYCLE:
-                    g.setStroke(new BasicStroke(0.00005f));
+                    g.setStroke(new BasicStroke(0.00005f*factor));
                     break;
                 case PEDESTRIAN:
-                    g.setStroke(new BasicStroke(0.00004f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
+                    g.setStroke(new BasicStroke(0.00004f*factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f*factor, 0.00002f*factor}, 0));
                     break;
                 default:
                     // There shouldn't be other possibilities
