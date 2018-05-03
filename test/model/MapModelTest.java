@@ -1,6 +1,7 @@
 package model;
 
 import helpers.structures.KDTree;
+import model.graph.Graph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +14,7 @@ public class MapModelTest {
 
     @Before
     public void setUp() throws Exception {
-        mapModel = new MapModel(new MetaModel());
+        mapModel = new MapModel(new MetaModel(), new Graph());
 
     }
 
