@@ -25,6 +25,8 @@ public class MouseController extends MouseAdapter {
     private Point2D lastMousePosition;
     private static Thread t;
 
+    static int testcounter = 0;
+
     public MouseController(MapView c, MapController cc, AddressesModel am, FooterView fv, SearchBoxController sbc) {
         canvas = c;
         mapController = cc;
@@ -38,12 +40,15 @@ public class MouseController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+
+        // Checking if user clicked on the favorite icon
         Coordinates coord = canvas.containsCoordinate(mapController.toModelCoords(e.getPoint()));
         if (coord != null) {
             mapController.updateLocationCoordinates(coord);
             searchBoxController.setInputOnLocationIcon(addressesModel.addressFromCoordinate(coord));
         }
 
+        // If right click, draw location icon
         if (e.getButton() == MouseEvent.BUTTON3) {
             Point2D modelCoords = mapController.toModelCoords(e.getPoint());
             Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
@@ -51,6 +56,7 @@ public class MouseController extends MouseAdapter {
             mapController.updateLocationCoordinates(address.getCoordinates());
         }
 
+        // If double click, zoom in
         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             mapController.zoom(1.4, -e.getX(), -e.getY());
         }
@@ -99,15 +105,13 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (t != null) t.interrupt();
+        if (t != null)  t.interrupt();
         canvas.requestFocus();
         double factor = pow(1/1.1, e.getWheelRotation());
         mapController.zoom(factor, -e.getX(), -e.getY());
     }
 
-    public void mouseReleased(MouseEvent e){
-        thread();
-    }
+    public void mouseReleased(MouseEvent e){ }
 
 
     /**
