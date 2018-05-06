@@ -5,6 +5,7 @@ import model.graph.RouteType;
 import model.graph.VehicleType;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.net.URL;
@@ -24,7 +25,8 @@ public class NavigationView extends JPanel {
     private String endInputText = "Til:";
     private AutoCompleteController autoCompleteController;
     private StateController stateController;
-
+    private JPanel bottomPanel;
+    private JScrollPane scroll;
 
     public NavigationView(NavigationController nc, AutoCompleteController acc, StateController sc) {
         navigationController = nc;
@@ -45,18 +47,24 @@ public class NavigationView extends JPanel {
     public void update() {
         if (!initialRender) {
             remove(topPanel);
+            if (scroll != null) {
+                remove(scroll);
+            }
         } else {
             initialRender = false;
         }
 
         if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
             int height = MainWindowView.getHeight();
-            setBounds(0, 0, 450, height);
+            setBounds(0, 0, 450, height-25);
         } else {
             setBounds(0, 0, 450, 200);
         }
 
         add(topPanel());
+        if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+            add(addBottomPanel());
+        }
         revalidate();
         repaint();
     }
@@ -259,6 +267,49 @@ public class NavigationView extends JPanel {
         switchAndSubmitPanel.add(submitButton, BorderLayout.EAST);
 
         return switchAndSubmitPanel;
+    }
+
+
+    private JScrollPane addBottomPanel() {
+        bottomPanel = new JPanel();
+        bottomPanel.setOpaque(true);
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        int height = MainWindowView.getHeight();
+        bottomPanel.setMaximumSize(new Dimension(width, height-225));
+        bottomPanel.setBackground(Color.WHITE);
+
+        scroll = new JScrollPane(bottomPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setMaximumSize(new Dimension(width, height-225));
+
+        return scroll;
+    }
+
+    public void addNavigationAddress(String address) {
+        String[] strings = address.split(",");
+        String text = "<html><span style=\"font-size: 12px;\">" + strings[0] +
+                "</span><br><span style=\"font-size: 10px;\">"+strings[1].trim()+"</span></html>";
+
+        JLabel addressLabel = new JLabel(text);
+        Border padding = BorderFactory.createEmptyBorder(10, 20, 10, 20);
+        Border margin = BorderFactory.createEmptyBorder(5, 0, 5, 0);
+        addressLabel.setBorder(BorderFactory.createCompoundBorder(margin, padding));
+
+        bottomPanel.add(addressLabel);
+    }
+
+    public void addNavigationText(String text, String iconURL) {
+        JLabel navigationText = new JLabel(text);
+        Border margin = BorderFactory.createEmptyBorder(5, 0, 5, 0);
+        navigationText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        URL navigationURL = this.getClass().getResource(iconURL);
+        ImageIcon navigationIcon = new ImageIcon(navigationURL);
+        //JLabel navigation = new JLabel();
+        //navigation.setText("RUTE");
+        //navigationText.setForeground(Color.decode("#383838"));
+        navigationText.setIcon(navigationIcon);
+        navigationText.setIconTextGap(20);
+        bottomPanel.add(navigationText);
     }
 
     public JTextField getStartInput() {

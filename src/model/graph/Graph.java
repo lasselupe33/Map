@@ -20,10 +20,12 @@ public class Graph {
     private RouteType routeType = RouteType.FASTEST;
     private Node source;
     private Node dest;
+    private ArrayList<Node> routeNodes;
 
     public Graph() {
         nodes = new LongToNodeMap(25);
         vehicleType = VehicleType.CAR;
+        routeNodes = new ArrayList<>();
     }
 
     public void computePath(Node source, Node dest) {
@@ -85,7 +87,10 @@ public class Graph {
 
     /** Internal helper that creates the path of the found path between two nodes */
     private void createComputedPath(Node dest) {
+        routeNodes = new ArrayList<>();
         Node node = dest;
+
+        routeNodes.add(dest);
 
         // Prepare drawing route path
         Path2D sp = new Path2D.Float();
@@ -94,6 +99,7 @@ public class Graph {
         while(node.getParent() != null) {
             node = node.getParent();
             sp.lineTo(node.getLon(), node.getLat());
+            routeNodes.add(node);
         }
 
         routePath = sp;
@@ -145,7 +151,8 @@ public class Graph {
         routePath = null;
         time = null;
         length = null;
-    };
+        routeNodes = new ArrayList<>();
+    }
 
     /** Getters and setters */
     public void putNode(Node node) {
@@ -175,4 +182,8 @@ public class Graph {
     public String getLength() { return length; }
 
     public String getTime() { return time; }
+
+    public ArrayList<Node> getRouteNodes() {
+        return routeNodes;
+    }
 }
