@@ -22,10 +22,10 @@ public class FavoriteController {
             searchBoxController.setInputOnLocationIcon(address);
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
-            System.out.println(navigationController.getStartInput().getText());
+            /*System.out.println(navigationController.getStartInput().getText());
             System.out.println(navigationController.getStartInput().getName());
-            System.out.println("");
-            if ((navigationController.getStartInput().getText().equals(navigationController.getStartInput().getName()))){
+            System.out.println("");*/
+            if ((navigationController.getStartInput().getText().equals(navigationController.getStartInput().getName()) || navigationController.getStartInput().getText().equals(""))){
                 navigationController.setStartAddress(address);
             }
             else if (!(navigationController.getStartInput().getText().equals(navigationController.getStartInput().getName()))){

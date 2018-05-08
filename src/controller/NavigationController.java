@@ -130,7 +130,7 @@ public class NavigationController extends MouseAdapter {
     /**
      * Update the view
      */
-    private void updateView() {
+    public void updateView() {
         setInputText();
         navigationView.update();
     }

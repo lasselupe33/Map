@@ -51,6 +51,7 @@ public class SearchBoxController extends MouseAdapter {
                 }
                 break;
             case "favoriteButton":
+                if (stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) navigationController.updateView();
                 onFavoritesClick();
                 break;
         }
