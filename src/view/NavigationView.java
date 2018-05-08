@@ -9,6 +9,9 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.net.URL;
 
+/**
+ * View for navigation search
+ */
 public class NavigationView extends JPanel {
     private boolean initialRender = true;
     private int width = 450;

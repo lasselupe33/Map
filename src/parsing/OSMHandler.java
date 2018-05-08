@@ -15,6 +15,9 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 
+/**
+ * Handle OSM data
+ */
 public class OSMHandler extends DefaultHandler {
     private LongToNodeMap idToNode = new LongToNodeMap(25);
     private Map<Long, OSMWay> idToWay = new HashMap<>();
@@ -216,6 +219,9 @@ public class OSMHandler extends DefaultHandler {
                         if (attributes.getValue("v").equals("yes")) {
                             type = WayType.HIGHWAYBRIDGE;
                         }
+                        break;
+                    case "railway":
+                        type = WayType.RAILWAY;
                         break;
                     case "addr:street":
                         street = attributes.getValue("v");
@@ -601,7 +607,6 @@ public class OSMHandler extends DefaultHandler {
             case FOOTWAY:
             case PATH:
             case FERRY:
-            case SUBWAY:
             case CYCLEWAY:
             case UNKNOWN:
             case BARRIER:
@@ -610,6 +615,7 @@ public class OSMHandler extends DefaultHandler {
             case RUNWAY:
             case TRUNK:
             case HIGHWAYBRIDGE:
+            case RAILWAY:
                 mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, false, nodes));
                 break;
             default:

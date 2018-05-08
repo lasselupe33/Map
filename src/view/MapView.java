@@ -42,7 +42,6 @@ public class MapView extends JComponent {
 
     /**
      * Draw map.
-     *
      * @param _g Graphics
      */
     @Override
@@ -80,43 +79,111 @@ public class MapView extends JComponent {
 
         // Draw navigation path if any
         if (graph.getRoutePath() != null) {
-            switch (graph.getVehicleType()) {
-                case CAR:
-                    g.setStroke(new BasicStroke(0.00007f));
-                    break;
-                case BICYCLE:
-                    g.setStroke(new BasicStroke(0.00005f));
-                    break;
-                case PEDESTRIAN:
-                    g.setStroke(new BasicStroke(0.00004f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
-                    break;
-                default:
-                    // There shouldn't be other possibilities
-                    break;
-            }
-            g.setColor(new Color(66, 133, 244));
-            g.draw(graph.getRoutePath());
-
-            g.setStroke(new BasicStroke(0.00004f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f, 0.00002f}, 0));
-            g.setColor(Color.GRAY);
-            g.draw(navigationController.getStartAddressPath());
-            g.draw(navigationController.getEndAddressPath());
+            drawRoute(g);
         }
 
-        paintStartNavigationIcon(g);
+        // Draw icons
+        drawFavoritesIcons(g);
+        drawLocationIcon(g);
+    }
 
+    /**
+     * Draw navigation route
+     * @param g graphics
+     */
+    private void drawRoute(Graphics2D g) {
+        // Get zoom level and calculate factor for determining width of stroke
+        float zoomLevel = MapController.getZoomLevel();
+        float factor = (511 - zoomLevel);
+
+        // Set stroke based on vehicle type
+        switch (graph.getVehicleType()) {
+            case CAR:
+                g.setStroke(new BasicStroke(0.00005f*factor));
+                break;
+            case BICYCLE:
+                g.setStroke(new BasicStroke(0.00004f*factor));
+                break;
+            case PEDESTRIAN:
+                g.setStroke(new BasicStroke(0.00004f*factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+                        0, new float[] {0.00003f*factor, 0.00002f*factor}, 0));
+                break;
+            default:
+                // There shouldn't be other possibilities
+                break;
+        }
+
+        // Set color
+        // Grey if grayscale mode; else blue (suited for color blind mode)
+        if (colorMap.isGrayscale()) {
+            g.setColor(new Color(30,30,30));
+        } else {
+            g.setColor(new Color(66, 133, 244));
+        }
+
+        g.draw(graph.getRoutePath());
+
+        // Draw dotted path from start address to beginning of route
+        // and from end address to end of route
+        g.setStroke(new BasicStroke(0.00004f*factor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {0.00003f*factor, 0.00002f*factor}, 0));
+        g.setColor(Color.GRAY);
+        g.draw(navigationController.getStartAddressPath());
+        g.draw(navigationController.getEndAddressPath());
+
+        // Draw icon indicating beginning of route
+        paintStartNavigationIcon(g);
+    }
+
+    /**
+     * Draw favorites icons
+     * @param g Graphics
+     */
+    public void drawFavoritesIcons(Graphics2D g) {
+        // Set colors for favorites icons
+        Color colorMain = new Color(66, 133, 244);
+        Color colorDetail = new Color(0, 4, 161);
+        // If color mode is gray scale change colors to gray scale
+        if (colorMap.isGrayscale()) {
+            colorMain = new Color(80,80,80);
+            colorDetail = new Color(148,148,148);
+        }
+
+        // Draw favorites icons if any favorites
         if (!controller.getListOfFavorites().isEmpty()) {
             for (Coordinates c : controller.getListOfFavorites()) {
-                paintLocationIcon(g, c, new Color(66, 133, 244), new Color(0, 4, 161), 0.0025);
+                paintLocationIcon(g, c, colorMain, colorDetail, 0.0025);
             }
         }
-        if (controller.getLocationCoordinates() != null) paintLocationIcon(g, controller.getLocationCoordinates(), Color.red, new Color(124, 17, 19), 0.003);
+    }
+
+    /**
+     * Draw location icon
+     * @param g Graphics
+     */
+    public void drawLocationIcon(Graphics2D g) {
+        // Set colors for location icon
+        Color colorMain = Color.red;
+        Color colorDetail = new Color(124, 17, 19);
+        // If color mode is gray scale change colors to gray scala
+        if (colorMap.isGrayscale()) {
+            colorMain = new Color(30,30,30);
+            colorDetail = new Color(148,148,148);
+        }
+
+        // Draw location icon if needed
+        if (controller.getLocationCoordinates() != null) paintLocationIcon(g, controller.getLocationCoordinates(), colorMain, colorDetail, 0.003);
 
     }
 
-
+    /**
+     * Draw location icon at address or route search
+     * @param g graphics
+     * @param coord coordinates for icon
+     * @param iconColor main color
+     * @param circleColor color for details
+     * @param scaling size of icon
+     */
     private void paintLocationIcon(Graphics2D g, Coordinates coord, Color iconColor, Color circleColor, double scaling) {
-
         float scale = (float) (scaling *  GetDistance.PxToKm(100));
 
         float[] xValue = new float[] {coord.getX()-scale/2, coord.getX(), coord.getX()+scale/2, coord.getX()-scale/2};
@@ -140,6 +207,10 @@ public class MapView extends JComponent {
 
     }
 
+    /**
+     * Draw icon for starting point of navigation
+     * @param g Graphics
+     */
     private void paintStartNavigationIcon(Graphics2D g) {
         if (controller.getStartCoordinates() == null) return;
 
@@ -150,7 +221,11 @@ public class MapView extends JComponent {
         Ellipse2D innerCircle = new Ellipse2D.Float(coord.getX()-scale/2, coord.getY()-scale/2, scale, scale);
         Ellipse2D outerCircle = new Ellipse2D.Float(coord.getX()-scale2/2, coord.getY()-scale2/2, scale2, scale2);
 
-        g.setPaint(new Color(66, 133, 244));
+        if (colorMap.isGrayscale()) {
+            g.setPaint(new Color(30,30,30));
+        } else {
+            g.setPaint(new Color(66, 133, 244));
+        }
         g.fill(outerCircle);
         g.setPaint(Color.white);
         g.fill(innerCircle);

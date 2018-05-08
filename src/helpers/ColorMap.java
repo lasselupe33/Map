@@ -2,12 +2,15 @@ package helpers;
 
 import model.WayType;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.EnumMap;
 
+/**
+ * Map color to element type
+ */
 public class ColorMap {
     private EnumMap<WayType, Color[]> colorMap = null;
-    private int mode = 0;
+    private int colorMode = 0;
 
     // Standard colors
     private Color standardRoadColor = new Color(255,255,255);
@@ -15,13 +18,13 @@ public class ColorMap {
     private Color residentialColor = new Color(219, 219, 219);
     private Color buildingColor = new Color(215, 205, 199);
     private Color cemeteryColor = new Color(193, 219, 200);
-    private Color subwayColor = new Color(168, 172, 190);
     private Color pathColor = new Color(250, 128, 114);
     private Color cycleAndFerryColor = new Color(125, 139, 244);
     private Color aerowayColor = new Color(233, 209, 255);
     private Color runwayColor = new Color(187, 187, 204);
     private Color bridgeColor = new Color(206, 206, 206);
     private Color waterColor = new Color(122, 199, 235);
+    private Color railwayColor = new Color(200,200,200);
 
     // Color blind colors
     private Color colorBlindForrest = new Color(9, 180, 90);
@@ -34,6 +37,7 @@ public class ColorMap {
     private Color colorBlindBarrier = new Color(62, 62, 59);
     private Color colorBlindHedge = new Color(9, 182, 91);
     private Color colorBlindMotorWay = new Color(66, 94, 148);
+    private Color colorBlindTrunk = new Color(59, 146, 148);
     private Color protanopiaWater = new Color(94, 184, 223);
 
     //Grayscale colors
@@ -41,32 +45,45 @@ public class ColorMap {
     private Color grayscalePath = new Color(164,164,164);
     private Color grayscaleCycleAndFerry = new Color(170,170,170);
 
+    /**
+     * Set color mode
+     * @param m the mode
+     */
     public void setMode(Mode m) {
         switch (m) {
             case STANDARD:
-                mode = 0;
+                colorMode = 0;
                 break;
             case PROTANOPIA:
-                mode = 1;
+                colorMode = 1;
                 break;
             case DEUTERANOPIA:
-                mode = 2;
+                colorMode = 2;
                 break;
             case GRAYSCALE:
-                mode = 3;
+                colorMode = 3;
                 break;
             default:
-                mode = 0;
+                colorMode = 0;
                 break;
         }
     }
 
+    /**
+     * Return color based on type and mode
+     * @param type map element type
+     * @return color of type in specific mode
+     */
     public Color getColor(WayType type) {
         if (colorMap == null) initializeMap();
         Color[] c = colorMap.get(type);
-        return c[mode];
+        return c[colorMode];
     }
 
+    /**
+     * Initialize map
+     * Colors mapped to type stored in arrays where index corresponds to mode
+     */
     private void initializeMap() {
         colorMap = new EnumMap<>(WayType.class);
         colorMap.put(WayType.COASTLINE, new Color[] {coastlineColor,coastlineColor,coastlineColor,coastlineColor});
@@ -145,11 +162,6 @@ public class ColorMap {
                 colorBlindCycleAndFerry,
                 grayscaleCycleAndFerry});
 
-        colorMap.put(WayType.SUBWAY, new Color[] {subwayColor,
-                subwayColor,
-                subwayColor,
-                new Color(177,177,177)});
-
         colorMap.put(WayType.CYCLEWAY, new Color[] {cycleAndFerryColor,
                 colorBlindCycleAndFerry,
                 colorBlindCycleAndFerry,
@@ -183,12 +195,10 @@ public class ColorMap {
                 colorBlindMotorWay,
                 colorBlindMotorWay,
                 new Color(180,180,180)});
-        /**
-         * @TODO color blind trunk
-         */
+
         colorMap.put(WayType.TRUNK, new Color[] {new Color(248, 161, 136),
-                new Color(66, 94, 148),
-                new Color(66, 94, 148),
+                colorBlindTrunk,
+                colorBlindTrunk,
                 new Color(182, 182, 182)});
 
         colorMap.put(WayType.DRAIN, new Color[] {waterColor,
@@ -221,8 +231,22 @@ public class ColorMap {
                 protanopiaWater,
                 waterColor,
                 grayscaleWater});
+
+        colorMap.put(WayType.RAILWAY, new Color[] {railwayColor,railwayColor,railwayColor,railwayColor});
     }
 
+    /**
+     * Check if the mode is grayscale
+     * @return true if the mode is grayscale; else return false
+     */
+    public boolean isGrayscale() {
+        if (colorMode == 3) return true;
+        return false;
+    }
+
+    /**
+     * Enum class of modes
+     */
     public enum Mode {
         STANDARD,
         GRAYSCALE,
