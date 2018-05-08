@@ -30,6 +30,7 @@ public class NavigationController extends MouseAdapter {
     private String startInput = "";
     private String endInput = "";
     private boolean navigationActive = false;
+    private boolean navigationFailed = false;
 
     public NavigationController(AddressesModel am, MapModel mm, Graph g){
         addressesModel = am;
@@ -54,12 +55,19 @@ public class NavigationController extends MouseAdapter {
         navigationView.addMouseMotionListener(this);
     }
 
-
+    /**
+     * Set start address in navigation view
+     * @param address the address to be set
+     */
     public void setStartAddress(Address address){
         navigationView.getStartInput().setText(address.toString());
         navigationView.setStartInputText(address.toString());
     }
 
+    /**
+     * Set end address in navigation view
+     * @param address the address to set
+     */
     public void setEndAddress(Address address) {
         navigationView.getEndInput().setText(address.toString());
         navigationView.setEndInputText(address.toString());
@@ -67,10 +75,12 @@ public class NavigationController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        // Bail out if a nameless/no component was clicked
         if (e.getComponent() == null || e.getComponent().getName() == null) {
 
             return;
         }
+
         switch(e.getComponent().getName()) {
             case "car":
                 changeVehicleType(VehicleType.CAR);
@@ -109,13 +119,17 @@ public class NavigationController extends MouseAdapter {
     }
 
     /**
-     * TODO: Needs documentation, why is this necessary?
+     * Store the inputs in fields for when the view is updated
+     * This is needed when the user is switching between views and the input data has to stay in the navigation view
      */
     private void setInputText() {
         navigationView.setStartInputText(navigationView.getStartInput().getText());
         navigationView.setEndInputText(navigationView.getEndInput().getText());
     }
 
+    /**
+     * Update the view
+     */
     private void updateView() {
         setInputText();
         navigationView.update();
@@ -149,13 +163,22 @@ public class NavigationController extends MouseAdapter {
         graph.computePath(startingPoint, endPoint);
 
         // Update map and view after path has been computed
-        navigationActive = true;
-        updateView();
-        MapController.repaintMap(true);
-        MapController.updateStartCoordinates(startAddressCoords);
-        MapController.updateLocationCoordinates(endAddressCoords);
+        if (!graph.didError()) {
+            navigationFailed = false;
+            navigationActive = true;
+            updateView();
+            MapController.repaintMap(true);
+            MapController.updateStartCoordinates(startAddressCoords);
+            MapController.updateLocationCoordinates(endAddressCoords);
+        } else {
+            navigationFailed = true;
+            navigationActive = false;
+        }
     }
 
+    /**
+     * Switch from input and to input
+     */
     public void switchFromAndTo() {
         String startTextHolder = navigationView.getStartInput().getText();
         String endTextHolder = navigationView.getEndInput().getText();
@@ -172,6 +195,10 @@ public class NavigationController extends MouseAdapter {
             navigationView.getEndInput().setText(startTextHolder);
             onRouteSearch();
         }
+    }
+
+    public boolean didError() {
+        return navigationFailed;
     }
 
     /**

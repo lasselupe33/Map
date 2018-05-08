@@ -95,6 +95,7 @@ public class IOHandler {
         model.serialize();
         mapModel.serialize();
         addressesModel.serialize();
+        graph.serialize();
     }
 
     /** Load data from a string */
@@ -158,6 +159,7 @@ public class IOHandler {
         model.deserialize();
         mapModel.deserialize();
         addressesModel.deserialize();
+        graph.deserialize();
     }
 
     /** Internal helper that sets up the OSMHandler and begins reading from an OSM-file */
@@ -243,6 +245,7 @@ public class IOHandler {
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName)));
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/address")));
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/map")));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/graph")));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
