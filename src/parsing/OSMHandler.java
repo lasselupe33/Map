@@ -54,6 +54,9 @@ public class OSMHandler extends DefaultHandler {
     private String postcode;
     private String city;
 
+    // Fields directly related to ways
+    private String name;
+
     // Loading related fields
     private boolean reachedAddress = false;
     private boolean reachedWays = false;
@@ -163,6 +166,9 @@ public class OSMHandler extends DefaultHandler {
     /** A helper that parses a single tag based on the key and value */
     private void parseTag(String key, String value) {
         switch (key) {
+            case "name":
+                name = value;
+                break;
             case "maxspeed":
                 try {
                     speedLimit = Integer.parseInt(value);
@@ -476,8 +482,9 @@ public class OSMHandler extends DefaultHandler {
         }
 
         if (isHighway) {
-            way.addWayInfo(speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
+            way.addWayInfo(name, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
             OSMNode from = way.getNodes().get(0);
+            name = null;
 
             for (int i = 1; i < way.getNodes().size(); i++) {
                 OSMNode to = way.getNodes().get(i);
@@ -773,7 +780,7 @@ public class OSMHandler extends DefaultHandler {
         }
 
         // Create the edge with the information of the nodes and the way connecting them
-        Edge edge = new Edge(convertedFrom.getId(), convertedTo.getId(), path, getEdgeLength(path), way.getSpeedLimit(), way.supportsCars(), way.supportsBicycles(), way.supportPedestrians());
+        Edge edge = new Edge(convertedFrom.getId(), convertedTo.getId(), path, way.getName(), getEdgeLength(path), way.getSpeedLimit(), way.supportsCars(), way.supportsBicycles(), way.supportPedestrians());
 
         // Add the edge to map and references to nodes
         int edgeId = graph.putEdge(edge);
