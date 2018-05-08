@@ -1,11 +1,13 @@
 package model;
 
+import helpers.structures.SimpleLongSet;
 import model.graph.Node;
+import parsing.OSMNode;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class MapElement extends Coordinates implements Externalizable {
@@ -13,17 +15,20 @@ public class MapElement extends Coordinates implements Externalizable {
     private Rectangle2D r;
     private WayType type;
     private boolean shouldFill;
-    private List<Long> nodeIds = new ArrayList<>();
+    private SimpleLongSet nodeIds;
+
 
     public MapElement() {}
-    public MapElement(float x, float y, Shape s, WayType t, boolean sf, ArrayList<Node> nodes){
+    public MapElement(float x, float y, Shape s, WayType t, boolean sf, ArrayList<OSMNode> nodes){
         super(x, y);
         shape = s;
         type = t;
         shouldFill = sf;
         r = shape.getBounds2D();
 
-        for (Node n : nodes) {
+        nodeIds = new SimpleLongSet();
+
+        for (OSMNode n : nodes) {
             nodeIds.add(n.getId());
         }
     }
@@ -36,7 +41,11 @@ public class MapElement extends Coordinates implements Externalizable {
         return r;
     }
 
-    public List<Long> getNodeIds() {
+    public void updateNodes(SimpleLongSet ids) {
+        nodeIds = ids;
+    }
+
+    public SimpleLongSet getNodeIds() {
             return nodeIds;
     }
 
@@ -53,6 +62,7 @@ public class MapElement extends Coordinates implements Externalizable {
         out.writeObject(shape);
         out.writeObject(type);
         out.writeBoolean(shouldFill);
+        out.writeObject(nodeIds);
     }
 
     @Override
@@ -62,5 +72,6 @@ public class MapElement extends Coordinates implements Externalizable {
         shape = (Shape) in.readObject();
         type = (WayType) in.readObject();
         shouldFill = in.readBoolean();
+        nodeIds = (SimpleLongSet) in.readObject();
     }
 }

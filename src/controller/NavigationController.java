@@ -28,6 +28,7 @@ public class NavigationController extends MouseAdapter {
     private String startInput = "";
     private String endInput = "";
     private boolean navigationActive = false;
+    private boolean navigationFailed = false;
 
     public NavigationController(AddressesModel am, MapModel mm, Graph g){
         addressesModel = am;
@@ -72,9 +73,11 @@ public class NavigationController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        // Bail out if a nameless/no component was clicked
         if (e.getComponent() == null || e.getComponent().getName() == null) {
             return;
         }
+
         switch(e.getComponent().getName()) {
             case "car":
                 changeVehicleType(VehicleType.CAR);
@@ -154,11 +157,17 @@ public class NavigationController extends MouseAdapter {
         graph.computePath(startingPoint, endPoint);
 
         // Update map and view after path has been computed
-        navigationActive = true;
-        updateView();
-        MapController.repaintMap(true);
-        MapController.updateStartCoordinates(startAddressCoords);
-        MapController.updateLocationCoordinates(endAddressCoords);
+        if (!graph.didError()) {
+            navigationFailed = false;
+            navigationActive = true;
+            updateView();
+            MapController.repaintMap(true);
+            MapController.updateStartCoordinates(startAddressCoords);
+            MapController.updateLocationCoordinates(endAddressCoords);
+        } else {
+            navigationFailed = true;
+            navigationActive = false;
+        }
     }
 
     /**
@@ -180,6 +189,10 @@ public class NavigationController extends MouseAdapter {
             navigationView.getEndInput().setText(startTextHolder);
             onRouteSearch();
         }
+    }
+
+    public boolean didError() {
+        return navigationFailed;
     }
 
     /**
