@@ -232,12 +232,12 @@ public class NavigationController extends MouseAdapter {
         double compassReading = Math.atan2(endPointX-startPointX, endPointY-startPointY) * (180 / Math.PI);
 
         String[] coordNames = new String[] {"syd", "sydøst", "øst", "nordøst", "syd", "nordvest", "vest", "sydvest", "syd"};
-        long coordIndex = Math.round(compassReading / 45);
+        int coordIndex = (int) Math.round(compassReading / 45); // divide 360 degrees by the 8 directions
         if (coordIndex < 0) {
             coordIndex = coordIndex + 8;
         }
 
-        navigationView.addNavigationText("Tag mod " + coordNames[(int)coordIndex] +" ad...", "/icons/arrow-up.png");
+        navigationView.addNavigationText("Tag mod " + coordNames[coordIndex] +" ad...", "/icons/arrow-up.png");
     }
 
     /**
