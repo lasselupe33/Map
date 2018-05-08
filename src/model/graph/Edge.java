@@ -105,6 +105,10 @@ public class Edge implements Externalizable {
 
     public Coordinates[] getPath() { return path; }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeLong(node1);

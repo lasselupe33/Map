@@ -189,7 +189,7 @@ public class NavigationController extends MouseAdapter {
         Node fromNode = graph.getSource();
 
         System.out.println(routeNodes);
-        addNavigationStart(fromNode, graph.getNode(routeNodes.get(0).getTo(fromNode)));
+        addNavigationStart(fromNode, routeNodes.get(0));
 
         float x;
         float y;
@@ -198,7 +198,7 @@ public class NavigationController extends MouseAdapter {
 
         if (routeNodes.size() >= 2) {
             float length = 0;
-            for (int i = 0; i < routeNodes.size() - 2; i++) {
+            for (int i = 0; i < routeNodes.size() - 1; i++) {
                 Edge firstEdge = routeNodes.get(i);
                 Node toNode = graph.getNode(firstEdge.getTo(fromNode));
                 x = toNode.getLon() - fromNode.getLon();
@@ -218,12 +218,15 @@ public class NavigationController extends MouseAdapter {
                 double angle = angle(vector1, vector2);
                 length += routeNodes.get(i+1).getLength();
                 if(angle < 135 && angle >= 45){
-                    navigationView.addNavigationText("Drej til højre og følg " + , "/icons/arrow-right.png", length);
+                    navigationView.addNavigationText("Drej til højre og følg " + secondEdge.getName(), "/icons/arrow-right.png", length);
                     length = 0;
                 } else if(angle < 45 && angle >= -45){
-                    //navigationView.addNavigationText("Fortsæt ned ad...", "/icons/arrow-up.png");
+                    if (!firstEdge.getName().equals(secondEdge.getName())) {
+                        navigationView.addNavigationText("Fortsæt ned ad " + secondEdge.getName(), "/icons/arrow-up.png", length);
+                        length = 0;
+                    }
                 } else if(angle < -45 && angle >= -135){
-                    navigationView.addNavigationText("Drej til venstre og følg...", "/icons/arrow-left.png", length);
+                    navigationView.addNavigationText("Drej til venstre og følg " + secondEdge.getName(), "/icons/arrow-left.png", length);
                     length = 0;
                 }
 
@@ -239,9 +242,11 @@ public class NavigationController extends MouseAdapter {
      * @param from first node in route
      * @param to second node in route
      */
-    private void addNavigationStart(Node from, Node to) {
+    private void addNavigationStart(Node from, Edge edge) {
         float startPointX = from.getLon();
         float startPointY = from.getLat();
+
+        Node to = graph.getNode(edge.getTo(from));
 
         float endPointX = to.getLon();
         float endPointY = to.getLat();
@@ -254,7 +259,7 @@ public class NavigationController extends MouseAdapter {
             coordIndex = coordIndex + 8;
         }
         double length = GetDistance.inMM(startPointY, startPointX, endPointY, endPointX);
-        navigationView.addNavigationText("Tag mod " + coordNames[coordIndex] +" ad...", "/icons/arrow-up.png", length);
+        navigationView.addNavigationText("Tag mod " + coordNames[coordIndex] +" ad " + edge.getName(), "/icons/arrow-up.png", length);
     }
 
     /**
