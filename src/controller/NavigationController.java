@@ -1,7 +1,6 @@
 package controller;
 
 import helpers.AddressBuilder;
-import helpers.GetDistance;
 import model.AddressesModel;
 import model.Coordinates;
 import model.MapModel;
@@ -12,10 +11,7 @@ import view.NavigationView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 public class NavigationController extends MouseAdapter {
     private NavigationView navigationView;
@@ -23,12 +19,12 @@ public class NavigationController extends MouseAdapter {
     private MapModel mapModel;
     private Graph graph;
     private AddressController addressController;
+    private String startInput = "";
+    private String endInput = "";
     private Coordinates startAddressCoords;
     private Coordinates endAddressCoords;
     private Node startingPoint;
     private Node endPoint;
-    private String startInput = "";
-    private String endInput = "";
     private boolean navigationActive = false;
     private boolean navigationFailed = false;
 
@@ -146,9 +142,12 @@ public class NavigationController extends MouseAdapter {
 
         addressController.setCurrentAddress(addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()));
 
-        // Get source and dest coords
-        startAddressCoords = addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()).getCoordinates();
-        endAddressCoords = addressesModel.getAddress(AddressBuilder.parse(endInput).toKey()).getCoordinates();
+        // Get source and dest address and coords
+        Address startAddress = addressesModel.getAddress(AddressBuilder.parse(startInput).toKey());
+        Address endAddress = addressesModel.getAddress(AddressBuilder.parse(endInput).toKey());
+
+        startAddressCoords = startAddress.getCoordinates();
+        endAddressCoords = endAddress.getCoordinates();
 
         // Retrieve nearest way-node to the address-node (we want to use roads to travel, not addresses)
         long startingPointId = mapModel.getNearestNodeId(startAddressCoords);
@@ -157,7 +156,7 @@ public class NavigationController extends MouseAdapter {
         startingPoint = graph.getNode(startingPointId);
         endPoint = graph.getNode(endPointId);
 
-        graph.computePath(startingPoint, endPoint);
+        graph.computePath(startingPoint, endPoint, startAddress, endAddress);
 
         // Update map and view after path has been computed
         if (!graph.didError()) {
@@ -165,135 +164,15 @@ public class NavigationController extends MouseAdapter {
             navigationActive = true;
             updateView();
             MapController.repaintMap(true);
-            MapController.updateStartCoordinates(startAddressCoords);
-            MapController.updateLocationCoordinates(endAddressCoords);
+            MapController.updateStartCoordinates(startAddress.getCoordinates());
+            MapController.updateLocationCoordinates(endAddress.getCoordinates());
             MapController.getInstance().moveScreenNavigation(graph.getRoutePath().getBounds2D());
-            textualNavigation(startInput, endInput);
         } else {
+            updateView();
+            MapController.repaintMap(true);
             navigationFailed = true;
             navigationActive = false;
         }
-    }
-
-    /**
-     * Add textual navigation to route search
-     */
-    public void textualNavigation(String start, String end) {
-        ArrayList<Edge> routeNodes = graph.getRouteNodes();
-        Collections.reverse(routeNodes);
-
-        System.out.println(routeNodes.size());
-
-        navigationView.addNavigationAddress(start);
-
-        Node fromNode = graph.getSource();
-
-        System.out.println(routeNodes);
-        addNavigationStart(fromNode, routeNodes.get(0));
-
-        float x;
-        float y;
-        float[] vector1 = new float[2];
-        float[] vector2 = new float[2];
-
-        if (routeNodes.size() >= 2) {
-            float length = 0;
-            for (int i = 0; i < routeNodes.size() - 1; i++) {
-                Edge firstEdge = routeNodes.get(i);
-                Node toNode = graph.getNode(firstEdge.getTo(fromNode));
-                x = toNode.getLon() - fromNode.getLon();
-                y = toNode.getLat() - fromNode.getLat();
-                vector1[0] = x;
-                vector1[1] = y;
-
-                fromNode = toNode;
-                Edge secondEdge = routeNodes.get(i+1);
-                toNode = graph.getNode(secondEdge.getTo(fromNode));
-
-                x = toNode.getLon() - fromNode.getLon();
-                y = toNode.getLat() - fromNode.getLat();
-                vector2[0] = x;
-                vector2[1] = y;
-
-                double angle = angle(vector1, vector2);
-                length += routeNodes.get(i+1).getLength();
-                if(angle < 135 && angle >= 45){
-                    navigationView.addNavigationText("Drej til højre og følg " + secondEdge.getName(), "/icons/arrow-right.png", length);
-                    length = 0;
-                } else if(angle < 45 && angle >= -45){
-                    if (!firstEdge.getName().equals(secondEdge.getName())) {
-                        navigationView.addNavigationText("Fortsæt ned ad " + secondEdge.getName(), "/icons/arrow-up.png", length);
-                        length = 0;
-                    }
-                } else if(angle < -45 && angle >= -135){
-                    navigationView.addNavigationText("Drej til venstre og følg " + secondEdge.getName(), "/icons/arrow-left.png", length);
-                    length = 0;
-                }
-
-            }
-
-            navigationView.addNavigationText("Destinationen er nået", "/icons/locationIcon.png", 0);
-            navigationView.addNavigationAddress(end);
-        }
-    }
-
-    /**
-     * Calculate start direction and add text to navigation
-     * @param from first node in route
-     * @param to second node in route
-     */
-    private void addNavigationStart(Node from, Edge edge) {
-        float startPointX = from.getLon();
-        float startPointY = from.getLat();
-
-        Node to = graph.getNode(edge.getTo(from));
-
-        float endPointX = to.getLon();
-        float endPointY = to.getLat();
-
-        double compassReading = Math.atan2(endPointX-startPointX, endPointY-startPointY) * (180 / Math.PI);
-
-        String[] coordNames = new String[] {"syd", "sydøst", "øst", "nordøst", "syd", "nordvest", "vest", "sydvest", "syd"};
-        int coordIndex = (int) Math.round(compassReading / 45); // divide 360 degrees by the 8 directions
-        if (coordIndex < 0) {
-            coordIndex = coordIndex + 8;
-        }
-        double length = GetDistance.inMM(startPointY, startPointX, endPointY, endPointX);
-        navigationView.addNavigationText("Tag mod " + coordNames[coordIndex] +" ad " + edge.getName(), "/icons/arrow-up.png", length);
-    }
-
-    /**
-     * Compute the scalar product of two vectors
-     * @param p first vector
-     * @param q second vector
-     * @return scalar product of vector p and vector q
-     */
-    private double scalarProduct(float[] p, float[] q) {
-        double product = 0;
-        for (int i = 0; i < p.length; i++) {
-            product += p[i] * q[i];
-        }
-        return product;
-    }
-
-    /**
-     * Compute the determinant of two vectors
-     * @param p first vector
-     * @param q second vector
-     * @return determinant of vector p and vector q
-     */
-    private double determinant(float[] p, float[] q) {
-        return p[0]*q[1] - p[1]*q[0];
-    }
-
-    /**
-     * Compute the angle of two vectors
-     * @param p first vector
-     * @param q second vector
-     * @return angle between -180 and 180
-     */
-    private double angle(float[] p, float[] q) {
-        return Math.toDegrees(Math.atan2(determinant(p, q), scalarProduct(p ,q)));
     }
 
     /**
@@ -315,6 +194,10 @@ public class NavigationController extends MouseAdapter {
             navigationView.getEndInput().setText(startTextHolder);
             onRouteSearch();
         }
+    }
+
+    public ArrayList<TextualElement> getTextualNavigation() {
+        return graph.getTextualNavigation();
     }
 
     public boolean didError() {

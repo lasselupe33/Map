@@ -1,6 +1,6 @@
 package controller;
 
-import helpers.GetDistance;
+import helpers.UnitConverter;
 import model.MetaModel;
 import model.MapElement;
 import model.MapModel;
@@ -95,8 +95,8 @@ public class MapController {
     }
 
     public void zoom(double factor, double x, double y) {
-        if (GetDistance.PxToKm(100) > 50 && factor < 1.01) factor = 1.0;
-        if (GetDistance.PxToKm(100) < 0.01 && factor > 1.0) factor = 1.0;
+        if (UnitConverter.PxToKm(100) > 50 && factor < 1.01) factor = 1.0;
+        if (UnitConverter.PxToKm(100) < 0.01 && factor > 1.0) factor = 1.0;
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
@@ -176,7 +176,7 @@ public class MapController {
     }
 
     private double getRectDistance(Rectangle2D rectangle2D) {
-        return GetDistance.inKM(rectangle2D.getMinX(), rectangle2D.getMinY(), rectangle2D.getMaxX(), rectangle2D.getMaxY());
+        return UnitConverter.DistInKM(rectangle2D.getMinX(), rectangle2D.getMinY(), rectangle2D.getMaxX(), rectangle2D.getMaxY());
     }
 
 
@@ -235,7 +235,7 @@ public class MapController {
      * This level will be between 1 and 510.
      */
     public static int getZoomLevel() {
-        double currDist = GetDistance.PxToKm(100) * 10;
+        double currDist = UnitConverter.PxToKm(100) * 10;
         int maxDist = 510;
 
         int zoomLevel = Math.max((int) ((maxDist - currDist)) + 1, 1);

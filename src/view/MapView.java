@@ -3,7 +3,7 @@ package view;
 import controller.MapController;
 import controller.NavigationController;
 import helpers.ColorMap;
-import helpers.GetDistance;
+import helpers.UnitConverter;
 import helpers.StrokeMap;
 import model.Coordinates;
 import model.MapElement;
@@ -182,7 +182,7 @@ public class MapView extends JComponent {
      * @param scaling size of icon
      */
     private void paintLocationIcon(Graphics2D g, Coordinates coord, Color iconColor, Color circleColor, double scaling) {
-        float scale = (float) (scaling *  GetDistance.PxToKm(100));
+        float scale = (float) (scaling *  UnitConverter.PxToKm(100));
 
         float[] xValue = new float[] {coord.getX()-scale/2, coord.getX(), coord.getX()+scale/2, coord.getX()-scale/2};
         float[] yValue = new float[] {coord.getY()-scale, coord.getY(), coord.getY()-scale, coord.getY()-scale};
@@ -213,8 +213,8 @@ public class MapView extends JComponent {
         if (controller.getStartCoordinates() == null) return;
 
         Coordinates coord = controller.getStartCoordinates();
-        float scale = (float) (0.0015 *  GetDistance.PxToKm(100));
-        float scale2 = (float) (0.0022 * GetDistance.PxToKm(100));
+        float scale = (float) (0.0015 *  UnitConverter.PxToKm(100));
+        float scale2 = (float) (0.0022 * UnitConverter.PxToKm(100));
 
         Ellipse2D innerCircle = new Ellipse2D.Float(coord.getX()-scale/2, coord.getY()-scale/2, scale, scale);
         Ellipse2D outerCircle = new Ellipse2D.Float(coord.getX()-scale2/2, coord.getY()-scale2/2, scale2, scale2);

@@ -1,7 +1,9 @@
 package view;
 
 import controller.*;
+import model.Address;
 import model.graph.RouteType;
+import model.graph.TextualElement;
 import model.graph.VehicleType;
 
 import javax.swing.*;
@@ -235,7 +237,7 @@ public class NavigationView extends JPanel {
 
         // Time label
         if (navigationController.getLength() != null && navigationController.getTime() != null && !navigationController.didError()) {
-            JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>" + navigationController.getTime() + "</span> <span style='font-size:12px;color:#4285F4;'>(" + navigationController.getLength() + "km)</span></html>");
+            JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>" + navigationController.getTime() + "</span> <span style='font-size:12px;color:#4285F4;'>(" + navigationController.getLength() + ")</span></html>");
             middlePanel.add(timeLabel, BorderLayout.WEST);
         } else if (navigationController.didError()) {
             JLabel errorLabel = new JLabel("<html><span style='color:#a94442;'>Ingen rute fundet med givne indstillinger!</span></html>");
@@ -281,16 +283,24 @@ public class NavigationView extends JPanel {
         bottomPanel.setMaximumSize(new Dimension(width, height-225));
         bottomPanel.setBackground(Color.WHITE);
 
+        // Add textual navigation
+        for (TextualElement textualElement : navigationController.getTextualNavigation()) {
+            if (textualElement.isAddress()) {
+                addNavigationAddress(textualElement.getAddress());
+            } else {
+                addNavigationText(textualElement.getName(), textualElement.getIconURL(), textualElement.getDist());
+            }
+        }
+
         scroll = new JScrollPane(bottomPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setMaximumSize(new Dimension(width, height-225));
 
         return scroll;
     }
 
-    public void addNavigationAddress(String address) {
-        String[] strings = address.split(",");
-        String text = "<html><span style=\"font-size: 12px;\">" + strings[0] +
-                "</span><br><span style=\"font-size: 10px;\">"+strings[1].trim()+"</span></html>";
+    public void addNavigationAddress(Address address) {
+        String text = "<html><span style=\"font-size: 12px;\">" + address.getStreet() + " " + address.getHouse() +
+                "</span><br><span style=\"font-size: 10px;\">"+ address.getCity() + address.getPostcode() +"</span></html>";
 
         JLabel addressLabel = new JLabel(text);
         Border padding = BorderFactory.createEmptyBorder(10, 20, 10, 20);
@@ -300,24 +310,15 @@ public class NavigationView extends JPanel {
         bottomPanel.add(addressLabel);
     }
 
-    public void addNavigationText(String navText, String iconURL, double length) {
+    public void addNavigationText(String navText, String iconURL, String length) {
+        String text = "<html><span style=\"font-size: 10px;\">" + navText +
+                (length != null ? "</span><br><span style=\"font-size: 8px;\">" + length + "</span></html>" : "");
 
-        String text;
-        if (length > 0) {
-            text = "<html><span style=\"font-size: 10px;\">" + navText +
-                    "</span><br><span style=\"font-size: 8px;\">" + length + " mm?" + "</span></html>";
-        } else {
-            text = "<html><span style=\"font-size: 10px;\">" + navText + "</span>";
-        }
         JLabel navigationText = new JLabel(text);
-        Border margin = BorderFactory.createEmptyBorder(5, 0, 5, 0);
         navigationText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         URL navigationURL = this.getClass().getResource(iconURL);
         ImageIcon navigationIcon = new ImageIcon(navigationURL);
-        //JLabel navigation = new JLabel();
-        //navigation.setText("RUTE");
-        //navigationText.setForeground(Color.decode("#383838"));
         navigationText.setIcon(navigationIcon);
         navigationText.setIconTextGap(20);
         bottomPanel.add(navigationText);

@@ -6,7 +6,7 @@ import java.text.DecimalFormat;
 
 import static org.junit.Assert.*;
 
-public class GetDistanceTest {
+public class UnitConverterTest {
     @Test
     public void testInKM()  {
         // Correct distance retrieved from https://www.movable-type.co.uk/scripts/latlong.html
@@ -15,7 +15,7 @@ public class GetDistanceTest {
         double lat2 = 55.692679;
         double lon2 = 12.450548;
 
-        double computedDistance = GetDistance.inKM(lat1, lon1, lat2, lon2);
+        double computedDistance = UnitConverter.DistInKM(lat1, lon1, lat2, lon2);
         DecimalFormat df = new DecimalFormat("#.#####");
 
         String correctDistance = df.format(0.05974);
@@ -32,11 +32,11 @@ public class GetDistanceTest {
         double lat2 = 18.129312;
         double lon2 = 34.123221;
 
-        double distance1 = GetDistance.inKM(lat1, lon1, lat2, lon2);
+        double distance1 = UnitConverter.DistInKM(lat1, lon1, lat2, lon2);
 
         double wrapDistance = 180;
 
-        double distance2 = GetDistance.inKM(lat1 + wrapDistance, lon1 - wrapDistance,
+        double distance2 = UnitConverter.DistInKM(lat1 + wrapDistance, lon1 - wrapDistance,
                 lat2 - wrapDistance, lon2 + wrapDistance);
 
         DecimalFormat df = new DecimalFormat("#.#####");

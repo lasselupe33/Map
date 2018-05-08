@@ -1,6 +1,6 @@
 package model.graph;
 
-import helpers.GetDistance;
+import helpers.UnitConverter;
 import parsing.OSMNode;
 
 import java.io.Externalizable;
@@ -68,7 +68,7 @@ public class Node extends OSMNode implements Externalizable {
         parentEdge = null;
         lengthTo = Float.POSITIVE_INFINITY;
         timeTo = Float.POSITIVE_INFINITY;
-        estimateToDest = (float) GetDistance.inMM(getLat(), getLon(), dest.getLat(), dest.getLon());
+        estimateToDest = (float) UnitConverter.DistInMM(getLat(), getLon(), dest.getLat(), dest.getLon());
     }
 
     public void setEstimateToDest(float estimate) { estimateToDest = estimate; }

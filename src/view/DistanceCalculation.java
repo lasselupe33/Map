@@ -1,7 +1,7 @@
 package view;
 
 import controller.MapController;
-import helpers.GetDistance;
+import helpers.UnitConverter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +25,7 @@ public class DistanceCalculation extends JComponent {
         g.setColor(Color.decode("#383838"));
 
         //Distance calculation
-        distance = GetDistance.PxToKm(100);
+        distance = UnitConverter.PxToKm(100);
 
         //Distance Text
         if(distance > 1){

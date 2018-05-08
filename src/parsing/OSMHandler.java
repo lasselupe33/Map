@@ -1,6 +1,6 @@
 package parsing;
 
-import helpers.GetDistance;
+import helpers.UnitConverter;
 import helpers.structures.LongToNodeMap;
 import helpers.structures.SimpleLongSet;
 import model.*;
@@ -795,7 +795,7 @@ public class OSMHandler extends DefaultHandler {
 
         for (int i = 1; i < nodes.size(); i++) {
             Coordinates to = nodes.get(i);
-            length += (float) GetDistance.inMM(from.getX(), from.getY(), to.getX(), to.getY());
+            length += (float) UnitConverter.DistInMM(from.getX(), from.getY(), to.getX(), to.getY());
 
             from = to;
         }
@@ -826,7 +826,7 @@ public class OSMHandler extends DefaultHandler {
             OSMNode to = nodes.get(i);
 
             // Determine length of edge between current node and prev node
-            float length = (float) GetDistance.inMM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
+            float length = (float) UnitConverter.inMM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
 
             Node convertedFromNode = graph.getNode(from.getId());
 
