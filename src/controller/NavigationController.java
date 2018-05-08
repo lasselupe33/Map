@@ -164,6 +164,7 @@ public class NavigationController extends MouseAdapter {
         MapController.repaintMap(true);
         MapController.updateStartCoordinates(startAddressCoords);
         MapController.updateLocationCoordinates(endAddressCoords);
+        MapController.getInstance().moveScreenNavigation(graph.getRoutePath().getBounds2D());
 
         textualNavigation(startInput, endInput);
     }
