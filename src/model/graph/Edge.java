@@ -9,9 +9,10 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 
 public class Edge implements Externalizable {
-    public long node1;
-    public long node2;
-    private float length; //in km
+    private long node1;
+    private long node2;
+    private String name;
+    private float length;
     private int speedLimit;
     private Coordinates[] path;
     private boolean supportsCars;
@@ -19,10 +20,11 @@ public class Edge implements Externalizable {
     private boolean supportsPedestrians;
 
     public Edge() {}
-    public Edge(long node1, long node2, ArrayList<Coordinates> path, float length, int speedLimit, boolean supportsCars, boolean supportsBicycles, boolean supportsPedestrians) {
+    public Edge(long node1, long node2, ArrayList<Coordinates> path, String name, float length, int speedLimit, boolean supportsCars, boolean supportsBicycles, boolean supportsPedestrians) {
         this.node1 = node1;
         this.node2 = node2;
         this.length = length;
+        this.name = name;
         this.speedLimit = speedLimit;
         this.supportsCars = supportsCars;
         this.supportsBicycles = supportsBicycles;

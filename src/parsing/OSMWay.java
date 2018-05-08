@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class OSMWay extends ArrayList<OSMNode>{
     private long id;
+    private String name;
     private int speedLimit;
     private boolean supportsCars;
     private boolean supportsBicycles;
@@ -14,7 +15,8 @@ public class OSMWay extends ArrayList<OSMNode>{
         this.id = id;
     }
 
-    public void addWayInfo(int sl, boolean c, boolean b, boolean p) {
+    public void addWayInfo(String name, int sl, boolean c, boolean b, boolean p) {
+        this.name = name;
         speedLimit = sl;
         supportsCars = c;
         supportsBicycles = b;
@@ -33,6 +35,10 @@ public class OSMWay extends ArrayList<OSMNode>{
 
     public long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getSpeedLimit() {
