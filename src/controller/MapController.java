@@ -170,19 +170,22 @@ public class MapController {
     }
 
 
-    //Methods to handle list of locations where Icons should be drawn
+    /** Methods to handle list of locations where Icons should be drawn */
+    /* The location icon */
     public static void updateLocationCoordinates(Coordinates coordinates){ locationIconCoordinates = coordinates; }
 
     public static void deleteLocationCoordinates() { locationIconCoordinates = null; }
 
     public Coordinates getLocationCoordinates() { return locationIconCoordinates; }
 
+    /* The start location icon when navigation is active */
     public static void updateStartCoordinates(Coordinates coordinates){ startIconCoordinates = coordinates; }
 
     public static void deleteStartCoordinates() { startIconCoordinates = null; }
 
     public Coordinates getStartCoordinates() { return startIconCoordinates; }
 
+    /* The icons of the favorites addresses */
     public static void updateListOfFavorites(Coordinates coordinates) { listOfFavorites.add(coordinates); }
 
     public static void deleteFavoritesFromList(Coordinates coordinates) { listOfFavorites.remove(coordinates); }
