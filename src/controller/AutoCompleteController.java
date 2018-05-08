@@ -49,11 +49,11 @@ public class AutoCompleteController extends KeyAdapter {
                     searchBoxController.updateAddress(address);
                     break;
 
-                case "startInput":
+                case "Fra:":
                     navigationController.setStartAddress(address);
                     break;
 
-                case "endInput":
+                case "Til:":
                     navigationController.setEndAddress(address);
                     break;
             }
@@ -91,7 +91,7 @@ public class AutoCompleteController extends KeyAdapter {
                 text = source.getText();
                 currentInput = source.getName();
 
-                if (currentInput.equals("startInput")) {
+                if (currentInput.equals("Fra:")) {
                     list.setBounds(20, 92, 409, 160);
                 } else {
                     // Only the endInput will be reached here.

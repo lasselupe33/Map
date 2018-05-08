@@ -55,7 +55,7 @@ public class SimpleLongSet implements Iterable<Long> {
 
     @Override
     public Iterator<Long> iterator() {
-        Iterator<Long> it = new Iterator<>() {
+        Iterator<Long> it = new Iterator<Long>() {
             private int currIndex = 0;
 
             @Override

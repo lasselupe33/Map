@@ -191,9 +191,9 @@ public class NavigationView extends JPanel {
 
         // Start input
         startInput = new JTextField(startInputText);
-        startInput.setName("startInput");
+        startInput.setName("Fra:");
         startInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
-        startInput.addFocusListener(new TextController("Fra:"));
+        startInput.addFocusListener(new TextController(startInput.getName()));
         startInput.addKeyListener(autoCompleteController);
         inputContainer.add(startInput);
 
@@ -202,9 +202,9 @@ public class NavigationView extends JPanel {
 
         // End input
         endInput = new JTextField(endInputText);
-        endInput.setName("endInput");
+        endInput.setName("Til:");
         endInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
-        endInput.addFocusListener(new TextController("Til:"));
+        endInput.addFocusListener(new TextController(endInput.getName()));
         endInput.addKeyListener(autoCompleteController);
         inputContainer.add(endInput);
 
@@ -263,7 +263,22 @@ public class NavigationView extends JPanel {
 
         return switchAndSubmitPanel;
     }
-
+    private void switchFromAndTo() {
+        String startTextHolder = startInput.getText();
+        String endTextHolder = endInput.getText();
+        if(startTextHolder.equals(startInput.getName()) && endTextHolder.equals(endInput.getName())){
+            //nothing happens
+        } else if (startTextHolder.equals(startInput.getName())){
+            startInput.setText(endTextHolder);
+            endInput.setText(endInput.getName());
+        } else if (endTextHolder.equals(endInput.getName())){
+            endInput.setText(startTextHolder);
+            startInput.setText(startInput.getName());
+        } else {
+            startInput.setText(endTextHolder);
+            endInput.setText(startTextHolder);
+        }
+    }
     public JTextField getStartInput() {
         return startInput;
     }
@@ -271,6 +286,11 @@ public class NavigationView extends JPanel {
         return endInput;
     }
 
-    public void setStartInputText(String text) { startInputText = text; }
+    public void setStartInputText(String text) {
+        System.out.println("Før: " + startInputText);
+        startInputText = text;
+        System.out.println("Efter: " + startInputText);
+        System.out.println();
+    }
     public void setEndInputText(String text) { endInputText = text; }
 }
