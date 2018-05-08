@@ -300,7 +300,15 @@ public class NavigationView extends JPanel {
         bottomPanel.add(addressLabel);
     }
 
-    public void addNavigationText(String text, String iconURL) {
+    public void addNavigationText(String navText, String iconURL, double length) {
+
+        String text;
+        if (length > 0) {
+            text = "<html><span style=\"font-size: 10px;\">" + navText +
+                    "</span><br><span style=\"font-size: 8px;\">" + length + " mm?" + "</span></html>";
+        } else {
+            text = "<html><span style=\"font-size: 10px;\">" + navText + "</span>";
+        }
         JLabel navigationText = new JLabel(text);
         Border margin = BorderFactory.createEmptyBorder(5, 0, 5, 0);
         navigationText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));

@@ -33,7 +33,7 @@ public class Graph {
     private RouteType routeType = RouteType.FASTEST;
     private Node source;
     private Node dest;
-    private ArrayList<Node> routeNodes;
+    private ArrayList<Edge> routeNodes;
     private boolean failed = false;
 
     public Graph() {
@@ -149,8 +149,6 @@ public class Graph {
         routeNodes = new ArrayList<>();
         Node node = dest;
 
-        routeNodes.add(dest);
-
         // Prepare drawing route path
         Path2D routePath = new Path2D.Float();
         Edge parentEdge = edges.get(node.getParentEdge());
@@ -174,7 +172,7 @@ public class Graph {
 
             // Go to next matched path
             node = nodes.get(parentEdge.getTo(node));
-            routeNodes.add(node);
+            routeNodes.add(parentEdge);
             parentEdge = edges.get(node.getParentEdge());
         }
 
@@ -246,8 +244,12 @@ public class Graph {
 
     public String getTime() { return time; }
 
+    public Node getSource() {
+        return source;
+    }
 
-    public ArrayList<Node> getRouteNodes() {
+
+    public ArrayList<Edge> getRouteNodes() {
         return routeNodes;
     }
 

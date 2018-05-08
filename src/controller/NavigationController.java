@@ -1,13 +1,11 @@
 package controller;
 
 import helpers.AddressBuilder;
+import helpers.GetDistance;
 import model.AddressesModel;
 import model.Coordinates;
 import model.MapModel;
-import model.graph.Graph;
-import model.graph.Node;
-import model.graph.RouteType;
-import model.graph.VehicleType;
+import model.graph.*;
 import model.Address;
 import view.NavigationView;
 
@@ -181,14 +179,17 @@ public class NavigationController extends MouseAdapter {
      * Add textual navigation to route search
      */
     public void textualNavigation(String start, String end) {
-        ArrayList<Node> routeNodes = graph.getRouteNodes();
+        ArrayList<Edge> routeNodes = graph.getRouteNodes();
         Collections.reverse(routeNodes);
 
         System.out.println(routeNodes.size());
 
         navigationView.addNavigationAddress(start);
 
-        addNavigationStart(routeNodes);
+        Node fromNode = graph.getSource();
+
+        System.out.println(routeNodes);
+        addNavigationStart(fromNode, graph.getNode(routeNodes.get(0).getTo(fromNode)));
 
         float x;
         float y;
@@ -196,46 +197,54 @@ public class NavigationController extends MouseAdapter {
         float[] vector2 = new float[2];
 
         if (routeNodes.size() >= 2) {
+            float length = 0;
             for (int i = 0; i < routeNodes.size() - 2; i++) {
-
-                x = routeNodes.get(i+1).getLon() - routeNodes.get(i).getLon();
-                y = routeNodes.get(i+1).getLat() - routeNodes.get(i).getLat();
+                Edge firstEdge = routeNodes.get(i);
+                Node toNode = graph.getNode(firstEdge.getTo(fromNode));
+                x = toNode.getLon() - fromNode.getLon();
+                y = toNode.getLat() - fromNode.getLat();
                 vector1[0] = x;
                 vector1[1] = y;
 
-                x = routeNodes.get(i + 2).getLon() - routeNodes.get(i + 1).getLon();
-                y = routeNodes.get(i + 2).getLat() - routeNodes.get(i + 1).getLat();
+                fromNode = toNode;
+                Edge secondEdge = routeNodes.get(i+1);
+                toNode = graph.getNode(secondEdge.getTo(fromNode));
+
+                x = toNode.getLon() - fromNode.getLon();
+                y = toNode.getLat() - fromNode.getLat();
                 vector2[0] = x;
                 vector2[1] = y;
 
                 double angle = angle(vector1, vector2);
-
-                if(angle < -135 || angle >= 135){
-                    //navigationView.addNavigationText("Tilbage...", "/icons/arrow-up.png");
-                } else if(angle < 135 && angle >= 45){
-                    navigationView.addNavigationText("Drej til højre og følg...", "/icons/arrow-right.png");
+                length += routeNodes.get(i+1).getLength();
+                if(angle < 135 && angle >= 45){
+                    navigationView.addNavigationText("Drej til højre og følg " + , "/icons/arrow-right.png", length);
+                    length = 0;
                 } else if(angle < 45 && angle >= -45){
-                    navigationView.addNavigationText("Fortsæt ned ad...", "/icons/arrow-up.png");
+                    //navigationView.addNavigationText("Fortsæt ned ad...", "/icons/arrow-up.png");
                 } else if(angle < -45 && angle >= -135){
-                    navigationView.addNavigationText("Drej til venstre og følg...", "/icons/arrow-left.png");
+                    navigationView.addNavigationText("Drej til venstre og følg...", "/icons/arrow-left.png", length);
+                    length = 0;
                 }
+
             }
 
-            navigationView.addNavigationText("Destinationen er nået", "/icons/locationIcon.png");
+            navigationView.addNavigationText("Destinationen er nået", "/icons/locationIcon.png", 0);
             navigationView.addNavigationAddress(end);
         }
     }
 
     /**
      * Calculate start direction and add text to navigation
-     * @param routeNodes list of nodes in route
+     * @param from first node in route
+     * @param to second node in route
      */
-    private void addNavigationStart(ArrayList<Node> routeNodes) {
-        float startPointX = routeNodes.get(0).getLon();
-        float startPointY = routeNodes.get(0).getLat();
+    private void addNavigationStart(Node from, Node to) {
+        float startPointX = from.getLon();
+        float startPointY = from.getLat();
 
-        float endPointX = routeNodes.get(1).getLon();
-        float endPointY = routeNodes.get(1).getLat();
+        float endPointX = to.getLon();
+        float endPointY = to.getLat();
 
         double compassReading = Math.atan2(endPointX-startPointX, endPointY-startPointY) * (180 / Math.PI);
 
@@ -244,8 +253,8 @@ public class NavigationController extends MouseAdapter {
         if (coordIndex < 0) {
             coordIndex = coordIndex + 8;
         }
-
-        navigationView.addNavigationText("Tag mod " + coordNames[coordIndex] +" ad...", "/icons/arrow-up.png");
+        double length = GetDistance.inMM(startPointY, startPointX, endPointY, endPointX);
+        navigationView.addNavigationText("Tag mod " + coordNames[coordIndex] +" ad...", "/icons/arrow-up.png", length);
     }
 
     /**
