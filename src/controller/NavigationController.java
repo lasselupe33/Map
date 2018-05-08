@@ -14,6 +14,10 @@ import view.NavigationView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 public class NavigationController extends MouseAdapter {
     private NavigationView navigationView;
@@ -101,15 +105,16 @@ public class NavigationController extends MouseAdapter {
     public void changeVehicleType(VehicleType type) {
         graph.setVehicleType(type);
         //setInputText();
-        onRouteSearch();
         updateView();
+        onRouteSearch();
     }
 
     /** Update the current road type */
     private void changeRouteType(RouteType type) {
         graph.setRouteType(type);
-        onRouteSearch();
         updateView();
+        onRouteSearch();
+
     }
 
     /**
@@ -164,10 +169,117 @@ public class NavigationController extends MouseAdapter {
             MapController.repaintMap(true);
             MapController.updateStartCoordinates(startAddressCoords);
             MapController.updateLocationCoordinates(endAddressCoords);
+            MapController.getInstance().moveScreenNavigation(graph.getRoutePath().getBounds2D());
+            textualNavigation(startInput, endInput);
         } else {
             navigationFailed = true;
             navigationActive = false;
         }
+    }
+
+    /**
+     * Add textual navigation to route search
+     */
+    public void textualNavigation(String start, String end) {
+        ArrayList<Node> routeNodes = graph.getRouteNodes();
+        Collections.reverse(routeNodes);
+
+        System.out.println(routeNodes.size());
+
+        navigationView.addNavigationAddress(start);
+
+        addNavigationStart(routeNodes);
+
+        float x;
+        float y;
+        float[] vector1 = new float[2];
+        float[] vector2 = new float[2];
+
+        if (routeNodes.size() >= 2) {
+            for (int i = 0; i < routeNodes.size() - 2; i++) {
+
+                x = routeNodes.get(i+1).getLon() - routeNodes.get(i).getLon();
+                y = routeNodes.get(i+1).getLat() - routeNodes.get(i).getLat();
+                vector1[0] = x;
+                vector1[1] = y;
+
+                x = routeNodes.get(i + 2).getLon() - routeNodes.get(i + 1).getLon();
+                y = routeNodes.get(i + 2).getLat() - routeNodes.get(i + 1).getLat();
+                vector2[0] = x;
+                vector2[1] = y;
+
+                double angle = angle(vector1, vector2);
+
+                if(angle < -135 || angle >= 135){
+                    //navigationView.addNavigationText("Tilbage...", "/icons/arrow-up.png");
+                } else if(angle < 135 && angle >= 45){
+                    navigationView.addNavigationText("Drej til højre og følg...", "/icons/arrow-right.png");
+                } else if(angle < 45 && angle >= -45){
+                    navigationView.addNavigationText("Fortsæt ned ad...", "/icons/arrow-up.png");
+                } else if(angle < -45 && angle >= -135){
+                    navigationView.addNavigationText("Drej til venstre og følg...", "/icons/arrow-left.png");
+                }
+            }
+
+            navigationView.addNavigationText("Destinationen er nået", "/icons/locationIcon.png");
+            navigationView.addNavigationAddress(end);
+        }
+    }
+
+    /**
+     * Calculate start direction and add text to navigation
+     * @param routeNodes list of nodes in route
+     */
+    private void addNavigationStart(ArrayList<Node> routeNodes) {
+        float startPointX = routeNodes.get(0).getLon();
+        float startPointY = routeNodes.get(0).getLat();
+
+        float endPointX = routeNodes.get(1).getLon();
+        float endPointY = routeNodes.get(1).getLat();
+
+        double compassReading = Math.atan2(endPointX-startPointX, endPointY-startPointY) * (180 / Math.PI);
+
+        String[] coordNames = new String[] {"syd", "sydøst", "øst", "nordøst", "syd", "nordvest", "vest", "sydvest", "syd"};
+        int coordIndex = (int) Math.round(compassReading / 45); // divide 360 degrees by the 8 directions
+        if (coordIndex < 0) {
+            coordIndex = coordIndex + 8;
+        }
+
+        navigationView.addNavigationText("Tag mod " + coordNames[coordIndex] +" ad...", "/icons/arrow-up.png");
+    }
+
+    /**
+     * Compute the scalar product of two vectors
+     * @param p first vector
+     * @param q second vector
+     * @return scalar product of vector p and vector q
+     */
+    private double scalarProduct(float[] p, float[] q) {
+        double product = 0;
+        for (int i = 0; i < p.length; i++) {
+            product += p[i] * q[i];
+        }
+        return product;
+    }
+
+    /**
+     * Compute the determinant of two vectors
+     * @param p first vector
+     * @param q second vector
+     * @return determinant of vector p and vector q
+     */
+    private double determinant(float[] p, float[] q) {
+        return p[0]*q[1] - p[1]*q[0];
+    }
+
+    /**
+     * Compute the angle of two vectors
+     * @param p first vector
+     * @param q second vector
+     * @return angle between -180 and 180
+     */
+    private double angle(float[] p, float[] q) {
+        return Math.toDegrees(Math.atan2(determinant(p, q), scalarProduct(p ,q)));
     }
 
     /**

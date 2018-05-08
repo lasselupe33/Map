@@ -33,12 +33,14 @@ public class Graph {
     private RouteType routeType = RouteType.FASTEST;
     private Node source;
     private Node dest;
+    private ArrayList<Node> routeNodes;
     private boolean failed = false;
 
     public Graph() {
         nodes = new HashMap<>();
         edges = new HashMap<>();
         vehicleType = VehicleType.CAR;
+        routeNodes = new ArrayList<>();
     }
 
     public int size() {
@@ -144,7 +146,10 @@ public class Graph {
 
     /** Internal helper that creates the path of the found path between two nodes */
     private void createComputedPath(Node dest) {
+        routeNodes = new ArrayList<>();
         Node node = dest;
+
+        routeNodes.add(dest);
 
         // Prepare drawing route path
         Path2D routePath = new Path2D.Float();
@@ -169,6 +174,7 @@ public class Graph {
 
             // Go to next matched path
             node = nodes.get(parentEdge.getTo(node));
+            routeNodes.add(node);
             parentEdge = edges.get(node.getParentEdge());
         }
 
@@ -194,7 +200,8 @@ public class Graph {
         routePath = null;
         time = null;
         length = null;
-    };
+        routeNodes = new ArrayList<>();
+    }
 
     /** Helper that converts the ArrayList of edges in a node to an array once all edges have been created */
     public void finalizeNodes() {
@@ -238,6 +245,11 @@ public class Graph {
     public String getLength() { return length; }
 
     public String getTime() { return time; }
+
+
+    public ArrayList<Node> getRouteNodes() {
+        return routeNodes;
+    }
 
     public boolean didError() {
         return failed;

@@ -152,21 +152,40 @@ public class MapController {
 
     public void moveScreen(Coordinates coordinates, WayType type) {
         transform = new AffineTransform();
-        // Pan to map
-        pan(-coordinates.getX(), -coordinates.getY());
-        zoom(canvas.getHeight() / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
-        // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
-        pan(canvas.getWidth()/2, canvas.getHeight()/2);
+
+        panToMap(coordinates.getX(), coordinates.getY());
 
         double zoomscale = 100.0*(type.getPriority()-getZoomLevel())/510.0;
-
-
         zoomToCenter(zoomscale);
 
         updateLocationCoordinates(coordinates);
 
         // Update map elements
         updateMap();
+    }
+
+
+    public void moveScreenNavigation(Rectangle2D rect){
+        transform = new AffineTransform();
+        panToMap((rect.getCenterX()-rect.getWidth()/8), rect.getCenterY());
+
+        double zoomscale = (getRectDistance(getModelViewRect())/3)/getRectDistance(rect);
+        zoomToCenter(zoomscale);
+
+        updateMap();
+    }
+
+    private double getRectDistance(Rectangle2D rectangle2D) {
+        return GetDistance.inKM(rectangle2D.getMinX(), rectangle2D.getMinY(), rectangle2D.getMaxX(), rectangle2D.getMaxY());
+    }
+
+
+    private void panToMap(double x, double y) {
+        // Pan to map
+        pan(-x, -y);
+        zoom(canvas.getHeight() / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
+        // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
+        pan(canvas.getWidth()/2, canvas.getHeight()/2);
     }
 
 
