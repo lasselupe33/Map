@@ -234,9 +234,12 @@ public class NavigationView extends JPanel {
         middlePanel.setLayout(new BorderLayout());
 
         // Time label
-        if (navigationController.getLength() != null && navigationController.getTime() != null) {
+        if (navigationController.getLength() != null && navigationController.getTime() != null && !navigationController.didError()) {
             JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>" + navigationController.getTime() + "</span> <span style='font-size:12px;color:#4285F4;'>(" + navigationController.getLength() + "km)</span></html>");
             middlePanel.add(timeLabel, BorderLayout.WEST);
+        } else if (navigationController.didError()) {
+            JLabel errorLabel = new JLabel("<html><span style='color:#a94442;'>Ingen rute fundet med givne indstillinger!</span></html>");
+            middlePanel.add(errorLabel, BorderLayout.WEST);
         }
 
         middlePanel.add(renderSwitchAndSubmitButtons(), BorderLayout.EAST);

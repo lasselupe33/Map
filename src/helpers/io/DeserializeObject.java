@@ -19,7 +19,9 @@ public class DeserializeObject implements Runnable {
         // A new deserialization has been started, bump amount of deserializations..
         IOHandler.instance.onDeserializeStart();
 
-        new Thread(this, "deserializer-" + name).start();
+        Thread thread = new Thread(this, "deserializer-" + name);
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
     }
 
     public void run() {

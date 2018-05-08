@@ -31,6 +31,18 @@ public class AddressBuilderTest {
 
     }
 
+    @Test
+    public void testParseValidInput3(){
+        Address assertAddress = new Address("Grønjordskollegiet", "6", "2300");
+        String stringAddress = "Grønjordskollegiet 6, 2300 København, Danmark";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+        //todo be able to parse ", country"
+    }
+
 
 
     @Test(expected = Error.class)
@@ -51,7 +63,7 @@ public class AddressBuilderTest {
         Address testAddress = AddressBuilder.parse("");
     }
 
-    //todo regex should be able to parse "Rued Langgaards Vej 7 7, 2300 København S, Danmark"
+
 
 
 }

@@ -1,17 +1,30 @@
 package model.graph;
 
 import helpers.GetDistance;
+import helpers.io.DeserializeObject;
+import helpers.io.SerializeObject;
+import helpers.structures.KDTree;
 import helpers.structures.LongToNodeMap;
+import model.Coordinates;
 import model.MapModel;
+import model.WayType;
 import view.MainWindowView;
 
 import java.awt.geom.Path2D;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class Graph {
-    private LongToNodeMap nodes;
+    private HashMap<Long, Node> nodes;
+    private HashMap<Integer, Edge> edges;
+    private int currEdgeId = 0;
     private VehicleType vehicleType;
     private Path2D routePath;
     private String length;
@@ -21,26 +34,40 @@ public class Graph {
     private Node source;
     private Node dest;
     private ArrayList<Node> routeNodes;
+    private boolean failed = false;
 
     public Graph() {
-        nodes = new LongToNodeMap(25);
+        nodes = new HashMap<>();
+        edges = new HashMap<>();
         vehicleType = VehicleType.CAR;
         routeNodes = new ArrayList<>();
     }
 
+    public int size() {
+        return nodes.size();
+    }
+
     public void computePath(Node source, Node dest) {
-        System.out.println(nodes.size());
+        // Performance logs
+        long start = System.currentTimeMillis();
+
+        // Reset nodes
+        for (Node node : nodes.values()) {
+            node.reset(dest);
+        }
+
         this.source = source;
         this.dest = dest;
 
         // Create priorityQueue that always returns the node with the closest distance to source
-        pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) ((a.getDistToSource(routeType)) - (b.getDistToSource(routeType))));
+        pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) (((a.getDistToSource(routeType)) + a.getEstimateToDest(routeType, vehicleType)) - ((b.getDistToSource(routeType)) + b.getEstimateToDest(routeType, vehicleType))));
 
         // Reset variables
         ArrayList<Node> visitedVerticies = new ArrayList<>();
         routePath = null;
         source.setLengthToSource(0);
         source.setTimeToSource(0);
+        source.setEstimateToDest((float) GetDistance.inMM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
         pq.add(source);
 
         while (pq.size() != 0) {
@@ -53,24 +80,52 @@ public class Graph {
             }
 
             // Go through all neighbours and relax them if possible
-            for (int i = 0; i < current.getEdges().size(); i++) {
-                relaxNeighbour(current, current.getEdges().get(i));
+            for (int i = 0; i < current.getEdges().length; i++) {
+                relaxNeighbour(current, current.getEdges()[i]);
             }
         }
 
-        setRouteLength(dest);
-        setRouteTime(dest);
-        createComputedPath(dest);
+        if (dest.getParentEdge() != null) {
+            setRouteLength(dest);
+            setRouteTime(dest);
+            createComputedPath(dest);
+            failed = false;
+        } else {
+            failed = true;
+        }
 
-        // Reset all visited vertexes once the path has been computed (no need to reset vertices that never have been
-        // visited).
-        resetVerticies(visitedVerticies);
+
+        System.out.println("Distance: " + GetDistance.inKM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
+        System.out.println("Visited verticies: " + visitedVerticies.size());
+        System.out.println("Time in ms: " + (System.currentTimeMillis() - start));
+    }
+
+    /**
+     * Internal helper that relaxes the neighbour of the current node if a shorter path can be found.
+     */
+    private void relaxNeighbour(Node current, Integer edgeToNeighbourId) {
+        Edge edgeToNeighbour = edges.get(edgeToNeighbourId);
+
+        // Ensure edge supports current vehicle type
+        if (!edgeToNeighbour.supportsType(vehicleType)) {
+            return;
+        }
+
+        Node neighbour = nodes.get(edgeToNeighbour.getTo(current));
+
+        if (neighbour.getDistToSource(routeType) > current.getDistToSource(routeType) + edgeToNeighbour.getWeight(vehicleType, routeType)) {
+            // We found a shorter path for the neighbour! Relax neighbour node.
+            neighbour.setLengthToSource(current.getLengthToSource() + edgeToNeighbour.getLength());
+            neighbour.setTimeToSource(current.getTimeToSource() + edgeToNeighbour.getTime(vehicleType));
+            neighbour.setParentEdge(edgeToNeighbourId);
+            pq.add(neighbour);
+        }
     }
 
     /** Internal helper that sets the route length in KM based on the computed path destination */
     private void setRouteLength(Node dest) {
         // Get length in KM's
-        float length = dest.getLengthToSource() / 1000;
+        float length = dest.getLengthToSource() / 1000000;
 
         // Nicely format distance
         DecimalFormat formatter = new DecimalFormat("0.0");
@@ -78,11 +133,15 @@ public class Graph {
     }
 
     private void setRouteTime(Node dest) {
-        // Get time in minutes
-        float time = dest.getTimeToSource() / 1000000;
+        // Get time in hours
+        float time = dest.getTimeToSource() / 1000000 / 60;
 
         // We always round the time up
-        this.time = (int) time + "min " + (int) ((time % 1) * 60) + "sek";
+        int hours = (int) time;
+        int min = (int) ((time % 1) * 60);
+        int seconds = (int) ((((time % 1) * 60) % 1) * 60);
+
+        this.time = (hours != 0 ? hours + "h " : "") + (min != 0 || hours != 0 ? min + "min " : "") + (seconds != 0 || min != 0 || hours != 0 ? seconds + "sek" : "");
     }
 
     /** Internal helper that creates the path of the found path between two nodes */
@@ -93,43 +152,33 @@ public class Graph {
         routeNodes.add(dest);
 
         // Prepare drawing route path
-        Path2D sp = new Path2D.Float();
-        sp.moveTo(node.getLon(), node.getLat());
+        Path2D routePath = new Path2D.Float();
+        Edge parentEdge = edges.get(node.getParentEdge());
+        routePath.moveTo(node.getLon(), node.getLat());
 
-        while(node.getParent() != null) {
-            node = node.getParent();
-            sp.lineTo(node.getLon(), node.getLat());
+        while(parentEdge != null) {
+            // Determine if we should start at the end of the edge path or the start...
+            if (parentEdge.getPath()[0].getX() == node.getLon() && parentEdge.getPath()[0].getY() == node.getLat()) {
+                // If the previous point matches with the start of the path, then go through the path forwards
+                for (int i = 1; i < parentEdge.getPath().length; i++) {
+                    Coordinates point = parentEdge.getPath()[i];
+                    routePath.lineTo(point.getX(), point.getY());
+                }
+            } else {
+                // ... else go through the path backwards
+                for (int i = parentEdge.getPath().length - 2; i >= 0; i--) {
+                    Coordinates point = parentEdge.getPath()[i];
+                    routePath.lineTo(point.getX(), point.getY());
+                }
+            }
+
+            // Go to next matched path
+            node = nodes.get(parentEdge.getTo(node));
             routeNodes.add(node);
+            parentEdge = edges.get(node.getParentEdge());
         }
 
-        routePath = sp;
-    }
-
-    /**
-     * Internal helper that relaxes the neighbour of the current node if a shorter path can be found.
-     */
-    private void relaxNeighbour(Node current, Edge edgeToNeighbour) {
-        // Ensure edge supports current vehicle type
-        if (!edgeToNeighbour.supportsType(vehicleType)) {
-            return;
-        }
-
-        Node neighbour = nodes.get(edgeToNeighbour.getTo(current).getId());
-
-        if (neighbour.getDistToSource(routeType) > current.getDistToSource(routeType) + edgeToNeighbour.getWeight(vehicleType, routeType)) {
-            // We found a shorter path for the neighbour! Relax neighbour node.
-            neighbour.setLengthToSource(current.getLengthToSource() + edgeToNeighbour.getLength());
-            neighbour.setTimeToSource(current.getTimeToSource() + edgeToNeighbour.getTime(vehicleType));
-            neighbour.setParent(current);
-            pq.add(neighbour);
-        }
-    }
-
-    /** Internal helper that resets all visited vertexes of the map */
-    private void resetVerticies(ArrayList<Node> vertexes) {
-        for (Node node : vertexes) {
-            node.reset();
-        }
+        this.routePath = routePath;
     }
 
     public void setSourceAndDest(Node s, Node d) {
@@ -154,14 +203,28 @@ public class Graph {
         routeNodes = new ArrayList<>();
     }
 
+    /** Helper that converts the ArrayList of edges in a node to an array once all edges have been created */
+    public void finalizeNodes() {
+        for (Node node : nodes.values()) {
+            node.finalizeEdges();
+        }
+    }
+
     /** Getters and setters */
     public void putNode(Node node) {
-        nodes.put(node.getId(), node.getLon(), node.getLat());
+        nodes.put(node.getId(), node);
+    }
+
+    public int putEdge(Edge edge) {
+        edges.put(currEdgeId, edge);
+        return currEdgeId++;
     }
 
     public Node getNode(long id) {
         return nodes.get(id);
     }
+
+    public Edge getEdge(int id) { return edges.get(id);}
 
     public void setVehicleType(VehicleType type) {
         this.vehicleType = type;
@@ -183,7 +246,39 @@ public class Graph {
 
     public String getTime() { return time; }
 
+
     public ArrayList<Node> getRouteNodes() {
         return routeNodes;
+    }
+
+    public boolean didError() {
+        return failed;
+    }
+
+    /** Serializes all data necessary to load and display the map */
+    public void serialize() {
+        new SerializeObject("graph/nodes", nodes);
+    }
+
+    /** Internal helper that deserializses the MapModel */
+    public void deserialize() {
+        try {
+            // Setup thread callback
+            Class[] parameterTypes = new Class[2];
+            parameterTypes[0] = HashMap.class;
+            parameterTypes[1] = String.class;
+            Method callback = Graph.class.getMethod("onThreadDeserializeComplete", parameterTypes);
+
+            new DeserializeObject("graph/nodes", this, callback);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** Callback to be called once a thread has finished deserializing a mapType */
+    public void onThreadDeserializeComplete(HashMap<Long, Node> nodes, String name) {
+        this.nodes = nodes;
     }
 }

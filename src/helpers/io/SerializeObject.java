@@ -17,7 +17,9 @@ public class SerializeObject implements Runnable {
         IOHandler.instance.onSerializationStart();
 
         // Begin serializing
-        new Thread(this, "serializer-" + name).start();
+        Thread thread = new Thread(this, "serializer-" + name);
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
     }
 
     public void run() {

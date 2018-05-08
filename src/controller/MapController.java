@@ -260,10 +260,10 @@ public class MapController {
                     new TimerTask() {
                         @Override
                         public void run() {
-                            if (System.currentTimeMillis() - lastAction >= 300) {
-                                useAntiAliasing = true;
-                                canvas.repaint();
-                            }
+                        if (System.currentTimeMillis() - lastAction >= 300) {
+                            useAntiAliasing = true;
+                            canvas.repaint();
+                        }
                         }
                     },
                     300
