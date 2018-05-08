@@ -92,6 +92,7 @@ public class ColorMap {
 
         colorMap.put(WayType.RESIDENTIAL, new Color[] {residentialColor, residentialColor, residentialColor, residentialColor});
 
+
         colorMap.put(WayType.FORREST, new Color[] {new Color(173, 216, 176),
                 colorBlindForrest,
                 colorBlindForrest,

@@ -8,6 +8,8 @@ import model.graph.*;
 import model.Address;
 import view.NavigationView;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
@@ -73,6 +75,7 @@ public class NavigationController extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
         // Bail out if a nameless/no component was clicked
         if (e.getComponent() == null || e.getComponent().getName() == null) {
+
             return;
         }
 
@@ -91,6 +94,9 @@ public class NavigationController extends MouseAdapter {
                 break;
             case "shortest":
                 changeRouteType(RouteType.SHORTEST);
+                break;
+            default:
+            System.out.print("test");
                 break;
         }
     }
@@ -123,7 +129,7 @@ public class NavigationController extends MouseAdapter {
     /**
      * Update the view
      */
-    private void updateView() {
+    public void updateView() {
         setInputText();
         navigationView.update();
     }
@@ -136,7 +142,7 @@ public class NavigationController extends MouseAdapter {
         endInput = navigationView.getEndInput().getText();
 
         // Check that inputs have been filled
-        if (startInput.equals("Fra:") || endInput.equals("Til:") || startInput.equals("") || endInput.equals("")) {
+        if (startInput.equals(navigationView.getStartInput().getName()) || endInput.equals(navigationView.getEndInput().getName()) || startInput.equals("") || endInput.equals("")) {
             return;
         }
 
@@ -236,14 +242,19 @@ public class NavigationController extends MouseAdapter {
         return navigationActive;
 
     }
-
+    public JTextField getStartInput(){
+        return navigationView.getStartInput();
+    }
+    public JTextField getEndInput(){
+        return navigationView.getEndInput();
+    }
     /**
      * Reset navigation view
      */
     public void reset() {
         navigationActive = false;
-        navigationView.setStartInputText("Fra:");
-        navigationView.setEndInputText("Til:");
+        navigationView.setStartInputText(navigationView.getStartInput().getName());
+        navigationView.setEndInputText(navigationView.getEndInput().getName());
         graph.setVehicleType(VehicleType.CAR);
     }
 

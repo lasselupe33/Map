@@ -17,18 +17,18 @@ public class StrokeMap {
      * @param type map element type
      * @return a BasicStroke
      */
-    public static BasicStroke getStroke(WayType type) {
+    public static BasicStroke getStroke(WayType type, float zoomLevel) {
         // Initialize map if it hasn't been done
         if (strokeMap == null) {initializeMap();}
-
-        // Get the current zoomlevel
-        float zoomLevel = MapController.getZoomLevel();
 
         // If zoom level is less than 500 then multiply the width
         // of the stroke with a factor based on zoom level
         if (zoomLevel < 500) {
             float factor = (511 - zoomLevel) * (zoomLevel / 10);
             float width = strokeMap.get(type) * factor / zoomLevel;
+            if (type == WayType.MOTORWAY) {
+                System.out.println(zoomLevel + " " + type + " " + width);
+            }
             return basicStroke(type, width);
         } else {
             return basicStroke(type, strokeMap.get(type));

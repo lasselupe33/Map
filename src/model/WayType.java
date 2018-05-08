@@ -10,13 +10,13 @@ public enum WayType implements Serializable {
     COASTLINE(1),
     PLACE(490),
     RESIDENTIAL(300),
-    FARMLAND(370),
+    FARMLAND(470),
     AEROWAY(490),
-    PARK(485),
-    FORREST(370),
-    WATER(400),
+    PARK(490),
+    FORREST(480),
+    WATER(485),
     RAILWAY(490),
-    BUILDING(509),
+    BUILDING(508),
     PITCH(490),
     ALLOMENTS(495),
     GRASS(485),
@@ -43,7 +43,8 @@ public enum WayType implements Serializable {
     DRAIN(490),
     RUNWAY(490),
     HEDGE(509),
-    UNKNOWN(510), SWIMMINGPOOL(485);
+    UNKNOWN(509),
+    SWIMMINGPOOL(485);
 
     /**
      * The priority of a map element specifies when it'll be rendered on the map.

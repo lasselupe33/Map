@@ -69,7 +69,10 @@ public class MapView extends JComponent {
                     g.setStroke(new BasicStroke(Float.MIN_VALUE));
                     g.fill(m.getShape());
                 } else {
-                    g.setStroke(StrokeMap.getStroke(m.getType()));
+                    // Get the current zoomlevel
+                    float zoomLevel = MapController.getZoomLevel();
+
+                    g.setStroke(StrokeMap.getStroke(m.getType(), zoomLevel));
                     g.draw(m.getShape());
                 }
             }
