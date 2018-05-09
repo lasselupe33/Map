@@ -97,7 +97,7 @@ public class HelpWindow {
         heading("Ikonforklaring", helpPanel);
         iconText("Søg efter indtastet adresse", "/icons/search.png", helpPanel);
         iconText("Gå til rutevejledning", "/icons/navigation.png", helpPanel);
-        iconText("Gå til liste over favoritter", "/icons/favorite.png", helpPanel);
+        iconText("Gå til liste over favoritter", "/icons/locationIcon-blue.png", helpPanel);
         iconText("Gem adresse som en favorit", "/icons/bookmark.png", helpPanel);
         iconText("Bilrute", "/icons/car.png", helpPanel);
         iconText("Cykelrute", "/icons/cycle.png", helpPanel);
