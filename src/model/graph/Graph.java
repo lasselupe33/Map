@@ -37,7 +37,6 @@ public class Graph {
     private boolean failed = false;
 
     public Graph() {
-        textualNavigation = new ArrayList<>();
         nodes = new HashMap<>();
         edges = new HashMap<>();
         vehicleType = VehicleType.CAR;
@@ -180,20 +179,25 @@ public class Graph {
         computeTextualNavigation();
     }
 
+    /**
+     * Use edges in route to create the textual navigation
+     */
     private void computeTextualNavigation() {
+        textualNavigation = new ArrayList<>();
+
         ArrayList<Edge> edges = routeEdges;
 
         // Reverse the edges of the route (we want to create the description from start to end)
         Collections.reverse(edges);
 
-        // Add the start Address to the navigation
+        // Add the start Address to the navigation text
         textualNavigation.add(new TextualElement(sourceAddress));
 
-        // Create the start of the navigation, leading the user to the actual road
+        // Create the start of the navigation, leading the user in the right direction of the first road
         Node fromNode = source;
         addNavigationStart(fromNode, routeEdges.get(0));
 
-        // Prepare variables
+        // Prepare vector variables
         float x;
         float y;
         float[] vector1 = new float[2];
@@ -225,7 +229,7 @@ public class Graph {
                 vector2[0] = x;
                 vector2[1] = y;
 
-                // Get the angle between the two, and prepare adding a step to the navigation
+                // Get the angle between the two vectors and prepare adding a step to the navigation
                 double angle = VectorMath.angle(vector1, vector2);
                 length += routeEdges.get(i+1).getLength();
                 String firstEdgeName = firstEdge.getName() == null ? "" : " ned ad " + firstEdge.getName();
@@ -235,7 +239,7 @@ public class Graph {
                     textualNavigation.add(new TextualElement("Drej til højre" + secondEdgeName, "/icons/arrow-right.png", UnitConverter.formatDistance(length)));
                     length = 0;
                 } else if(angle < 45 && angle >= -45){
-                    // If we're continuing straightforward, then we only want to add a step if the roadname has changed!
+                    // If we're continuing straightforward, then we only want to add a step if the road name has changed!
                     if (!firstEdgeName.equals(secondEdgeName)) {
                         textualNavigation.add(new TextualElement("Fortsæt" + secondEdgeName, "/icons/arrow-up.png", UnitConverter.formatDistance(length)));
                         length = 0;
@@ -246,10 +250,11 @@ public class Graph {
                 }
 
             }
-
-            textualNavigation.add(new TextualElement("Destinationen er nået", "/icons/locationIcon.png", null));
-            textualNavigation.add(new TextualElement(destAddress));
         }
+        textualNavigation.add(new TextualElement("Destinationen er nået", "/icons/locationIcon.png", null));
+
+        // Add the destination Address to the navigation text
+        textualNavigation.add(new TextualElement(destAddress));
     }
 
     /**
@@ -266,16 +271,16 @@ public class Graph {
         float endPointX = to.getLon();
         float endPointY = to.getLat();
 
-        double compassReading = Math.atan2(endPointX-startPointX, endPointY-startPointY) * (180 / Math.PI);
+        double compassReading = Math.toDegrees(Math.atan2(endPointX-startPointX, endPointY-startPointY));
 
-        String[] coordNames = new String[] {"syd", "sydøst", "øst", "nordøst", "syd", "nordvest", "vest", "sydvest", "syd"};
-        int coordIndex = (int) Math.round(compassReading / 45); // divide 360 degrees by the 8 directions
-        if (coordIndex < 0) {
-            coordIndex = coordIndex + 8;
+        String[] directions = new String[] {"syd", "sydøst", "øst", "nordøst", "syd", "nordvest", "vest", "sydvest", "syd"};
+        int directionIndex = (int) Math.round(compassReading / 45); // divide 360 degrees by the 8 directions = 45
+        if (directionIndex < 0) {
+            directionIndex = directionIndex + 8;
         }
 
         String length = UnitConverter.formatDistance(UnitConverter.DistInMM(startPointY, startPointX, endPointY, endPointX));
-        textualNavigation.add(new TextualElement("Tag mod " + coordNames[coordIndex] + (edge.getName() != null ? " ad " + edge.getName() : ""), "/icons/arrow-up.png", length));
+        textualNavigation.add(new TextualElement("Tag mod " + directions[directionIndex] + (edge.getName() != null ? " ad " + edge.getName() : ""), "/icons/arrow-up.png", length));
     }
 
     public void setSourceAndDest(Node s, Node d) {

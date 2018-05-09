@@ -50,6 +50,8 @@ public class NavigationView extends JPanel {
         if (!initialRender) {
             remove(topPanel);
             if (scroll != null) {
+                bottomPanel.removeAll();
+                bottomPanel.revalidate();
                 remove(scroll);
             }
         } else {
