@@ -2,10 +2,8 @@ package controller;
 
 import helpers.ColorMap;
 import helpers.io.IOHandler;
-import model.MetaModel;
 import model.graph.Graph;
-import model.graph.RouteType;
-import view.LoadingScreen;
+import view.HelpWindow;
 
 import javax.swing.*;
 
@@ -54,5 +52,14 @@ public class MenuController {
     public void grayscaleMode() {
         colorMap.setMode(ColorMap.Mode.GRAYSCALE);
         MapController.repaintMap(true);
+    }
+
+    public void help() {
+        HelpWindow helpWindow = new HelpWindow(HelpWindow.HelpType.HELP);
+    }
+
+    public void userManual() {
+        HelpWindow helpWindow = new HelpWindow(HelpWindow.HelpType.USERMANUAL);
+
     }
 }
