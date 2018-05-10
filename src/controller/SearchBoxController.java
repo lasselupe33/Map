@@ -92,6 +92,7 @@ public class SearchBoxController extends MouseAdapter {
 
         navigationController.setStartAddress(address);
 
+
         // Update view to reflect changes
         stateHandler.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
