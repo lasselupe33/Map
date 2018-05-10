@@ -34,7 +34,43 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toString(), testAddress.toString());
 
     }
+    @Test
+    public void testParseSpecialCharacters() {
+        Address assertAddress = new Address("Mü-Sö's Mäë.", "11", "1231");
+        String stringAddress = "Mü-Sö's Mäë. 11, 1231 København S";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
 
+    @Test
+    public void testStreetNameWithNumberFirst() {
+        Address assertAddress = new Address("10. februar vej", "11", "1231");
+        String stringAddress = "10. februar vej 11, 1231 København S";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
+    @Test
+    public void testStreetNameWithNumberInTheMiddle() {
+        Address assertAddress = new Address("Christian 10. Gade", "11", "1231");
+        String stringAddress = "Christian 10. Gade 11, 1231 København S";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
     /*
     @Test
     public void testParseValidInput3(){
@@ -79,13 +115,13 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
 
-    @Test(expected = Error.class)
-    public void testParseInvalidPostCode(){
-        String stringAddresLength5 = "Islands Brygge 10, 99999 city of Danmark";
-        Address testAddress = AddressBuilder.parse(stringAddresLength5);
-        assertEquals(assertAddress.getCity(), testAddress.getCity());
-        //todo regex shouldn't accept postcode with length != 4
-    }
+//    @Test(expected = Error.class)
+//    public void testParseInvalidPostCode(){
+//        String stringAddresLength5 = "Islands Brygge 10, 99999 city of Danmark";
+//        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+//        assertEquals(assertAddress.getCity(), testAddress.getCity());
+//        //todo regex shouldn't accept postcode with length != 4
+//    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyInput(){
