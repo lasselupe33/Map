@@ -150,12 +150,12 @@ public class MapController {
         updateMap();
     }
 
-    public void moveScreen(Coordinates coordinates, WayType type) {
+    public void moveScreen(Coordinates coordinates) {
         transform = new AffineTransform();
 
         panToMap(coordinates.getX(), coordinates.getY());
 
-        double zoomscale = 100.0*(type.getPriority()-getZoomLevel())/510.0;
+        double zoomscale = Math.abs(100.0 * (508 - getZoomLevel()) / 510.0);
         zoomToCenter(zoomscale);
 
         updateLocationCoordinates(coordinates);
@@ -167,9 +167,9 @@ public class MapController {
 
     public void moveScreenNavigation(Rectangle2D rect){
         transform = new AffineTransform();
-        panToMap((rect.getCenterX()-rect.getWidth()/8), rect.getCenterY());
+        panToMap((rect.getCenterX()-rect.getWidth() / 8), rect.getCenterY());
 
-        double zoomscale = (getRectDistance(getModelViewRect())/3)/getRectDistance(rect);
+        double zoomscale = (getRectDistance(getModelViewRect()) / 3) / getRectDistance(rect);
         zoomToCenter(zoomscale);
 
         updateMap();

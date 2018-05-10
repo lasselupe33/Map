@@ -176,6 +176,8 @@ public class Graph {
     }
 
     private void computeTextualNavigation() {
+        // Reset textualNav
+        textualNavigation = new ArrayList<>();
         ArrayList<Edge> edges = routeEdges;
 
         // Reverse the edges of the route (we want to create the description from start to end)

@@ -49,6 +49,7 @@ public class NavigationView extends JPanel {
     public void update() {
         if (!initialRender) {
             remove(topPanel);
+
             if (scroll != null) {
                 remove(scroll);
             }
@@ -56,17 +57,17 @@ public class NavigationView extends JPanel {
             initialRender = false;
         }
 
+        add(topPanel());
+
+        // Set correct dimensions based on whether or not a navigation is active
         if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
             int height = MainWindowView.getHeight();
             setBounds(0, 0, 450, height-25);
+            add(textualNavigation());
         } else {
             setBounds(0, 0, 450, 200);
         }
 
-        add(topPanel());
-        if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
-            add(addBottomPanel());
-        }
         revalidate();
         repaint();
     }
@@ -274,7 +275,7 @@ public class NavigationView extends JPanel {
         return switchAndSubmitPanel;
     }
 
-    private JScrollPane addBottomPanel() {
+    private JScrollPane textualNavigation() {
         bottomPanel = new JPanel();
         bottomPanel.setOpaque(true);
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));

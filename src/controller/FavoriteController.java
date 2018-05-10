@@ -18,7 +18,7 @@ public class FavoriteController {
     public void updateFavoriteInput(Address address){
         stateController.updateCurrentState(stateController.getPrevPanel());
         if(stateController.getCurrentState() == ViewStates.INITIAL || stateController.getCurrentState() == ViewStates.ADDRESS_ENTERED){
-            MapController.getInstance().moveScreen(address.getCoordinates(), address.getType());
+            MapController.getInstance().moveScreen(address.getCoordinates());
             searchBoxController.setInputOnLocationIcon(address);
         }
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
