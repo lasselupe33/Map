@@ -8,6 +8,7 @@ import view.FavoriteView;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 
 public class AddressController extends MouseAdapter {
     private StateController stateController;
@@ -15,6 +16,8 @@ public class AddressController extends MouseAdapter {
     private FavoritesModel favoritesModel;
     private FavoriteView favoriteView;
     private NavigationController navigationController;
+
+    private URL bookmarkURL = this.getClass().getResource("/icons/bookmark.png");
 
     public AddressController(StateController sc, FavoritesModel favoritesModel, NavigationController nc)  {
         stateController = sc;
@@ -63,6 +66,17 @@ public class AddressController extends MouseAdapter {
         System.out.println(newFavorite.getAddress().getCoordinates());
         favoritesModel.add(newFavorite);
         favoriteView.updateFavoritesView();
+    }
+
+    public URL getURl() {
+        return bookmarkURL;
+    }
+
+    public void isFavoriteSaved() {
+        for (Favorite favorite : favoritesModel) {
+            if (favorite.getAddress().equals(currAddress)) bookmarkURL = this.getClass().getResource("/icons/bookmark-filled.png");
+        }
+        bookmarkURL = this.getClass().getResource("/icons/bookmark.png");
     }
 
     /** Helper that returns the current address */
