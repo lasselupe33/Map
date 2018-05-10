@@ -83,6 +83,7 @@ public class MapModel {
                 for (long nodeId : way.getNodeIds()) {
                     Node node = graph.getNode(nodeId);
 
+
                     if (node != null) {
                         double distanceTo = Math.hypot( coords.getX() - node.getLon(), coords.getY() - node.getLat());
                         if ( distanceTo < currentNeighbour ) {

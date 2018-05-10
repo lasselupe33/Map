@@ -1,6 +1,6 @@
 package parsing;
 
-import helpers.GetDistance;
+import helpers.UnitConverter;
 import helpers.structures.LongToNodeMap;
 import helpers.structures.SimpleLongSet;
 import model.*;
@@ -53,6 +53,9 @@ public class OSMHandler extends DefaultHandler {
     private String house_no;
     private String postcode;
     private String city;
+
+    // Fields directly related to ways
+    private String name;
 
     // Loading related fields
     private boolean reachedAddress = false;
@@ -163,6 +166,9 @@ public class OSMHandler extends DefaultHandler {
     /** A helper that parses a single tag based on the key and value */
     private void parseTag(String key, String value) {
         switch (key) {
+            case "name":
+                name = value;
+                break;
             case "maxspeed":
                 try {
                     speedLimit = Integer.parseInt(value);
@@ -476,8 +482,9 @@ public class OSMHandler extends DefaultHandler {
         }
 
         if (isHighway) {
-            way.addWayInfo(speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
+            way.addWayInfo(name, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
             OSMNode from = way.getNodes().get(0);
+            name = null;
 
             for (int i = 1; i < way.getNodes().size(); i++) {
                 OSMNode to = way.getNodes().get(i);
@@ -773,7 +780,7 @@ public class OSMHandler extends DefaultHandler {
         }
 
         // Create the edge with the information of the nodes and the way connecting them
-        Edge edge = new Edge(convertedFrom.getId(), convertedTo.getId(), path, getEdgeLength(path), way.getSpeedLimit(), way.supportsCars(), way.supportsBicycles(), way.supportPedestrians());
+        Edge edge = new Edge(convertedFrom.getId(), convertedTo.getId(), path, way.getName(), getEdgeLength(path), way.getSpeedLimit(), way.supportsCars(), way.supportsBicycles(), way.supportPedestrians());
 
         // Add the edge to map and references to nodes
         int edgeId = graph.putEdge(edge);
@@ -788,7 +795,7 @@ public class OSMHandler extends DefaultHandler {
 
         for (int i = 1; i < nodes.size(); i++) {
             Coordinates to = nodes.get(i);
-            length += (float) GetDistance.inMM(from.getX(), from.getY(), to.getX(), to.getY());
+            length += (float) UnitConverter.DistInMM(from.getX(), from.getY(), to.getX(), to.getY());
 
             from = to;
         }
@@ -819,7 +826,7 @@ public class OSMHandler extends DefaultHandler {
             OSMNode to = nodes.get(i);
 
             // Determine length of edge between current node and prev node
-            float length = (float) GetDistance.inMM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
+            float length = (float) UnitConverter.inMM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
 
             Node convertedFromNode = graph.getNode(from.getId());
 

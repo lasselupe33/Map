@@ -1,6 +1,6 @@
 package controller;
 
-import helpers.GetDistance;
+import helpers.UnitConverter;
 import model.MetaModel;
 import model.MapElement;
 import model.MapModel;
@@ -95,8 +95,8 @@ public class MapController {
     }
 
     public void zoom(double factor, double x, double y) {
-        if (GetDistance.PxToKm(100) > 50 && factor < 1.01) factor = 1.0;
-        if (GetDistance.PxToKm(100) < 0.01 && factor > 1.0) factor = 1.0;
+        if (UnitConverter.PxToKm(100) > 50 && factor < 1.01) factor = 1.0;
+        if (UnitConverter.PxToKm(100) < 0.01 && factor > 1.0) factor = 1.0;
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
@@ -152,11 +152,8 @@ public class MapController {
 
     public void moveScreen(Coordinates coordinates, WayType type) {
         transform = new AffineTransform();
-        // Pan to map
-        pan(-coordinates.getX(), -coordinates.getY());
-        zoom(canvas.getHeight() / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
-        // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
-        pan(canvas.getWidth()/2, canvas.getHeight()/2);
+
+        panToMap(coordinates.getX(), coordinates.getY());
 
         double zoomscale = 100.0*(type.getPriority()-getZoomLevel())/510.0;
 
@@ -170,19 +167,45 @@ public class MapController {
     }
 
 
-    //Methods to handle list of locations where Icons should be drawn
+    public void moveScreenNavigation(Rectangle2D rect){
+        transform = new AffineTransform();
+        panToMap((rect.getCenterX()-rect.getWidth()/8), rect.getCenterY());
+
+        double zoomscale = (getRectDistance(getModelViewRect())/3)/getRectDistance(rect);
+        zoomToCenter(zoomscale);
+
+        updateMap();
+    }
+
+    private double getRectDistance(Rectangle2D rectangle2D) {
+        return UnitConverter.DistInKM(rectangle2D.getMinX(), rectangle2D.getMinY(), rectangle2D.getMaxX(), rectangle2D.getMaxY());
+    }
+
+
+    private void panToMap(double x, double y) {
+        // Pan to map
+        pan(-x, -y);
+        zoom(canvas.getHeight() / (metaModel.getMaxLon() - metaModel.getMinLon()), 0, 0);
+        // Ensure that the initial canvas is properly centered, even on screens that are wider than they are tall.
+        pan(canvas.getWidth()/2, canvas.getHeight()/2);
+    }
+
+    /** Methods to handle list of locations where Icons should be drawn */
+    /* The location icon */
     public static void updateLocationCoordinates(Coordinates coordinates){ locationIconCoordinates = coordinates; }
 
     public static void deleteLocationCoordinates() { locationIconCoordinates = null; }
 
     public Coordinates getLocationCoordinates() { return locationIconCoordinates; }
 
+    /* The start location icon when navigation is active */
     public static void updateStartCoordinates(Coordinates coordinates){ startIconCoordinates = coordinates; }
 
     public static void deleteStartCoordinates() { startIconCoordinates = null; }
 
     public Coordinates getStartCoordinates() { return startIconCoordinates; }
 
+    /* The icons of the favorites addresses */
     public static void updateListOfFavorites(Coordinates coordinates) { listOfFavorites.add(coordinates); }
 
     public static void deleteFavoritesFromList(Coordinates coordinates) { listOfFavorites.remove(coordinates); }
@@ -216,7 +239,7 @@ public class MapController {
      * This level will be between 1 and 510.
      */
     public static int getZoomLevel() {
-        double currDist = GetDistance.PxToKm(100) * 10;
+        double currDist = UnitConverter.PxToKm(100) * 10;
         int maxDist = 510;
 
         int zoomLevel = Math.max((int) ((maxDist - currDist)) + 1, 1);

@@ -4,16 +4,16 @@ import helpers.AddressBuilder;
 import model.AddressesModel;
 import model.Coordinates;
 import model.MapModel;
-import model.graph.Graph;
-import model.graph.Node;
-import model.graph.RouteType;
-import model.graph.VehicleType;
+import model.graph.*;
 import model.Address;
 import view.NavigationView;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
+import java.util.ArrayList;
 
 public class NavigationController extends MouseAdapter {
     private NavigationView navigationView;
@@ -21,12 +21,12 @@ public class NavigationController extends MouseAdapter {
     private MapModel mapModel;
     private Graph graph;
     private AddressController addressController;
+    private String startInput = "";
+    private String endInput = "";
     private Coordinates startAddressCoords;
     private Coordinates endAddressCoords;
     private Node startingPoint;
     private Node endPoint;
-    private String startInput = "";
-    private String endInput = "";
     private boolean navigationActive = false;
     private boolean navigationFailed = false;
 
@@ -75,6 +75,7 @@ public class NavigationController extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
         // Bail out if a nameless/no component was clicked
         if (e.getComponent() == null || e.getComponent().getName() == null) {
+
             return;
         }
 
@@ -94,6 +95,9 @@ public class NavigationController extends MouseAdapter {
             case "shortest":
                 changeRouteType(RouteType.SHORTEST);
                 break;
+            default:
+            System.out.print("test");
+                break;
         }
     }
 
@@ -101,15 +105,16 @@ public class NavigationController extends MouseAdapter {
     public void changeVehicleType(VehicleType type) {
         graph.setVehicleType(type);
         //setInputText();
-        onRouteSearch();
         updateView();
+        onRouteSearch();
     }
 
     /** Update the current road type */
     private void changeRouteType(RouteType type) {
         graph.setRouteType(type);
-        onRouteSearch();
         updateView();
+        onRouteSearch();
+
     }
 
     /**
@@ -124,7 +129,7 @@ public class NavigationController extends MouseAdapter {
     /**
      * Update the view
      */
-    private void updateView() {
+    public void updateView() {
         setInputText();
         navigationView.update();
     }
@@ -137,15 +142,18 @@ public class NavigationController extends MouseAdapter {
         endInput = navigationView.getEndInput().getText();
 
         // Check that inputs have been filled
-        if (startInput.equals("Fra:") || endInput.equals("Til:") || startInput.equals("") || endInput.equals("")) {
+        if (startInput.equals(navigationView.getStartInput().getName()) || endInput.equals(navigationView.getEndInput().getName()) || startInput.equals("") || endInput.equals("")) {
             return;
         }
 
         addressController.setCurrentAddress(addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()));
 
-        // Get source and dest coords
-        startAddressCoords = addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()).getCoordinates();
-        endAddressCoords = addressesModel.getAddress(AddressBuilder.parse(endInput).toKey()).getCoordinates();
+        // Get source and dest address and coords
+        Address startAddress = addressesModel.getAddress(AddressBuilder.parse(startInput).toKey());
+        Address endAddress = addressesModel.getAddress(AddressBuilder.parse(endInput).toKey());
+
+        startAddressCoords = startAddress.getCoordinates();
+        endAddressCoords = endAddress.getCoordinates();
 
         // Retrieve nearest way-node to the address-node (we want to use roads to travel, not addresses)
         long startingPointId = mapModel.getNearestNodeId(startAddressCoords);
@@ -154,7 +162,7 @@ public class NavigationController extends MouseAdapter {
         startingPoint = graph.getNode(startingPointId);
         endPoint = graph.getNode(endPointId);
 
-        graph.computePath(startingPoint, endPoint);
+        graph.computePath(startingPoint, endPoint, startAddress, endAddress);
 
         // Update map and view after path has been computed
         if (!graph.didError()) {
@@ -162,9 +170,12 @@ public class NavigationController extends MouseAdapter {
             navigationActive = true;
             updateView();
             MapController.repaintMap(true);
-            MapController.updateStartCoordinates(startAddressCoords);
-            MapController.updateLocationCoordinates(endAddressCoords);
+            MapController.updateStartCoordinates(startAddress.getCoordinates());
+            MapController.updateLocationCoordinates(endAddress.getCoordinates());
+            MapController.getInstance().moveScreenNavigation(graph.getRoutePath().getBounds2D());
         } else {
+            updateView();
+            MapController.repaintMap(true);
             navigationFailed = true;
             navigationActive = false;
         }
@@ -189,6 +200,10 @@ public class NavigationController extends MouseAdapter {
             navigationView.getEndInput().setText(startTextHolder);
             onRouteSearch();
         }
+    }
+
+    public ArrayList<TextualElement> getTextualNavigation() {
+        return graph.getTextualNavigation();
     }
 
     public boolean didError() {
@@ -227,14 +242,19 @@ public class NavigationController extends MouseAdapter {
         return navigationActive;
 
     }
-
+    public JTextField getStartInput(){
+        return navigationView.getStartInput();
+    }
+    public JTextField getEndInput(){
+        return navigationView.getEndInput();
+    }
     /**
      * Reset navigation view
      */
     public void reset() {
         navigationActive = false;
-        navigationView.setStartInputText("Fra:");
-        navigationView.setEndInputText("Til:");
+        navigationView.setStartInputText(navigationView.getStartInput().getName());
+        navigationView.setEndInputText(navigationView.getEndInput().getName());
         graph.setVehicleType(VehicleType.CAR);
     }
 

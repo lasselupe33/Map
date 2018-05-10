@@ -49,9 +49,10 @@ public class Main {
         colorMap = new ColorMap();
 
         // Models
-        graph = new Graph();
         model = new MetaModel();
+        graph = new Graph();
         mapModel = new MapModel(model, graph);
+        graph.addMapModel(mapModel);
         am = new AddressesModel();
         IOHandler.instance.addModels(model, mapModel, am, graph);
         favoritesModelModel = new FavoritesModel();

@@ -114,7 +114,7 @@ public class SearchBox extends JPanel {
         searchInput.setBorder(BorderFactory.createEmptyBorder());
         searchInput.addActionListener(e -> searchBoxController.onSearchInput());
         searchInput.addKeyListener(autoCompleteController);
-        searchInput.addFocusListener(new TextController("Søg.."));
+        searchInput.addFocusListener(new TextController(searchInput.getName()));
 
         // Add to wrapper
         searchContainer.add(searchInput, BorderLayout.WEST);
@@ -173,7 +173,7 @@ public class SearchBox extends JPanel {
         favoriteButtonContainer.setPreferredSize(new Dimension(32, 32));
 
         // Create button
-        URL imageURL = this.getClass().getResource("/icons/favorite.png");
+        URL imageURL = this.getClass().getResource("/icons/locationIcon-blue.png");
         ImageIcon icon = new ImageIcon(imageURL);
         JLabel iconLabel = new JLabel(icon);
         iconLabel.setVerticalAlignment(JLabel.CENTER);

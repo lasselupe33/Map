@@ -1,27 +1,24 @@
 package model.graph;
 
-import helpers.GetDistance;
+import helpers.UnitConverter;
+import helpers.VectorMath;
 import helpers.io.DeserializeObject;
 import helpers.io.SerializeObject;
-import helpers.structures.KDTree;
-import helpers.structures.LongToNodeMap;
+import model.Address;
 import model.Coordinates;
 import model.MapModel;
-import model.WayType;
-import view.MainWindowView;
+import org.w3c.dom.Text;
 
 import java.awt.geom.Path2D;
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class Graph {
+    private MapModel mapModel;
     private HashMap<Long, Node> nodes;
     private HashMap<Integer, Edge> edges;
     private int currEdgeId = 0;
@@ -31,21 +28,35 @@ public class Graph {
     private String time;
     private PriorityQueue<Node> pq;
     private RouteType routeType = RouteType.FASTEST;
+    private Address sourceAddress;
+    private Address destAddress;
     private Node source;
     private Node dest;
+    private ArrayList<Edge> routeEdges;
+    private ArrayList<TextualElement> textualNavigation;
     private boolean failed = false;
 
     public Graph() {
         nodes = new HashMap<>();
         edges = new HashMap<>();
         vehicleType = VehicleType.CAR;
+        routeEdges = new ArrayList<>();
+    }
+
+    public void addMapModel(MapModel mm) {
+        mapModel = mm;
     }
 
     public int size() {
         return nodes.size();
     }
 
-    public void computePath(Node source, Node dest) {
+    public void computePath(Node source, Node dest, Address sourceAddress, Address destAddress) {
+        this.sourceAddress = sourceAddress;
+        this.destAddress = destAddress;
+        this.source = source;
+        this.dest = dest;
+
         // Performance logs
         long start = System.currentTimeMillis();
 
@@ -53,9 +64,6 @@ public class Graph {
         for (Node node : nodes.values()) {
             node.reset(dest);
         }
-
-        this.source = source;
-        this.dest = dest;
 
         // Create priorityQueue that always returns the node with the closest distance to source
         pq = new PriorityQueue<>(11, (Node a, Node b) -> (int) (((a.getDistToSource(routeType)) + a.getEstimateToDest(routeType, vehicleType)) - ((b.getDistToSource(routeType)) + b.getEstimateToDest(routeType, vehicleType))));
@@ -65,7 +73,7 @@ public class Graph {
         routePath = null;
         source.setLengthToSource(0);
         source.setTimeToSource(0);
-        source.setEstimateToDest((float) GetDistance.inMM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
+        source.setEstimateToDest((float) UnitConverter.DistInMM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
         pq.add(source);
 
         while (pq.size() != 0) {
@@ -93,7 +101,7 @@ public class Graph {
         }
 
 
-        System.out.println("Distance: " + GetDistance.inKM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
+        System.out.println("Distance: " + UnitConverter.DistInKM(source.getLat(), source.getLon(), dest.getLat(), dest.getLon()));
         System.out.println("Visited verticies: " + visitedVerticies.size());
         System.out.println("Time in ms: " + (System.currentTimeMillis() - start));
     }
@@ -122,28 +130,20 @@ public class Graph {
 
     /** Internal helper that sets the route length in KM based on the computed path destination */
     private void setRouteLength(Node dest) {
-        // Get length in KM's
-        float length = dest.getLengthToSource() / 1000000;
-
-        // Nicely format distance
-        DecimalFormat formatter = new DecimalFormat("0.0");
-        this.length = formatter.format(length);
+        this.length = UnitConverter.formatDistance(dest.getLengthToSource());
     }
 
     private void setRouteTime(Node dest) {
         // Get time in hours
         float time = dest.getTimeToSource() / 1000000 / 60;
 
-        // We always round the time up
-        int hours = (int) time;
-        int min = (int) ((time % 1) * 60);
-        int seconds = (int) ((((time % 1) * 60) % 1) * 60);
-
-        this.time = (hours != 0 ? hours + "h " : "") + (min != 0 || hours != 0 ? min + "min " : "") + (seconds != 0 || min != 0 || hours != 0 ? seconds + "sek" : "");
+        // Create formatted time string and use as computed time
+        this.time = UnitConverter.formatTime(time);
     }
 
     /** Internal helper that creates the path of the found path between two nodes */
     private void createComputedPath(Node dest) {
+        routeEdges = new ArrayList<>();
         Node node = dest;
 
         // Prepare drawing route path
@@ -169,21 +169,123 @@ public class Graph {
 
             // Go to next matched path
             node = nodes.get(parentEdge.getTo(node));
+            routeEdges.add(parentEdge);
             parentEdge = edges.get(node.getParentEdge());
         }
 
         this.routePath = routePath;
+
+        // Now that the path has been computed, then compute textual navigation
+        computeTextualNavigation();
+    }
+
+    /**
+     * Use edges in route to create the textual navigation
+     */
+    private void computeTextualNavigation() {
+        textualNavigation = new ArrayList<>();
+
+        ArrayList<Edge> edges = routeEdges;
+
+        // Reverse the edges of the route (we want to create the description from start to end)
+        Collections.reverse(edges);
+
+        // Add the start Address to the navigation text
+        textualNavigation.add(new TextualElement(sourceAddress));
+
+        // Create the start of the navigation, leading the user in the right direction of the first road
+        Node fromNode = source;
+        addNavigationStart(fromNode, routeEdges.get(0));
+
+        // Prepare vector variables
+        float x;
+        float y;
+        float[] vector1 = new float[2];
+        float[] vector2 = new float[2];
+
+        // Step-by-step navigation is only relevant if we have more than two edges.
+        if (routeEdges.size() >= 2) {
+            float length = 0;
+
+            // Go through all edges and print navigation every time we reach an edge
+            for (int i = 0; i < routeEdges.size() - 1; i++) {
+                // Get the toNode of the current Edge
+                Edge firstEdge = routeEdges.get(i);
+                Node toNode = getNode(firstEdge.getTo(fromNode));
+
+                // Create a vector for the current edge
+                x = toNode.getLon() - fromNode.getLon();
+                y = toNode.getLat() - fromNode.getLat();
+                vector1[0] = x;
+                vector1[1] = y;
+
+                // Get the nodes of the second and and create a vector for this one.
+                fromNode = toNode;
+                Edge secondEdge = routeEdges.get(i+1);
+                toNode = getNode(secondEdge.getTo(fromNode));
+
+                x = toNode.getLon() - fromNode.getLon();
+                y = toNode.getLat() - fromNode.getLat();
+                vector2[0] = x;
+                vector2[1] = y;
+
+                // Get the angle between the two vectors and prepare adding a step to the navigation
+                double angle = VectorMath.angle(vector1, vector2);
+                length += routeEdges.get(i+1).getLength();
+                String firstEdgeName = firstEdge.getName() == null ? "" : " ned ad " + firstEdge.getName();
+                String secondEdgeName = secondEdge.getName() == null ? "" : " ned ad " + secondEdge.getName();
+
+                if(angle < 135 && angle >= 45){
+                    textualNavigation.add(new TextualElement("Drej til højre" + secondEdgeName, "/icons/arrow-right.png", UnitConverter.formatDistance(length)));
+                    length = 0;
+                } else if(angle < 45 && angle >= -45){
+                    // If we're continuing straightforward, then we only want to add a step if the road name has changed!
+                    if (!firstEdgeName.equals(secondEdgeName)) {
+                        textualNavigation.add(new TextualElement("Fortsæt" + secondEdgeName, "/icons/arrow-up.png", UnitConverter.formatDistance(length)));
+                        length = 0;
+                    }
+                } else if(angle < -45 && angle >= -135){
+                    textualNavigation.add(new TextualElement("Drej til venstre" + secondEdgeName, "/icons/arrow-left.png", UnitConverter.formatDistance(length)));
+                    length = 0;
+                }
+
+            }
+        }
+        textualNavigation.add(new TextualElement("Destinationen er nået", "/icons/locationIcon.png", null));
+
+        // Add the destination Address to the navigation text
+        textualNavigation.add(new TextualElement(destAddress));
+    }
+
+    /**
+     * Calculate start direction and add text to navigation
+     * @param from first node in route
+     * @param edge the edge connecting the first node and the second node of the navigation
+     */
+    private void addNavigationStart(Node from, Edge edge) {
+        float startPointX = from.getLon();
+        float startPointY = from.getLat();
+
+        Node to = getNode(edge.getTo(from));
+
+        float endPointX = to.getLon();
+        float endPointY = to.getLat();
+
+        double compassReading = Math.toDegrees(Math.atan2(endPointX-startPointX, endPointY-startPointY));
+
+        String[] directions = new String[] {"syd", "sydøst", "øst", "nordøst", "syd", "nordvest", "vest", "sydvest", "syd"};
+        int directionIndex = (int) Math.round(compassReading / 45); // divide 360 degrees by the 8 directions = 45
+        if (directionIndex < 0) {
+            directionIndex = directionIndex + 8;
+        }
+
+        String length = UnitConverter.formatDistance(UnitConverter.DistInMM(startPointY, startPointX, endPointY, endPointX));
+        textualNavigation.add(new TextualElement("Tag mod " + directions[directionIndex] + (edge.getName() != null ? " ad " + edge.getName() : ""), "/icons/arrow-up.png", length));
     }
 
     public void setSourceAndDest(Node s, Node d) {
         source = s;
         dest = d;
-    }
-
-    public void recalculatePath() {
-        if (source != null && dest != null) {
-            computePath(source, dest);
-        }
     }
 
     public Path2D getRoutePath() {
@@ -194,7 +296,8 @@ public class Graph {
         routePath = null;
         time = null;
         length = null;
-    };
+        routeEdges = new ArrayList<>();
+    }
 
     /** Helper that converts the ArrayList of edges in a node to an array once all edges have been created */
     public void finalizeNodes() {
@@ -238,6 +341,10 @@ public class Graph {
     public String getLength() { return length; }
 
     public String getTime() { return time; }
+
+    public ArrayList<TextualElement> getTextualNavigation() {
+        return textualNavigation;
+    }
 
     public boolean didError() {
         return failed;

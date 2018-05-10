@@ -18,11 +18,11 @@ public class OSMHandlerTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        g = new Graph();
         m = new MetaModel();
+        g = new Graph();
         mm = new MapModel(m, g);
+        g.addMapModel(mm);
         am = new AddressesModel();
-
 
         IOHandler.instance.addModels(m, mm, am, g);
         IOHandler.instance.loadFromString("./test/data/tiny.osm");
