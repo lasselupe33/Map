@@ -13,7 +13,7 @@ public class LongToNodeMapTest {
     private float lat = (float) 55.6598896;
     private float lon = (float) 12.5911909;
     private long wrongId = 01234;
-    private float wrongLat = (float) 55.6598895;
+    private float wrongLat = (float) 55.6498896;
     private float wrongLon = (float) 12.5911908;
 
     @Test
