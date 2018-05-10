@@ -258,7 +258,7 @@ public class OSMHandler extends DefaultHandler {
                 }
                 break;
             case "place":
-                if (value.equals("island")) {
+                if (value.equals("islet")) {
                     type = WayType.PLACE;
                 }
                 if (value.equals("square")) {
@@ -597,7 +597,6 @@ public class OSMHandler extends DefaultHandler {
             case AEROWAY:
             case GRASS:
             case MANMADEBRIDGE:
-            case PIER:
             case SWIMMINGPOOL:
                 mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, true, nodes));
                 break;
@@ -618,6 +617,7 @@ public class OSMHandler extends DefaultHandler {
             case DRAIN:
             case RUNWAY:
             case TRUNK:
+            case PIER:
             case HIGHWAYBRIDGE:
             case RAILWAY:
 
