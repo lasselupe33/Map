@@ -49,12 +49,12 @@ public class Main {
         colorMap = new ColorMap();
 
         // Models
+        favoritesModelModel = new FavoritesModel();
         model = new MetaModel();
         graph = new Graph();
         mapModel = new MapModel(model, graph);
         am = new AddressesModel();
-        IOHandler.instance.addModels(model, mapModel, am, graph);
-        favoritesModelModel = new FavoritesModel();
+        IOHandler.instance.addModels(model, mapModel, am, graph, favoritesModelModel);
 
         fv = new FooterView(cc);
         IOHandler.instance.addView(fv);
@@ -98,7 +98,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             // Views
             cv = new MapView(cc, graph, colorMap, nc);
-            cc.addDependencies(cv, mapModel, model, graph);
+            cc.addDependencies(cv, mapModel, model, graph, favoritesModelModel);
             av = new AddressView(ac);
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);

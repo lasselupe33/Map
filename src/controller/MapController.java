@@ -30,13 +30,12 @@ public class MapController {
 
     private MetaModel metaModel;
     private MapModel mapModel;
-    private AffineTransform transform = new AffineTransform();
-
+    private FavoritesModel favoritesModel;
     private Graph graph;
+    private AffineTransform transform = new AffineTransform();
 
     private static Coordinates locationIconCoordinates;
     private static Coordinates startIconCoordinates;
-    private static List<Coordinates> listOfFavorites = new ArrayList<>();
 
     /**
      * @return the transform to be used in the canvasView
@@ -56,10 +55,11 @@ public class MapController {
      * @param m MetaModel
      * @param g Graphics
      */
-    public void addDependencies(MapView mv, MapModel mm, MetaModel m, Graph g) {
+    public void addDependencies(MapView mv, MapModel mm, MetaModel m, Graph g, FavoritesModel fm) {
         canvas = mv;
         mapModel = mm;
         metaModel = m;
+        favoritesModel = fm;
         graph = g;
     }
 
@@ -202,13 +202,7 @@ public class MapController {
 
     public Coordinates getStartCoordinates() { return startIconCoordinates; }
 
-    public static void updateListOfFavorites(Coordinates coordinates) { listOfFavorites.add(coordinates); }
-
-    public static void deleteFavoritesFromList(Coordinates coordinates) { listOfFavorites.remove(coordinates); }
-
-    public List<Coordinates> getListOfFavorites() { return listOfFavorites; }
-
-
+    public ArrayList<Favorite> getFavorites() { return favoritesModel.getFavorites(); }
 
     public Rectangle2D getModelViewRect() {
         try {

@@ -15,6 +15,7 @@ public class OSMHandlerTest {
     private static MapModel mm;
     private static AddressesModel am;
     private static Graph g;
+    private static FavoritesModel fm;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -22,8 +23,10 @@ public class OSMHandlerTest {
         g = new Graph();
         mm = new MapModel(m, g);
         am = new AddressesModel();
+        fm = new FavoritesModel();
 
-        IOHandler.instance.addModels(m, mm, am, g);
+
+        IOHandler.instance.addModels(m, mm, am, g, fm);
         IOHandler.instance.loadFromString("./test/data/tiny.osm");
 
         // Give time to parse osm on another thread
