@@ -1,20 +1,20 @@
 package view;
 
-import javafx.geometry.VerticalDirection;
-
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.net.URL;
 
+/**
+ * Class that creates the help windows
+ */
 public class HelpWindow {
     public HelpWindow(HelpType helpType) {
         // Create the window
         JFrame window = new JFrame();
-        //window.setLayout(new BorderLayout());
         window.setPreferredSize(new Dimension(530, 530));
         window.setResizable(false);
 
+        // Add information to window based on help type
         switch (helpType) {
             case HELP:
                 window.add(addHelpPanel());
@@ -27,13 +27,21 @@ public class HelpWindow {
                 break;
         }
 
+        // Show and pack window
         window.setVisible(true);
         window.pack();
+
+        // Place window in middle of screen
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         window.setLocation(dimension.width/2-window.getSize().width/2, dimension.height/2-window.getSize().height/2);
     }
 
+    /**
+     * Panel with generel information about how to use the program and what icons mean
+     * @return scroll pane with help information
+     */
     private JScrollPane addHelpPanel() {
+        // Set up panel
         JPanel helpPanel = new JPanel();
         helpPanel.setLayout(new BoxLayout(helpPanel, BoxLayout.Y_AXIS));
         helpPanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
@@ -49,7 +57,7 @@ public class HelpWindow {
         // Add text about loading in osm file
         heading("Indlæs OSM-fil", helpPanel);
         String osmText = "<html>Klik på 'Indlæs OSM-fil' under 'Filer' og vælg den ønskede OSM-fil.<br/>" +
-                "Vent på det nye kort loades.</html>";
+                "Vent på det nye kort loades. Tager også i mod zippet OSM-data.</html>";
         text(osmText, helpPanel);
 
         // Add text about saving to a binary file
@@ -57,15 +65,6 @@ public class HelpWindow {
         String saveText = "<html>Klik på 'Gem' under 'Filer'. I bunden af skærmen vises, hvor langt<br/>" +
                                 "programmet er med at gemme.</html>";
         text(saveText, helpPanel);
-
-        /*
-        // Add text about loading a binary file
-        JLabel loadHeading = heading("Indlæs fra binær fil");
-        String lText = "";
-        JLabel loadText = text(lText);
-        helpPanel.add(loadHeading);
-        helpPanel.add(loadText);
-        */
 
         // Add zoom text
         heading("Zoom", helpPanel);
@@ -105,12 +104,18 @@ public class HelpWindow {
         iconText("Hurtigste rute", "/icons/flash-blue.png", helpPanel);
         iconText("Korteste rute", "/icons/nearby-blue.png", helpPanel);
 
+        // Create scroll pane
         JScrollPane scroll = new JScrollPane(helpPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         return scroll;
     }
 
+    /**
+     * Basic guide on how to search for addresses, search for routes and use favorites
+     * @return scroll pane with basic user manual
+     */
     private JScrollPane addUserManualPanel() {
+        // Set up panel
         JPanel userManualPanel = new JPanel();
         userManualPanel.setLayout(new BoxLayout(userManualPanel, BoxLayout.Y_AXIS));
         userManualPanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
@@ -150,36 +155,17 @@ public class HelpWindow {
                                     "En favorit kan vælges ved at klikke på den i listen eller på kortikonet.</html>";
         text(favoritesText, userManualPanel);
 
+        // Add scroll pane
         JScrollPane scroll = new JScrollPane(userManualPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         return scroll;
     }
 
-    /*
-    private JPanel addShortcutsPanel() {
-        JPanel shortcutsPanel = new JPanel();
-        shortcutsPanel.setLayout(new BoxLayout(shortcutsPanel, BoxLayout.Y_AXIS));
-        shortcutsPanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
-        shortcutsPanel.setBackground(Color.WHITE);
-        shortcutsPanel.setOpaque(true);
-
-
-        // Add title
-        JLabel panelTitle = new JLabel("Shortcuts");
-        panelTitle.setFont(new Font("Myriad Pro", Font.PLAIN, 24));
-        shortcutsPanel.add(panelTitle);
-
-        text("x: slå antialising til/fra", shortcutsPanel);
-        text("w: panorer op", shortcutsPanel);
-        text("a: panorer til venstre", shortcutsPanel);
-        text("s: panorer ned", shortcutsPanel);
-        text("d: panorer til højre", shortcutsPanel);
-        text("+: zoom ind", shortcutsPanel);
-        text("-: zoom ud", shortcutsPanel);
-
-        return shortcutsPanel;
-    }*/
-
+    /**
+     * Create a heading
+     * @param title the heading
+     * @param p the panel the heading is to be added to
+     */
     private void heading(String title, JPanel p) {
         JLabel heading = new JLabel(title);
         heading.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
@@ -187,6 +173,11 @@ public class HelpWindow {
         p.add(heading);
     }
 
+    /**
+     * Create a text paragraph
+     * @param text the text
+     * @param p the panel the text is to be added to
+     */
     private void text(String text, JPanel p) {
         JLabel textLabel = new JLabel(text);
         textLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
@@ -194,6 +185,12 @@ public class HelpWindow {
         p.add(textLabel);
     }
 
+    /**
+     * Create a text with an icon
+     * @param text the text
+     * @param iconURL the URL of the icon
+     * @param p the panel to add the text to
+     */
     private void iconText(String text, String iconURL, JPanel p) {
         JLabel textLabel = new JLabel(text);
         textLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
@@ -205,6 +202,9 @@ public class HelpWindow {
         p.add(textLabel);
     }
 
+    /**
+     * Help types
+     */
     public enum HelpType {
         HELP, USERMANUAL
     }

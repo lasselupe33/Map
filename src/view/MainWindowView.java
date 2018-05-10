@@ -89,7 +89,7 @@ public class MainWindowView {
         // Run initial render
         update();
 
-        // put screen to correct place on canvas
+        // Put screen to correct place on canvas
         height = window.getContentPane().getHeight();
         int offsetX = (window.getContentPane().getWidth() - height) / 2;
 
