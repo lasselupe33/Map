@@ -108,8 +108,6 @@ public class ColorMap {
                 waterColor,
                 grayscaleWater});
 
-        colorMap.put(WayType.UNKNOWN, new Color[] {Color.black,Color.black,Color.black, Color.black});
-
         colorMap.put(WayType.BUILDING, new Color[] {buildingColor,
                 buildingColor,
                 buildingColor,

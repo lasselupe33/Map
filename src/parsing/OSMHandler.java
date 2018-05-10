@@ -84,7 +84,6 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case "relation":
                 relation = new OSMRelation();
-                type = WayType.UNKNOWN;
                 break;
             case "member":
                 OSMWay w = idToWay.get(Long.parseLong(attributes.getValue("ref")));
@@ -407,7 +406,6 @@ public class OSMHandler extends DefaultHandler {
                 supportsPedestrians = false;
                 break;
             default:
-                type = WayType.UNKNOWN;
                 break;
         }
     }
@@ -469,7 +467,6 @@ public class OSMHandler extends DefaultHandler {
     /** Internal helper that initializes a way then a way-tag is reached */
     private void initializeWay(long id) {
         way = new OSMWay(id);
-        type = WayType.UNKNOWN;
         speedLimit = 50;
         idToWay.put(id, way);
     }
@@ -616,7 +613,6 @@ public class OSMHandler extends DefaultHandler {
             case PATH:
             case FERRY:
             case CYCLEWAY:
-            case UNKNOWN:
             case BARRIER:
             case HEDGE:
             case DRAIN:

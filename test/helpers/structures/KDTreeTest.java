@@ -51,7 +51,7 @@ public class KDTreeTest {
 
         for (int i = 0; i < 1000; i++) {
             Ellipse2D shape = new Ellipse2D.Float(i, i, 300, 100);
-            MapElement me = new MapElement(i, i, shape, WayType.UNKNOWN, true, new ArrayList<>());
+            MapElement me = new MapElement(i, i, shape, WayType.ROAD, true, new ArrayList<>());
             expectedResults.add(me);
         }
 
@@ -59,7 +59,7 @@ public class KDTreeTest {
 
         for (int i = 0; i < 1000000; i++) {
             Ellipse2D shape = new Ellipse2D.Float(i, i, 300, 100);
-            MapElement me = new MapElement(i, i, shape, WayType.UNKNOWN, true, new ArrayList<>());
+            MapElement me = new MapElement(i, i, shape, WayType.ROAD, true, new ArrayList<>());
             actualResults.add(me);
         }
 

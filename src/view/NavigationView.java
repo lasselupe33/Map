@@ -333,10 +333,7 @@ public class NavigationView extends JPanel {
     }
 
     public void setStartInputText(String text) {
-        System.out.println("Før: " + startInputText);
         startInputText = text;
-        System.out.println("Efter: " + startInputText);
-        System.out.println();
     }
     public void setEndInputText(String text) { endInputText = text; }
 }

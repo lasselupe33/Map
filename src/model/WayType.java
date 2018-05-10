@@ -43,7 +43,6 @@ public enum WayType implements Serializable {
     DRAIN(490),
     RUNWAY(490),
     HEDGE(509),
-    UNKNOWN(509),
     SWIMMINGPOOL(485);
 
     /**
