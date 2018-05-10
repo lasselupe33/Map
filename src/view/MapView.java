@@ -5,9 +5,7 @@ import controller.NavigationController;
 import helpers.ColorMap;
 import helpers.UnitConverter;
 import helpers.StrokeMap;
-import model.Coordinates;
-import model.MapElement;
-import model.WayType;
+import model.*;
 import model.graph.Graph;
 
 import javax.swing.*;
@@ -27,7 +25,6 @@ public class MapView extends JComponent {
     private Graph graph;
     private ColorMap colorMap;
     private HashMap<Shape, Coordinates> favoriteIcons = new HashMap<>();
-
 
     public MapView(MapController c, Graph g, ColorMap cm, NavigationController nc) {
         controller = c;
@@ -150,9 +147,9 @@ public class MapView extends JComponent {
         }
 
         // Draw favorites icons if any favorites
-        if (!controller.getListOfFavorites().isEmpty()) {
-            for (Coordinates c : controller.getListOfFavorites()) {
-                paintLocationIcon(g, c, colorMain, colorDetail, 0.0025);
+        if (!controller.getFavorites().isEmpty()) {
+            for (Favorite f : controller.getFavorites()) {
+                paintLocationIcon(g, f.getAddress().getCoordinates(), colorMain, colorDetail, 0.0025);
             }
         }
     }

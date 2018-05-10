@@ -111,6 +111,7 @@ public class Edge implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(name);
         out.writeLong(node1);
         out.writeLong(node2);
         out.writeFloat(length);
@@ -118,10 +119,12 @@ public class Edge implements Externalizable {
         out.writeBoolean(supportsCars);
         out.writeBoolean(supportsBicycles);
         out.writeBoolean(supportsPedestrians);
+        out.writeObject(path);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        name = (String) in.readObject();
         node1 = in.readLong();
         node2 = in.readLong();
         length = in.readFloat();
@@ -129,5 +132,6 @@ public class Edge implements Externalizable {
         supportsCars = in.readBoolean();
         supportsBicycles = in.readBoolean();
         supportsPedestrians = in.readBoolean();
+        path = (Coordinates[]) in.readObject();
     }
 }

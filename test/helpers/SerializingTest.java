@@ -4,6 +4,7 @@ import helpers.io.IOHandler;
 import helpers.io.SerializeObject;
 import main.Main;
 import model.AddressesModel;
+import model.FavoritesModel;
 import model.MapModel;
 import model.MetaModel;
 import model.graph.Graph;
@@ -21,6 +22,7 @@ public class SerializingTest {
     private static MapModel mm;
     private static AddressesModel am;
     private static Graph g;
+    private static FavoritesModel fm;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -28,9 +30,10 @@ public class SerializingTest {
         m = new MetaModel();
         mm = new MapModel(m, g);
         am = new AddressesModel();
+        fm = new FavoritesModel();
 
         IOHandler.instance.testMode = true;
-        IOHandler.instance.addModels(m, mm, am, g);
+        IOHandler.instance.addModels(m, mm, am, g, fm);
         IOHandler.instance.loadFromString("./test/data/tiny.osm");
 
         // Give time to parse osm on another thread

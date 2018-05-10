@@ -61,7 +61,6 @@ public class SearchBoxController extends MouseAdapter {
     public void onSearchInput() {
         String input = searchBoxView.getSearchInput().getText();
 
-
         // Bail out if no input has been entered
         if (input.length() == 0) {
             return;
@@ -82,8 +81,6 @@ public class SearchBoxController extends MouseAdapter {
         }
     }
 
-
-
     /** Helper that updates the currently entered address */
     public void updateAddress(Address address) {
         this.address = address;
@@ -92,8 +89,7 @@ public class SearchBoxController extends MouseAdapter {
 
         // Go to proper position on map
         Coordinates coordinates = addressesModel.getCoordinates(address);
-        WayType type = addressesModel.getType(address);
-        MapController.getInstance().moveScreen(coordinates, type);
+        MapController.getInstance().moveScreen(coordinates);
 
         navigationController.setStartAddress(address);
 
@@ -122,8 +118,7 @@ public class SearchBoxController extends MouseAdapter {
             stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
             // Go to proper position on map
             Coordinates coordinates = addressesModel.getCoordinates(address);
-            WayType type = addressesModel.getType(address);
-            MapController.getInstance().moveScreen(coordinates, type);
+            MapController.getInstance().moveScreen(coordinates);
         } else {
             stateController.updateCurrentState(ViewStates.INITIAL);
             MapController.deleteLocationCoordinates();

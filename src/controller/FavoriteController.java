@@ -13,14 +13,16 @@ public class FavoriteController {
     this.stateController = sc;
     this.searchBoxController = sbc;
     this.navigationController = nc;
-
     }
+
     public void updateFavoriteInput(Address address){
         stateController.updateCurrentState(stateController.getPrevPanel());
+
         if(stateController.getCurrentState() == ViewStates.INITIAL || stateController.getCurrentState() == ViewStates.ADDRESS_ENTERED){
-            MapController.getInstance().moveScreen(address.getCoordinates(), address.getType());
+            MapController.getInstance().moveScreen(address.getCoordinates());
             searchBoxController.setInputOnLocationIcon(address);
         }
+
         if(stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
             /*System.out.println(navigationController.getStartInput().getText());
             System.out.println(navigationController.getStartInput().getName());
@@ -28,6 +30,7 @@ public class FavoriteController {
             if ((navigationController.getStartInput().getText().equals(navigationController.getStartInput().getName()) || navigationController.getStartInput().getText().equals(""))){
                 navigationController.setStartAddress(address);
             }
+
             else if (!(navigationController.getStartInput().getText().equals(navigationController.getStartInput().getName()))){
                 navigationController.setEndAddress(address);
             }

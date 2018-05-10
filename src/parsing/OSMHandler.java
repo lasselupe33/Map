@@ -427,8 +427,6 @@ public class OSMHandler extends DefaultHandler {
 
         // Create temp address to be used when parsing address fields
         currentAddress = new Address(id, lon, lat);
-        currentAddress.setType(type);
-
     }
 
     /** Internal helper that creates an address */

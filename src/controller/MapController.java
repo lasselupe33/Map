@@ -30,13 +30,12 @@ public class MapController {
 
     private MetaModel metaModel;
     private MapModel mapModel;
-    private AffineTransform transform = new AffineTransform();
-
+    private FavoritesModel favoritesModel;
     private Graph graph;
+    private AffineTransform transform = new AffineTransform();
 
     private static Coordinates locationIconCoordinates;
     private static Coordinates startIconCoordinates;
-    private static List<Coordinates> listOfFavorites = new ArrayList<>();
 
     /**
      * @return the transform to be used in the canvasView
@@ -56,10 +55,11 @@ public class MapController {
      * @param m MetaModel
      * @param g Graphics
      */
-    public void addDependencies(MapView mv, MapModel mm, MetaModel m, Graph g) {
+    public void addDependencies(MapView mv, MapModel mm, MetaModel m, Graph g, FavoritesModel fm) {
         canvas = mv;
         mapModel = mm;
         metaModel = m;
+        favoritesModel = fm;
         graph = g;
     }
 
@@ -150,14 +150,12 @@ public class MapController {
         updateMap();
     }
 
-    public void moveScreen(Coordinates coordinates, WayType type) {
+    public void moveScreen(Coordinates coordinates) {
         transform = new AffineTransform();
 
         panToMap(coordinates.getX(), coordinates.getY());
 
-        double zoomscale = 100.0*(type.getPriority()-getZoomLevel())/510.0;
-
-
+        double zoomscale = Math.abs(100.0 * (508 - getZoomLevel()) / 510.0);
         zoomToCenter(zoomscale);
 
         updateLocationCoordinates(coordinates);
@@ -169,9 +167,9 @@ public class MapController {
 
     public void moveScreenNavigation(Rectangle2D rect){
         transform = new AffineTransform();
-        panToMap((rect.getCenterX()-rect.getWidth()/8), rect.getCenterY());
+        panToMap((rect.getCenterX()-rect.getWidth() / 8), rect.getCenterY());
 
-        double zoomscale = (getRectDistance(getModelViewRect())/3)/getRectDistance(rect);
+        double zoomscale = (getRectDistance(getModelViewRect()) / 3) / getRectDistance(rect);
         zoomToCenter(zoomscale);
 
         updateMap();
@@ -205,14 +203,7 @@ public class MapController {
 
     public Coordinates getStartCoordinates() { return startIconCoordinates; }
 
-    /* The icons of the favorites addresses */
-    public static void updateListOfFavorites(Coordinates coordinates) { listOfFavorites.add(coordinates); }
-
-    public static void deleteFavoritesFromList(Coordinates coordinates) { listOfFavorites.remove(coordinates); }
-
-    public List<Coordinates> getListOfFavorites() { return listOfFavorites; }
-
-
+    public ArrayList<Favorite> getFavorites() { return favoritesModel.getFavorites(); }
 
     public Rectangle2D getModelViewRect() {
         try {

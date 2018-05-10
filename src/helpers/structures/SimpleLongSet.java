@@ -1,8 +1,12 @@
 package helpers.structures;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Iterator;
 
-public class SimpleLongSet implements Iterable<Long> {
+public class SimpleLongSet implements Iterable<Long>, Externalizable {
     private long[] set;
     private int size;
 
@@ -70,5 +74,17 @@ public class SimpleLongSet implements Iterable<Long> {
         };
 
         return it;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(size);
+        out.writeObject(set);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        size = in.readInt();
+        set = (long[]) in.readObject();
     }
 }

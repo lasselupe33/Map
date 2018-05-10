@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class Graph {
-    private MapModel mapModel;
     private HashMap<Long, Node> nodes;
     private HashMap<Integer, Edge> edges;
     private int currEdgeId = 0;
@@ -41,10 +40,6 @@ public class Graph {
         edges = new HashMap<>();
         vehicleType = VehicleType.CAR;
         routeEdges = new ArrayList<>();
-    }
-
-    public void addMapModel(MapModel mm) {
-        mapModel = mm;
     }
 
     public int size() {
@@ -183,6 +178,7 @@ public class Graph {
      * Use edges in route to create the textual navigation
      */
     private void computeTextualNavigation() {
+        // Reset textualNav
         textualNavigation = new ArrayList<>();
 
         ArrayList<Edge> edges = routeEdges;
@@ -353,6 +349,7 @@ public class Graph {
     /** Serializes all data necessary to load and display the map */
     public void serialize() {
         new SerializeObject("graph/nodes", nodes);
+        new SerializeObject("graph/edges", edges);
     }
 
     /** Internal helper that deserializses the MapModel */
@@ -360,11 +357,12 @@ public class Graph {
         try {
             // Setup thread callback
             Class[] parameterTypes = new Class[2];
-            parameterTypes[0] = HashMap.class;
+            parameterTypes[0] = Object.class;
             parameterTypes[1] = String.class;
             Method callback = Graph.class.getMethod("onThreadDeserializeComplete", parameterTypes);
 
             new DeserializeObject("graph/nodes", this, callback);
+            new DeserializeObject("graph/edges", this, callback);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -373,7 +371,15 @@ public class Graph {
     }
 
     /** Callback to be called once a thread has finished deserializing a mapType */
-    public void onThreadDeserializeComplete(HashMap<Long, Node> nodes, String name) {
-        this.nodes = nodes;
+    public void onThreadDeserializeComplete(Object deserializedObject, String name) {
+        switch (name) {
+            case "graph/nodes":
+                this.nodes = (HashMap<Long, Node>) deserializedObject;
+                break;
+
+            case "graph/edges":
+                this.edges = (HashMap<Integer, Edge>) deserializedObject;
+
+        }
     }
 }

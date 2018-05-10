@@ -2,6 +2,7 @@ package helpers.io;
 
 import controller.MapController;
 import model.AddressesModel;
+import model.FavoritesModel;
 import model.MapModel;
 import model.MetaModel;
 import model.graph.Graph;
@@ -43,6 +44,7 @@ public class IOHandler {
     private FooterView footerView;
     private LoadingScreen loadingScreen;
     private Graph graph;
+    private FavoritesModel favoritesModel;
 
     /** Initialize IOHandler with reference to the rootPath */
     private IOHandler() {
@@ -61,11 +63,12 @@ public class IOHandler {
         }
     }
 
-    public void addModels(MetaModel m, MapModel mm, AddressesModel am, Graph g) {
+    public void addModels(MetaModel m, MapModel mm, AddressesModel am, Graph g, FavoritesModel fm) {
         model = m;
         mapModel = mm;
         addressesModel = am;
         graph = g;
+        favoritesModel = fm;
     }
 
     public void addView(FooterView fv) {
@@ -160,6 +163,7 @@ public class IOHandler {
         mapModel.deserialize();
         addressesModel.deserialize();
         graph.deserialize();
+        favoritesModel.deserialize();
     }
 
     /** Internal helper that sets up the OSMHandler and begins reading from an OSM-file */
@@ -220,6 +224,14 @@ public class IOHandler {
     private void cleanDirs() {
         try {
             String folderName = "/BFST18_binary" + (IOHandler.instance.testMode ? "_test" : "");
+            File tempFavorites = null;
+
+            if (Files.exists(Paths.get(new URI(externalRootPath + folderName + "/favorites.bin")))) {
+                tempFavorites = File.createTempFile("favorites", "temp");
+                FileOutputStream out = new FileOutputStream(tempFavorites);
+
+                Files.copy(Paths.get(new URI(externalRootPath + folderName + "/favorites.bin")), out);
+            }
 
             // Attempt to delete the while data-folder recursively if exists
             if (Files.exists(Paths.get(new URI(externalRootPath + folderName)))) {
@@ -246,6 +258,11 @@ public class IOHandler {
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/address")));
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/map")));
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/graph")));
+
+            if (tempFavorites != null) {
+                OutputStream out = new FileOutputStream(new URI(externalRootPath + folderName + "/favorites").getPath());
+                Files.copy(tempFavorites.toPath(), out);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {

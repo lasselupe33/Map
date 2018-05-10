@@ -22,5 +22,4 @@ public class ResizeController extends ComponentAdapter{
     public void componentResized(ComponentEvent e) {
         mainWindow.update();
     }
-
 }

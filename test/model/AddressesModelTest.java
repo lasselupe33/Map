@@ -17,15 +17,18 @@ public class AddressesModelTest {
     private static MapModel mm;
     private static AddressesModel addressesModel;
     private static Graph graph;
+    private static FavoritesModel fm;
 
     @Before
     public void setUp() throws Exception {
         graph = new Graph();
         m = new MetaModel();
         mm = new MapModel(m, graph);
+        fm = new FavoritesModel();
+
         addressesModel = new AddressesModel();
 
-        IOHandler.instance.addModels(m, mm, addressesModel, graph);
+        IOHandler.instance.addModels(m, mm, addressesModel, graph, fm);
         IOHandler.instance.loadFromString("./test/data/tiny.osm");
 
         // Give time to parse osm on another thread
