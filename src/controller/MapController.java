@@ -135,7 +135,8 @@ public class MapController {
 
         panToMap(coordinates.getX(), coordinates.getY());
 
-        // TODO: Document magic number :) What do they dooo?
+        // Calculates scale the map should zoom
+        // (508 is the BUILDING WayTypes zoom priority)
         double zoomscale = Math.abs(100.0 * (508 - getZoomLevel()) / 510.0);
         zoomToCenter(zoomscale);
 
@@ -149,9 +150,11 @@ public class MapController {
     public void moveScreenNavigation(Rectangle2D rect){
         transform = new AffineTransform();
 
-        // TODO: Document the following lines
+        // Panning to the center of the rectangle, and the slightly to the left because
+        // of the navigation panel
         panToMap((rect.getCenterX()-rect.getWidth() / 8), rect.getCenterY());
 
+        // Calculates scale the map should zoom
         double zoomscale = (getRectDistance(getModelViewRect()) / 3) / getRectDistance(rect);
         zoomToCenter(zoomscale);
 

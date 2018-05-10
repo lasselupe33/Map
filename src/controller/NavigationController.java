@@ -152,7 +152,8 @@ public class NavigationController extends MouseAdapter {
             return;
         }
 
-        // TODO: Why do we update the addressController currentAddress, is that necessary for navigation?
+        // Saving the startInput to current address, to move back to if the navigation
+        // panel is closed on close click
         addressController.setCurrentAddress(addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()));
 
         // Get source and dest address and coords
