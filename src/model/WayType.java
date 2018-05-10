@@ -25,7 +25,7 @@ public enum WayType implements Serializable {
     CYCLEWAY(508),
     MOTORWAY(1),
     TRUNK(390),
-    ROAD(490),
+    ROAD(501),
     PEDESTRIAN(500),
     SQUARE(500),
     PLAYGROUND(490),

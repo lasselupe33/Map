@@ -47,7 +47,7 @@ public class DeserializeObject implements Runnable {
                 callback.invoke(callbackClass, in.readObject(), name);
                 in.close();
             }
-            
+
             // Indicate that deserialization has been completed!
             IOHandler.instance.onObjectDeserializationComplete();
         } catch (UnsupportedEncodingException e) {
