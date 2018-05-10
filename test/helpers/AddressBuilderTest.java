@@ -108,6 +108,18 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toKey(), testAddress.toKey());
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
+    @Test
+    public void testStrangeHouseNumber() {
+        Address assertAddress = new Address("Levantkaj", "4-14", "2150");
+        String stringAddresLength5 = "Levantkaj 4-14, 2150 Nordhavn";
+        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
 
 
 //    @Test(expected = Error.class)
