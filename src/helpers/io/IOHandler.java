@@ -121,6 +121,7 @@ public class IOHandler {
         Thread loaderThread = new Thread(() -> {
             // Prepare models to recieve new data
             mapModel.reset();
+            graph.reset();
 
             if (filename.endsWith(".osm")) {
                 readFromOSM(new InputSource(filename));
@@ -230,15 +231,6 @@ public class IOHandler {
     private void cleanDirs() {
         try {
             String folderName = "/BFST18_binary" + (IOHandler.instance.testMode ? "_test" : "");
-            File tempFavorites = null;
-
-            // If we have a collection of favorites, save these to a temp file to ensure they won't be deleted
-            if (Files.exists(Paths.get(new URI(externalRootPath + folderName + "/favorites.bin")))) {
-                tempFavorites = File.createTempFile("favorites", "temp");
-                FileOutputStream out = new FileOutputStream(tempFavorites);
-
-                Files.copy(Paths.get(new URI(externalRootPath + folderName + "/favorites.bin")), out);
-            }
 
             // Attempt to delete the while data-folder recursively if exists
             if (Files.exists(Paths.get(new URI(externalRootPath + folderName)))) {
@@ -265,12 +257,6 @@ public class IOHandler {
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/address")));
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/map")));
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/graph")));
-
-            // If favorites existed before clearing, then copy the temp file back into the data-folder
-            if (tempFavorites != null) {
-                OutputStream out = new FileOutputStream(new URI(externalRootPath + folderName + "/favorites.bin").getPath());
-                Files.copy(tempFavorites.toPath(), out);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {

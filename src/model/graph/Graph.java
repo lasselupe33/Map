@@ -51,6 +51,11 @@ public class Graph {
         routeEdges = new ArrayList<>();
     }
 
+    public void reset() {
+        nodes = new HashMap<>();
+        edges = new HashMap<>();
+    }
+
     public int size() {
         return nodes.size();
     }

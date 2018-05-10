@@ -765,12 +765,20 @@ public class OSMHandler extends DefaultHandler {
             graph.putNode(convertedFrom);
         }
 
+        if (convertedFrom.getTempEdges() == null) {
+            convertedFrom.initialize();
+        }
+
         // ... Do the same with the "to"-node
         Node convertedTo = graph.getNode(to.getId());
 
         if (convertedTo == null) {
             convertedTo = new Node(to.getId(), to.getLon(), to.getLat());
             graph.putNode(convertedTo);
+        }
+
+        if (convertedTo.getTempEdges() == null) {
+            convertedTo.initialize();
         }
 
         // Ensure that there doesn't already exist an edge between the two nodes.
