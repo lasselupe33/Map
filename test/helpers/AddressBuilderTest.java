@@ -59,6 +59,7 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toKey(), testAddress.toKey());
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
+    
     @Test
     public void testStreetNameWithNumberInTheMiddle() {
         Address assertAddress = new Address("Christian 10. Gade", "11", "1231");
@@ -84,7 +85,7 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
 
-    @Test
+    @Test(expected = RuntimeException.class )
     public void testTooLongPostCode(){
         Address assertAddress = new Address("Islands Brygge", "10", "2300");
         String stringAddress = "Islands Brygge 10, 23000 city of Danmark";

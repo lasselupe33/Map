@@ -23,7 +23,7 @@ public class AddressBuilder {
         if (s.equals("")) {
             throw new IllegalArgumentException("Cannot parse empty string " + s);
         }
-        //final String street = "(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.]*[^\\d\\s,])";
+
         final String street = "(?<street>\\d*[a-zA-ZåæøÅÆØéÈÉè\\s.'´üöäë-]*[^\\d\\s,])";
         final String house = "(?<house>\\d+[A-ZÆÅØ]?[^\\,\\s\\.]?)";
         final String floor = "(?<floor>[\\d^]+)\\.\\s*)";
@@ -31,8 +31,8 @@ public class AddressBuilder {
         final String postCode = "(?<postcode>\\d{4})";
         final String city = "(?<city>[a-zA-ZåæøÅÆØ\\s]+)";
         
-        final String regex = "(?:" + street +"\\s*" + house +"?(?:\\,*\\s*" + floor +"?(?:" + side +
-                "?\\.)?)?(?:\\,+\\s*)?(?:(?:" + postCode +")?(?:\\d*)\\s*" + city + "?)?";
+        final String regex = "(?:" + street +"\\s*" + house +"?\\s?(?:\\,*\\s*" + floor +"?(?:" + side +
+                "?\\.)?)?(?:\\,+\\s*)?(?:(?:" + postCode +")?\\s(?:\\d*)\\s*" + city + "?)?";
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(s);
@@ -77,6 +77,9 @@ public class AddressBuilder {
         AddressBuilder b = new AddressBuilder();
 
         if (matcher.matches()) {
+            if (matcher.group("postcode") == null) {
+                throw new RuntimeException("Address invalid!");
+            }
             return b.city(matcher.group("city")).
                     house(matcher.group("house")).
                     postcode(matcher.group("postcode")).
@@ -86,12 +89,14 @@ public class AddressBuilder {
                     house(matcher2.group("house")).
                     postcode(matcher2.group("postcode")).
                     street(matcher2.group("street")).build();
-        } else if (matcher4.matches()){
+        }
+        else if (matcher4.matches()){
             return b.city(matcher4.group("city")).
                     house(matcher4.group("house")).
                     postcode(matcher4.group("postcode")).
                     street(matcher4.group("street")).build();
-        } else if (matcher5.matches()){
+        }
+        else if (matcher5.matches()){
             return b.city(matcher5.group("city")).
                     house(matcher5.group("house")).
                     postcode(matcher5.group("postcode")).
@@ -104,6 +109,6 @@ public class AddressBuilder {
                     street(matcher3.group("street")).build();
         }
 
-        throw new Error("Address invalid!");
+        throw new RuntimeException("Address invalid!");
     }
 }
