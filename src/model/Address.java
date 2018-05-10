@@ -2,6 +2,11 @@ package model;
 
 import java.io.*;
 
+/**
+ * The address contains information of a single node that has a street, house and postcode.
+ *
+ * It is also possible to get its coordinates and an associated id.
+ */
 public class Address implements Externalizable {
     private String street, house, postcode;
     private long id;

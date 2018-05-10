@@ -1,20 +1,21 @@
-package controller;
+package helpers;
 
+import controller.AutoCompleteController;
 import view.MainWindowView;
 
 /**
- * Global controller that takes care of handling the current state of the application, i.e. which view should currently
+ * Handler that takes care of handling the current state of the application, i.e. which view should currently
  * be visible.
  * This will often be called from other controllers.
  */
-public class StateController {
+public class StateHandler {
     private ViewStates currentState;
     private MainWindowView mainView;
     private ViewStates prevState;
     private ViewStates prevPanel;
     private AutoCompleteController autoCompleteController;
 
-    public StateController() {
+    public StateHandler() {
         // Setup initial state
         currentState = ViewStates.INITIAL;
         prevState = ViewStates.INITIAL;

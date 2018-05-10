@@ -2,6 +2,7 @@ package main;
 
 import controller.*;
 import helpers.ColorMap;
+import helpers.StateHandler;
 import helpers.io.IOHandler;
 import model.*;
 import model.graph.Graph;
@@ -21,7 +22,7 @@ public class Main {
     private static FavoritesModel favoritesModelModel;
     private static MenuController mc;
     private static MapController cc;
-    private static StateController sc;
+    private static StateHandler sc;
     private static AddressController ac;
     private static SearchBoxController sbc;
     private static AutoCompleteController acc;
@@ -84,9 +85,9 @@ public class Main {
 
 
         // Controllers
-        mc = new MenuController(colorMap, graph);
+        mc = new MenuController(colorMap);
         cc = MapController.getInstance();
-        sc = new StateController();
+        sc = new StateHandler();
         nc = new NavigationController(am, mapModel, graph);
         ac = new AddressController(sc, favoritesModelModel, nc);
         nc.addAddressController(ac);

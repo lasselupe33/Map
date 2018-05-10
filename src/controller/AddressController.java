@@ -1,5 +1,7 @@
 package controller;
 
+import helpers.StateHandler;
+import helpers.ViewStates;
 import model.Address;
 import model.Favorite;
 import model.FavoritesModel;
@@ -10,14 +12,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class AddressController extends MouseAdapter {
-    private StateController stateController;
+    private StateHandler stateHandler;
     private Address currAddress = new Address(0, 0, 0);
     private FavoritesModel favoritesModel;
     private FavoriteView favoriteView;
     private NavigationController navigationController;
 
-    public AddressController(StateController sc, FavoritesModel favoritesModel, NavigationController nc)  {
-        stateController = sc;
+    public AddressController(StateHandler sc, FavoritesModel favoritesModel, NavigationController nc)  {
+        stateHandler = sc;
         this.favoritesModel = favoritesModel;
         navigationController = nc;
     }
@@ -29,7 +31,7 @@ public class AddressController extends MouseAdapter {
                 goToNavigation();
                 break;
             case "bookmark":
-                bookmarkAdress();
+                bookmarkAddress();
                 break;
         }
     }
@@ -51,11 +53,11 @@ public class AddressController extends MouseAdapter {
     /** To be called when the user wishes to go to the navigation view */
     public void goToNavigation() {
         navigationController.setStartAddress(currAddress);
-        stateController.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
+        stateHandler.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
     }
 
-    private void bookmarkAdress() {
-        stateController.updateCurrentState(ViewStates.FAVORITES_POPUP);
+    private void bookmarkAddress() {
+        stateHandler.updateCurrentState(ViewStates.FAVORITES_POPUP);
     }
 
     public void saveAddress(String name){

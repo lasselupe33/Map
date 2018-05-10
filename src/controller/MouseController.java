@@ -10,8 +10,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Point2D;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Math.pow;
+
 /**
  * This controller handles mouse events.
  */
@@ -22,10 +25,11 @@ public class MouseController extends MouseAdapter {
     private FooterView footerView;
     private SearchBoxController searchBoxController;
 
-    private Point2D lastMousePosition;
-    private static Thread t;
+    /** Fields related to the debouncing of map updates */
+    private Timer timer = new Timer();
+    private Long lastAction;
 
-    static int testcounter = 0;
+    private Point2D lastMousePosition;
 
     public MouseController(MapView c, MapController cc, AddressesModel am, FooterView fv, SearchBoxController sbc) {
         canvas = c;
@@ -40,7 +44,6 @@ public class MouseController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
         // Checking if user clicked on the favorite icon
         Coordinates coord = canvas.containsCoordinate(mapController.toModelCoords(e.getPoint()));
         if (coord != null) {
@@ -71,13 +74,14 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (t != null) t.interrupt();
         canvas.requestFocus();
         Point2D currentMousePosition = e.getPoint();
         double dx = currentMousePosition.getX() - lastMousePosition.getX();
         double dy = currentMousePosition.getY() - lastMousePosition.getY();
         mapController.pan(dx, dy);
         lastMousePosition = currentMousePosition;
+
+        repaintMap();
     }
 
     /**
@@ -105,30 +109,34 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (t != null)  t.interrupt();
         canvas.requestFocus();
         double factor = pow(1/1.1, e.getWheelRotation());
         mapController.zoom(factor, -e.getX(), -e.getY());
+
+        repaintMap();
     }
 
     public void mouseReleased(MouseEvent e){ }
 
-
     /**
-     * TODO: Needs documentation, what is happening here, and why is it running in a separate thread?
+     * Internal helper that repaints the map every time a mouse event occurs, however only updating the map-data
+     * after 100ms of user inactivity, in order to preserve performance.
      */
-    public static void thread(){
-        t = new Thread() {
-            public void run() {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    MapController.repaintMap(false);
-                    return;
+    private void repaintMap() {
+        MapController.getInstance().repaintMap(false);
+        lastAction = System.currentTimeMillis();
+
+        // Only update the mapData
+        timer.schedule(
+            new TimerTask() {
+                @Override
+                public void run() {
+                    if (System.currentTimeMillis() - lastAction >= 100) {
+                        MapController.getInstance().updateMap();
+                    }
                 }
-                MapController.getInstance().updateMap();
-            }
-        };
-        t.start();
+            },
+            100
+        );
     }
 }

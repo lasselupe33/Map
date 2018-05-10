@@ -6,6 +6,9 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 
+/**
+ * Helper responsible for deserializing a single object on a dedicated thread.
+ */
 public class DeserializeObject implements Runnable {
     Object callbackClass;
     Method callback;

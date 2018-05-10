@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-public class DistanceCalculation extends JComponent {
+public class ScaleBar extends JComponent {
     private MapController mapController;
     private final int screenDistance = 100;
     private Point2D startModelPoint;
@@ -15,7 +15,7 @@ public class DistanceCalculation extends JComponent {
     private double distance;
     private String text;
 
-    public DistanceCalculation(MapController cc){
+    public ScaleBar(MapController cc){
         mapController = cc;
         setPreferredSize(new Dimension(200, 30));
     }

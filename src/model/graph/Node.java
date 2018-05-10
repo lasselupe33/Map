@@ -9,6 +9,9 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 
+/**
+ * A node is a class that contains a single vertex of the graph and its required info
+ */
 public class Node extends OSMNode implements Externalizable {
     private Integer[] edges;
     private ArrayList<Integer> tempEdges; // Contains edges until map has been completely parsed

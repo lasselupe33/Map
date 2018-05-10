@@ -17,7 +17,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 /**
- * Handle OSM data
+ * This class is responsible for parsing all necessary data out of an OSM-file
  */
 public class OSMHandler extends DefaultHandler {
     private LongToNodeMap idToNode = new LongToNodeMap(25);
@@ -129,9 +129,8 @@ public class OSMHandler extends DefaultHandler {
                 addressesModel.setPostcodeToCity(postcodeToCity);
                 loadingScreen.updateProgress(95.341);
                 buildGraph();
-                addHighwayNodeRefs();
+                trimMapElementNodes();
                 graph.finalizeNodes();
-                //graph.flatten();
             default:
                 break;
         }
@@ -148,7 +147,6 @@ public class OSMHandler extends DefaultHandler {
         // Compute lonFactor to ensure map won't be shrunk on the x-axis.
         // NB: This is necessary due to the world being round, and this approach would be incorrect if parsing the whole
         // world, but it will work since only relatively small areas (Denmark as the largest) will be parsed.
-        // This however also results in incorrect distances.
         double avgLat = minLat + (maxLat - minLat) / 2;
         lonFactor = Math.cos(avgLat / 180 * Math.PI);
         minLon *= lonFactor;
@@ -577,6 +575,7 @@ public class OSMHandler extends DefaultHandler {
         }
     }
 
+    /** Internal helper that adds a mapElement to the mapModel */
     private void addElement(WayType type, Path2D path, ArrayList<OSMNode> nodes) {
         if (type == null) {return;}
         Rectangle2D rect = path.getBounds2D();
@@ -629,7 +628,11 @@ public class OSMHandler extends DefaultHandler {
         }
     }
 
-    private void addHighwayNodeRefs() {
+    /**
+     * Internal helper that trims the nodeIds of a mapElement, meaning that if a node has been removed during parsing
+     * of the graph, then its reference will also be removed from the mapElement.
+     */
+    private void trimMapElementNodes() {
         for (WayType type : WayType.values()) {
             switch (type) {
                 case SERVICE:
@@ -813,43 +816,4 @@ public class OSMHandler extends DefaultHandler {
 
         return null;
     }
-
-    /** Internal helper that converts an OSMNode to a Node to be used in the wayGraph */
-    /*
-    private void addToGraph(OSMWay way) {
-        ArrayList<OSMNode> nodes = way.getNodes();
-        OSMNode from = nodes.get(0);
-
-        for (int i = 1; i < nodes.size(); i++) {
-            OSMNode to = nodes.get(i);
-
-            // Determine length of edge between current node and prev node
-            float length = (float) UnitConverter.inMM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
-
-            Node convertedFromNode = graph.getNode(from.getId());
-
-            if (convertedFromNode == null) {
-                convertedFromNode = new Node(from.getId(), from.getLon(), from.getLat());
-                graph.putNode(convertedFromNode);
-            }
-
-            Node convertedToNode = graph.getNode(to.getId());
-
-            if (convertedToNode == null) {
-                convertedToNode = new Node(to.getId(), to.getLon(), to.getLat());
-                graph.putNode(convertedToNode);
-            }
-
-            // Create edge between converted nodes and add the edge to them.
-            Edge edge = new Edge(convertedFromNode.getId(), convertedToNode.getId(), length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
-
-            graph.getNode(convertedFromNode.getId()).addEdge(edge);
-            graph.getNode(convertedToNode.getId()).addEdge(edge);
-
-            // Prepare for next iteration in loop
-            from = to;
-        }
-        isHighway = false;
-    }
-    */
 }
