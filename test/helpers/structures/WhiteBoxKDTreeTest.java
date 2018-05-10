@@ -52,7 +52,7 @@ public class WhiteBoxKDTreeTest {
     public void mapElement(){
         ArrayList<OSMNode> nodes = new ArrayList<>();
         MapElement mapElement;
-        for(int i = 0; i < 1000000; i++){
+        for(int i = 0; i < 100000; i++){
             int x = 400;
             int y = 100;
             mapElement = new MapElement(x, y, new Rectangle2D.Double(x, y, 100, 100), WayType.BUILDING, true, nodes);
@@ -60,6 +60,8 @@ public class WhiteBoxKDTreeTest {
         }
         kdTree = new KDTree<>(coordinates, 200, 0, 100, 0);
         //todo cover 106 to 112 + 193
+        //TEMP!
+        assertTrue(true);
     }
 
     @Test
