@@ -127,7 +127,7 @@ public class AddressBuilderTest {
     }
     @Test
     public void testHouseNumberWithSpaceAndLetter() {
-        Address assertAddress = new Address("JernBane Allé", "88 B", "2720");
+        Address assertAddress = new Address("Jernbane Allé", "88 B", "2720");
         String stringAddress = "Jernbane Allé 88 B, 2720 Vanløse";
         Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());

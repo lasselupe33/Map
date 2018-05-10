@@ -25,7 +25,7 @@ public class AddressBuilder {
         }
         //final String street = "(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.]*[^\\d\\s,])";
         final String street = "(?<street>\\d*[a-zA-ZåæøÅÆØéÈÉè\\s.'´üöäë-]*[^\\d\\s,])";
-        final String house = "(?<house>\\d+[^\\,\\s\\.]?)";
+        final String house = "(?<house>\\d+[A-ZÆÅØ]?[^\\,\\s\\.]?)";
         final String floor = "(?<floor>[\\d^]+)\\.\\s*)";
         final String side = "(?<side>[tTmM]{1}.?[VHvhfF]{1})";
         final String postCode = "(?<postcode>\\d{4})";
@@ -55,7 +55,7 @@ public class AddressBuilder {
         Pattern pattern3 = Pattern.compile(regex3);
         Matcher matcher3 = pattern3.matcher(s);
 
-        // Reges that accepts interval house numbers i.g. Levantkaj 4-14
+        // Regex that accepts interval house numbers i.g. Levantkaj 4-14
         final String street4 = "(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.\\'´üöäë-]*[^\\d\\s,])";
         final String house4 = "(?<house>[\\d-]+[^\\,\\s\\.]?)";
 
@@ -64,6 +64,15 @@ public class AddressBuilder {
 
         Pattern pattern4 = Pattern.compile(regex4);
         Matcher matcher4 = pattern4.matcher(s);
+
+        // Regex that accepts floor and side
+        final String house5 = "(?<house>[\\d,]+[\\skldstvh1floor.]*[^\\,\\s]?)";
+
+        final String regex5 = "(?:" + street4 +"\\s*" + house5 +"?(?:\\,*\\s*" + floor +"?(?:" + side +
+                "?\\.)?)?(?:\\,+\\s*)?(?:(?:" + postCode +")?(?:\\d*)\\s*" + city + "?)?";
+
+        Pattern pattern5 = Pattern.compile(regex5);
+        Matcher matcher5 = pattern5.matcher(s);
 
         AddressBuilder b = new AddressBuilder();
 
@@ -82,6 +91,11 @@ public class AddressBuilder {
                     house(matcher4.group("house")).
                     postcode(matcher4.group("postcode")).
                     street(matcher4.group("street")).build();
+        } else if (matcher5.matches()){
+            return b.city(matcher5.group("city")).
+                    house(matcher5.group("house")).
+                    postcode(matcher5.group("postcode")).
+                    street(matcher5.group("street")).build();
         }
         else if (matcher3.matches()){
             return b.city(matcher3.group("city")).
