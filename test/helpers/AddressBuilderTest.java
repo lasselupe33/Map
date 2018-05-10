@@ -173,6 +173,18 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toKey(), testAddress.toKey());
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
+    @Test
+    public void testExtraSpaceAfterHouseNumber() {
+        Address assertAddress = new Address("Valgårdsvej", "8", "2500");
+        String stringAddress = "Valgårdsvej 8 , 2500 Valby";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyInput(){
         Address testAddress = AddressBuilder.parse("");
