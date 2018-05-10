@@ -127,7 +127,7 @@ public class AddressBuilderTest {
     }
     @Test
     public void testHouseNumberWithSpaceAndLetter() {
-        Address assertAddress = new Address("JernBane Allé", "88 B", "2720");
+        Address assertAddress = new Address("Jernbane Allé", "88 B", "2720");
         String stringAddress = "Jernbane Allé 88 B, 2720 Vanløse";
         Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
@@ -165,6 +165,18 @@ public class AddressBuilderTest {
     public void testFloorSideWithComma() {
         Address assertAddress = new Address("Dronningensgade", "51, st.", "1420");
         String stringAddress = "Dronningensgade 51, st., 1420 København K";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
+    @Test
+    public void testExtraSpaceAfterHouseNumber() {
+        Address assertAddress = new Address("Valgårdsvej", "8", "2500");
+        String stringAddress = "Valgårdsvej 8 , 2500 Valby";
         Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
         assertEquals(assertAddress.getCity(), testAddress.getCity());
