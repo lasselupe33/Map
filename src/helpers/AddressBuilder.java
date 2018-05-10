@@ -30,13 +30,14 @@ public class AddressBuilder {
         final String side = "(?<side>[tTmM]{1}.?[VHvhfF]{1})";
         final String postCode = "(?<postcode>\\d{4})";
         final String city = "(?<city>[a-zA-ZåæøÅÆØ\\s]+)";
-
+        
         final String regex = "(?:" + street +"\\s*" + house +"?(?:\\,*\\s*" + floor +"?(?:" + side +
                 "?\\.)?)?(?:\\,+\\s*)?(?:(?:" + postCode +")?(?:\\d*)\\s*" + city + "?)?";
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(s);
 
+        // Regex that accepts street names with numbers last i.g. Vej 5
         final String street2 = "(?<street>\\d*[a-zA-ZåæøÅÆØéÈÉè\\s.'´üöäë-]*[^\\s,])";
 
         final String regex2 = "(?:" + street2 +"\\s*" + house +"?(?:\\,*\\s*" + floor +"?(?:" + side +

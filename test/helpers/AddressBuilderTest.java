@@ -51,8 +51,6 @@ public class AddressBuilderTest {
     }
     */
 
-
-
     @Test
     public void testStreetNameWithNumberLast(){
         Address assertAddress = new Address("Vej 5", "9", "2000");
@@ -72,6 +70,7 @@ public class AddressBuilderTest {
         String stringAddresLength5 = "Islands Brygge 10, 23000 city of Danmark";
         Address testAddress = AddressBuilder.parse(stringAddresLength5);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getPostcode(), testAddress.getPostcode());
         assertEquals(assertAddress.getCity(), testAddress.getCity());
         assertEquals(assertAddress.getStreet(), testAddress.getStreet());
         assertEquals(assertAddress.getHouse(), testAddress.getHouse());
@@ -79,13 +78,7 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
 
-    @Test(expected = Error.class)
-    public void testParseInvalidPostCode(){
-        String stringAddresLength5 = "Islands Brygge 10, 99999 city of Danmark";
-        Address testAddress = AddressBuilder.parse(stringAddresLength5);
-        assertEquals(assertAddress.getCity(), testAddress.getCity());
-        //todo regex shouldn't accept postcode with length != 4
-    }
+    // TODO Test for too long postcodes where the first four digits aren't correct
 
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyInput(){
