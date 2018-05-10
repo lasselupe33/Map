@@ -125,10 +125,30 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toKey(), testAddress.toKey());
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
-
-
-
-
+    @Test
+    public void testHouseNumberWithSpaceAndLetter() {
+        Address assertAddress = new Address("JernBane Allé", "88 B", "2720");
+        String stringAddresLength5 = "Jernbane Allé 88 B, 2720 Vanløse";
+        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
+    @Test
+    public void testHouseNumberWithMultipleLetters() {
+        Address assertAddress = new Address("Viktoriagade", "8BC", "1655");
+        String stringAddresLength5 = "Viktoriagade 8BC, 1655 København V";
+        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyInput(){
         Address testAddress = AddressBuilder.parse("");
