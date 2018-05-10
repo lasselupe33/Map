@@ -6,6 +6,10 @@ import model.graph.Graph;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import static junit.framework.TestCase.assertEquals;
 
 public class AddressesModelTest {
@@ -48,13 +52,24 @@ public class AddressesModelTest {
 
     @Test
     public void getMatchingAddresses() {
-        
+        ArrayList<Address> addresses = addressesModel.getMatchingAddresses("st");
+        ArrayList<String> expectedAddresses = new ArrayList<>();
+        expectedAddresses.add("strandgade931401");
+        expectedAddresses.add("strandvej122100");
+        expectedAddresses.add("strøget41100");
+
+        for(int i = 0; i < addresses.size(); i++) {
+            String addressToKey = addresses.get(i).toKey();
+            assertEquals(expectedAddresses.get(i), addressToKey);
+        }
     }
 
     @Test
     public void setPostcodeToCity() {
-        //todo
+        HashMap<String, String> newPostCodeToCity = new HashMap<String, String>();
+        newPostCodeToCity.put("2100", "København Ø");
+        newPostCodeToCity.put("2605", "Brøndby");
+        addressesModel.setPostcodeToCity(newPostCodeToCity);
+        assertEquals(newPostCodeToCity, AddressesModel.postcodeToCity);
     }
-
-
 }

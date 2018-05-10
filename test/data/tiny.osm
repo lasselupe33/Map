@@ -26,6 +26,22 @@
   <tag k="wheelchair" v="limited"/>
   <tag k="wikipedia" v="da:Noma"/>
  </node>
+
+ <node id="39393020" visible="true" version="11" changeset="42001321" timestamp="2016-09-08T11:15:46Z" user="Bob Bobsen" uid="1288" lat="50.837268" lon="13.858130">
+   <tag k="addr:city" v="København"/>
+   <tag k="addr:country" v="DK"/>
+   <tag k="addr:housenumber" v="12"/>
+   <tag k="addr:postcode" v="2100"/>
+   <tag k="addr:street" v="Strandvej"/>
+   <tag k="contact:email" v="bob@bob.dk"/>
+ </node>
+ <node id="21234554" visible="true" version="11" changeset="42001321" timestamp="2016-09-08T11:15:46Z" user="Ulla" uid="1288" lat="49.837268" lon="15.858130">
+     <tag k="addr:city" v="København"/>
+     <tag k="addr:country" v="DK"/>
+     <tag k="addr:housenumber" v="4"/>
+     <tag k="addr:postcode" v="1100"/>
+     <tag k="addr:street" v="Strøget"/>
+ </node>
  <way id="25838049" visible="true" version="9" changeset="25215338" timestamp="2014-09-03T21:17:26Z" user="halfd" uid="285692">
   <nd ref="281824620"/>
   <nd ref="697547" />
