@@ -23,20 +23,27 @@ public class AddressBuilder {
         if (s.equals("")) {
             throw new IllegalArgumentException("Cannot parse empty string " + s);
         }
-        final String street = "(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.]*[^\\d\\s,])";
+        //final String street = "(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.]*[^\\d\\s,])";
+        final String street = "(?<street>\\d*[a-zA-ZåæøÅÆØéÈÉè\\s.'´üöäë-]*[^\\d\\s,])";
         final String house = "(?<house>\\d+[^\\,\\s\\.]?)";
         final String floor = "(?<floor>[\\d^]+)\\.\\s*)";
         final String side = "(?<side>[tTmM]{1}.?[VHvhfF]{1})";
         final String postCode = "(?<postcode>\\d{4})";
         final String city = "(?<city>[a-zA-ZåæøÅÆØ\\s]+)";
 
-
-
         final String regex = "(?:" + street +"\\s*" + house +"?(?:\\,*\\s*" + floor +"?(?:" + side +
                 "?\\.)?)?(?:\\,+\\s*)?(?:(?:" + postCode +")?(?:\\d*)\\s*" + city + "?)?";
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(s);
+
+        final String street2 = "(?<street>\\d*[a-zA-ZåæøÅÆØéÈÉè\\s.'´üöäë-]*[^\\s,])";
+
+        final String regex2 = "(?:" + street2 +"\\s*" + house +"?(?:\\,*\\s*" + floor +"?(?:" + side +
+                "?\\.)?)?(?:\\,+\\s*)?(?:(?:" + postCode +")?(?:\\d*)\\s*" + city + "?)?";
+
+        Pattern pattern2 = Pattern.compile(regex2);
+        Matcher matcher2 = pattern2.matcher(s);
 
         AddressBuilder b = new AddressBuilder();
 
@@ -45,6 +52,11 @@ public class AddressBuilder {
                     house(matcher.group("house")).
                     postcode(matcher.group("postcode")).
                     street(matcher.group("street")).build();
+        } else if (matcher2.matches()) {
+            return b.city(matcher2.group("city")).
+                    house(matcher2.group("house")).
+                    postcode(matcher2.group("postcode")).
+                    street(matcher2.group("street")).build();
         }
 
         throw new Error("Address invalid!");
