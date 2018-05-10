@@ -46,6 +46,15 @@ public class AddressBuilder {
         Pattern pattern2 = Pattern.compile(regex2);
         Matcher matcher2 = pattern2.matcher(s);
 
+        final String street3 = "(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.\\'´üöäë\\d-]*[^\\d\\s,])";
+
+        final String regex3 = "(?:" + street3 +"\\s*" + house +"?(?:\\,*\\s*" + floor +"?(?:" + side +
+                "?\\.)?)?(?:\\,+\\s*)?(?:(?:" + postCode +")?(?:\\d*)\\s*" + city + "?)?";
+
+        Pattern pattern3 = Pattern.compile(regex3);
+        Matcher matcher3 = pattern3.matcher(s);
+
+
         AddressBuilder b = new AddressBuilder();
 
         if (matcher.matches()) {
@@ -58,6 +67,12 @@ public class AddressBuilder {
                     house(matcher2.group("house")).
                     postcode(matcher2.group("postcode")).
                     street(matcher2.group("street")).build();
+        }
+        else if (matcher3.matches()){
+            return b.city(matcher3.group("city")).
+                    house(matcher3.group("house")).
+                    postcode(matcher3.group("postcode")).
+                    street(matcher3.group("street")).build();
         }
 
         throw new Error("Address invalid!");

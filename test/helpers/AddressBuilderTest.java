@@ -34,12 +34,10 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toString(), testAddress.toString());
 
     }
-
-    /*
     @Test
-    public void testParseValidInput3(){
-        Address assertAddress = new Address("Grønjordskollegiet", "6", "2300");
-        String stringAddress = "Grønjordskollegiet 6, 2300 København, Danmark";
+    public void testParseSpecialCharacters() {
+        Address assertAddress = new Address("Mü-Sö's Mäëé.", "11", "1231");
+        String stringAddress = "Mü-Sö's Mäëé. 11, 1231 København S";
         Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
         assertEquals(assertAddress.getCity(), testAddress.getCity());
@@ -47,10 +45,32 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.getHouse(), testAddress.getHouse());
         assertEquals(assertAddress.toKey(), testAddress.toKey());
         assertEquals(assertAddress.toString(), testAddress.toString());
-        //todo be able to parse ", country"
     }
-    */
 
+    @Test
+    public void testStreetNameWithNumberFirst() {
+        Address assertAddress = new Address("10. februar vej", "11", "1231");
+        String stringAddress = "10. februar vej 11, 1231 København S";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
+    @Test
+    public void testStreetNameWithNumberInTheMiddle() {
+        Address assertAddress = new Address("Christian 10. Gade", "11", "1231");
+        String stringAddress = "Christian 10. Gade 11, 1231 København S";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
     @Test
     public void testStreetNameWithNumberLast(){
         Address assertAddress = new Address("Vej 5", "9", "2000");
@@ -78,7 +98,36 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
 
+
     // TODO Test for too long postcodes where the first four digits aren't correct
+
+    @Test
+    public void testLetterInHouseNumber() {
+        Address assertAddress = new Address("Islands Brygge", "10B", "2300");
+        String stringAddresLength5 = "Islands Brygge 10B, 2300 København S";
+        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
+    @Test
+    public void testStrangeHouseNumber() {
+        Address assertAddress = new Address("Levantkaj", "4-14", "2150");
+        String stringAddresLength5 = "Levantkaj 4-14, 2150 Nordhavn";
+        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
+
+
+
 
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyInput(){
