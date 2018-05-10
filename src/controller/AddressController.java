@@ -74,7 +74,7 @@ public class AddressController extends MouseAdapter {
     }
 
     public void deleteFavorite() {
-        favoritesModel.getFavorites().remove(currFavorite);
+        favoritesModel.remove(currFavorite);
         setBookmarkURL();
         addressView.update();
     }

@@ -19,6 +19,13 @@ public class FavoritesModel {
         return favorites;
     }
 
+    public void remove(Favorite fav) {
+        favorites.remove(fav);
+
+        // Store the updated favorites array
+        this.serialize();
+    }
+
     public void add(Favorite fav) {
         favorites.add(fav);
 
