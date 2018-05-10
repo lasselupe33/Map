@@ -46,6 +46,7 @@ public class AddressBuilder {
         Pattern pattern2 = Pattern.compile(regex2);
         Matcher matcher2 = pattern2.matcher(s);
 
+        // Reges that accepts numbers in the middle of street name i.g. Christian 10. Gade
         final String street3 = "(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.\\'´üöäë\\d-]*[^\\d\\s,])";
 
         final String regex3 = "(?:" + street3 +"\\s*" + house +"?(?:\\,*\\s*" + floor +"?(?:" + side +
@@ -54,6 +55,15 @@ public class AddressBuilder {
         Pattern pattern3 = Pattern.compile(regex3);
         Matcher matcher3 = pattern3.matcher(s);
 
+        // Reges that accepts interval house numbers i.g. Levantkaj 4-14
+        final String street4 = "(?<street>[a-zA-ZåæøÅÆØéÈÉè\\s.\\'´üöäë-]*[^\\d\\s,])";
+        final String house4 = "(?<house>[\\d-]+[^\\,\\s\\.]?)";
+
+        final String regex4 = "(?:" + street4 +"\\s*" + house4 +"?(?:\\,*\\s*" + floor +"?(?:" + side +
+                "?\\.)?)?(?:\\,+\\s*)?(?:(?:" + postCode +")?(?:\\d*)\\s*" + city + "?)?";
+
+        Pattern pattern4 = Pattern.compile(regex4);
+        Matcher matcher4 = pattern4.matcher(s);
 
         AddressBuilder b = new AddressBuilder();
 
@@ -67,6 +77,11 @@ public class AddressBuilder {
                     house(matcher2.group("house")).
                     postcode(matcher2.group("postcode")).
                     street(matcher2.group("street")).build();
+        } else if (matcher4.matches()){
+            return b.city(matcher4.group("city")).
+                    house(matcher4.group("house")).
+                    postcode(matcher4.group("postcode")).
+                    street(matcher4.group("street")).build();
         }
         else if (matcher3.matches()){
             return b.city(matcher3.group("city")).
