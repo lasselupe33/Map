@@ -143,7 +143,10 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
 
         List<Value> list = new ArrayList<>();
 
-        if(x.valueList != null) { return x.valueList; }
+        if(x.valueList != null) {
+
+            return x.valueList;
+        }
 
         switch (axis(depth)) {
             case 0:

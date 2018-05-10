@@ -273,7 +273,7 @@ public class NavigationView extends JPanel {
         submitButton.setForeground(Color.decode("#4285F4"));
         submitButton.setBackground(Color.WHITE);
         submitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        submitButton.addActionListener((e) -> navigationController.onRouteSearch());
+        submitButton.addActionListener((e) -> navigationController.routeClicked());
         switchAndSubmitPanel.add(submitButton, BorderLayout.EAST);
 
         return switchAndSubmitPanel;
