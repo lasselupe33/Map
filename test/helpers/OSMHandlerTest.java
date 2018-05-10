@@ -54,9 +54,4 @@ public class OSMHandlerTest {
         assertNull(mm.getTree(0));
         assertEquals(0, mm.getMapElements(WayType.ROAD).size());
     }
-
-    @Test
-    public void testAddressModel() throws Exception {
-
-    }
 }
