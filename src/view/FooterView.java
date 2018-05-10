@@ -10,10 +10,10 @@ import java.text.DecimalFormat;
 public class FooterView extends JPanel {
     public JLabel hoverAddress = new JLabel();
     private JLabel progressbar = new JLabel();
-    private DistanceCalculation distanceIcon;
+    private ScaleBar distanceIcon;
 
     public FooterView(MapController cc){
-        distanceIcon = new DistanceCalculation(cc);
+        distanceIcon = new ScaleBar(cc);
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));

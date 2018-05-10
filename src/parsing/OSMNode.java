@@ -6,8 +6,8 @@ public class OSMNode {
     private long id;
     private float lon;
     private float lat;
-    private SimpleLongSet refs;
-    private SimpleLongSet wayIds;
+    private SimpleLongSet refs; // Keep track of which nodes references this node
+    private SimpleLongSet wayIds; // Keep track of which ways this node is a part of
 
     public OSMNode() {
     }

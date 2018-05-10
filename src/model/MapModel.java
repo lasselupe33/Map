@@ -1,5 +1,6 @@
 package model;
 
+import controller.MapController;
 import helpers.io.DeserializeObject;
 import helpers.structures.KDTree;
 import helpers.io.SerializeObject;
@@ -8,14 +9,17 @@ import model.graph.Node;
 import model.graph.VehicleType;
 
 import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+/**
+ * The MapModel keeps track of all data required to render the canvas that draws the map, along with queries to keep
+ * the data up to speed.
+ */
 public class MapModel {
-    private int initializedTypes = 0;
-    private int amountOfTypes = 0;
     private EnumMap<WayType, List<MapElement>> mapElements = initializeMap();
     private KDTree[] mapTrees; // Contain a reference to trees containing all elements
     private List<MapElement> currentMapData = new ArrayList<>();
@@ -37,6 +41,21 @@ public class MapModel {
         }
     }
 
+    /** Internal helper that updates the list of map elements required to render the current viewport. */
+     public void updateCurrentMapElement(Point2D p0, Point2D p1) {
+         int i = 0;
+         List<MapElement> tmpList = new ArrayList<>();
+
+         for (WayType type : WayType.values()) {
+             if (type.getPriority() <= MapController.getInstance().getZoomLevel()) {
+                 tmpList.addAll(getTree(i).searchTree(p0, p1));
+             }
+             i++;
+         }
+
+         this.currentMapData = tmpList;
+     }
+
     /** Add a Coordinates to the list. This will happen while parsing OSM-files */
     public void add(WayType type, MapElement m) {
         mapElements.get(type).add(m);
@@ -45,10 +64,6 @@ public class MapModel {
     /** Returns the mapElements of a specific type */
     public List<MapElement> getMapElements(WayType type) {
         return mapElements.get(type);
-    }
-
-    public void setMapData(List<MapElement> newData) {
-        currentMapData = newData;
     }
 
     /** Returns the mapData required to render the screen */
@@ -159,7 +174,6 @@ public class MapModel {
     public void deserialize() {
         try {
             mapTrees = new KDTree[WayType.values().length];
-            amountOfTypes = mapTrees.length;
 
             // Setup thread callback
             Class[] parameterTypes = new Class[2];
@@ -179,8 +193,6 @@ public class MapModel {
 
     /** Callback to be called once a thread has finished deserializing a mapType */
     public void onThreadDeserializeComplete(KDTree loadedTree, String name) {
-        initializedTypes++;
-
         String index = name.split("-")[1];
         mapTrees[Integer.parseInt(index)] = loadedTree;
     }

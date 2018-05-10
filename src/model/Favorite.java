@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+/**
+ * A favorite is a user specified address that they would like to have an easy reference to.
+ */
 public class Favorite implements Externalizable {
     private String name;
     private Address address;

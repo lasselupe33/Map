@@ -3,7 +3,7 @@ package view;
 import controller.MapController;
 import model.MetaModel;
 import controller.MenuController;
-import controller.StateController;
+import helpers.StateHandler;
 import controller.*;
 import model.FavoritesModel;
 
@@ -27,7 +27,7 @@ public class MainWindowView {
     private ZoomView zoomView;
     private NavigationView navigationView;
     private AutoCompleteList autoCompleteList;
-    private StateController stateController;
+    private StateHandler stateHandler;
     private boolean initialRender = true;
     private FooterView footerView;
     private FavoriteView favoriteView;
@@ -43,7 +43,7 @@ public class MainWindowView {
             AddressView av,
             SearchBox sb,
             ZoomView zv,
-            StateController sc,
+            StateHandler sc,
             NavigationView nv,
             FooterView fv,
             FavoriteView favoriteView,
@@ -59,7 +59,7 @@ public class MainWindowView {
         addressView = av;
         searchBox = sb;
         zoomView = zv;
-        stateController = sc;
+        stateHandler = sc;
         navigationView = nv;
         footerView = fv;
         this.favoriteView = favoriteView;
@@ -110,7 +110,7 @@ public class MainWindowView {
     public void update() {
         // Remove old components
         if (!initialRender) {
-            switch (stateController.getPrevState()) {
+            switch (stateHandler.getPrevState()) {
                 case INITIAL:
                     lpane.remove(searchBox);
                     lpane.remove(autoCompleteList);
@@ -145,7 +145,7 @@ public class MainWindowView {
         navigationView.update();
 
         // Add components
-        switch(stateController.getCurrentState()) {
+        switch(stateHandler.getCurrentState()) {
             case INITIAL:
                 lpane.add(searchBox, 2, 2);
                 lpane.add(autoCompleteList, 3, 6);
@@ -204,7 +204,7 @@ public class MainWindowView {
         favoriteView.updateBound(height);
 
         // Update the previous state after render
-        stateController.updatePrevState();
+        stateHandler.updatePrevState();
     }
 
     /**

@@ -8,13 +8,16 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 
+/**
+ * An edge contains information of the path between two vertices (nodes)
+ */
 public class Edge implements Externalizable {
     private long node1;
     private long node2;
     private String name;
     private float length;
     private int speedLimit;
-    private Coordinates[] path;
+    private Coordinates[] path; // Contain the coordinates hidden by this edge in order to draw them properly
     private boolean supportsCars;
     private boolean supportsBicycles;
     private boolean supportsPedestrians;
@@ -69,7 +72,6 @@ public class Edge implements Externalizable {
     public float getLength() {
         return length;
     }
-
 
     /**
      * Returns the opposite node of the edge from the one passed.

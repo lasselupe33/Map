@@ -6,32 +6,41 @@ import helpers.io.DeserializeObject;
 import helpers.io.SerializeObject;
 import model.Address;
 import model.Coordinates;
-import model.MapModel;
-import org.w3c.dom.Text;
 
 import java.awt.geom.Path2D;
 import java.lang.reflect.Method;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
+/**
+ * Model responsible for handling the graph used for navigation between two points
+ */
 public class Graph {
+    // Contain the vertices and edges of the graph
     private HashMap<Long, Node> nodes;
     private HashMap<Integer, Edge> edges;
+
+    // Used while parsing the graph
     private int currEdgeId = 0;
+
+    // Used while computing path
+    private PriorityQueue<Node> pq;
+
+    // Contains the current settings of the navigation
     private VehicleType vehicleType;
+    private RouteType routeType = RouteType.FASTEST;
+
+    // Fields containing the info gathered after computing a path
+    private ArrayList<Edge> routeEdges;
     private Path2D routePath;
     private String length;
     private String time;
-    private PriorityQueue<Node> pq;
-    private RouteType routeType = RouteType.FASTEST;
     private Address sourceAddress;
     private Address destAddress;
     private Node source;
     private Node dest;
-    private ArrayList<Edge> routeEdges;
     private ArrayList<TextualElement> textualNavigation;
     private boolean failed = false;
 
@@ -46,6 +55,12 @@ public class Graph {
         return nodes.size();
     }
 
+    /**
+     * Helper that computes a path between two nodes/vertices using the A* search algorithm.
+     *
+     * This method takes the current settings of the navigation into account, e.g. if we want the fastest route or the
+     * shortest, on bike or in car.
+     */
     public void computePath(Node source, Node dest, Address sourceAddress, Address destAddress) {
         this.sourceAddress = sourceAddress;
         this.destAddress = destAddress;
@@ -352,7 +367,7 @@ public class Graph {
         new SerializeObject("graph/edges", edges);
     }
 
-    /** Internal helper that deserializses the MapModel */
+    /** Internal helper that deserializses the Graph */
     public void deserialize() {
         try {
             // Setup thread callback
@@ -370,7 +385,7 @@ public class Graph {
         }
     }
 
-    /** Callback to be called once a thread has finished deserializing a mapType */
+    /** Callback to be called once a thread has finished deserializing a graph dependency */
     public void onThreadDeserializeComplete(Object deserializedObject, String name) {
         switch (name) {
             case "graph/nodes":

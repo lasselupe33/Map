@@ -10,6 +10,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The addressesModel contains all the addresses of the currently rendered map along with many queries to access
+ * these.
+ *
+ * E.g. an address can be fetched based on its name or on its coordiantes.
+ */
 public class AddressesModel implements Serializable {
     // Expose postcodeToCity mapping
     public static HashMap<String, String> postcodeToCity = new HashMap<>();
@@ -30,6 +36,7 @@ public class AddressesModel implements Serializable {
         addressTree = new KDTree(getAllCoordinates());
     }
 
+    /** Helper that returns the address nearest to a given point */
     public Address nearestNeighbour(double px, double py) {
         return addressFromCoordinate(addressTree.nearestNeighbour(px, py));
     }

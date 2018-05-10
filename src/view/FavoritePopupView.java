@@ -2,26 +2,24 @@ package view;
 
 import controller.AddressController;
 import controller.MapController;
-import controller.StateController;
-import controller.ViewStates;
+import helpers.StateHandler;
+import helpers.ViewStates;
 
 
 import javax.swing.*;
-import java.awt.*;
 
 public class FavoritePopupView extends JOptionPane {
     private String name;
     private AddressController addressController;
-    private StateController stateController;
+    private StateHandler stateHandler;
 
-    public FavoritePopupView(AddressController addressController, StateController stateController, AddressView av){
+    public FavoritePopupView(AddressController addressController, StateHandler stateHandler){
         this.addressController = addressController;
-        this.stateController = stateController;
-
+        this.stateHandler = stateHandler;
     }
 
     public void addFrame(JFrame frame){
-        ViewStates prevState = stateController.getPrevPanel();
+        ViewStates prevState = stateHandler.getPrevPanel();
         name = (String)JOptionPane.showInputDialog(
                 frame,
                 "Name: ",
@@ -43,12 +41,12 @@ public class FavoritePopupView extends JOptionPane {
         if(name != null){
             name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
             addressController.saveAddress(name);
-            stateController.updateCurrentState(ViewStates.FAVORITES);
-            stateController.forcePrevState(ViewStates.INITIAL);
-            MapController.deleteLocationCoordinates();
+            stateHandler.updateCurrentState(ViewStates.FAVORITES);
+            stateHandler.forcePrevState(ViewStates.INITIAL);
+            MapController.getInstance().deleteLocationCoordinates();
         } else {
-            stateController.updateCurrentState(stateController.getPrevState());
-            stateController.forcePrevState(prevState);
+            stateHandler.updateCurrentState(stateHandler.getPrevState());
+            stateHandler.forcePrevState(prevState);
         }
 
 

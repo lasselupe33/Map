@@ -24,6 +24,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.zip.ZipInputStream;
 
+/**
+ * Handler responsible for handling all logic related to input and output
+ */
 public class IOHandler {
     public static IOHandler instance = new IOHandler(); // Create an instance of the IOHandler
     public static URL internalRootPath;
@@ -32,6 +35,7 @@ public class IOHandler {
     public boolean testMode = false;
     public boolean isJar = false;
 
+    /** Keep track of current state in order to render progress properly */
     private int deserializedObjects = 0;
     private int serializedObjects = 0;
     private int objectsToSerialize = 0;
@@ -131,9 +135,9 @@ public class IOHandler {
                     e.printStackTrace();
                 }
             }
-            
 
             if (Main.initialRender) {
+                // Specify that data has been loaded
                 Main.dataLoaded = true;
 
                 // If MVC is ready, then run application!
@@ -150,6 +154,7 @@ public class IOHandler {
             loadingScreen = null;
         });
 
+        // Run the parser on a separate thread in order to keep the GUI-thread non-blocked.
         loaderThread.start();
     }
 
@@ -221,11 +226,13 @@ public class IOHandler {
         objectsToSerialize++;
     }
 
+    /** Internal helper that clears all previously saved binary data (except for favorites) */
     private void cleanDirs() {
         try {
             String folderName = "/BFST18_binary" + (IOHandler.instance.testMode ? "_test" : "");
             File tempFavorites = null;
 
+            // If we have a collection of favorites, save these to a temp file to ensure they won't be deleted
             if (Files.exists(Paths.get(new URI(externalRootPath + folderName + "/favorites.bin")))) {
                 tempFavorites = File.createTempFile("favorites", "temp");
                 FileOutputStream out = new FileOutputStream(tempFavorites);
@@ -259,6 +266,7 @@ public class IOHandler {
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/map")));
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/graph")));
 
+            // If favorites existed before clearing, then copy the temp file back into the data-folder
             if (tempFavorites != null) {
                 OutputStream out = new FileOutputStream(new URI(externalRootPath + folderName + "/favorites").getPath());
                 Files.copy(tempFavorites.toPath(), out);

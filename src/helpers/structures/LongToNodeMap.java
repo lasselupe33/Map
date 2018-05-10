@@ -7,6 +7,9 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+/**
+ * A helper that stores a node in a memory-efficient way.
+ */
 public class LongToNodeMap<Value extends OSMNode> implements Externalizable {
     private Node[] table;
     private int size;

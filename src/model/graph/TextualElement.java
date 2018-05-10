@@ -2,6 +2,9 @@ package model.graph;
 
 import model.Address;
 
+/**
+ * This class contains the information of a single action of the step-by-step navigation.
+ */
 public class TextualElement {
     private String name;
     private String dist;

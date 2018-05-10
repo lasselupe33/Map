@@ -5,6 +5,9 @@ import helpers.io.SerializeObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+/**
+ * The favoritesModel has access to all the stored favorites along with queries to access them.
+ */
 public class FavoritesModel {
     private ArrayList<Favorite> favorites;
 

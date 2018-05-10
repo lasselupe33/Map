@@ -1,17 +1,15 @@
 package controller;
 
 import helpers.AddressBuilder;
+import helpers.StateHandler;
 import model.Address;
 import model.AddressesModel;
 import view.AutoCompleteList;
-import view.NavigationView;
-import view.SearchBox;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class AutoCompleteController extends KeyAdapter {
@@ -19,13 +17,13 @@ public class AutoCompleteController extends KeyAdapter {
     private SearchBoxController searchBoxController;
     private NavigationController navigationController;
     private AddressesModel addresses;
-    private StateController stateController;
+    private StateHandler stateHandler;
     private String currentInput;
 
     ArrayList<Address> matchingAddresses = new ArrayList<>();
 
-    public AutoCompleteController(StateController sc, NavigationController nc) {
-        stateController = sc;
+    public AutoCompleteController(StateHandler sc, NavigationController nc) {
+        stateHandler = sc;
         navigationController = nc;
     }
 
@@ -78,7 +76,7 @@ public class AutoCompleteController extends KeyAdapter {
     public void keyReleased(KeyEvent e) {
         String text = null;
 
-        switch (stateController.getCurrentState()) {
+        switch (stateHandler.getCurrentState()) {
             case INITIAL:
             case ADDRESS_ENTERED:
                 currentInput = "searchBox";

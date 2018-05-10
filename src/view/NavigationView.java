@@ -1,6 +1,8 @@
 package view;
 
 import controller.*;
+import helpers.StateHandler;
+import helpers.ViewStates;
 import model.Address;
 import model.graph.RouteType;
 import model.graph.TextualElement;
@@ -26,14 +28,14 @@ public class NavigationView extends JPanel {
     private String startInputText = "Fra:";
     private String endInputText = "Til:";
     private AutoCompleteController autoCompleteController;
-    private StateController stateController;
+    private StateHandler stateHandler;
     private JPanel bottomPanel;
     private JScrollPane scroll;
 
-    public NavigationView(NavigationController nc, AutoCompleteController acc, StateController sc) {
+    public NavigationView(NavigationController nc, AutoCompleteController acc, StateHandler sc) {
         navigationController = nc;
         autoCompleteController = acc;
-        stateController = sc;
+        stateHandler = sc;
 
         // Setup view
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -62,7 +64,7 @@ public class NavigationView extends JPanel {
         add(topPanel());
 
         // Set correct dimensions based on whether or not a navigation is active
-        if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+        if (navigationController.isNavigationActive() && stateHandler.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
             int height = MainWindowView.getHeight();
             setBounds(0, 0, 450, height-25);
             add(textualNavigation());
