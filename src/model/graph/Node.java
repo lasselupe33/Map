@@ -41,6 +41,10 @@ public class Node extends OSMNode implements Externalizable {
         }
     }
 
+    public void initialize() {
+        tempEdges = new ArrayList<>();
+    }
+
     public float getTimeToSource() {
         return timeTo;
     }
