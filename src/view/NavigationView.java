@@ -1,6 +1,8 @@
 package view;
 
 import controller.*;
+import helpers.StateHandler;
+import helpers.ViewStates;
 import model.Address;
 import model.graph.RouteType;
 import model.graph.TextualElement;
@@ -26,14 +28,14 @@ public class NavigationView extends JPanel {
     private String startInputText = "Fra:";
     private String endInputText = "Til:";
     private AutoCompleteController autoCompleteController;
-    private StateController stateController;
+    private StateHandler stateHandler;
     private JPanel bottomPanel;
     private JScrollPane scroll;
 
-    public NavigationView(NavigationController nc, AutoCompleteController acc, StateController sc) {
+    public NavigationView(NavigationController nc, AutoCompleteController acc, StateHandler sc) {
         navigationController = nc;
         autoCompleteController = acc;
-        stateController = sc;
+        stateHandler = sc;
 
         // Setup view
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -49,6 +51,7 @@ public class NavigationView extends JPanel {
     public void update() {
         if (!initialRender) {
             remove(topPanel);
+
             if (scroll != null) {
                 bottomPanel.removeAll();
                 bottomPanel.revalidate();
@@ -58,17 +61,17 @@ public class NavigationView extends JPanel {
             initialRender = false;
         }
 
-        if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+        add(topPanel());
+
+        // Set correct dimensions based on whether or not a navigation is active
+        if (navigationController.isNavigationActive() && stateHandler.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
             int height = MainWindowView.getHeight();
             setBounds(0, 0, 450, height-25);
+            add(textualNavigation());
         } else {
             setBounds(0, 0, 450, 200);
         }
 
-        add(topPanel());
-        if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
-            add(addBottomPanel());
-        }
         revalidate();
         repaint();
     }
@@ -276,7 +279,7 @@ public class NavigationView extends JPanel {
         return switchAndSubmitPanel;
     }
 
-    private JScrollPane addBottomPanel() {
+    private JScrollPane textualNavigation() {
         bottomPanel = new JPanel();
         bottomPanel.setOpaque(true);
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
@@ -332,11 +335,6 @@ public class NavigationView extends JPanel {
         return endInput;
     }
 
-    public void setStartInputText(String text) {
-        System.out.println("Før: " + startInputText);
-        startInputText = text;
-        System.out.println("Efter: " + startInputText);
-        System.out.println();
-    }
+    public void setStartInputText(String text) { startInputText = text; }
     public void setEndInputText(String text) { endInputText = text; }
 }

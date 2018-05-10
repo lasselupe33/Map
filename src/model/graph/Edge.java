@@ -8,13 +8,16 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 
+/**
+ * An edge contains information of the path between two vertices (nodes)
+ */
 public class Edge implements Externalizable {
     private long node1;
     private long node2;
     private String name;
     private float length;
     private int speedLimit;
-    private Coordinates[] path;
+    private Coordinates[] path; // Contain the coordinates hidden by this edge in order to draw them properly
     private boolean supportsCars;
     private boolean supportsBicycles;
     private boolean supportsPedestrians;
@@ -70,7 +73,6 @@ public class Edge implements Externalizable {
         return length;
     }
 
-
     /**
      * Returns the opposite node of the edge from the one passed.
      * NB: from must be one of the two nodes of the edge.
@@ -111,6 +113,7 @@ public class Edge implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(name);
         out.writeLong(node1);
         out.writeLong(node2);
         out.writeFloat(length);
@@ -118,10 +121,12 @@ public class Edge implements Externalizable {
         out.writeBoolean(supportsCars);
         out.writeBoolean(supportsBicycles);
         out.writeBoolean(supportsPedestrians);
+        out.writeObject(path);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        name = (String) in.readObject();
         node1 = in.readLong();
         node2 = in.readLong();
         length = in.readFloat();
@@ -129,5 +134,6 @@ public class Edge implements Externalizable {
         supportsCars = in.readBoolean();
         supportsBicycles = in.readBoolean();
         supportsPedestrians = in.readBoolean();
+        path = (Coordinates[]) in.readObject();
     }
 }

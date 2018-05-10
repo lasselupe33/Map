@@ -10,6 +10,7 @@ import java.util.List;
 import model.Coordinates;
 import model.MapElement;
 
+// TODO: Document aaaaaaall of this :')
 public class KDTree<Value extends Coordinates> implements Externalizable {
     private double maxLat, minLat, maxLon, minLon;
     private Node root;

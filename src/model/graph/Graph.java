@@ -6,33 +6,41 @@ import helpers.io.DeserializeObject;
 import helpers.io.SerializeObject;
 import model.Address;
 import model.Coordinates;
-import model.MapModel;
-import org.w3c.dom.Text;
 
 import java.awt.geom.Path2D;
 import java.lang.reflect.Method;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
+/**
+ * Model responsible for handling the graph used for navigation between two points
+ */
 public class Graph {
-    private MapModel mapModel;
+    // Contain the vertices and edges of the graph
     private HashMap<Long, Node> nodes;
     private HashMap<Integer, Edge> edges;
+
+    // Used while parsing the graph
     private int currEdgeId = 0;
+
+    // Used while computing path
+    private PriorityQueue<Node> pq;
+
+    // Contains the current settings of the navigation
     private VehicleType vehicleType;
+    private RouteType routeType = RouteType.FASTEST;
+
+    // Fields containing the info gathered after computing a path
+    private ArrayList<Edge> routeEdges;
     private Path2D routePath;
     private String length;
     private String time;
-    private PriorityQueue<Node> pq;
-    private RouteType routeType = RouteType.FASTEST;
     private Address sourceAddress;
     private Address destAddress;
     private Node source;
     private Node dest;
-    private ArrayList<Edge> routeEdges;
     private ArrayList<TextualElement> textualNavigation;
     private boolean failed = false;
 
@@ -43,14 +51,16 @@ public class Graph {
         routeEdges = new ArrayList<>();
     }
 
-    public void addMapModel(MapModel mm) {
-        mapModel = mm;
-    }
-
     public int size() {
         return nodes.size();
     }
 
+    /**
+     * Helper that computes a path between two nodes/vertices using the A* search algorithm.
+     *
+     * This method takes the current settings of the navigation into account, e.g. if we want the fastest route or the
+     * shortest, on bike or in car.
+     */
     public void computePath(Node source, Node dest, Address sourceAddress, Address destAddress) {
         this.sourceAddress = sourceAddress;
         this.destAddress = destAddress;
@@ -183,6 +193,7 @@ public class Graph {
      * Use edges in route to create the textual navigation
      */
     private void computeTextualNavigation() {
+        // Reset textualNav
         textualNavigation = new ArrayList<>();
 
         ArrayList<Edge> edges = routeEdges;
@@ -353,18 +364,20 @@ public class Graph {
     /** Serializes all data necessary to load and display the map */
     public void serialize() {
         new SerializeObject("graph/nodes", nodes);
+        new SerializeObject("graph/edges", edges);
     }
 
-    /** Internal helper that deserializses the MapModel */
+    /** Internal helper that deserializses the Graph */
     public void deserialize() {
         try {
             // Setup thread callback
             Class[] parameterTypes = new Class[2];
-            parameterTypes[0] = HashMap.class;
+            parameterTypes[0] = Object.class;
             parameterTypes[1] = String.class;
             Method callback = Graph.class.getMethod("onThreadDeserializeComplete", parameterTypes);
 
             new DeserializeObject("graph/nodes", this, callback);
+            new DeserializeObject("graph/edges", this, callback);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -372,8 +385,16 @@ public class Graph {
         }
     }
 
-    /** Callback to be called once a thread has finished deserializing a mapType */
-    public void onThreadDeserializeComplete(HashMap<Long, Node> nodes, String name) {
-        this.nodes = nodes;
+    /** Callback to be called once a thread has finished deserializing a graph dependency */
+    public void onThreadDeserializeComplete(Object deserializedObject, String name) {
+        switch (name) {
+            case "graph/nodes":
+                this.nodes = (HashMap<Long, Node>) deserializedObject;
+                break;
+
+            case "graph/edges":
+                this.edges = (HashMap<Integer, Edge>) deserializedObject;
+
+        }
     }
 }

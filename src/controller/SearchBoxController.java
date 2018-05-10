@@ -1,23 +1,21 @@
 package controller;
 
 import helpers.AddressBuilder;
+import helpers.StateHandler;
+import helpers.ViewStates;
 import model.Address;
 import model.AddressesModel;
 import model.Coordinates;
 
 import model.graph.Graph;
-import model.graph.Node;
-import model.MetaModel;
-import model.*;
 import view.SearchBox;
 
-import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class SearchBoxController extends MouseAdapter {
-    private StateController stateController;
+    private StateHandler stateHandler;
     private AddressController addressController;
     private AddressesModel addressesModel;
     private SearchBox searchBoxView;
@@ -25,10 +23,10 @@ public class SearchBoxController extends MouseAdapter {
     private NavigationController navigationController;
     private Address address;
 
-    public SearchBoxController(StateController sc, AddressController ac, AddressesModel am, Graph g, NavigationController nc) {
+    public SearchBoxController(StateHandler sc, AddressController ac, AddressesModel am, Graph g, NavigationController nc) {
         addressesModel = am;
         addressController = ac;
-        stateController = sc;
+        stateHandler = sc;
         graph = g;
         navigationController = nc;
     }
@@ -44,14 +42,14 @@ public class SearchBoxController extends MouseAdapter {
                 onSearchInput();
                 break;
             case "rightButton":
-                if (stateController.getCurrentState() == ViewStates.INITIAL) {
+                if (stateHandler.getCurrentState() == ViewStates.INITIAL) {
                     onNavigationClick();
                 } else {
                     onCloseClick();
                 }
                 break;
             case "favoriteButton":
-                if (stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) navigationController.updateView();
+                if (stateHandler.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) navigationController.updateView();
                 onFavoritesClick();
                 break;
         }
@@ -60,7 +58,6 @@ public class SearchBoxController extends MouseAdapter {
     /** Will be called once the a user has entered a search query */
     public void onSearchInput() {
         String input = searchBoxView.getSearchInput().getText();
-
 
         // Bail out if no input has been entered
         if (input.length() == 0) {
@@ -82,23 +79,21 @@ public class SearchBoxController extends MouseAdapter {
         }
     }
 
-
-
     /** Helper that updates the currently entered address */
     public void updateAddress(Address address) {
         this.address = address;
         // Update address
         addressController.setCurrentAddress(address);
+        addressController.setBookmarkURL();
 
         // Go to proper position on map
         Coordinates coordinates = addressesModel.getCoordinates(address);
-        WayType type = addressesModel.getType(address);
-        MapController.getInstance().moveScreen(coordinates, type);
+        MapController.getInstance().moveScreen(coordinates);
 
         navigationController.setStartAddress(address);
 
         // Update view to reflect changes
-        stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+        stateHandler.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
 
     public void setSearchInput(String s){
@@ -108,33 +103,37 @@ public class SearchBoxController extends MouseAdapter {
     public void setInputOnLocationIcon(Address address) {
         setSearchInput(address.toString());
         addressController.setCurrentAddress(address);
-        stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+        addressController.setBookmarkURL();
+        stateHandler.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
 
     public String getSearchInput() { return searchBoxView.getSearchInput().getText(); }
 
     public void onNavigationClick() {
-        stateController.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
+        stateHandler.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
     }
 
+    /** Helper to be called once the SearchBox cross is clicked */
     public void onCloseClick() {
-        if (stateController.getPrevPanel() == ViewStates.ADDRESS_ENTERED && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
-            stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
+        // TODO: Briefly explain what happens in this if statement
+        if (stateHandler.getPrevPanel() == ViewStates.ADDRESS_ENTERED && stateHandler.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+            stateHandler.updateCurrentState(ViewStates.ADDRESS_ENTERED);
             // Go to proper position on map
             Coordinates coordinates = addressesModel.getCoordinates(address);
-            WayType type = addressesModel.getType(address);
-            MapController.getInstance().moveScreen(coordinates, type);
+            MapController.getInstance().moveScreen(coordinates);
         } else {
-            stateController.updateCurrentState(ViewStates.INITIAL);
-            MapController.deleteLocationCoordinates();
+            stateHandler.updateCurrentState(ViewStates.INITIAL);
+            MapController.getInstance().deleteLocationCoordinates();
         }
+
         navigationController.reset();
         graph.setSourceAndDest(null, null);
-        MapController.deleteStartCoordinates();
+
+        MapController.getInstance().deleteStartCoordinates();
     }
 
     public void onFavoritesClick() {
-        stateController.updateCurrentState(ViewStates.FAVORITES);
+        stateHandler.updateCurrentState(ViewStates.FAVORITES);
     }
 
     public SearchBox getSearchBoxView() {

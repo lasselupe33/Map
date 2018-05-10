@@ -1,8 +1,20 @@
 package helpers.structures;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Iterator;
 
-public class SimpleLongSet implements Iterable<Long> {
+/**
+ * Naive and simple set of long's.
+ * This is used in order to avoid using java.util.HashSet which has excessive memory usage, since it utilizes
+ * HashMaps and more under the hood..
+ *
+ * NB: This implementation isn't very efficient, with most methods being O(N) (where N is the size of the array),
+ * however this structure is usually only used to contain around at max 20 elements, and therefore isn't an issue.
+ */
+public class SimpleLongSet implements Iterable<Long>, Externalizable {
     private long[] set;
     private int size;
 
@@ -25,6 +37,10 @@ public class SimpleLongSet implements Iterable<Long> {
         set[size++] = value;
     }
 
+    /**
+     * Helper that doubles the size of the array if the old array reached a point where it couldn't contain any more
+     * elements.
+     */
     public void resize() {
         long[] tempSet = new long[size * 2];
 
@@ -70,5 +86,17 @@ public class SimpleLongSet implements Iterable<Long> {
         };
 
         return it;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(size);
+        out.writeObject(set);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        size = in.readInt();
+        set = (long[]) in.readObject();
     }
 }

@@ -15,6 +15,9 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
+/**
+ * Controller responsible for handling all input in the navigation view.
+ */
 public class NavigationController extends MouseAdapter {
     private NavigationView navigationView;
     private AddressesModel addressesModel;
@@ -79,6 +82,7 @@ public class NavigationController extends MouseAdapter {
             return;
         }
 
+        // Based on the icon clicked, do something
         switch(e.getComponent().getName()) {
             case "car":
                 changeVehicleType(VehicleType.CAR);
@@ -146,6 +150,7 @@ public class NavigationController extends MouseAdapter {
             return;
         }
 
+        // TODO: Why do we update the addressController currentAddress, is that necessary for navigation?
         addressController.setCurrentAddress(addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()));
 
         // Get source and dest address and coords
@@ -162,6 +167,7 @@ public class NavigationController extends MouseAdapter {
         startingPoint = graph.getNode(startingPointId);
         endPoint = graph.getNode(endPointId);
 
+        // Finally, now that we have the required info, compute the path!
         graph.computePath(startingPoint, endPoint, startAddress, endAddress);
 
         // Update map and view after path has been computed
@@ -169,13 +175,13 @@ public class NavigationController extends MouseAdapter {
             navigationFailed = false;
             navigationActive = true;
             updateView();
-            MapController.repaintMap(true);
-            MapController.updateStartCoordinates(startAddress.getCoordinates());
-            MapController.updateLocationCoordinates(endAddress.getCoordinates());
+            MapController.getInstance().repaintMap(true);
+            MapController.getInstance().updateStartCoordinates(startAddress.getCoordinates());
+            MapController.getInstance().updateLocationCoordinates(endAddress.getCoordinates());
             MapController.getInstance().moveScreenNavigation(graph.getRoutePath().getBounds2D());
         } else {
             updateView();
-            MapController.repaintMap(true);
+            MapController.getInstance().repaintMap(true);
             navigationFailed = true;
             navigationActive = false;
         }

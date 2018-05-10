@@ -57,7 +57,6 @@ public class StrokeMap {
      */
     private static void initializeMap() {
         strokeMap = new EnumMap<>(WayType.class);
-        strokeMap.put(WayType.UNKNOWN, 0.00002f);
         strokeMap.put(WayType.SERVICE, 0.00002f);
         strokeMap.put(WayType.ROAD, 0.00010f);
         strokeMap.put(WayType.PEDESTRIAN, 0.00015f);

@@ -7,13 +7,14 @@ import view.HelpWindow;
 
 import javax.swing.*;
 
+/**
+ * Controller responsible for handling all interaction with the menu
+ */
 public class MenuController {
     private ColorMap colorMap;
-    private Graph graph;
 
-    public MenuController(ColorMap cm, Graph g) {
+    public MenuController(ColorMap cm) {
         colorMap = cm;
-        graph = g;
     }
 
     /**
@@ -50,7 +51,7 @@ public class MenuController {
      */
     public void standardMode() {
         colorMap.setMode(ColorMap.Mode.STANDARD);
-        MapController.repaintMap(true);
+        MapController.getInstance().repaintMap(true);
     }
 
     /**
@@ -58,7 +59,7 @@ public class MenuController {
      */
     public void protanopiaMode() {
         colorMap.setMode(ColorMap.Mode.PROTANOPIA);
-        MapController.repaintMap(true);
+        MapController.getInstance().repaintMap(true);
     }
 
     /**
@@ -66,7 +67,7 @@ public class MenuController {
      */
     public void deuteranopiaMode() {
         colorMap.setMode(ColorMap.Mode.DEUTERANOPIA);
-        MapController.repaintMap(true);
+        MapController.getInstance().repaintMap(true);
     }
 
     /**
@@ -74,7 +75,7 @@ public class MenuController {
      */
     public void grayscaleMode() {
         colorMap.setMode(ColorMap.Mode.GRAYSCALE);
-        MapController.repaintMap(true);
+        MapController.getInstance().repaintMap(true);
     }
 
     /**

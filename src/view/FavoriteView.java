@@ -44,7 +44,7 @@ public class FavoriteView extends JPanel {
 
     public void updateFavoritesView() {
         panel.removeAll();
-        for(Favorite favorite : favoritesModel){
+        for(Favorite favorite : favoritesModel.getFavorites()){
 
             addLabelToFavorites(favorite);
         }
@@ -61,14 +61,14 @@ public class FavoriteView extends JPanel {
         Border combo = BorderFactory.createCompoundBorder(border, padding);
         label.setBorder(BorderFactory.createCompoundBorder(margin, combo));
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        MapController.updateListOfFavorites(f.getAddress().getCoordinates());
 
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 favoriteController.updateFavoriteInput(f.getAddress());
-                }
+            }
         });
+
         panel.add(label);
     }
 

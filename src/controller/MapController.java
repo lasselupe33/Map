@@ -19,24 +19,25 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * This controller handles all logic and input related to the canvas that draws the map.
+ * This singleton controller handles all input related to the canvas that draws the map.
  */
 public class MapController {
+    /** Create the instance of the controller */
     private static MapController instance = new MapController();
-    private static MapView canvas;
-    private static boolean useAntiAliasing = true;
-    private static Timer timer = new Timer();
-    private static long lastAction = 0;
+    private MapView canvas;
+    private boolean useAntiAliasing = true;
+    private Timer timer = new Timer();
+    private long lastAction = 0;
 
+    /** Contains references to the required models */
     private MetaModel metaModel;
     private MapModel mapModel;
+    private FavoritesModel favoritesModel;
+    private Graph graph;
     private AffineTransform transform = new AffineTransform();
 
-    private Graph graph;
-
-    private static Coordinates locationIconCoordinates;
-    private static Coordinates startIconCoordinates;
-    private static List<Coordinates> listOfFavorites = new ArrayList<>();
+    private Coordinates locationIconCoordinates;
+    private Coordinates startIconCoordinates;
 
     /**
      * @return the transform to be used in the canvasView
@@ -49,24 +50,16 @@ public class MapController {
         return instance;
     }
 
-    /**
-     * Add needed dependencies
-     * @param mv MapView
-     * @param mm MapModel
-     * @param m MetaModel
-     * @param g Graphics
-     */
-    public void addDependencies(MapView mv, MapModel mm, MetaModel m, Graph g) {
+    /** Add needed dependencies */
+    public void addDependencies(MapView mv, MapModel mm, MetaModel m, Graph g, FavoritesModel fm) {
         canvas = mv;
         mapModel = mm;
         metaModel = m;
+        favoritesModel = fm;
         graph = g;
     }
 
-    /**
-     * Return whether or not the view should utilise antialias
-     * @return true if should; else false
-     */
+    /** Return whether or not the view should utilise antialias */
     public boolean shouldAntiAlias() {
         return useAntiAliasing;
     }
@@ -76,14 +69,10 @@ public class MapController {
         canvas.repaint();
     }
 
-    /**
-     * Pan
-     * @param dx
-     * @param dy
-     */
+    /** Helper that pans to a specific location on the map */
     public void pan(double dx, double dy) {
         transform.preConcatenate(AffineTransform.getTranslateInstance(dx, dy));
-        MouseController.thread();
+        updateMap();
     }
 
     /**
@@ -95,36 +84,26 @@ public class MapController {
     }
 
     public void zoom(double factor, double x, double y) {
+        // Cap the zoom so that the user isn't able to zoom either too far or too far in.
         if (UnitConverter.PxToKm(100) > 50 && factor < 1.01) factor = 1.0;
         if (UnitConverter.PxToKm(100) < 0.01 && factor > 1.0) factor = 1.0;
+
+        // Zoom by the passed factor to the coordinate given
         pan(x, y);
         transform.preConcatenate(AffineTransform.getScaleInstance(factor, factor));
         pan(-x, -y);
     }
 
-    /**
-     * Helper that returns the current data required for rendering the map
-     */
+    /** Helper that returns the current data required for rendering the map */
     public List<MapElement> getMapData() { return mapModel.getMapData(); }
 
-    /**
-     * Helper that updates the list of mapElements to be rendered, based on the current transform.
-     */
+    /** Helper that updates the list of mapElements to be rendered, based on the current transform. */
     public void updateMap(){
         Point2D p0 = toModelCoords(new Point2D.Double(0,0));
         Point2D p1 = toModelCoords(new Point2D.Double(canvas.getWidth(), canvas.getHeight()));
 
-        int i = 0;
-        List<MapElement> tmpList = new ArrayList<>();
+        mapModel.updateCurrentMapElement(p0, p1);
 
-        for (WayType type : WayType.values()) {
-            if (type.getPriority() <= getZoomLevel()) {
-                tmpList.addAll(mapModel.getTree(i).searchTree(p0, p1));
-            }
-            i++;
-        }
-
-        mapModel.setMapData(tmpList);
         repaintMap(false);
     }
 
@@ -150,14 +129,14 @@ public class MapController {
         updateMap();
     }
 
-    public void moveScreen(Coordinates coordinates, WayType type) {
+    /** Helper that moves the screen to a specific set of coordinates */
+    public void moveScreen(Coordinates coordinates) {
         transform = new AffineTransform();
 
         panToMap(coordinates.getX(), coordinates.getY());
 
-        double zoomscale = 100.0*(type.getPriority()-getZoomLevel())/510.0;
-
-
+        // TODO: Document magic number :) What do they dooo?
+        double zoomscale = Math.abs(100.0 * (508 - getZoomLevel()) / 510.0);
         zoomToCenter(zoomscale);
 
         updateLocationCoordinates(coordinates);
@@ -166,22 +145,25 @@ public class MapController {
         updateMap();
     }
 
-
+    /** Helper that moves the screen so that the whole navigation is visible between two points */
     public void moveScreenNavigation(Rectangle2D rect){
         transform = new AffineTransform();
-        panToMap((rect.getCenterX()-rect.getWidth()/8), rect.getCenterY());
 
-        double zoomscale = (getRectDistance(getModelViewRect())/3)/getRectDistance(rect);
+        // TODO: Document the following lines
+        panToMap((rect.getCenterX()-rect.getWidth() / 8), rect.getCenterY());
+
+        double zoomscale = (getRectDistance(getModelViewRect()) / 3) / getRectDistance(rect);
         zoomToCenter(zoomscale);
 
         updateMap();
     }
 
+    /** TODO: Document this function */
     private double getRectDistance(Rectangle2D rectangle2D) {
         return UnitConverter.DistInKM(rectangle2D.getMinX(), rectangle2D.getMinY(), rectangle2D.getMaxX(), rectangle2D.getMaxY());
     }
 
-
+    /** TODO: Document this function */
     private void panToMap(double x, double y) {
         // Pan to map
         pan(-x, -y);
@@ -192,28 +174,22 @@ public class MapController {
 
     /** Methods to handle list of locations where Icons should be drawn */
     /* The location icon */
-    public static void updateLocationCoordinates(Coordinates coordinates){ locationIconCoordinates = coordinates; }
+    public void updateLocationCoordinates(Coordinates coordinates){ locationIconCoordinates = coordinates; }
 
-    public static void deleteLocationCoordinates() { locationIconCoordinates = null; }
+    public void deleteLocationCoordinates() { locationIconCoordinates = null; }
 
     public Coordinates getLocationCoordinates() { return locationIconCoordinates; }
 
     /* The start location icon when navigation is active */
-    public static void updateStartCoordinates(Coordinates coordinates){ startIconCoordinates = coordinates; }
+    public void updateStartCoordinates(Coordinates coordinates){ startIconCoordinates = coordinates; }
 
-    public static void deleteStartCoordinates() { startIconCoordinates = null; }
+    public void deleteStartCoordinates() { startIconCoordinates = null; }
 
     public Coordinates getStartCoordinates() { return startIconCoordinates; }
 
-    /* The icons of the favorites addresses */
-    public static void updateListOfFavorites(Coordinates coordinates) { listOfFavorites.add(coordinates); }
+    public ArrayList<Favorite> getFavorites() { return favoritesModel.getFavorites(); }
 
-    public static void deleteFavoritesFromList(Coordinates coordinates) { listOfFavorites.remove(coordinates); }
-
-    public List<Coordinates> getListOfFavorites() { return listOfFavorites; }
-
-
-
+    /** Helper that returns the viewRect that surrounds the current viewPort in model coordinates */
     public Rectangle2D getModelViewRect() {
         try {
             return transform.createInverse().createTransformedShape(new Rectangle2D.Double(0, 0, canvas.getWidth(), canvas.getHeight())).getBounds2D();
@@ -224,7 +200,10 @@ public class MapController {
         return null;
     }
 
-
+    /**
+     * Public helper that converts a point from the screen to the coordinate that matches the current position on the
+     * model, based on the current transform.
+     */
     public Point2D toModelCoords(Point2D p) {
         try {
             return transform.inverseTransform(p, null);
@@ -236,9 +215,9 @@ public class MapController {
 
     /**
      * Internal helper that parses the current zoom level.
-     * This level will be between 1 and 510.
+     * This level will be between 1 and 510, see WayTypes for further clarification of this scale.
      */
-    public static int getZoomLevel() {
+    public int getZoomLevel() {
         double currDist = UnitConverter.PxToKm(100) * 10;
         int maxDist = 510;
 
@@ -246,11 +225,11 @@ public class MapController {
         return zoomLevel;
     }
 
-    /**
-     * Repaint map
-     * @param forceAntialias
+    /** Helper that repaints map. If antialias isn't forced, then it will be disabled and debounced until 150ms has
+     * passed after the last call of this function.
+     * This is done in order to increase performance when, for example, the user is panning and repainting a lot.
      */
-    public static void repaintMap(boolean forceAntialias) {
+    public void repaintMap(boolean forceAntialias) {
         canvas.repaint();
 
         if (forceAntialias) {
@@ -264,20 +243,18 @@ public class MapController {
                     new TimerTask() {
                         @Override
                         public void run() {
-                        if (System.currentTimeMillis() - lastAction >= 300) {
+                        if (System.currentTimeMillis() - lastAction >= 150) {
                             useAntiAliasing = true;
                             canvas.repaint();
                         }
                         }
                     },
-                    300
+                    150
             );
         }
     }
 
-    /**
-     * Remove navigation route
-     */
+    /** Remove navigation route */
     public void removeRoute() {
         graph.resetRoute();
         repaintMap(true);

@@ -10,13 +10,18 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 
+/**
+ * A mapElement is a single elements of the map to be drawn on the canvas, meaning that it contains a path.
+ *
+ * At the same time it contains the ids of the nodes it has been created by in order to successfully find nearest
+ * nodes for navigation.
+ */
 public class MapElement extends Coordinates implements Externalizable {
     private Shape shape;
     private Rectangle2D r;
     private WayType type;
     private boolean shouldFill;
     private SimpleLongSet nodeIds;
-
 
     public MapElement() {}
     public MapElement(float x, float y, Shape s, WayType t, boolean sf, ArrayList<OSMNode> nodes){

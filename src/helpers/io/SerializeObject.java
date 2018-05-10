@@ -5,6 +5,9 @@ import main.Main;
 import java.io.*;
 import java.net.URL;
 
+/**
+ * Helper responsible for serializing a single object on a dedicated thread.
+ */
 public class SerializeObject implements Runnable {
     Object toSerialize;
     String name;
