@@ -89,7 +89,7 @@ public class MainWindowView {
         // Run initial render
         update();
 
-        // put screen to correct place on canvas
+        // Put screen to correct place on canvas
         height = window.getContentPane().getHeight();
         int offsetX = (window.getContentPane().getWidth() - height) / 2;
 
@@ -259,8 +259,16 @@ public class MainWindowView {
         subShowMenu.add(grayscaleItem);
 
         // create the Help menu
-        JMenu helpMenu = new JMenu("Help");
+        JMenu helpMenu = new JMenu("Hjælp");
         menubar.add(helpMenu);
+
+        JMenuItem helpItem = new JMenuItem("Hjælp");
+        helpItem.addActionListener((ActionEvent e) -> menuController.help());
+        helpMenu.add(helpItem);
+
+        JMenuItem userManualItem = new JMenuItem("Brugervejledning");
+        userManualItem.addActionListener((ActionEvent e) -> menuController.userManual());
+        helpMenu.add(userManualItem);
     }
 
     public static int getHeight() {
