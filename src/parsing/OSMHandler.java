@@ -84,6 +84,7 @@ public class OSMHandler extends DefaultHandler {
                 break;
             case "relation":
                 relation = new OSMRelation();
+                type = null;
                 break;
             case "member":
                 OSMWay w = idToWay.get(Long.parseLong(attributes.getValue("ref")));
@@ -467,6 +468,7 @@ public class OSMHandler extends DefaultHandler {
     /** Internal helper that initializes a way then a way-tag is reached */
     private void initializeWay(long id) {
         way = new OSMWay(id);
+        type = null;
         speedLimit = 50;
         idToWay.put(id, way);
     }
@@ -578,6 +580,7 @@ public class OSMHandler extends DefaultHandler {
     }
 
     private void addElement(WayType type, Path2D path, ArrayList<OSMNode> nodes) {
+        if (type == null) {return;}
         Rectangle2D rect = path.getBounds2D();
         switch (type) {
             case COASTLINE:
@@ -620,6 +623,7 @@ public class OSMHandler extends DefaultHandler {
             case TRUNK:
             case HIGHWAYBRIDGE:
             case RAILWAY:
+
                 mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, false, nodes));
                 break;
             default:
