@@ -21,7 +21,6 @@ public class OSMHandlerTest {
         m = new MetaModel();
         g = new Graph();
         mm = new MapModel(m, g);
-        g.addMapModel(mm);
         am = new AddressesModel();
 
         IOHandler.instance.addModels(m, mm, am, g);
