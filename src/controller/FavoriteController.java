@@ -31,16 +31,15 @@ public class FavoriteController {
 
         // Else, if we came from the navigation view, then insert the favorite into the nav-inputs
         if(stateHandler.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
-            /*System.out.println(navigationController.getStartInput().getText());
-            System.out.println(navigationController.getStartInput().getName());
-            System.out.println("");*/
-            // TODO: Document why this if statements work :)
+
+            // If input in textfield is its initial name or empty...
             if ((navigationController.getStartInput().getText().equals(navigationController.getStartInput().getName()) || navigationController.getStartInput().getText().equals(""))){
+                // ... then update start address field...
                 navigationController.setStartAddress(address);
             }
 
-            // TODO: Document why this if statements work :)
-            else if (!(navigationController.getStartInput().getText().equals(navigationController.getStartInput().getName()))){
+            // ... else update end address field
+            else {
                 navigationController.setEndAddress(address);
             }
 

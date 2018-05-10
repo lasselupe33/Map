@@ -81,7 +81,9 @@ public class MapView extends JComponent {
         }
 
         // Draw icons
-        drawFavoritesIcons(g);
+        if (graph.getRoutePath() == null) {
+            drawFavoritesIcons(g);
+        }
         drawLocationIcon(g);
     }
 

@@ -115,13 +115,15 @@ public class SearchBoxController extends MouseAdapter {
 
     /** Helper to be called once the SearchBox cross is clicked */
     public void onCloseClick() {
-        // TODO: Briefly explain what happens in this if statement
+
         if (stateHandler.getPrevPanel() == ViewStates.ADDRESS_ENTERED && stateHandler.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+            // If closing navigation view where previous panel was address entered...
             stateHandler.updateCurrentState(ViewStates.ADDRESS_ENTERED);
-            // Go to proper position on map
+            // ... Go to proper position on map ...
             Coordinates coordinates = addressesModel.getCoordinates(address);
             MapController.getInstance().moveScreen(coordinates);
         } else {
+            // ... else just go to initial state
             stateHandler.updateCurrentState(ViewStates.INITIAL);
             MapController.getInstance().deleteLocationCoordinates();
         }

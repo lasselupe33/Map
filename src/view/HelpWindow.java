@@ -152,7 +152,9 @@ public class HelpWindow {
                                     "ket, der vises ud fra en adresse, når man har søgt på den. Favoritter<br/>" +
                                     "vises på kortet med blå ikoner, og en liste over alle favoritter kan<br/>" +
                                     "ses ved ved at klikke på favoritikonet yderst til venstre i søgebaren.<br/>" +
-                                    "En favorit kan vælges ved at klikke på den i listen eller på kortikonet.</html>";
+                                    "En favorit kan vælges ved at klikke på den i listen eller på kortikonet.<br/>" +
+                                    "Når en favorit er gemt, bliver bogmærket under adressen udfyldt. Klikker</br>" +
+                                    "man på det udfyldte bogmærke, slettes favoritten.</html>";
         text(favoritesText, userManualPanel);
 
         // Add scroll pane

@@ -48,6 +48,9 @@ public class AddressView extends JPanel {
 
         add(renderLabels(), BorderLayout.WEST);
         add(renderButtons(), BorderLayout.EAST);
+
+        revalidate();
+        repaint();
     }
 
     public JPanel renderLabels() {

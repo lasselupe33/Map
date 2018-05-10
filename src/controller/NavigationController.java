@@ -32,6 +32,7 @@ public class NavigationController extends MouseAdapter {
     private Node endPoint;
     private boolean navigationActive = false;
     private boolean navigationFailed = false;
+    private boolean routeClicked = false;
 
     public NavigationController(AddressesModel am, MapModel mm, Graph g){
         addressesModel = am;
@@ -118,7 +119,6 @@ public class NavigationController extends MouseAdapter {
         graph.setRouteType(type);
         updateView();
         onRouteSearch();
-
     }
 
     /**
@@ -142,6 +142,8 @@ public class NavigationController extends MouseAdapter {
      * Method to be called once the user wishes to perform a navigation between two points
      */
     public void onRouteSearch() {
+        if (!routeClicked) return;
+
         startInput = navigationView.getStartInput().getText();
         endInput = navigationView.getEndInput().getText();
 
@@ -284,5 +286,10 @@ public class NavigationController extends MouseAdapter {
         fromRouteToEnd.moveTo(endAddressCoords.getX(), endAddressCoords.getY());
         fromRouteToEnd.lineTo(endPoint.getLon(), endPoint.getLat());
         return fromRouteToEnd;
+    }
+
+    public void routeClicked() {
+        if (!routeClicked) routeClicked = true;
+        onRouteSearch();
     }
 }
