@@ -173,7 +173,7 @@ public class SearchBox extends JPanel {
         favoriteButtonContainer.setPreferredSize(new Dimension(32, 32));
 
         // Create button
-        URL imageURL = this.getClass().getResource("/icons/favorite.png");
+        URL imageURL = this.getClass().getResource("/icons/locationIcon-blue.png");
         ImageIcon icon = new ImageIcon(imageURL);
         JLabel iconLabel = new JLabel(icon);
         iconLabel.setVerticalAlignment(JLabel.CENTER);

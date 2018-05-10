@@ -1,10 +1,13 @@
 package view;
 
 import controller.*;
+import model.Address;
 import model.graph.RouteType;
+import model.graph.TextualElement;
 import model.graph.VehicleType;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.net.URL;
@@ -24,7 +27,8 @@ public class NavigationView extends JPanel {
     private String endInputText = "Til:";
     private AutoCompleteController autoCompleteController;
     private StateController stateController;
-
+    private JPanel bottomPanel;
+    private JScrollPane scroll;
 
     public NavigationView(NavigationController nc, AutoCompleteController acc, StateController sc) {
         navigationController = nc;
@@ -45,18 +49,26 @@ public class NavigationView extends JPanel {
     public void update() {
         if (!initialRender) {
             remove(topPanel);
+            if (scroll != null) {
+                bottomPanel.removeAll();
+                bottomPanel.revalidate();
+                remove(scroll);
+            }
         } else {
             initialRender = false;
         }
 
         if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
             int height = MainWindowView.getHeight();
-            setBounds(0, 0, 450, height);
+            setBounds(0, 0, 450, height-25);
         } else {
             setBounds(0, 0, 450, 200);
         }
 
         add(topPanel());
+        if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+            add(addBottomPanel());
+        }
         revalidate();
         repaint();
     }
@@ -227,7 +239,7 @@ public class NavigationView extends JPanel {
 
         // Time label
         if (navigationController.getLength() != null && navigationController.getTime() != null && !navigationController.didError()) {
-            JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>" + navigationController.getTime() + "</span> <span style='font-size:12px;color:#4285F4;'>(" + navigationController.getLength() + "km)</span></html>");
+            JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>" + navigationController.getTime() + "</span> <span style='font-size:12px;color:#4285F4;'>(" + navigationController.getLength() + ")</span></html>");
             middlePanel.add(timeLabel, BorderLayout.WEST);
         } else if (navigationController.didError()) {
             JLabel errorLabel = new JLabel("<html><span style='color:#a94442;'>Ingen rute fundet med givne indstillinger!</span></html>");
@@ -263,22 +275,56 @@ public class NavigationView extends JPanel {
 
         return switchAndSubmitPanel;
     }
-    private void switchFromAndTo() {
-        String startTextHolder = startInput.getText();
-        String endTextHolder = endInput.getText();
-        if(startTextHolder.equals(startInput.getName()) && endTextHolder.equals(endInput.getName())){
-            //nothing happens
-        } else if (startTextHolder.equals(startInput.getName())){
-            startInput.setText(endTextHolder);
-            endInput.setText(endInput.getName());
-        } else if (endTextHolder.equals(endInput.getName())){
-            endInput.setText(startTextHolder);
-            startInput.setText(startInput.getName());
-        } else {
-            startInput.setText(endTextHolder);
-            endInput.setText(startTextHolder);
+
+    private JScrollPane addBottomPanel() {
+        bottomPanel = new JPanel();
+        bottomPanel.setOpaque(true);
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        int height = MainWindowView.getHeight();
+        bottomPanel.setMaximumSize(new Dimension(width, height-225));
+        bottomPanel.setBackground(Color.WHITE);
+
+        // Add textual navigation
+        for (TextualElement textualElement : navigationController.getTextualNavigation()) {
+            if (textualElement.isAddress()) {
+                addNavigationAddress(textualElement.getAddress());
+            } else {
+                addNavigationText(textualElement.getName(), textualElement.getIconURL(), textualElement.getDist());
+            }
         }
+
+        scroll = new JScrollPane(bottomPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setMaximumSize(new Dimension(width, height-225));
+
+        return scroll;
     }
+
+    public void addNavigationAddress(Address address) {
+        String text = "<html><span style=\"font-size: 12px;\">" + address.getStreet() + " " + address.getHouse() +
+                "</span><br><span style=\"font-size: 10px;\">"+ address.getCity() + address.getPostcode() +"</span></html>";
+
+        JLabel addressLabel = new JLabel(text);
+        Border padding = BorderFactory.createEmptyBorder(10, 20, 10, 20);
+        Border margin = BorderFactory.createEmptyBorder(5, 0, 5, 0);
+        addressLabel.setBorder(BorderFactory.createCompoundBorder(margin, padding));
+
+        bottomPanel.add(addressLabel);
+    }
+
+    public void addNavigationText(String navText, String iconURL, String length) {
+        String text = "<html><span style=\"font-size: 10px;\">" + navText +
+                (length != null ? "</span><br><span style=\"font-size: 8px;\">" + length + "</span></html>" : "");
+
+        JLabel navigationText = new JLabel(text);
+        navigationText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        URL navigationURL = this.getClass().getResource(iconURL);
+        ImageIcon navigationIcon = new ImageIcon(navigationURL);
+        navigationText.setIcon(navigationIcon);
+        navigationText.setIconTextGap(20);
+        bottomPanel.add(navigationText);
+    }
+
     public JTextField getStartInput() {
         return startInput;
     }
