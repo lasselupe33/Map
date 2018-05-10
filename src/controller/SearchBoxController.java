@@ -86,6 +86,7 @@ public class SearchBoxController extends MouseAdapter {
         this.address = address;
         // Update address
         addressController.setCurrentAddress(address);
+        addressController.setBookmarkURL();
 
         // Go to proper position on map
         Coordinates coordinates = addressesModel.getCoordinates(address);
@@ -104,6 +105,7 @@ public class SearchBoxController extends MouseAdapter {
     public void setInputOnLocationIcon(Address address) {
         setSearchInput(address.toString());
         addressController.setCurrentAddress(address);
+        addressController.setBookmarkURL();
         stateController.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
 

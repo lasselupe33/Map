@@ -333,8 +333,6 @@ public class NavigationView extends JPanel {
         return endInput;
     }
 
-    public void setStartInputText(String text) {
-        startInputText = text;
-    }
+    public void setStartInputText(String text) { startInputText = text; }
     public void setEndInputText(String text) { endInputText = text; }
 }

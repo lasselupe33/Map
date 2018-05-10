@@ -66,7 +66,7 @@ public class FavoriteView extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 favoriteController.updateFavoriteInput(f.getAddress());
-                }
+            }
         });
 
         panel.add(label);

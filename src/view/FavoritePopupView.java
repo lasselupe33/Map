@@ -14,10 +14,9 @@ public class FavoritePopupView extends JOptionPane {
     private AddressController addressController;
     private StateController stateController;
 
-    public FavoritePopupView(AddressController addressController, StateController stateController){
+    public FavoritePopupView(AddressController addressController, StateController stateController, AddressView av){
         this.addressController = addressController;
         this.stateController = stateController;
-
 
     }
 
