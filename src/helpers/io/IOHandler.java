@@ -268,7 +268,7 @@ public class IOHandler {
 
             // If favorites existed before clearing, then copy the temp file back into the data-folder
             if (tempFavorites != null) {
-                OutputStream out = new FileOutputStream(new URI(externalRootPath + folderName + "/favorites").getPath());
+                OutputStream out = new FileOutputStream(new URI(externalRootPath + folderName + "/favorites.bin").getPath());
                 Files.copy(tempFavorites.toPath(), out);
             }
         } catch (IOException e) {

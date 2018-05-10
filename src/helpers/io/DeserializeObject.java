@@ -39,13 +39,15 @@ public class DeserializeObject implements Runnable {
                 path = Main.class.getResource(folderName + name + ".bin");
             }
 
-            InputStream stream = path.openStream();
-            ObjectInputStream in = new ObjectInputStream(stream);
+            if (path != null) {
+                InputStream stream = path.openStream();
+                ObjectInputStream in = new ObjectInputStream(stream);
 
-            // Read given object
-            callback.invoke(callbackClass, in.readObject(), name);
-            in.close();
-
+                // Read given object
+                callback.invoke(callbackClass, in.readObject(), name);
+                in.close();
+            }
+            
             // Indicate that deserialization has been completed!
             IOHandler.instance.onObjectDeserializationComplete();
         } catch (UnsupportedEncodingException e) {
