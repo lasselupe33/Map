@@ -77,9 +77,6 @@ public class AddressBuilder {
         AddressBuilder b = new AddressBuilder();
 
         if (matcher.matches()) {
-            if (matcher.group("postcode") == null) {
-                throw new RuntimeException("Address invalid!");
-            }
             return b.city(matcher.group("city")).
                     house(matcher.group("house")).
                     postcode(matcher.group("postcode")).
