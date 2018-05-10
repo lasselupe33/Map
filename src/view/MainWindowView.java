@@ -164,6 +164,7 @@ public class MainWindowView {
                 break;
 
             case FAVORITES:
+                favoriteView.updateFavoritesView();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(favoriteView, 1, 5);
                 break;

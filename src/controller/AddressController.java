@@ -13,8 +13,10 @@ import java.net.URL;
 public class AddressController extends MouseAdapter {
     private StateController stateController;
     private Address currAddress = new Address(0, 0, 0);
+    private Favorite currFavorite;
     private FavoritesModel favoritesModel;
     private FavoriteView favoriteView;
+    private AddressView addressView;
     private NavigationController navigationController;
 
     private URL bookmarkURL = this.getClass().getResource("/icons/bookmark.png");
@@ -32,7 +34,8 @@ public class AddressController extends MouseAdapter {
                 goToNavigation();
                 break;
             case "bookmark":
-                bookmarkAdress();
+                if(isFavoriteSaved()) deleteFavorite();
+                else bookmarkAddress();
                 break;
         }
     }
@@ -44,6 +47,7 @@ public class AddressController extends MouseAdapter {
         av.addMouseWheelListener(this);
         av.addMouseMotionListener(this);
         this.favoriteView = favoriteView;
+        addressView = av;
     }
 
     /** Helper that sets the currently entered address */
@@ -57,7 +61,7 @@ public class AddressController extends MouseAdapter {
         stateController.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
     }
 
-    private void bookmarkAdress() {
+    private void bookmarkAddress() {
         stateController.updateCurrentState(ViewStates.FAVORITES_POPUP);
     }
 
@@ -68,19 +72,36 @@ public class AddressController extends MouseAdapter {
         favoriteView.updateFavoritesView();
     }
 
+    public void deleteFavorite() {
+        favoritesModel.remove(currFavorite);
+        setBookmarkURL();
+        addressView.update();
+    }
+
     public URL getURl() {
+        System.out.println(bookmarkURL);
         return bookmarkURL;
     }
 
-    public void isFavoriteSaved() {
+    public void setBookmarkURL() {
+        if (isFavoriteSaved()) bookmarkURL = this.getClass().getResource("/icons/bookmark-filled.png");
+        else bookmarkURL = this.getClass().getResource("/icons/bookmark.png");
+    }
+
+    public boolean isFavoriteSaved() {
         for (Favorite favorite : favoritesModel) {
-            if (favorite.getAddress().equals(currAddress)) bookmarkURL = this.getClass().getResource("/icons/bookmark-filled.png");
+            if (favorite.getAddress().toKey().equals(currAddress.toKey())) {
+                currFavorite = favorite;
+                return true;
+            }
+            // plothole :D
         }
-        bookmarkURL = this.getClass().getResource("/icons/bookmark.png");
+        return false;
     }
 
     /** Helper that returns the current address */
     public Address getAddress() {
         return currAddress;
     }
+
 }
