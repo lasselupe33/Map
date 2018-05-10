@@ -87,8 +87,8 @@ public class AddressBuilderTest {
     @Test
     public void testTooLongPostCode(){
         Address assertAddress = new Address("Islands Brygge", "10", "2300");
-        String stringAddresLength5 = "Islands Brygge 10, 23000 city of Danmark";
-        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        String stringAddress = "Islands Brygge 10, 23000 city of Danmark";
+        Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
         assertEquals(assertAddress.getPostcode(), testAddress.getPostcode());
         assertEquals(assertAddress.getCity(), testAddress.getCity());
@@ -104,8 +104,8 @@ public class AddressBuilderTest {
     @Test
     public void testLetterInHouseNumber() {
         Address assertAddress = new Address("Islands Brygge", "10B", "2300");
-        String stringAddresLength5 = "Islands Brygge 10B, 2300 København S";
-        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        String stringAddress = "Islands Brygge 10B, 2300 København S";
+        Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
         assertEquals(assertAddress.getCity(), testAddress.getCity());
         assertEquals(assertAddress.getStreet(), testAddress.getStreet());
@@ -116,8 +116,8 @@ public class AddressBuilderTest {
     @Test
     public void testStrangeHouseNumber() {
         Address assertAddress = new Address("Levantkaj", "4-14", "2150");
-        String stringAddresLength5 = "Levantkaj 4-14, 2150 Nordhavn";
-        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        String stringAddress = "Levantkaj 4-14, 2150 Nordhavn";
+        Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
         assertEquals(assertAddress.getCity(), testAddress.getCity());
         assertEquals(assertAddress.getStreet(), testAddress.getStreet());
@@ -128,8 +128,8 @@ public class AddressBuilderTest {
     @Test
     public void testHouseNumberWithSpaceAndLetter() {
         Address assertAddress = new Address("JernBane Allé", "88 B", "2720");
-        String stringAddresLength5 = "Jernbane Allé 88 B, 2720 Vanløse";
-        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        String stringAddress = "Jernbane Allé 88 B, 2720 Vanløse";
+        Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
         assertEquals(assertAddress.getCity(), testAddress.getCity());
         assertEquals(assertAddress.getStreet(), testAddress.getStreet());
@@ -140,8 +140,32 @@ public class AddressBuilderTest {
     @Test
     public void testHouseNumberWithMultipleLetters() {
         Address assertAddress = new Address("Viktoriagade", "8BC", "1655");
-        String stringAddresLength5 = "Viktoriagade 8BC, 1655 København V";
-        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        String stringAddress = "Viktoriagade 8BC, 1655 København V";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
+    @Test
+    public void testFloorSide() {
+        Address assertAddress = new Address("Nørre Farimagsgade", "11 st. th.", "1364");
+        String stringAddress = "Nørre Farimagsgade 11 st. th., 1364 København K";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
+    @Test
+    public void testFloorSideWithComma() {
+        Address assertAddress = new Address("Dronningensgade", "51, st.", "1420");
+        String stringAddress = "Dronningensgade 51, st., 1420 København K";
+        Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
         assertEquals(assertAddress.getCity(), testAddress.getCity());
         assertEquals(assertAddress.getStreet(), testAddress.getStreet());
