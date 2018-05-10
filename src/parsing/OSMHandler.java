@@ -248,6 +248,9 @@ public class OSMHandler extends DefaultHandler {
                 if (value.equals("recreation_ground")) {
                     type = WayType.GRASS;
                 }
+                if (value.equals("military")) {
+                    type = WayType.MILITARY;
+                }
                 break;
             case "aeroway":
                 if (value.equals("aerodrome")) {
@@ -598,6 +601,7 @@ public class OSMHandler extends DefaultHandler {
             case GRASS:
             case MANMADEBRIDGE:
             case SWIMMINGPOOL:
+            case MILITARY:
                 mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, true, nodes));
                 break;
 
