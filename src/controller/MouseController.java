@@ -110,7 +110,8 @@ public class MouseController extends MouseAdapter {
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         canvas.requestFocus();
-        double factor = pow(1/1.1, e.getWheelRotation());
+        int cappedRotation = e.getWheelRotation() > 0 ? Math.min(20, e.getWheelRotation()) : Math.max(-20, e.getWheelRotation());
+        double factor = pow(1/1.1, cappedRotation);
         mapController.zoom(factor, -e.getX(), -e.getY());
 
         repaintMap();
