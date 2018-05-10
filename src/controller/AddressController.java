@@ -79,7 +79,6 @@ public class AddressController extends MouseAdapter {
     }
 
     public URL getURl() {
-        System.out.println(bookmarkURL);
         return bookmarkURL;
     }
 
@@ -94,7 +93,6 @@ public class AddressController extends MouseAdapter {
                 currFavorite = favorite;
                 return true;
             }
-            // plothole :D
         }
         return false;
     }
