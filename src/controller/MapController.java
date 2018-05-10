@@ -136,8 +136,7 @@ public class MapController {
         panToMap(coordinates.getX(), coordinates.getY());
 
         // Calculates scale the map should zoom
-        // (508 is the BUILDING WayTypes zoom priority)
-        double zoomscale = Math.abs(100.0 * (508 - getZoomLevel()) / 510.0);
+        double zoomscale = Math.abs(100.0 * (511 - getZoomLevel()) / 510.0);
         zoomToCenter(zoomscale);
 
         updateLocationCoordinates(coordinates);
