@@ -28,7 +28,6 @@ public class WhiteBoxKDTreeTest {
     public void setUp(){
         randomGenerator = new Random();
         coordinates = new ArrayList<>();
-
     }
 
     @Test
@@ -44,8 +43,6 @@ public class WhiteBoxKDTreeTest {
         for(int i = 0; i < treeCoordinates.size(); i++){
             assertEquals(true, coordinates.contains(treeCoordinates.get(i)));
         }
-
-
     }
 
     @Test
@@ -84,6 +81,4 @@ public class WhiteBoxKDTreeTest {
         nearestNeighbour = kdTree.nearestNeighbour(4, 8);
         assertEquals(coordinates.get(0), nearestNeighbour);
     }
-
-
 }

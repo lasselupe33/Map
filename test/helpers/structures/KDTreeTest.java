@@ -79,8 +79,6 @@ public class KDTreeTest {
 
     @Test
     public void nearestNeighbour() throws Exception {
-
-
         /* Expected results */
         Coordinates expected = new Coordinates(10, 10);
 
