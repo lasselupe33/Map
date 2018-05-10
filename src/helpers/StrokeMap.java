@@ -26,9 +26,6 @@ public class StrokeMap {
         if (zoomLevel < 500) {
             float factor = (511 - zoomLevel) * (zoomLevel / 10);
             float width = strokeMap.get(type) * factor / zoomLevel;
-            if (type == WayType.MOTORWAY) {
-                System.out.println(zoomLevel + " " + type + " " + width);
-            }
             return basicStroke(type, width);
         } else {
             return basicStroke(type, strokeMap.get(type));
@@ -80,6 +77,5 @@ public class StrokeMap {
         strokeMap.put(WayType.RUNWAY, 0.000009f);
         strokeMap.put(WayType.HIGHWAYBRIDGE, 0.00009f);
         strokeMap.put(WayType.RAILWAY, 0.00002f);
-
     }
 }
