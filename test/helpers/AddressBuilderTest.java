@@ -36,8 +36,8 @@ public class AddressBuilderTest {
     }
     @Test
     public void testParseSpecialCharacters() {
-        Address assertAddress = new Address("Mü-Sö's Mäë.", "11", "1231");
-        String stringAddress = "Mü-Sö's Mäë. 11, 1231 København S";
+        Address assertAddress = new Address("Mü-Sö's Mäëé.", "11", "1231");
+        String stringAddress = "Mü-Sö's Mäëé. 11, 1231 København S";
         Address testAddress = AddressBuilder.parse(stringAddress);
         assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
         assertEquals(assertAddress.getCity(), testAddress.getCity());
@@ -71,24 +71,6 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toKey(), testAddress.toKey());
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
-    /*
-    @Test
-    public void testParseValidInput3(){
-        Address assertAddress = new Address("Grønjordskollegiet", "6", "2300");
-        String stringAddress = "Grønjordskollegiet 6, 2300 København, Danmark";
-        Address testAddress = AddressBuilder.parse(stringAddress);
-        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
-        assertEquals(assertAddress.getCity(), testAddress.getCity());
-        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
-        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
-        assertEquals(assertAddress.toKey(), testAddress.toKey());
-        assertEquals(assertAddress.toString(), testAddress.toString());
-        //todo be able to parse ", country"
-    }
-    */
-
-
-
     @Test
     public void testStreetNameWithNumberLast(){
         Address assertAddress = new Address("Vej 5", "9", "2000");
@@ -114,6 +96,19 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toKey(), testAddress.toKey());
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
+    @Test
+    public void testLetterInHouseNumber() {
+        Address assertAddress = new Address("Islands Brygge", "10B", "2300");
+        String stringAddresLength5 = "Islands Brygge 10B, 2300 København S";
+        Address testAddress = AddressBuilder.parse(stringAddresLength5);
+        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
+        assertEquals(assertAddress.getCity(), testAddress.getCity());
+        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
+        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
+        assertEquals(assertAddress.toKey(), testAddress.toKey());
+        assertEquals(assertAddress.toString(), testAddress.toString());
+    }
+
 
 //    @Test(expected = Error.class)
 //    public void testParseInvalidPostCode(){
