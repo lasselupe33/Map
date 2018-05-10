@@ -220,6 +220,11 @@ public class ColorMap {
                 new Color(53, 242, 103),
                 new Color(205,205,205)});
 
+        colorMap.put(WayType.MILITARY, new Color[] {new Color(205, 235, 176),
+                new Color(9, 180, 90),
+                new Color(53, 242, 103),
+                new Color(205,205,205)});
+
         colorMap.put(WayType.PIER, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});
 
         colorMap.put(WayType.HIGHWAYBRIDGE, new Color[] {standardRoadColor,standardRoadColor,standardRoadColor,standardRoadColor});

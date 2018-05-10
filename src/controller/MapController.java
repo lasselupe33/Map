@@ -158,12 +158,16 @@ public class MapController {
         updateMap();
     }
 
-    /** TODO: Document this function */
+    /**
+     * Internal helper that return the diagonal distance in KM in a rectangle
+     */
     private double getRectDistance(Rectangle2D rectangle2D) {
         return UnitConverter.DistInKM(rectangle2D.getMinX(), rectangle2D.getMinY(), rectangle2D.getMaxX(), rectangle2D.getMaxY());
     }
 
-    /** TODO: Document this function */
+    /**
+     * Internal helper that pans map to the proper location
+     */
     private void panToMap(double x, double y) {
         // Pan to map
         pan(-x, -y);
