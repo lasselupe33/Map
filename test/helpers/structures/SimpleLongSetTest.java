@@ -11,6 +11,11 @@ public class SimpleLongSetTest {
         set.add(1023);
 
         assertEquals(set.getSet()[0], 1023);
+        assertEquals(set.size(), 1);
+
+        set.add(1023);
+
+        assertEquals(set.size(), 1);
     }
 
     @Test
