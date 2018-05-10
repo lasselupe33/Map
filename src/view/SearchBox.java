@@ -1,16 +1,18 @@
 package view;
 
 import controller.*;
+import helpers.StateHandler;
+import helpers.ViewStates;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.net.URL;
 
 public class SearchBox extends JPanel {
-    private StateController stateController;
+    private StateHandler stateHandler;
     private SearchBoxController searchBoxController;
     private AutoCompleteController autoCompleteController;
     private JTextField searchInput;
@@ -20,8 +22,8 @@ public class SearchBox extends JPanel {
     private JPanel buttonsContainer;
     private boolean initialRender = true;
 
-    public SearchBox(StateController sc, SearchBoxController sbc, AutoCompleteController acc) {
-        stateController = sc;
+    public SearchBox(StateHandler sc, SearchBoxController sbc, AutoCompleteController acc) {
+        stateHandler = sc;
         searchBoxController = sbc;
         autoCompleteController = acc;
         setBackground(Color.WHITE);
@@ -35,7 +37,7 @@ public class SearchBox extends JPanel {
     public void update() {
         // Remove components if necessary
         if (!initialRender) {
-            switch(stateController.getPrevState()){
+            switch(stateHandler.getPrevState()){
                 case INITIAL:
                     remove(searchContainer);
                     remove(buttonsContainer);
@@ -56,7 +58,7 @@ public class SearchBox extends JPanel {
         }
 
         // Add required components and update bounds
-        switch(stateController.getCurrentState()){
+        switch(stateHandler.getCurrentState()){
             case INITIAL:
                 add(createSearchInput(), BorderLayout.WEST);
                 setBounds(20, 20, 477, 32);
@@ -114,7 +116,7 @@ public class SearchBox extends JPanel {
         searchInput.setBorder(BorderFactory.createEmptyBorder());
         searchInput.addActionListener(e -> searchBoxController.onSearchInput());
         searchInput.addKeyListener(autoCompleteController);
-        searchInput.addFocusListener(new TextController("Søg.."));
+        searchInput.addFocusListener(new TextController(searchInput.getName()));
 
         // Add to wrapper
         searchContainer.add(searchInput, BorderLayout.WEST);
@@ -147,7 +149,7 @@ public class SearchBox extends JPanel {
         // Create button
         URL imageURL;
 
-        if (stateController.getCurrentState() == ViewStates.INITIAL) {
+        if (stateHandler.getCurrentState() == ViewStates.INITIAL) {
             imageURL = this.getClass().getResource("/icons/navigation.png");
         } else {
             imageURL = this.getClass().getResource("/icons/cross.png");
@@ -173,7 +175,7 @@ public class SearchBox extends JPanel {
         favoriteButtonContainer.setPreferredSize(new Dimension(32, 32));
 
         // Create button
-        URL imageURL = this.getClass().getResource("/icons/favorite.png");
+        URL imageURL = this.getClass().getResource("/icons/locationIcon-blue.png");
         ImageIcon icon = new ImageIcon(imageURL);
         JLabel iconLabel = new JLabel(icon);
         iconLabel.setVerticalAlignment(JLabel.CENTER);

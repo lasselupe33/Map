@@ -1,22 +1,38 @@
 package model.graph;
 
-public class Edge {
-    private Node node1;
-    private Node node2;
-    private float length; //in km
+import model.Coordinates;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.ArrayList;
+
+/**
+ * An edge contains information of the path between two vertices (nodes)
+ */
+public class Edge implements Externalizable {
+    private long node1;
+    private long node2;
+    private String name;
+    private float length;
     private int speedLimit;
+    private Coordinates[] path; // Contain the coordinates hidden by this edge in order to draw them properly
     private boolean supportsCars;
     private boolean supportsBicycles;
     private boolean supportsPedestrians;
 
-    public Edge(Node node1, Node node2, float length, int speedLimit, boolean supportsCars, boolean supportsBicycles, boolean supportsPedestrians) {
+    public Edge() {}
+    public Edge(long node1, long node2, ArrayList<Coordinates> path, String name, float length, int speedLimit, boolean supportsCars, boolean supportsBicycles, boolean supportsPedestrians) {
         this.node1 = node1;
         this.node2 = node2;
         this.length = length;
+        this.name = name;
         this.speedLimit = speedLimit;
         this.supportsCars = supportsCars;
         this.supportsBicycles = supportsBicycles;
         this.supportsPedestrians = supportsPedestrians;
+        this.path = path.toArray(new Coordinates[path.size()]);
     }
 
     /** Get the weight of the edge based on the type of vehicle and the desired route type */
@@ -41,31 +57,30 @@ public class Edge {
     public float getTime(VehicleType type) {
         switch (type) {
             case PEDESTRIAN:
-                return length * 1000000 * 60 / 5;
+                return length * 60 / 5;
             case BICYCLE:
-                return length * 1000000 * 60 / 18;
+                return length * 60 / 18;
             default:
                 // Default will always be car
-                return length * 1000000 * 60 / speedLimit;
+                return length * 60 / speedLimit;
         }
     }
 
     /**
-     * Returns the length of the edge in meters
+     * Returns the length of the edge in millimeters
      */
     public float getLength() {
-        return length * 1000;
+        return length;
     }
-
 
     /**
      * Returns the opposite node of the edge from the one passed.
      * NB: from must be one of the two nodes of the edge.
      */
-    public Node getTo(Node from) {
-        if (from.getId() == node1.getId()) {
+    public long getTo(Node from) {
+        if (from.getId() == node1) {
             return node2;
-        } else if (from.getId() == node2.getId()) {
+        } else if (from.getId() == node2) {
             return node1;
         } else {
             throw new RuntimeException("The 'from' node must be one of the nodes of the current edge!");
@@ -88,5 +103,37 @@ public class Edge {
                 // No other types are supported.
                 return false;
         }
+    }
+
+    public Coordinates[] getPath() { return path; }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(name);
+        out.writeLong(node1);
+        out.writeLong(node2);
+        out.writeFloat(length);
+        out.writeInt(speedLimit);
+        out.writeBoolean(supportsCars);
+        out.writeBoolean(supportsBicycles);
+        out.writeBoolean(supportsPedestrians);
+        out.writeObject(path);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        name = (String) in.readObject();
+        node1 = in.readLong();
+        node2 = in.readLong();
+        length = in.readFloat();
+        speedLimit = in.readInt();
+        supportsCars = in.readBoolean();
+        supportsBicycles = in.readBoolean();
+        supportsPedestrians = in.readBoolean();
+        path = (Coordinates[]) in.readObject();
     }
 }

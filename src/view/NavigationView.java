@@ -1,14 +1,22 @@
 package view;
 
 import controller.*;
+import helpers.StateHandler;
+import helpers.ViewStates;
+import model.Address;
 import model.graph.RouteType;
+import model.graph.TextualElement;
 import model.graph.VehicleType;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.net.URL;
 
+/**
+ * View for navigation search
+ */
 public class NavigationView extends JPanel {
     private boolean initialRender = true;
     private int width = 450;
@@ -20,13 +28,14 @@ public class NavigationView extends JPanel {
     private String startInputText = "Fra:";
     private String endInputText = "Til:";
     private AutoCompleteController autoCompleteController;
-    private StateController stateController;
+    private StateHandler stateHandler;
+    private JPanel bottomPanel;
+    private JScrollPane scroll;
 
-
-    public NavigationView(NavigationController nc, AutoCompleteController acc, StateController sc) {
+    public NavigationView(NavigationController nc, AutoCompleteController acc, StateHandler sc) {
         navigationController = nc;
         autoCompleteController = acc;
-        stateController = sc;
+        stateHandler = sc;
 
         // Setup view
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -42,17 +51,27 @@ public class NavigationView extends JPanel {
     public void update() {
         if (!initialRender) {
             remove(topPanel);
+
+            if (scroll != null) {
+                bottomPanel.removeAll();
+                bottomPanel.revalidate();
+                remove(scroll);
+            }
         } else {
             initialRender = false;
         }
 
-        if (navigationController.isNavigationActive() && stateController.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
-            setBounds(0, 0, 450, getParent().getHeight());
+        add(topPanel());
+
+        // Set correct dimensions based on whether or not a navigation is active
+        if (navigationController.isNavigationActive() && stateHandler.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
+            int height = MainWindowView.getHeight();
+            setBounds(0, 0, 450, height-25);
+            add(textualNavigation());
         } else {
             setBounds(0, 0, 450, 200);
         }
 
-        add(topPanel());
         revalidate();
         repaint();
     }
@@ -187,9 +206,9 @@ public class NavigationView extends JPanel {
 
         // Start input
         startInput = new JTextField(startInputText);
-        startInput.setName("startInput");
+        startInput.setName("Fra:");
         startInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
-        startInput.addFocusListener(new TextController("Fra:"));
+        startInput.addFocusListener(new TextController(startInput.getName()));
         startInput.addKeyListener(autoCompleteController);
         inputContainer.add(startInput);
 
@@ -198,9 +217,9 @@ public class NavigationView extends JPanel {
 
         // End input
         endInput = new JTextField(endInputText);
-        endInput.setName("endInput");
+        endInput.setName("Til:");
         endInput.setFont(new Font("Myriad Pro", Font.PLAIN, 16));
-        endInput.addFocusListener(new TextController("Til:"));
+        endInput.addFocusListener(new TextController(endInput.getName()));
         endInput.addKeyListener(autoCompleteController);
         inputContainer.add(endInput);
 
@@ -222,9 +241,12 @@ public class NavigationView extends JPanel {
         middlePanel.setLayout(new BorderLayout());
 
         // Time label
-        if (navigationController.getLength() != null && navigationController.getTime() != null) {
-            JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>" + navigationController.getTime() + "</span> <span style='font-size:12px;color:#4285F4;'>(" + navigationController.getLength() + "km)</span></html>");
+        if (navigationController.getLength() != null && navigationController.getTime() != null && !navigationController.didError()) {
+            JLabel timeLabel = new JLabel("<html><span style='font-size:12px;color:#383838;'>" + navigationController.getTime() + "</span> <span style='font-size:12px;color:#4285F4;'>(" + navigationController.getLength() + ")</span></html>");
             middlePanel.add(timeLabel, BorderLayout.WEST);
+        } else if (navigationController.didError()) {
+            JLabel errorLabel = new JLabel("<html><span style='color:#a94442;'>Ingen rute fundet med givne indstillinger!</span></html>");
+            middlePanel.add(errorLabel, BorderLayout.WEST);
         }
 
         middlePanel.add(renderSwitchAndSubmitButtons(), BorderLayout.EAST);
@@ -243,7 +265,7 @@ public class NavigationView extends JPanel {
         JButton switchFromTo = new JButton(switchIcon);
         switchFromTo.setBackground(Color.WHITE);
         switchFromTo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        switchFromTo.addActionListener((e) -> switchFromAndTo());
+        switchFromTo.addActionListener((e) -> navigationController.switchFromAndTo());
         switchAndSubmitPanel.add(switchFromTo, BorderLayout.WEST);
 
         // Submit-button
@@ -251,27 +273,59 @@ public class NavigationView extends JPanel {
         submitButton.setForeground(Color.decode("#4285F4"));
         submitButton.setBackground(Color.WHITE);
         submitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        submitButton.addActionListener((e) -> navigationController.onRouteSearch());
+        submitButton.addActionListener((e) -> navigationController.routeClicked());
         switchAndSubmitPanel.add(submitButton, BorderLayout.EAST);
 
         return switchAndSubmitPanel;
     }
 
-    private void switchFromAndTo() {
-        String startTextHolder = startInput.getText();
-        String endTextHolder = endInput.getText();
-        if(startTextHolder.equals("Fra:") && endTextHolder.equals("Til:")){
-            //nothing happens
-        } else if (startTextHolder.equals("Fra:")){
-            startInput.setText(endTextHolder);
-            endInput.setText("Til:");
-        } else if (endTextHolder.equals("Til:")){
-            endInput.setText(startTextHolder);
-            startInput.setText("Fra:");
-        } else {
-            startInput.setText(endTextHolder);
-            endInput.setText(startTextHolder);
+    private JScrollPane textualNavigation() {
+        bottomPanel = new JPanel();
+        bottomPanel.setOpaque(true);
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        int height = MainWindowView.getHeight();
+        bottomPanel.setMaximumSize(new Dimension(width, height-225));
+        bottomPanel.setBackground(Color.WHITE);
+
+        // Add textual navigation
+        for (TextualElement textualElement : navigationController.getTextualNavigation()) {
+            if (textualElement.isAddress()) {
+                addNavigationAddress(textualElement.getAddress());
+            } else {
+                addNavigationText(textualElement.getName(), textualElement.getIconURL(), textualElement.getDist());
+            }
         }
+
+        scroll = new JScrollPane(bottomPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setMaximumSize(new Dimension(width, height-225));
+
+        return scroll;
+    }
+
+    public void addNavigationAddress(Address address) {
+        String text = "<html><span style=\"font-size: 12px;\">" + address.getStreet() + " " + address.getHouse() +
+                "</span><br><span style=\"font-size: 10px;\">"+ address.getCity() + address.getPostcode() +"</span></html>";
+
+        JLabel addressLabel = new JLabel(text);
+        Border padding = BorderFactory.createEmptyBorder(10, 20, 10, 20);
+        Border margin = BorderFactory.createEmptyBorder(5, 0, 5, 0);
+        addressLabel.setBorder(BorderFactory.createCompoundBorder(margin, padding));
+
+        bottomPanel.add(addressLabel);
+    }
+
+    public void addNavigationText(String navText, String iconURL, String length) {
+        String text = "<html><span style=\"font-size: 10px;\">" + navText +
+                (length != null ? "</span><br><span style=\"font-size: 8px;\">" + length + "</span></html>" : "");
+
+        JLabel navigationText = new JLabel(text);
+        navigationText.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        URL navigationURL = this.getClass().getResource(iconURL);
+        ImageIcon navigationIcon = new ImageIcon(navigationURL);
+        navigationText.setIcon(navigationIcon);
+        navigationText.setIconTextGap(20);
+        bottomPanel.add(navigationText);
     }
 
     public JTextField getStartInput() {

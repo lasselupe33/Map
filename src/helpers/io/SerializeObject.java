@@ -5,6 +5,9 @@ import main.Main;
 import java.io.*;
 import java.net.URL;
 
+/**
+ * Helper responsible for serializing a single object on a dedicated thread.
+ */
 public class SerializeObject implements Runnable {
     Object toSerialize;
     String name;
@@ -17,7 +20,9 @@ public class SerializeObject implements Runnable {
         IOHandler.instance.onSerializationStart();
 
         // Begin serializing
-        new Thread(this, "serializer-" + name).start();
+        Thread thread = new Thread(this, "serializer-" + name);
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
     }
 
     public void run() {

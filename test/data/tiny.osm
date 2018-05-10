@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.5.8 (8284 thorn-01.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <bounds minlat="55.6631000" minlon="12.5730000" maxlat="55.6804000" maxlon="12.6031000"/>
+ <node id="125399" visible="true" version="8" changeset="32185754" timestamp="2015-06-24T15:19:58Z" user="Spectrokid" uid="19775" lat="55.6710440" lon="12.5771583"/>
+ <node id="125402" visible="true" version="4" changeset="828447" timestamp="2009-01-23T19:05:27Z" user="sfromis" uid="49560" lat="55.6743964" lon="12.5854426"/>
+ <node id="125403" visible="true" version="6" changeset="7694939" timestamp="2011-03-28T10:01:49Z" user="Jens G" uid="426207" lat="55.6753313" lon="12.5871796"/>
+ <node id="125404" visible="true" version="3" changeset="6661999" timestamp="2010-12-14T20:14:15Z" user="Winbladh" uid="49777" lat="55.6809120" lon="12.5848854"/>
+ <node id="697547" visible="true" version="7" changeset="3531468" timestamp="2010-01-03T18:54:57Z" user="Claus Hindsgaul" uid="185440" lat="55.6736517" lon="12.5722541">
+   <tag k="highway" v="traffic_signals"/>
+ </node>
+  <node id="281824620" visible="true" version="11" changeset="42001321" timestamp="2016-09-08T11:15:46Z" user="Niels Elgaard Larsen" uid="1288" lat="55.6779044" lon="12.5962497">
+  <tag k="addr:city" v="København K"/>
+  <tag k="addr:country" v="DK"/>
+  <tag k="addr:housenumber" v="93"/>
+  <tag k="addr:postcode" v="1401"/>
+  <tag k="addr:street" v="Strandgade"/>
+  <tag k="amenity" v="restaurant"/>
+  <tag k="award:michelin" v="2"/>
+  <tag k="contact:email" v="noma@noma.dk"/>
+  <tag k="cuisine" v="nordic"/>
+  <tag k="fvst:navnelbnr" v="113807"/>
+  <tag k="name" v="Noma"/>
+  <tag k="opening_hours" v="Tu-Sa 12:00-16:00, 19:00-00:30"/>
+  <tag k="phone" v="+45 3296 3297"/>
+  <tag k="website" v="http://www.noma.dk/"/>
+  <tag k="wheelchair" v="limited"/>
+  <tag k="wikipedia" v="da:Noma"/>
+ </node>
+
+ <node id="39393020" visible="true" version="11" changeset="42001321" timestamp="2016-09-08T11:15:46Z" user="Bob Bobsen" uid="1288" lat="50.837268" lon="13.858130">
+   <tag k="addr:city" v="København"/>
+   <tag k="addr:country" v="DK"/>
+   <tag k="addr:housenumber" v="12"/>
+   <tag k="addr:postcode" v="2100"/>
+   <tag k="addr:street" v="Strandvej"/>
+   <tag k="contact:email" v="bob@bob.dk"/>
+ </node>
+ <node id="21234554" visible="true" version="11" changeset="42001321" timestamp="2016-09-08T11:15:46Z" user="Ulla" uid="1288" lat="49.837268" lon="15.858130">
+     <tag k="addr:city" v="København"/>
+     <tag k="addr:country" v="DK"/>
+     <tag k="addr:housenumber" v="4"/>
+     <tag k="addr:postcode" v="1100"/>
+     <tag k="addr:street" v="Strøget"/>
+ </node>
+ <way id="25838049" visible="true" version="9" changeset="25215338" timestamp="2014-09-03T21:17:26Z" user="halfd" uid="285692">
+  <nd ref="281824620"/>
+  <nd ref="697547" />
+  <tag k="architect" v="Kai Gottlob"/>
+  <tag k="bicycle" v="yes"/>
+  <tag k="bridge" v="yes"/>
+  <tag k="cycleway" v="lane"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="tertiary"/>
+  <tag k="image" v="http://da.wikipedia.org/wiki/Fil:Knippelsbro_K%C3%B8benhavn.jpg"/>
+  <tag k="layer" v="1"/>
+  <tag k="length" v="115"/>
+  <tag k="lit" v="yes"/>
+  <tag k="maxspeed" v="50"/>
+  <tag k="name" v="Knippelsbro"/>
+  <tag k="sidewalk" v="both"/>
+  <tag k="source:maxspeed" v="DK:urban"/>
+  <tag k="start_date" v="1937-12-17"/>
+  <tag k="surface" v="asphalt"/>
+  <tag k="width" v="27.4"/>
+  <tag k="wikidata" v="Q491808"/>
+  <tag k="wikipedia" v="da:Knippelsbro"/>
+ </way>
+  <way id="25838049" visible="true" version="9" changeset="25215338" timestamp="2014-09-03T21:17:26Z" user="halfd" uid="285692">
+  <nd ref="125404"/>
+  <nd ref="125403" />
+  <tag k="bicycle" v="yes"/>
+  <tag k="cycleway" v="no"/>
+  <tag k="foot" v="yes"/>
+  <tag k="highway" v="residential"/>
+  <tag k="lit" v="yes"/>
+  <tag k="maxspeed" v="40"/>
+  <tag k="maxweight" v="12"/>
+  <tag k="name" v="Toldbodgade"/>
+  <tag k="sidewalk" v="both"/>
+  <tag k="source:maxspeed" v="sign"/>
+  <tag k="surface" v="asphalt"/>
+ </way>
+ <relation id="3189813" visible="true" version="32" changeset="44899578" timestamp="2017-01-04T14:14:51Z" user="Green1984" uid="204479">
+  <member type="way" ref="11567615" role=""/>
+  <member type="way" ref="27113862" role=""/>
+ </relation>
+</osm>

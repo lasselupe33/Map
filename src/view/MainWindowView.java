@@ -3,7 +3,7 @@ package view;
 import controller.MapController;
 import model.MetaModel;
 import controller.MenuController;
-import controller.StateController;
+import helpers.StateHandler;
 import controller.*;
 import model.FavoritesModel;
 
@@ -15,8 +15,9 @@ import java.awt.event.ActionEvent;
  * This class creates the main window to display the map in.
  */
 public class MainWindowView {
+    private static int height;
     private JFrame window;
-    public JLayeredPane lpane = new JLayeredPane();
+    private JLayeredPane lpane = new JLayeredPane();
     private MenuController menuController;
     private MetaModel metaModel;
     private MapView mapView;
@@ -26,7 +27,7 @@ public class MainWindowView {
     private ZoomView zoomView;
     private NavigationView navigationView;
     private AutoCompleteList autoCompleteList;
-    private StateController stateController;
+    private StateHandler stateHandler;
     private boolean initialRender = true;
     private FooterView footerView;
     private FavoriteView favoriteView;
@@ -42,7 +43,7 @@ public class MainWindowView {
             AddressView av,
             SearchBox sb,
             ZoomView zv,
-            StateController sc,
+            StateHandler sc,
             NavigationView nv,
             FooterView fv,
             FavoriteView favoriteView,
@@ -58,7 +59,7 @@ public class MainWindowView {
         addressView = av;
         searchBox = sb;
         zoomView = zv;
-        stateController = sc;
+        stateHandler = sc;
         navigationView = nv;
         footerView = fv;
         this.favoriteView = favoriteView;
@@ -88,7 +89,7 @@ public class MainWindowView {
         // Run initial render
         update();
 
-        // put screen to correct place on canvas
+        // Put screen to correct place on canvas
         height = window.getContentPane().getHeight();
         int offsetX = (window.getContentPane().getWidth() - height) / 2;
 
@@ -109,7 +110,7 @@ public class MainWindowView {
     public void update() {
         // Remove old components
         if (!initialRender) {
-            switch (stateController.getPrevState()) {
+            switch (stateHandler.getPrevState()) {
                 case INITIAL:
                     lpane.remove(searchBox);
                     lpane.remove(autoCompleteList);
@@ -144,7 +145,7 @@ public class MainWindowView {
         navigationView.update();
 
         // Add components
-        switch(stateController.getCurrentState()) {
+        switch(stateHandler.getCurrentState()) {
             case INITIAL:
                 lpane.add(searchBox, 2, 2);
                 lpane.add(autoCompleteList, 3, 6);
@@ -163,6 +164,7 @@ public class MainWindowView {
                 break;
 
             case FAVORITES:
+                favoriteView.updateFavoritesView();
                 lpane.add(searchBox, 2, 2);
                 lpane.add(favoriteView, 1, 5);
                 break;
@@ -190,7 +192,7 @@ public class MainWindowView {
             initialRender = false;
         }
 
-        int height = window.getContentPane().getHeight();
+        height = window.getContentPane().getHeight();
         int width = window.getContentPane().getWidth();
 
         // Setup bounds once the screen size has been determined
@@ -202,7 +204,7 @@ public class MainWindowView {
         favoriteView.updateBound(height);
 
         // Update the previous state after render
-        stateController.updatePrevState();
+        stateHandler.updatePrevState();
     }
 
     /**
@@ -252,18 +254,29 @@ public class MainWindowView {
         colorGroup.add(deuteranopiaItem);
         subShowMenu.add(deuteranopiaItem);
 
-        JMenuItem tritanopiaItem = new JRadioButtonMenuItem("Blåblind (Tritanopia)");
-        tritanopiaItem.addActionListener((ActionEvent e) -> menuController.tritanopiaMode());
-        colorGroup.add(tritanopiaItem);
-        subShowMenu.add(tritanopiaItem);
-
         JMenuItem grayscaleItem = new JRadioButtonMenuItem("Gråskala");
         grayscaleItem.addActionListener((ActionEvent e) -> menuController.grayscaleMode());
         colorGroup.add(grayscaleItem);
         subShowMenu.add(grayscaleItem);
 
         // create the Help menu
-        JMenu helpMenu = new JMenu("Help");
+        JMenu helpMenu = new JMenu("Hjælp");
         menubar.add(helpMenu);
+
+        JMenuItem helpItem = new JMenuItem("Hjælp");
+        helpItem.addActionListener((ActionEvent e) -> menuController.help());
+        helpMenu.add(helpItem);
+
+        JMenuItem userManualItem = new JMenuItem("Brugervejledning");
+        userManualItem.addActionListener((ActionEvent e) -> menuController.userManual());
+        helpMenu.add(userManualItem);
+    }
+
+    public static int getHeight() {
+        return height;
+    }
+
+    public JLayeredPane getlpane() {
+        return lpane;
     }
 }

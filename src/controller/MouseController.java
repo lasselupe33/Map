@@ -1,6 +1,8 @@
 package controller;
 
+import model.Address;
 import model.AddressesModel;
+import model.Coordinates;
 import view.MapView;
 import view.FooterView;
 
@@ -8,8 +10,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Point2D;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Math.pow;
+
 /**
  * This controller handles mouse events.
  */
@@ -18,15 +23,20 @@ public class MouseController extends MouseAdapter {
     private MapController mapController;
     private AddressesModel addressesModel;
     private FooterView footerView;
+    private SearchBoxController searchBoxController;
+
+    /** Fields related to the debouncing of map updates */
+    private Timer timer = new Timer();
+    private Long lastAction;
 
     private Point2D lastMousePosition;
-    private static Thread t;
 
-    public MouseController(MapView c, MapController cc, AddressesModel am, FooterView fv) {
+    public MouseController(MapView c, MapController cc, AddressesModel am, FooterView fv, SearchBoxController sbc) {
         canvas = c;
         mapController = cc;
         addressesModel = am;
         footerView = fv;
+        searchBoxController = sbc;
         canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
         canvas.addMouseMotionListener(this);
@@ -34,6 +44,26 @@ public class MouseController extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        // Checking if user clicked on the favorite icon
+        Coordinates coord = canvas.containsCoordinate(mapController.toModelCoords(e.getPoint()));
+        if (coord != null) {
+            mapController.updateLocationCoordinates(coord);
+            searchBoxController.setInputOnLocationIcon(addressesModel.addressFromCoordinate(coord));
+        }
+
+        // If right click, draw location icon
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            Point2D modelCoords = mapController.toModelCoords(e.getPoint());
+            Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
+            searchBoxController.setInputOnLocationIcon(address);
+            mapController.updateLocationCoordinates(address.getCoordinates());
+        }
+
+        // If double click, zoom in
+        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+            mapController.zoom(1.4, -e.getX(), -e.getY());
+        }
+
         // Ensure keyboard events are used when the canvas has been pressed
         canvas.requestFocus();
     }
@@ -44,13 +74,14 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (t != null) t.interrupt();
         canvas.requestFocus();
         Point2D currentMousePosition = e.getPoint();
         double dx = currentMousePosition.getX() - lastMousePosition.getX();
         double dy = currentMousePosition.getY() - lastMousePosition.getY();
         mapController.pan(dx, dy);
         lastMousePosition = currentMousePosition;
+
+        repaintMap();
     }
 
     /**
@@ -60,10 +91,6 @@ public class MouseController extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
         canvas.requestFocus();
-
-        if (e.getClickCount() == 2) {
-            mapController.zoom(1.4, -e.getX(), -e.getY());
-        }
 
         lastMousePosition = e.getPoint();
     }
@@ -82,32 +109,35 @@ public class MouseController extends MouseAdapter {
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (t != null) t.interrupt();
         canvas.requestFocus();
-        double factor = pow(1/1.1, e.getWheelRotation());
+        int cappedRotation = e.getWheelRotation() > 0 ? Math.min(20, e.getWheelRotation()) : Math.max(-20, e.getWheelRotation());
+        double factor = pow(1/1.1, cappedRotation);
         mapController.zoom(factor, -e.getX(), -e.getY());
+
+        repaintMap();
     }
 
-    public void mouseReleased(MouseEvent e){
-        thread();
-    }
-
+    public void mouseReleased(MouseEvent e){ }
 
     /**
-     * TODO: Needs documentation, what is happening here, and why is it running in a separate thread?
+     * Internal helper that repaints the map every time a mouse event occurs, however only updating the map-data
+     * after 100ms of user inactivity, in order to preserve performance.
      */
-    public static void thread(){
-        t = new Thread() {
-            public void run() {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    MapController.repaintMap(false);
-                    return;
+    private void repaintMap() {
+        MapController.getInstance().repaintMap(false);
+        lastAction = System.currentTimeMillis();
+
+        // Only update the mapData
+        timer.schedule(
+            new TimerTask() {
+                @Override
+                public void run() {
+                    if (System.currentTimeMillis() - lastAction >= 100) {
+                        MapController.getInstance().updateMap();
+                    }
                 }
-                MapController.getInstance().updateMap();
-            }
-        };
-        t.start();
+            },
+            100
+        );
     }
 }

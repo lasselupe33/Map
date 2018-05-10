@@ -2,6 +2,7 @@ package helpers.io;
 
 import controller.MapController;
 import model.AddressesModel;
+import model.FavoritesModel;
 import model.MapModel;
 import model.MetaModel;
 import model.graph.Graph;
@@ -23,6 +24,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.zip.ZipInputStream;
 
+/**
+ * Handler responsible for handling all logic related to input and output
+ */
 public class IOHandler {
     public static IOHandler instance = new IOHandler(); // Create an instance of the IOHandler
     public static URL internalRootPath;
@@ -31,6 +35,7 @@ public class IOHandler {
     public boolean testMode = false;
     public boolean isJar = false;
 
+    /** Keep track of current state in order to render progress properly */
     private int deserializedObjects = 0;
     private int serializedObjects = 0;
     private int objectsToSerialize = 0;
@@ -43,6 +48,7 @@ public class IOHandler {
     private FooterView footerView;
     private LoadingScreen loadingScreen;
     private Graph graph;
+    private FavoritesModel favoritesModel;
 
     /** Initialize IOHandler with reference to the rootPath */
     private IOHandler() {
@@ -61,11 +67,12 @@ public class IOHandler {
         }
     }
 
-    public void addModels(MetaModel m, MapModel mm, AddressesModel am, Graph g) {
+    public void addModels(MetaModel m, MapModel mm, AddressesModel am, Graph g, FavoritesModel fm) {
         model = m;
         mapModel = mm;
         addressesModel = am;
         graph = g;
+        favoritesModel = fm;
     }
 
     public void addView(FooterView fv) {
@@ -95,6 +102,7 @@ public class IOHandler {
         model.serialize();
         mapModel.serialize();
         addressesModel.serialize();
+        graph.serialize();
     }
 
     /** Load data from a string */
@@ -113,6 +121,7 @@ public class IOHandler {
         Thread loaderThread = new Thread(() -> {
             // Prepare models to recieve new data
             mapModel.reset();
+            graph.reset();
 
             if (filename.endsWith(".osm")) {
                 readFromOSM(new InputSource(filename));
@@ -127,9 +136,9 @@ public class IOHandler {
                     e.printStackTrace();
                 }
             }
-            
 
             if (Main.initialRender) {
+                // Specify that data has been loaded
                 Main.dataLoaded = true;
 
                 // If MVC is ready, then run application!
@@ -146,6 +155,7 @@ public class IOHandler {
             loadingScreen = null;
         });
 
+        // Run the parser on a separate thread in order to keep the GUI-thread non-blocked.
         loaderThread.start();
     }
 
@@ -158,6 +168,8 @@ public class IOHandler {
         model.deserialize();
         mapModel.deserialize();
         addressesModel.deserialize();
+        graph.deserialize();
+        favoritesModel.deserialize();
     }
 
     /** Internal helper that sets up the OSMHandler and begins reading from an OSM-file */
@@ -215,6 +227,7 @@ public class IOHandler {
         objectsToSerialize++;
     }
 
+    /** Internal helper that clears all previously saved binary data (except for favorites) */
     private void cleanDirs() {
         try {
             String folderName = "/BFST18_binary" + (IOHandler.instance.testMode ? "_test" : "");
@@ -243,6 +256,7 @@ public class IOHandler {
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName)));
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/address")));
             Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/map")));
+            Files.createDirectory(Paths.get(new URI(externalRootPath + folderName + "/graph")));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {

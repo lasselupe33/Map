@@ -1,21 +1,21 @@
-package controller;
+package helpers;
 
-import view.AutoCompleteList;
+import controller.AutoCompleteController;
 import view.MainWindowView;
 
 /**
- * Global controller that takes care of handling the current state of the application, i.e. which view should currently
+ * Handler that takes care of handling the current state of the application, i.e. which view should currently
  * be visible.
  * This will often be called from other controllers.
  */
-public class StateController {
+public class StateHandler {
     private ViewStates currentState;
     private MainWindowView mainView;
     private ViewStates prevState;
     private ViewStates prevPanel;
     private AutoCompleteController autoCompleteController;
 
-    public StateController() {
+    public StateHandler() {
         // Setup initial state
         currentState = ViewStates.INITIAL;
         prevState = ViewStates.INITIAL;
@@ -27,33 +27,61 @@ public class StateController {
         this.autoCompleteController = acl;
     }
 
+    /**
+     * Return the current state
+     * @return current state
+     */
     public ViewStates getCurrentState() {
         return currentState;
     }
 
+    /**
+     * Return the previous view state
+     * @return prev state
+     */
     public ViewStates getPrevState() { return prevState; }
 
-    public  ViewStates getPrevPanel() {return prevPanel; }
+    /**
+     * Return previous panel
+     * @return panel
+     */
+    public  ViewStates getPrevPanel() { return prevPanel; }
 
+    /**
+     * Update the current state
+     * @param newState the state to update to
+     */
     public void updateCurrentState(ViewStates newState) {
         // AutoCompleteList will always be reset on state change
         autoCompleteController.reset();
 
         currentState = newState;
         mainView.update();
-        mainView.lpane.repaint();
+        mainView.getlpane().repaint();
     }
-    public void forcePrevState(ViewStates state){
+
+    /**
+     * For the previous state to be something specific
+     * @param state the state the previous state is forced to be
+     */
+    public void forcePrevState(ViewStates state) {
         updatePrevPanel();
+
         prevState = state;
     }
 
+    /**
+     * Update the previous state
+     */
     public void updatePrevState() {
         updatePrevPanel();
 
         prevState = currentState;
-
     }
+
+    /**
+     * Update the previous panel
+     */
     public void updatePrevPanel(){
         if (prevPanel != prevState){
             prevPanel = prevState;

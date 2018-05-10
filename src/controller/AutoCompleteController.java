@@ -1,17 +1,15 @@
 package controller;
 
 import helpers.AddressBuilder;
+import helpers.StateHandler;
 import model.Address;
 import model.AddressesModel;
 import view.AutoCompleteList;
-import view.NavigationView;
-import view.SearchBox;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class AutoCompleteController extends KeyAdapter {
@@ -19,13 +17,13 @@ public class AutoCompleteController extends KeyAdapter {
     private SearchBoxController searchBoxController;
     private NavigationController navigationController;
     private AddressesModel addresses;
-    private StateController stateController;
+    private StateHandler stateHandler;
     private String currentInput;
 
     ArrayList<Address> matchingAddresses = new ArrayList<>();
 
-    public AutoCompleteController(StateController sc, NavigationController nc) {
-        stateController = sc;
+    public AutoCompleteController(StateHandler sc, NavigationController nc) {
+        stateHandler = sc;
         navigationController = nc;
     }
 
@@ -49,11 +47,11 @@ public class AutoCompleteController extends KeyAdapter {
                     searchBoxController.updateAddress(address);
                     break;
 
-                case "startInput":
+                case "Fra:":
                     navigationController.setStartAddress(address);
                     break;
 
-                case "endInput":
+                case "Til:":
                     navigationController.setEndAddress(address);
                     break;
             }
@@ -78,7 +76,7 @@ public class AutoCompleteController extends KeyAdapter {
     public void keyReleased(KeyEvent e) {
         String text = null;
 
-        switch (stateController.getCurrentState()) {
+        switch (stateHandler.getCurrentState()) {
             case INITIAL:
             case ADDRESS_ENTERED:
                 currentInput = "searchBox";
@@ -91,7 +89,7 @@ public class AutoCompleteController extends KeyAdapter {
                 text = source.getText();
                 currentInput = source.getName();
 
-                if (currentInput.equals("startInput")) {
+                if (currentInput.equals("Fra:")) {
                     list.setBounds(20, 92, 409, 160);
                 } else {
                     // Only the endInput will be reached here.
@@ -100,7 +98,7 @@ public class AutoCompleteController extends KeyAdapter {
                 break;
         }
 
-        if (text.length() == 0) {
+        if (text.length() < 3) {
             list.setVisibility(false);
         } else {
             list.setVisibility(true);

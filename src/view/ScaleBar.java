@@ -1,13 +1,13 @@
 package view;
 
 import controller.MapController;
-import helpers.GetDistance;
+import helpers.UnitConverter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-public class DistanceCalculation extends JComponent {
+public class ScaleBar extends JComponent {
     private MapController mapController;
     private final int screenDistance = 100;
     private Point2D startModelPoint;
@@ -15,7 +15,7 @@ public class DistanceCalculation extends JComponent {
     private double distance;
     private String text;
 
-    public DistanceCalculation(MapController cc){
+    public ScaleBar(MapController cc){
         mapController = cc;
         setPreferredSize(new Dimension(200, 30));
     }
@@ -25,7 +25,7 @@ public class DistanceCalculation extends JComponent {
         g.setColor(Color.decode("#383838"));
 
         //Distance calculation
-        distance = GetDistance.PxToKm(100);
+        distance = UnitConverter.PxToKm(100);
 
         //Distance Text
         if(distance > 1){

@@ -2,6 +2,7 @@ package main;
 
 import controller.*;
 import helpers.ColorMap;
+import helpers.StateHandler;
 import helpers.io.IOHandler;
 import model.*;
 import model.graph.Graph;
@@ -18,10 +19,10 @@ public class Main {
     private static AddressesModel am;
     private static MetaModel model;
     private static MapModel mapModel;
-    private static FavoritesModel favoritesModelModel;
+    private static FavoritesModel fm;
     private static MenuController mc;
     private static MapController cc;
-    private static StateController sc;
+    private static StateHandler sc;
     private static AddressController ac;
     private static SearchBoxController sbc;
     private static AutoCompleteController acc;
@@ -49,12 +50,13 @@ public class Main {
         colorMap = new ColorMap();
 
         // Models
-        graph = new Graph();
+        fm = new FavoritesModel();
         model = new MetaModel();
+        graph = new Graph();
         mapModel = new MapModel(model, graph);
         am = new AddressesModel();
-        IOHandler.instance.addModels(model, mapModel, am, graph);
-        favoritesModelModel = new FavoritesModel();
+
+        IOHandler.instance.addModels(model, mapModel, am, graph, fm);
 
         fv = new FooterView(cc);
         IOHandler.instance.addView(fv);
@@ -84,11 +86,12 @@ public class Main {
 
 
         // Controllers
-        mc = new MenuController(colorMap, graph);
+        mc = new MenuController(colorMap);
         cc = MapController.getInstance();
-        sc = new StateController();
+        sc = new StateHandler();
         nc = new NavigationController(am, mapModel, graph);
-        ac = new AddressController(sc, favoritesModelModel, nc);
+        ac = new AddressController(sc, fm, nc);
+        nc.addAddressController(ac);
         sbc = new SearchBoxController(sc, ac, am, graph, nc);
         acc = new AutoCompleteController(sc, nc);
         fc = new FavoriteController(sc, sbc, nc);
@@ -96,8 +99,8 @@ public class Main {
         // Ensure views are being invoked on proper thread!
         SwingUtilities.invokeLater(() -> {
             // Views
-            cv = new MapView(cc, graph, colorMap);
-            cc.addDependencies(cv, mapModel, model, graph);
+            cv = new MapView(cc, graph, colorMap, nc);
+            cc.addDependencies(cv, mapModel, model, graph, fm);
             av = new AddressView(ac);
             sb = new SearchBox(sc, sbc, acc);
             sbc.addView(sb);
@@ -105,7 +108,7 @@ public class Main {
             nv = new NavigationView(nc, acc, sc);
             nc.addView(nv);
             al = new AutoCompleteList(acc);
-            fav = new FavoriteView(favoritesModelModel, fc);
+            fav = new FavoriteView(fm, fc);
             favp = new FavoritePopupView(ac, sc);
             acc.addDependencies(al, sbc, am);
             ac.addView(av, fav);
@@ -125,11 +128,11 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
-            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, favoritesModelModel, favp);
+            MainWindowView v = new MainWindowView(cv, model, cc, mc, av, sb, zv, sc, nv, fv, fav, fc, al, fm, favp);
             sc.addDependencies(v, acc);
 
             new KeyboardController(v, cv, model, cc);
-            new MouseController(cv, cc, am, fv);
+            new MouseController(cv, cc, am, fv, sbc);
             new ResizeController(v);
 
             initialRender = false;

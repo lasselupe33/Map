@@ -1,7 +1,8 @@
 package parsing;
 
-import helpers.GetDistance;
+import helpers.UnitConverter;
 import helpers.structures.LongToNodeMap;
+import helpers.structures.SimpleLongSet;
 import model.*;
 import model.graph.Edge;
 import model.graph.Graph;
@@ -15,10 +16,13 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 
+/**
+ * This class is responsible for parsing all necessary data out of an OSM-file
+ */
 public class OSMHandler extends DefaultHandler {
     private LongToNodeMap idToNode = new LongToNodeMap(25);
     private Map<Long, OSMWay> idToWay = new HashMap<>();
-    private HashMap<Node, OSMWay> coastlines = new HashMap<>();
+    private HashMap<OSMNode, OSMWay> coastlines = new HashMap<>();
     private double lonFactor;
     private HashMap<String, String> postcodeToCity = new HashMap<>();
 
@@ -33,7 +37,6 @@ public class OSMHandler extends DefaultHandler {
     // Fields for graph
     private Graph graph;
     private boolean isHighway = false;
-    private String temp;
 
     // Fields for parsing information on highways
     private int speedLimit;
@@ -51,6 +54,9 @@ public class OSMHandler extends DefaultHandler {
     private String postcode;
     private String city;
 
+    // Fields directly related to ways
+    private String name;
+
     // Loading related fields
     private boolean reachedAddress = false;
     private boolean reachedWays = false;
@@ -65,7 +71,7 @@ public class OSMHandler extends DefaultHandler {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         switch (qName) {
             case "bounds":
                 parseCoordinates(attributes);
@@ -74,14 +80,11 @@ public class OSMHandler extends DefaultHandler {
                 parseNode(attributes);
                 break;
             case "way":
-                way = new OSMWay();
-                type = WayType.UNKNOWN;
-                speedLimit = 50;
-                idToWay.put(Long.parseLong(attributes.getValue("id")), way);
+                initializeWay(Long.parseLong(attributes.getValue("id")));
                 break;
             case "relation":
                 relation = new OSMRelation();
-                type = WayType.UNKNOWN;
+                type = null;
                 break;
             case "member":
                 OSMWay w = idToWay.get(Long.parseLong(attributes.getValue("ref")));
@@ -90,150 +93,7 @@ public class OSMHandler extends DefaultHandler {
                 }
                 break;
             case "tag":
-                switch (attributes.getValue("k")) {
-                    case "maxspeed":
-                        try {
-                            speedLimit = Integer.parseInt(attributes.getValue("v"));
-                        } catch (NumberFormatException e) {
-                            // Do nothing, simply continue with unset speedLimit
-                        }
-                        break;
-                    case "bicycle":
-                        supportsBicycles = attributes.getValue("v").equals("yes");
-                        break;
-                    case "motor_vehicle":
-                        supportsCars = attributes.getValue("v").equals("yes");
-                        break;
-                    case "foot":
-                        supportsPedestrians = attributes.getValue("v").equals("yes");
-                        break;
-                    case "highway":
-                        isHighway = true;
-                        parseHighway(attributes.getValue("v"));
-                        break;
-                    case "natural":
-                        if (attributes.getValue("v").equals("water")) {
-                            type = WayType.WATER;
-                        }
-                        if (attributes.getValue("v").equals("coastline")) {
-                            type = WayType.COASTLINE;
-                        }
-                        if (attributes.getValue("v").equals("wood")) {
-                            type = WayType.FORREST;
-                        }
-                        break;
-                    case "route":
-                        if (attributes.getValue("v").equals("ferry")) {
-                            type = WayType.FERRY;
-                        }
-                        break;
-                    case "building":
-                        type = WayType.BUILDING;
-                        if (attributes.getValue("v").equals("church")) {
-                            type = WayType.PLACE_OF_WORSHIP;
-                        }
-                        break;
-                    case "leisure":
-                        if (attributes.getValue("v").equals("park")) {
-                            type = WayType.PARK;
-                        }
-                        if (attributes.getValue("v").equals("pitch")) {
-                            type = WayType.PITCH;
-                        }
-                        if (attributes.getValue("v").equals("garden")) {
-                            type = WayType.PARK;
-                        }
-                        if (attributes.getValue("v").equals("playground")) {
-                            type = WayType.PLAYGROUND;
-                        }
-                        if (attributes.getValue("v").equals("swimming_pool")) {
-                            type = WayType.SWIMMINGPOOL;
-                        }
-                        break;
-                    case "landuse":
-                        if (attributes.getValue("v").equals("forest")) {
-                            type = WayType.FORREST;
-                        }
-                        if (attributes.getValue("v").equals("residential")) {
-                            type = WayType.RESIDENTIAL;
-                        }
-                        if (attributes.getValue("v").equals("farmland")) {
-                            type = WayType.FARMLAND;
-                        }
-                        if (attributes.getValue("v").equals("allotments")) {
-                            type = WayType.ALLOMENTS;
-                        }
-                        if (attributes.getValue("v").equals("cemetery")) {
-                            type = WayType.CEMETERY;
-                        }
-                        if (attributes.getValue("v").equals("grass")) {
-                            type = WayType.GRASS;
-                        }
-                        if (attributes.getValue("v").equals("recreation_ground")) {
-                            type = WayType.GRASS;
-                        }
-                        break;
-                    case "aeroway":
-                        if (attributes.getValue("v").equals("aerodrome")) {
-                            type = WayType.AEROWAY;
-                        }
-                        if (attributes.getValue("v").equals("runway")) {
-                            type = WayType.RUNWAY;
-                        }
-                        break;
-                    case "place":
-                        if (attributes.getValue("v").equals("island")) {
-                            type = WayType.PLACE;
-                        }
-                        if (attributes.getValue("v").equals("square")) {
-                            type = WayType.SQUARE;
-                        }
-                        break;
-                    case "amenity":
-                        if (attributes.getValue("v").equals("place_of_worship")) {
-                            type = WayType.PLACE_OF_WORSHIP;
-                        }
-                        break;
-                    case "barrier":
-                        type = WayType.BARRIER;
-                        if (attributes.getValue("v").equals("hedge")) {
-                            type = WayType.HEDGE;
-                        }
-                        break;
-                    case "waterway":
-                        if (attributes.getValue("v").equals("drain")) {
-                            type = WayType.DRAIN;
-                        }
-                        break;
-                    case "man_made":
-                        if (attributes.getValue("v").equals("bridge")) {
-                            type = WayType.MANMADEBRIDGE;
-                        } else if (attributes.getValue("v").equals("pier")) {
-                            type = WayType.PIER;
-                        }
-                        break;
-                    case "bridge":
-                        if (attributes.getValue("v").equals("yes")) {
-                            type = WayType.HIGHWAYBRIDGE;
-                        }
-                        break;
-                    case "addr:street":
-                        street = attributes.getValue("v");
-                        break;
-
-                    case "addr:housenumber":
-                        house_no = attributes.getValue("v");
-                        break;
-
-                    case "addr:postcode":
-                        postcode = attributes.getValue("v");
-                        break;
-
-                    case "addr:city":
-                        city = attributes.getValue("v");
-                    default:
-                        break;
-                }
+                parseTag(attributes.getValue("k"), attributes.getValue("v"));
                 break;
             case "nd":
                 way.add(idToNode.get(Long.parseLong(attributes.getValue("ref"))));
@@ -244,7 +104,7 @@ public class OSMHandler extends DefaultHandler {
     }
 
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(String uri, String localName, String qName) {
         switch (qName) {
             case "node":
                 createAddress();
@@ -255,26 +115,207 @@ public class OSMHandler extends DefaultHandler {
                 } else {
                     createWay(way);
                 }
-                if (isHighway) {
-                    addToGraph(way);
-                }
                 break;
             case "relation":
                 createRelation();
                 break;
             case "osm":
-                loadingScreen.updateProgress(84.881);
+                loadingScreen.updateProgress(81.881);
                 convertCoastlinesToPath();
-                loadingScreen.updateProgress(92.963);
+                loadingScreen.updateProgress(85.963);
                 mapModel.createTrees();
-                loadingScreen.updateProgress(96.345);
+                loadingScreen.updateProgress(91.345);
                 addressesModel.createTree();
                 addressesModel.setPostcodeToCity(postcodeToCity);
+                loadingScreen.updateProgress(95.341);
+                buildGraph();
+                trimMapElementNodes();
+                graph.finalizeNodes();
             default:
                 break;
         }
     }
 
+    /** Helper to be called when the parser reaches the coordinates of the given OSM-file */
+    private void parseCoordinates(Attributes attributes) {
+        // Get the coordinates from the file
+        double minLat = Double.parseDouble(attributes.getValue("minlat"));
+        double minLon = Double.parseDouble(attributes.getValue("minlon"));
+        double maxLat = Double.parseDouble(attributes.getValue("maxlat"));
+        double maxLon = Double.parseDouble(attributes.getValue("maxlon"));
+
+        // Compute lonFactor to ensure map won't be shrunk on the x-axis.
+        // NB: This is necessary due to the world being round, and this approach would be incorrect if parsing the whole
+        // world, but it will work since only relatively small areas (Denmark as the largest) will be parsed.
+        double avgLat = minLat + (maxLat - minLat) / 2;
+        lonFactor = Math.cos(avgLat / 180 * Math.PI);
+        minLon *= lonFactor;
+        model.setMinLon(minLon);
+        maxLon *= lonFactor;
+        model.setMaxLon(maxLon);
+
+        // Ensure map won't be upside down and set coordinates
+        maxLat = -maxLat;
+        model.setMaxLat(maxLat);
+        minLat = -minLat;
+        model.setMinLat(minLat);
+    }
+
+    /** A helper that parses a single tag based on the key and value */
+    private void parseTag(String key, String value) {
+        switch (key) {
+            case "name":
+                name = value;
+                break;
+            case "maxspeed":
+                try {
+                    speedLimit = Integer.parseInt(value);
+                } catch (NumberFormatException e) {
+                    // Do nothing, simply continue with unset speedLimit
+                }
+                break;
+            case "bicycle":
+                supportsBicycles = value.equals("yes");
+                break;
+            case "motor_vehicle":
+                supportsCars = value.equals("yes");
+                break;
+            case "foot":
+                supportsPedestrians = value.equals("yes");
+                break;
+            case "highway":
+                isHighway = true;
+                parseHighway(value);
+                break;
+            case "natural":
+                if (value.equals("water")) {
+                    type = WayType.WATER;
+                }
+                if (value.equals("coastline")) {
+                    type = WayType.COASTLINE;
+                }
+                if (value.equals("wood")) {
+                    type = WayType.FORREST;
+                }
+                break;
+            case "route":
+                if (value.equals("ferry")) {
+                    type = WayType.FERRY;
+                }
+                break;
+            case "building":
+                type = WayType.BUILDING;
+                if (value.equals("church")) {
+                    type = WayType.PLACE_OF_WORSHIP;
+                }
+                break;
+            case "leisure":
+                if (value.equals("park")) {
+                    type = WayType.PARK;
+                }
+                if (value.equals("pitch")) {
+                    type = WayType.PITCH;
+                }
+                if (value.equals("garden")) {
+                    type = WayType.PARK;
+                }
+                if (value.equals("playground")) {
+                    type = WayType.PLAYGROUND;
+                }
+                if (value.equals("swimming_pool")) {
+                    type = WayType.SWIMMINGPOOL;
+                }
+                break;
+            case "landuse":
+                if (value.equals("forest")) {
+                    type = WayType.FORREST;
+                }
+                if (value.equals("residential")) {
+                    type = WayType.RESIDENTIAL;
+                }
+                if (value.equals("farmland")) {
+                    type = WayType.FARMLAND;
+                }
+                if (value.equals("allotments")) {
+                    type = WayType.ALLOMENTS;
+                }
+                if (value.equals("cemetery")) {
+                    type = WayType.CEMETERY;
+                }
+                if (value.equals("grass")) {
+                    type = WayType.GRASS;
+                }
+                if (value.equals("recreation_ground")) {
+                    type = WayType.GRASS;
+                }
+                if (value.equals("military")) {
+                    type = WayType.MILITARY;
+                }
+                break;
+            case "aeroway":
+                if (value.equals("aerodrome")) {
+                    type = WayType.AEROWAY;
+                }
+                if (value.equals("runway")) {
+                    type = WayType.RUNWAY;
+                }
+                break;
+            case "place":
+                if (value.equals("islet")) {
+                    type = WayType.PLACE;
+                }
+                if (value.equals("square")) {
+                    type = WayType.SQUARE;
+                }
+                break;
+            case "amenity":
+                if (value.equals("place_of_worship")) {
+                    type = WayType.PLACE_OF_WORSHIP;
+                }
+                break;
+            case "barrier":
+                type = WayType.BARRIER;
+                if (value.equals("hedge")) {
+                    type = WayType.HEDGE;
+                }
+                break;
+            case "waterway":
+                if (value.equals("drain")) {
+                    type = WayType.DRAIN;
+                }
+                break;
+            case "man_made":
+                if (value.equals("bridge")) {
+                    type = WayType.MANMADEBRIDGE;
+                } else if (value.equals("pier")) {
+                    type = WayType.PIER;
+                }
+                break;
+            case "bridge":
+                if (value.equals("yes")) {
+                    type = WayType.HIGHWAYBRIDGE;
+                }
+                break;
+            case "addr:street":
+                street = value;
+                break;
+
+            case "addr:housenumber":
+                house_no = value;
+                break;
+
+            case "addr:postcode":
+                postcode = value;
+                break;
+
+            case "addr:city":
+                city = value;
+            default:
+                break;
+        }
+    }
+
+    /** Internal helper that determines the type of way based on the highway tag */
     private void parseHighway(String tag) {
         switch (tag) {
             case "motorway":
@@ -367,7 +408,6 @@ public class OSMHandler extends DefaultHandler {
                 supportsPedestrians = false;
                 break;
             default:
-                type = WayType.UNKNOWN;
                 break;
         }
     }
@@ -383,36 +423,11 @@ public class OSMHandler extends DefaultHandler {
         lon = (float) lonFactor * lon;
         lat = -lat;
 
-        // Add node to map
-        idToNode.put(id, lon, lat);
+        // Add address to node
+        idToNode.put(new OSMNode(id, lon, lat));
 
         // Create temp address to be used when parsing address fields
         currentAddress = new Address(id, lon, lat);
-    }
-
-    /** Helper to be called when the parser reaches the coordinates of the given OSM-file */
-    private void parseCoordinates(Attributes attributes) {
-        // Get the coordinates from the file
-        double minLat = Double.parseDouble(attributes.getValue("minlat"));
-        double minLon = Double.parseDouble(attributes.getValue("minlon"));
-        double maxLat = Double.parseDouble(attributes.getValue("maxlat"));
-        double maxLon = Double.parseDouble(attributes.getValue("maxlon"));
-
-        // Compute lonFactor to ensure map won't be shrunk on the x-axis.
-        // NB: This is necessary due to the world being round, and this approach would be incorrect if parsing the whole
-        // world, but it will work since only relatively small areas (Denmark as the largest) will be parsed.
-        double avgLat = minLat + (maxLat - minLat) / 2;
-        lonFactor = Math.cos(avgLat / 180 * Math.PI);
-        minLon *= lonFactor;
-        model.setMinLon(minLon);
-        maxLon *= lonFactor;
-        model.setMaxLon(maxLon);
-
-        // Ensure map won't be upside down and set coordinates
-        maxLat = -maxLat;
-        model.setMaxLat(maxLat);
-        minLat = -minLat;
-        model.setMinLat(minLat);
     }
 
     /** Internal helper that creates an address */
@@ -422,12 +437,16 @@ public class OSMHandler extends DefaultHandler {
             reachedAddress = true;
         }
 
-        // Create address of node if possible
+        // Create address of node if possible, else this is a way-node, hence add it to the way-map
         if (street == null) {
+
             // Bail out if street doesn't exist.
             house_no = postcode = city = null;
+            currentAddress = null;
 
-            return;
+            if (street == null) {
+                return;
+            }
         }
 
         // Create address
@@ -445,6 +464,14 @@ public class OSMHandler extends DefaultHandler {
         street = house_no = postcode = city = null;
     }
 
+    /** Internal helper that initializes a way then a way-tag is reached */
+    private void initializeWay(long id) {
+        way = new OSMWay(id);
+        type = null;
+        speedLimit = 50;
+        idToWay.put(id, way);
+    }
+
     /** Internal helper that creates a way when called (i.e. when the parser reaches the end of a way */
     private void createWay(OSMWay way) {
         if (!reachedWays) {
@@ -452,41 +479,27 @@ public class OSMHandler extends DefaultHandler {
             reachedWays = true;
         }
 
+        if (isHighway) {
+            way.addWayInfo(name, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
+            OSMNode from = way.getNodes().get(0);
+            name = null;
+
+            for (int i = 1; i < way.getNodes().size(); i++) {
+                OSMNode to = way.getNodes().get(i);
+
+                from.addRef(to.getId());
+                from.addWayId(way.getId());
+                to.addRef(from.getId());
+                to.addWayId(way.getId());
+
+                from = to;
+            }
+        }
+
         Path2D path = convertWayToPath(new Path2D.Float(), way);
         addElement(type, path, way.getNodes());
-    }
 
-    private void addToGraph(OSMWay way) {
-        ArrayList<Node> nodes = way.getNodes();
-        Node from = nodes.get(0);
-
-        for (int i = 1; i < nodes.size(); i++) {
-            Node to = nodes.get(i);
-
-            // Determine length of edge between current node and prev node
-            float length = (float) GetDistance.inKM(from.getLat(), from.getLon(), to.getLat(), to.getLon());
-
-            Node newFrom = graph.getNode(from.getId());
-
-            if (newFrom == null) {
-                newFrom = from;
-                graph.putNode(newFrom);
-            }
-
-            Node newTo = graph.getNode(to.getId());
-
-            if (newTo == null) {
-                newTo = to;
-                graph.putNode(newTo);
-            }
-
-            Edge edge = new Edge(newFrom, newTo, length, speedLimit, supportsCars, supportsBicycles, supportsPedestrians);
-
-            graph.getNode(newFrom.getId()).addEdge(edge);
-            graph.getNode(newTo.getId()).addEdge(edge);
-
-            from = to;
-        }
+        // Reset field
         isHighway = false;
     }
 
@@ -507,8 +520,9 @@ public class OSMHandler extends DefaultHandler {
 
     /** Internal helper that converts a way into a path */
     private Path2D convertWayToPath(Path2D path, OSMWay way) {
-        Node node = way.get(0);
+        OSMNode node = way.get(0);
         path.moveTo(node.getLon(), node.getLat());
+
         for (int i = 1; i < way.size(); i++) {
             node = way.get(i);
             path.lineTo(node.getLon(), node.getLat());
@@ -543,10 +557,10 @@ public class OSMHandler extends DefaultHandler {
     /** Internal helper to be called once all coastlines have been parsed in order to convert them into paths */
     private void convertCoastlinesToPath() {
         Path2D path;
-        Node node;
+        OSMNode node;
 
         // convert all coastlines found to paths
-        for (Map.Entry<Node, OSMWay> coastline : coastlines.entrySet()) {
+        for (Map.Entry<OSMNode, OSMWay> coastline : coastlines.entrySet()) {
             OSMWay way = coastline.getValue();
             if (coastline.getKey() == way.from()) {
                 path = new Path2D.Float();
@@ -564,7 +578,9 @@ public class OSMHandler extends DefaultHandler {
         }
     }
 
-    private void addElement(WayType type, Path2D path, ArrayList<Node> nodes) {
+    /** Internal helper that adds a mapElement to the mapModel */
+    private void addElement(WayType type, Path2D path, ArrayList<OSMNode> nodes) {
+        if (type == null) {return;}
         Rectangle2D rect = path.getBounds2D();
         switch (type) {
             case COASTLINE:
@@ -584,8 +600,8 @@ public class OSMHandler extends DefaultHandler {
             case AEROWAY:
             case GRASS:
             case MANMADEBRIDGE:
-            case PIER:
             case SWIMMINGPOOL:
+            case MILITARY:
                 mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, true, nodes));
                 break;
 
@@ -599,19 +615,217 @@ public class OSMHandler extends DefaultHandler {
             case FOOTWAY:
             case PATH:
             case FERRY:
-            case SUBWAY:
             case CYCLEWAY:
-            case UNKNOWN:
             case BARRIER:
             case HEDGE:
             case DRAIN:
             case RUNWAY:
             case TRUNK:
+            case PIER:
             case HIGHWAYBRIDGE:
+            case RAILWAY:
+
                 mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, false, nodes));
                 break;
             default:
                 break;
         }
+    }
+
+    /**
+     * Internal helper that trims the nodeIds of a mapElement, meaning that if a node has been removed during parsing
+     * of the graph, then its reference will also be removed from the mapElement.
+     */
+    private void trimMapElementNodes() {
+        for (WayType type : WayType.values()) {
+            switch (type) {
+                case SERVICE:
+                case TRUNK:
+                case ROAD:
+                case TERTIARYROAD:
+                case SECONDARYROAD:
+                case HIGHWAY:
+                case MOTORWAY:
+                case CYCLEWAY:
+                case FOOTWAY:
+                case PEDESTRIAN:
+                case PATH:
+                    List<MapElement> list = mapModel.getMapElements(type);
+
+                    for (MapElement element : list) {
+                        SimpleLongSet tempIds = new SimpleLongSet();
+
+                        for (Long id : element.getNodeIds()) {
+                            if (idToNode.get(id).getRefs().size() != 2) {
+                                tempIds.add(id);
+                            }
+                        }
+
+                        element.updateNodes(tempIds);
+                    }
+
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Helper that builds a flattened wayGraph with only the required nodes once all node references have build.
+     */
+    private void buildGraph() {
+        ArrayList<Long> nodeIds = idToNode.getIds();
+        int counter = 0;
+
+        // Go through all parsed nodes
+        for (long nodeId : nodeIds) {
+            // Store the node that is being currently worked on.
+            OSMNode node = idToNode.get(nodeId);
+
+            // As long as the node is a highway (has more than 0 wayIds), then we want to process and add it to the graph.
+            if (node.getWayIds().size() != 0) {
+                counter++;
+
+                // If the current node has either 1 or more than 2 nodes, then we need to add it to the graph.
+                // (Nodes with exactly to references can be removed since no intersections/endpoints will ever exist
+                // there).
+                SimpleLongSet refs = node.getRefs();
+                if (refs.size() != 2) {
+                    // Start from the currently found node
+                    OSMNode from = node;
+
+                    // Go through all of its neighbours and create required edges
+                    for (Long neighborID : refs) {
+                        createEdgeToNeighbor(from, neighborID);
+                    }
+                }
+            }
+        }
+
+        System.out.println(graph.size());
+        System.out.println(counter);
+    }
+
+    /** Internal helper that finds the first needed neighbor node of a node and creates an edge between the two. */
+    private void createEdgeToNeighbor(OSMNode from, Long initialNeighborId) {
+        // Get initial values
+        Long wayId = null;
+        OSMNode neighbor = idToNode.get(initialNeighborId);
+        long prevNeighborId = neighbor.getId();
+        ArrayList<Coordinates> path = new ArrayList<>();
+        path.add(new Coordinates(from.getLon(), from.getLat()));
+        path.add(new Coordinates(neighbor.getLon(), neighbor.getLat()));
+
+        // Continue until we find a node that cannot be removed.
+        while (true) {
+            // Go through all the nodes...
+            SimpleLongSet neighbourRefs = neighbor.getRefs();
+
+            if (neighbourRefs.size() != 2 || (neighbourRefs.contains(from.getId()) && neighbourRefs.contains(prevNeighborId))) {
+                break;
+            }
+
+            for (Long id : neighbourRefs.getSet()) {
+                // ... and find the next node (i.e. not the previous node)
+                if (id != prevNeighborId && id != from.getId()) {
+
+                    // If we haven't stored the wayId yet, do so new.
+                    if (wayId == null) {
+                        wayId = getMatchingWayId(from, neighbor);
+                    }
+
+                    // Set the current neighbor to be the neighbor we just found.
+                    prevNeighborId = neighbor.getId();
+                    neighbor = idToNode.get(id);
+                    path.add(new Coordinates(neighbor.getLon(), neighbor.getLat()));
+                    break;
+                }
+            }
+        }
+
+        // If we're parsing two nodes that doesn't have any nodes in between, then the wayId haven't been stored yet..
+        // therefore this should be done now.
+        if (wayId == null) {
+            wayId = getMatchingWayId(from, neighbor);
+        }
+
+        // We now have all the information required to create an edge, do so now!
+        createEdge(from, neighbor, path, wayId);
+    }
+
+    /**
+     * This method should be called once a from and to node has been found along with the id to the way they're related
+     * to.
+     */
+    private void createEdge(OSMNode from, OSMNode to, ArrayList<Coordinates> path, Long wayId) {
+        // Get the related way
+        OSMWay way = idToWay.get(wayId);
+
+        // Get the actual node already added to the graph
+        Node convertedFrom = graph.getNode(from.getId());
+
+        // If the OSMNode hasn't been converted and added to the graph, then do so now.
+        if (convertedFrom == null) {
+            convertedFrom = new Node(from.getId(), from.getLon(), from.getLat());
+            graph.putNode(convertedFrom);
+        }
+
+        if (convertedFrom.getTempEdges() == null) {
+            convertedFrom.initialize();
+        }
+
+        // ... Do the same with the "to"-node
+        Node convertedTo = graph.getNode(to.getId());
+
+        if (convertedTo == null) {
+            convertedTo = new Node(to.getId(), to.getLon(), to.getLat());
+            graph.putNode(convertedTo);
+        }
+
+        if (convertedTo.getTempEdges() == null) {
+            convertedTo.initialize();
+        }
+
+        // Ensure that there doesn't already exist an edge between the two nodes.
+        for (Integer edgeId : convertedFrom.getTempEdges()) {
+            if (graph.getEdge(edgeId).getTo(convertedFrom) == convertedTo.getId()) {
+               return;
+            }
+        }
+
+        // Create the edge with the information of the nodes and the way connecting them
+        Edge edge = new Edge(convertedFrom.getId(), convertedTo.getId(), path, way.getName(), getEdgeLength(path), way.getSpeedLimit(), way.supportsCars(), way.supportsBicycles(), way.supportPedestrians());
+
+        // Add the edge to map and references to nodes
+        int edgeId = graph.putEdge(edge);
+        convertedFrom.addEdge(edgeId);
+        convertedTo.addEdge(edgeId);
+    }
+
+    /** Helper that computes the actual length between two required graph nodes (Taking hidden nodes into account) */
+    private float getEdgeLength(ArrayList<Coordinates> nodes) {
+        float length = 0;
+        Coordinates from = nodes.get(0);
+
+        for (int i = 1; i < nodes.size(); i++) {
+            Coordinates to = nodes.get(i);
+            length += (float) UnitConverter.DistInMM(from.getX(), from.getY(), to.getX(), to.getY());
+
+            from = to;
+        }
+
+        return length;
+    }
+
+    /**
+     * Internal helper that returns the id of the way that two nodes are a part of.
+     */
+    private Long getMatchingWayId(OSMNode node1, OSMNode node2) {
+        for (long fromWayId : node1.getWayIds().getSet()) {
+            if (idToNode.get(node2.getId()).getWayIds().contains(fromWayId)) {
+                return fromWayId;
+            }
+        }
+
+        return null;
     }
 }

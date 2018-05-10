@@ -48,6 +48,9 @@ public class AddressView extends JPanel {
 
         add(renderLabels(), BorderLayout.WEST);
         add(renderButtons(), BorderLayout.EAST);
+
+        revalidate();
+        repaint();
     }
 
     public JPanel renderLabels() {
@@ -86,7 +89,7 @@ public class AddressView extends JPanel {
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(topOffset, 0, borderSize, borderSize));
 
         // Setup save button
-        URL bookmarkURL = this.getClass().getResource("/icons/bookmark.png");
+        URL bookmarkURL = addressController.getURl();
         ImageIcon saveIcon = new ImageIcon(bookmarkURL);
         JLabel save = new JLabel();
         save.setText("GEM");
