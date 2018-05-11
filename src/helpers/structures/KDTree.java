@@ -115,7 +115,6 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
         List<Value> listLeft = new ArrayList<>();
         List<Value> listRight = new ArrayList<>();
 
-        // Sorting the elements of the list into liftLeft or/and listRight
         for (int i = 0; i < list.size(); i++) {
             Value s = list.get(i);
             if (s instanceof MapElement) {
@@ -125,7 +124,7 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
                     listLeft.add(s);
                     listRight.add(s);
 
-                // else add to
+                // else sort the elements into liftLeft or listRight
                 } else if (i < median) {
                     listLeft.add(s);
                 } else {
@@ -157,8 +156,7 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
      * Method to be called for when beginning searching in the tree
      */
     public List<Value> searchTree(Point2D p0, Point2D p1){
-        int depth = 0;
-        return searchTree(root, p0, p1, depth);
+        return searchTree(root, p0, p1, 0);
     }
 
     /**
