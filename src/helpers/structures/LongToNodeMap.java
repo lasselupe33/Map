@@ -22,14 +22,26 @@ public class LongToNodeMap<Value extends OSMNode> implements Externalizable {
         MASK = table.length - 1;
     }
 
+    /**
+     * Get the size of the map
+     * @return size
+     */
     public int size() {
         return size;
     }
 
+    /**
+     * Get list of ids
+     * @return ArrayList of ids
+     */
     public ArrayList<Long> getIds() {
         return ids;
     }
 
+    /**
+     * Add to the map
+     * @param v value
+     */
     public void put(Value v) {
         int position = Long.hashCode(v.getId()) & MASK;
         table[position] = new Node(v, table[position]);
@@ -37,6 +49,11 @@ public class LongToNodeMap<Value extends OSMNode> implements Externalizable {
         size++;
     }
 
+    /**
+     * Get value for an id
+     * @param id to get value of
+     * @return value of id
+     */
     public Value get(long id) {
         int position = Long.hashCode(id) & MASK;
         for (Node n = table[position]; n != null; n = n.next) {

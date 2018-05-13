@@ -81,7 +81,6 @@ public class IOHandler {
 
     public void loadFromString(String filename) {
         loadingScreen = new LoadingScreen();
-
         load(filename);
     }
 

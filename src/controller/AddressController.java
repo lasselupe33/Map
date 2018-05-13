@@ -62,10 +62,15 @@ public class AddressController extends MouseAdapter {
         stateHandler.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
     }
 
+    /** Ask for a name to save the address under */
     private void bookmarkAddress() {
         stateHandler.updateCurrentState(ViewStates.FAVORITES_POPUP);
     }
 
+    /**
+     * Save the address as a favorite and show it on the map
+     * @param name of favorite
+     */
     public void saveAddress(String name){
         Favorite newFavorite = new Favorite(name, getAddress());
         System.out.println(newFavorite.getAddress().getCoordinates());
@@ -73,21 +78,30 @@ public class AddressController extends MouseAdapter {
         favoriteView.updateFavoritesView();
     }
 
+    /**
+     * Delete the address as an favorite
+     */
     public void deleteFavorite() {
         favoritesModel.remove(currFavorite);
         setBookmarkURL();
         addressView.update();
     }
 
+    /** Get the url for the bookmark icon */
     public URL getURl() {
         return bookmarkURL;
     }
 
+    /** Set the bookmark icon based on wether the address is saved as an address*/
     public void setBookmarkURL() {
         if (isFavoriteSaved()) bookmarkURL = this.getClass().getResource("/icons/bookmark-filled.png");
         else bookmarkURL = this.getClass().getResource("/icons/bookmark.png");
     }
 
+    /**
+     * Check wether the favorite is saved
+     * @return true if saved; else false
+     */
     public boolean isFavoriteSaved() {
         for (Favorite favorite : favoritesModel.getFavorites()) {
             if (favorite.getAddress().toKey().equals(currAddress.toKey())) {

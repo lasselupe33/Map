@@ -98,6 +98,7 @@ public class HelpWindow {
         iconText("Gå til rutevejledning", "/icons/navigation.png", helpPanel);
         iconText("Gå til liste over favoritter", "/icons/locationIcon-blue.png", helpPanel);
         iconText("Gem adresse som en favorit", "/icons/bookmark.png", helpPanel);
+        iconText("Gemt som favorit/tryk for at fjerne", "/icons/bookmark-filled.png", helpPanel);
         iconText("Bilrute", "/icons/car.png", helpPanel);
         iconText("Cykelrute", "/icons/cycle.png", helpPanel);
         iconText("Gårute", "/icons/pedestrian.png", helpPanel);
