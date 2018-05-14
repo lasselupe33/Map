@@ -304,7 +304,7 @@ public class NavigationView extends JPanel {
 
     public void addNavigationAddress(Address address) {
         String text = "<html><span style=\"font-size: 12px;\">" + address.getStreet() + " " + address.getHouse() +
-                "</span><br><span style=\"font-size: 10px;\">"+ address.getCity() + address.getPostcode() +"</span></html>";
+                "</span><br><span style=\"font-size: 10px;\">"+ address.getPostcode() + " " + address.getCity() + "</span></html>";
 
         JLabel addressLabel = new JLabel(text);
         Border padding = BorderFactory.createEmptyBorder(10, 20, 10, 20);

@@ -199,7 +199,7 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
         Value nearestNeighbour = null;
         double currentNeighbour = Double.MAX_VALUE;
 
-        // Loop through the list and chooses the nearest neighbour from it
+        // Loop through the list and choose the nearest neighbour from it
         for (Value val : currentSearchList) {
             double distanceTo = Math.hypot( px - val.getX(), py - val.getY());
             if ( distanceTo < currentNeighbour ) {

@@ -57,6 +57,7 @@ public class MouseController extends MouseAdapter {
             Address address = addressesModel.nearestNeighbour(modelCoords.getX(), modelCoords.getY());
             searchBoxController.setInputOnLocationIcon(address);
             mapController.updateLocationCoordinates(address.getCoordinates());
+            mapController.removeRoute();
         }
 
         // If double click, zoom in
