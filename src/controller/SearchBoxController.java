@@ -104,6 +104,7 @@ public class SearchBoxController extends MouseAdapter {
 
     public void setInputOnLocationIcon(Address address) {
         setSearchInput(address.toString());
+        this.address = address;
         addressController.setCurrentAddress(address);
         addressController.setBookmarkURL();
         stateHandler.updateCurrentState(ViewStates.ADDRESS_ENTERED);
