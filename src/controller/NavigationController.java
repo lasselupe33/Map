@@ -299,4 +299,8 @@ public class NavigationController extends MouseAdapter {
         if (!routeClicked) routeClicked = true;
         onRouteSearch();
     }
+
+    public void resetRoute() {
+        graph.resetRoute();
+    }
 }

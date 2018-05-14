@@ -317,6 +317,7 @@ public class Graph {
         length = null;
         routeEdges = new ArrayList<>();
         textualNavigation = null;
+        failed = false;
     }
 
     /** Helper that converts the ArrayList of edges in a node to an array once all edges have been created */

@@ -288,11 +288,13 @@ public class NavigationView extends JPanel {
         bottomPanel.setBackground(Color.WHITE);
 
         // Add textual navigation
-        for (TextualElement textualElement : navigationController.getTextualNavigation()) {
-            if (textualElement.isAddress()) {
-                addNavigationAddress(textualElement.getAddress());
-            } else {
-                addNavigationText(textualElement.getName(), textualElement.getIconURL(), textualElement.getDist());
+        if (navigationController.getTextualNavigation() != null) {
+            for (TextualElement textualElement : navigationController.getTextualNavigation()) {
+                if (textualElement.isAddress()) {
+                    addNavigationAddress(textualElement.getAddress());
+                } else {
+                    addNavigationText(textualElement.getName(), textualElement.getIconURL(), textualElement.getDist());
+                }
             }
         }
 
