@@ -19,11 +19,16 @@ public class AddressBuilder {
         return new Address(street, house, postcode);
     }
 
+    /**
+     * Return address created from a string
+     * @param s address as string
+     * @return address
+     */
     public static Address parse(String s) {
         if (s.equals("")) {
             throw new IllegalArgumentException("Cannot parse empty string " + s);
         }
-
+         // Regex that recognizes most addresses
         final String street = "(?<street>\\d*[a-zA-ZåæøÅÆØéÈÉè\\s.'´üöäë-]*[^\\d\\s,])";
         final String house = "(?<house>\\d+[A-ZÆÅØ]?[^\\,\\s\\.]?)";
         final String floor = "(?<floor>[\\d^]+)\\.\\s*)";
@@ -74,6 +79,7 @@ public class AddressBuilder {
         Pattern pattern5 = Pattern.compile(regex5);
         Matcher matcher5 = pattern5.matcher(s);
 
+        // Build address
         AddressBuilder b = new AddressBuilder();
 
         if (matcher.matches()) {

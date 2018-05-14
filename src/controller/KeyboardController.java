@@ -35,22 +35,22 @@ public class KeyboardController extends KeyAdapter {
                 mapController.toggleAntiAliasing();
                 break;
             case 'w':
-                mapController.pan(0, 10);
+                mapController.pan(0, 10); // up
                 break;
             case 'a':
-                mapController.pan(10, 0);
+                mapController.pan(10, 0); // left
                 break;
             case 's':
-                mapController.pan(0, -10);
+                mapController.pan(0, -10); // down
                 break;
             case 'd':
-                mapController.pan(-10, 0);
+                mapController.pan(-10, 0); // right
                 break;
             case '+':
-                mapController.zoomToCenter(1.1);
+                mapController.zoomToCenter(1.1); // zoom in
                 break;
             case '-':
-                mapController.zoomToCenter(1/1.1);
+                mapController.zoomToCenter(1/1.1); // zoom out
                 break;
             default:
                 break;

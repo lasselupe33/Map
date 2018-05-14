@@ -54,6 +54,7 @@ public class StrokeMap {
 
     /**
      * Initialize stroke map
+     * Map width to type
      */
     private static void initializeMap() {
         strokeMap = new EnumMap<>(WayType.class);

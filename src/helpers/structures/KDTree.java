@@ -115,7 +115,6 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
         List<Value> listLeft = new ArrayList<>();
         List<Value> listRight = new ArrayList<>();
 
-        // Sorting the elements of the list into liftLeft or/and listRight
         for (int i = 0; i < list.size(); i++) {
             Value s = list.get(i);
             if (s instanceof MapElement) {
@@ -125,7 +124,7 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
                     listLeft.add(s);
                     listRight.add(s);
 
-                // else add to
+                // else sort the elements into liftLeft or listRight
                 } else if (i < median) {
                     listLeft.add(s);
                 } else {
@@ -157,41 +156,31 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
      * Method to be called for when beginning searching in the tree
      */
     public List<Value> searchTree(Point2D p0, Point2D p1){
-        int depth = 0;
-        return searchTree(root, p0, p1, depth);
+        return searchTree(root, p0, p1, 0);
     }
 
     /**
      * Helper that recursively search in a tree.
      */
-    private List<Value> searchTree(Node x, Point2D p0, Point2D p1, int depth){
+    private List<Value> searchTree(Node n, Point2D p0, Point2D p1, int depth){
 
         List<Value> list = new ArrayList<>();
 
-        if(x.valueList != null) {
+        // Return the list of values if it is not null
+        if(n.valueList != null) {
 
-            return x.valueList;
+            return n.valueList;
         }
 
-        switch (axis(depth)) {
-            case 0:
-                if(p0.getX() < x.split && p1.getX() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                else if (p0.getX() > x.split && p1.getX() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-                else {
-                    list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                    list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-                }
-                break;
-            case 1:
-                if(p0.getY() < x.split && p1.getY() < x.split) list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                else if (p0.getY() > x.split && p1.getY() > x.split) list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-                else {
-                    list.addAll(searchTree(x.leftChild, p0, p1, depth + 1));
-                    list.addAll(searchTree(x.rightChild, p0, p1, depth + 1));
-                }
-                break;
-            default:
-                break;
+
+        // Check if points are left or right to the split and go recursively down to the right child
+        if(getValue(depth, p0) < n.split && getValue(depth, p1) < n.split) list.addAll(searchTree(n.leftChild, p0, p1, depth + 1));
+        else if (getValue(depth, p0) > n.split && getValue(depth, p1) > n.split) list.addAll(searchTree(n.rightChild, p0, p1, depth + 1));
+
+        // If neither, just go down both branches
+        else {
+            list.addAll(searchTree(n.leftChild, p0, p1, depth + 1));
+            list.addAll(searchTree(n.rightChild, p0, p1, depth + 1));
         }
 
         return list;
@@ -201,12 +190,16 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
      * Method to find the nearest neightbour based on an x and y value
      */
     public Value nearestNeighbour(double px, double py){
+
+        // Creates a point and searches in the tree
         Point2D p0 = new Point2D.Double(px, py);
         Point2D p1 = new Point2D.Double(px, py);
         List<Value> currentSearchList = searchTree(p0, p1);
 
         Value nearestNeighbour = null;
         double currentNeighbour = Double.MAX_VALUE;
+
+        // Loop through the list and chooses the nearest neighbour from it
         for (Value val : currentSearchList) {
             double distanceTo = Math.hypot( px - val.getX(), py - val.getY());
             if ( distanceTo < currentNeighbour ) {
@@ -223,10 +216,18 @@ public class KDTree<Value extends Coordinates> implements Externalizable {
     }
 
     /**
-     * Method that checks if depth is even
+     * Helper that checks if depth is even
      */
     private int axis(int depth) {
         return depth % 2;
+    }
+
+    /**
+     * Helper that returns an x oy y value for a coordinate
+     */
+    private double getValue(int depth, Point2D p) {
+        if (axis(depth) == 0) return p.getX();
+        else return p.getY();
     }
 
     @Override
