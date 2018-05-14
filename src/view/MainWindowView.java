@@ -123,7 +123,6 @@ public class MainWindowView {
                     break;
 
                 case NAVIGATION_ACTIVE:
-                    mapController.removeRoute();
                     lpane.remove(searchBox);
                     lpane.remove(autoCompleteList);
                     lpane.remove(navigationView);

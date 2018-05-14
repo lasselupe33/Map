@@ -118,6 +118,10 @@ public class SearchBoxController extends MouseAdapter {
 
     /** Helper to be called once the SearchBox cross is clicked */
     public void onCloseClick() {
+        navigationController.reset();
+        graph.resetRoute();
+
+        MapController.getInstance().deleteStartCoordinates();
 
         if (stateHandler.getPrevPanel() == ViewStates.ADDRESS_ENTERED && stateHandler.getCurrentState() == ViewStates.NAVIGATION_ACTIVE) {
             // If closing navigation view where previous panel was address entered...
@@ -130,11 +134,6 @@ public class SearchBoxController extends MouseAdapter {
             stateHandler.updateCurrentState(ViewStates.INITIAL);
             MapController.getInstance().deleteLocationCoordinates();
         }
-
-        navigationController.reset();
-        graph.setSourceAndDest(null, null);
-
-        MapController.getInstance().deleteStartCoordinates();
     }
 
     /** Go to favorites */

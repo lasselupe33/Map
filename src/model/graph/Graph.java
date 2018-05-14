@@ -40,7 +40,6 @@ public class Graph {
     private Address sourceAddress;
     private Address destAddress;
     private Node source;
-    private Node dest;
     private ArrayList<TextualElement> textualNavigation;
     private boolean failed = false;
 
@@ -76,7 +75,6 @@ public class Graph {
         this.sourceAddress = sourceAddress;
         this.destAddress = destAddress;
         this.source = source;
-        this.dest = dest;
 
         // Performance logs
         long start = System.currentTimeMillis();
@@ -308,16 +306,12 @@ public class Graph {
         textualNavigation.add(new TextualElement("Tag mod " + directions[directionIndex] + (edge.getName() != null ? " ad " + edge.getName() : ""), "/icons/arrow-up.png", length));
     }
 
-    public void setSourceAndDest(Node s, Node d) {
-        source = s;
-        dest = d;
-    }
-
     public Path2D getRoutePath() {
         return routePath;
     }
 
     public void resetRoute() {
+        source = null;
         routePath = null;
         time = null;
         length = null;
