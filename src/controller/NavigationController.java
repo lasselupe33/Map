@@ -183,10 +183,10 @@ public class NavigationController extends MouseAdapter {
             MapController.getInstance().updateLocationCoordinates(endAddress.getCoordinates());
             MapController.getInstance().moveScreenNavigation(graph.getRoutePath().getBounds2D());
         } else {
-            updateView();
-            MapController.getInstance().repaintMap(true);
             navigationFailed = true;
             navigationActive = false;
+            updateView();
+            MapController.getInstance().repaintMap(true);
         }
     }
 
