@@ -68,7 +68,6 @@ public class AddressController extends MouseAdapter {
 
     public void saveAddress(String name){
         Favorite newFavorite = new Favorite(name, getAddress());
-        System.out.println(newFavorite.getAddress().getCoordinates());
         favoritesModel.add(newFavorite);
         favoriteView.updateFavoritesView();
     }

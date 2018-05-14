@@ -67,6 +67,12 @@ public class Graph {
      * shortest, on bike or in car.
      */
     public void computePath(Node source, Node dest, Address sourceAddress, Address destAddress) {
+        // We don't want to compute a path between two identical nodes, since there is no path to compute...
+        if (source.getId() == dest.getId()) {
+            failed = false;
+            return;
+        }
+
         this.sourceAddress = sourceAddress;
         this.destAddress = destAddress;
         this.source = source;
