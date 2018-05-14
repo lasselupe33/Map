@@ -114,7 +114,7 @@ public class NavigationController extends MouseAdapter {
         onRouteSearch();
     }
 
-    /** Update the current road type */
+    /** Update the current route type */
     private void changeRouteType(RouteType type) {
         graph.setRouteType(type);
         updateView();
@@ -139,7 +139,7 @@ public class NavigationController extends MouseAdapter {
     }
 
     /**
-     * Method to be called once the user wishes to perform a navigation between two points
+     * Method to be called once the user wishes to perform a route search between two points
      */
     public void onRouteSearch() {
         if (!routeClicked) return;
@@ -152,7 +152,8 @@ public class NavigationController extends MouseAdapter {
             return;
         }
 
-        // TODO: Why do we update the addressController currentAddress, is that necessary for navigation?
+        // Saving the startInput to current address, to move back to if the navigation
+        // panel is closed on close click
         addressController.setCurrentAddress(addressesModel.getAddress(AddressBuilder.parse(startInput).toKey()));
 
         // Get source and dest address and coords
@@ -182,10 +183,10 @@ public class NavigationController extends MouseAdapter {
             MapController.getInstance().updateLocationCoordinates(endAddress.getCoordinates());
             MapController.getInstance().moveScreenNavigation(graph.getRoutePath().getBounds2D());
         } else {
-            updateView();
-            MapController.getInstance().repaintMap(true);
             navigationFailed = true;
             navigationActive = false;
+            updateView();
+            MapController.getInstance().repaintMap(true);
         }
     }
 
@@ -210,6 +211,10 @@ public class NavigationController extends MouseAdapter {
         }
     }
 
+    /**
+     * Get list of steps in textual navigation
+     * @return ArrayList of textual elements
+     */
     public ArrayList<TextualElement> getTextualNavigation() {
         return graph.getTextualNavigation();
     }
@@ -226,6 +231,10 @@ public class NavigationController extends MouseAdapter {
         return graph.getVehicleType();
     }
 
+    /**
+     * Get route type
+     * @return route type
+     */
     public RouteType getRouteType() {
         return graph.getRouteType();
     }
@@ -256,6 +265,7 @@ public class NavigationController extends MouseAdapter {
     public JTextField getEndInput(){
         return navigationView.getEndInput();
     }
+
     /**
      * Reset navigation view
      */

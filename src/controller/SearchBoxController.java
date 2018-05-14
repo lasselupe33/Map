@@ -92,10 +92,12 @@ public class SearchBoxController extends MouseAdapter {
 
         navigationController.setStartAddress(address);
 
+
         // Update view to reflect changes
         stateHandler.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
 
+    /** Set search input */
     public void setSearchInput(String s){
         searchBoxView.getSearchInput().setText(s);
     }
@@ -109,6 +111,7 @@ public class SearchBoxController extends MouseAdapter {
 
     public String getSearchInput() { return searchBoxView.getSearchInput().getText(); }
 
+    /** Go to navigation view */
     public void onNavigationClick() {
         stateHandler.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
     }
@@ -134,6 +137,7 @@ public class SearchBoxController extends MouseAdapter {
         MapController.getInstance().deleteStartCoordinates();
     }
 
+    /** Go to favorites */
     public void onFavoritesClick() {
         stateHandler.updateCurrentState(ViewStates.FAVORITES);
     }

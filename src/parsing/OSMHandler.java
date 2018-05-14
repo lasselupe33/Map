@@ -248,6 +248,9 @@ public class OSMHandler extends DefaultHandler {
                 if (value.equals("recreation_ground")) {
                     type = WayType.GRASS;
                 }
+                if (value.equals("military")) {
+                    type = WayType.MILITARY;
+                }
                 break;
             case "aeroway":
                 if (value.equals("aerodrome")) {
@@ -258,7 +261,7 @@ public class OSMHandler extends DefaultHandler {
                 }
                 break;
             case "place":
-                if (value.equals("island")) {
+                if (value.equals("islet")) {
                     type = WayType.PLACE;
                 }
                 if (value.equals("square")) {
@@ -597,8 +600,8 @@ public class OSMHandler extends DefaultHandler {
             case AEROWAY:
             case GRASS:
             case MANMADEBRIDGE:
-            case PIER:
             case SWIMMINGPOOL:
+            case MILITARY:
                 mapModel.add(type, new MapElement((float) rect.getX(), (float) rect.getY(), path, type, true, nodes));
                 break;
 
@@ -618,6 +621,7 @@ public class OSMHandler extends DefaultHandler {
             case DRAIN:
             case RUNWAY:
             case TRUNK:
+            case PIER:
             case HIGHWAYBRIDGE:
             case RAILWAY:
 
@@ -765,12 +769,20 @@ public class OSMHandler extends DefaultHandler {
             graph.putNode(convertedFrom);
         }
 
+        if (convertedFrom.getTempEdges() == null) {
+            convertedFrom.initialize();
+        }
+
         // ... Do the same with the "to"-node
         Node convertedTo = graph.getNode(to.getId());
 
         if (convertedTo == null) {
             convertedTo = new Node(to.getId(), to.getLon(), to.getLat());
             graph.putNode(convertedTo);
+        }
+
+        if (convertedTo.getTempEdges() == null) {
+            convertedTo.initialize();
         }
 
         // Ensure that there doesn't already exist an edge between the two nodes.

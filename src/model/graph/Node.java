@@ -41,6 +41,10 @@ public class Node extends OSMNode implements Externalizable {
         }
     }
 
+    public void initialize() {
+        tempEdges = new ArrayList<>();
+    }
+
     public float getTimeToSource() {
         return timeTo;
     }
@@ -67,6 +71,10 @@ public class Node extends OSMNode implements Externalizable {
 
     public ArrayList<Integer> getTempEdges() { return tempEdges; }
 
+    /**
+     * Reset node
+     * @param dest
+     */
     public void reset(Node dest) {
         parentEdge = null;
         lengthTo = Float.POSITIVE_INFINITY;
@@ -74,8 +82,18 @@ public class Node extends OSMNode implements Externalizable {
         estimateToDest = (float) UnitConverter.DistInMM(getLat(), getLon(), dest.getLat(), dest.getLon());
     }
 
+    /**
+     * Set estimated destiance to destination
+     * @param estimate the estimate
+     */
     public void setEstimateToDest(float estimate) { estimateToDest = estimate; }
 
+    /**
+     * Get estimated distance or time to destination based on route and vehicle type
+     * @param rType route type (shortest or fastest)
+     * @param vType vehicle type (car, cycle or pedestrian)
+     * @return estimated distance or time to destination
+     */
     public float getEstimateToDest(RouteType rType, VehicleType vType) {
         if (rType == RouteType.SHORTEST) {
             return estimateToDest;

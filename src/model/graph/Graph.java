@@ -51,6 +51,11 @@ public class Graph {
         routeEdges = new ArrayList<>();
     }
 
+    public void reset() {
+        nodes = new HashMap<>();
+        edges = new HashMap<>();
+    }
+
     public int size() {
         return nodes.size();
     }
@@ -62,6 +67,12 @@ public class Graph {
      * shortest, on bike or in car.
      */
     public void computePath(Node source, Node dest, Address sourceAddress, Address destAddress) {
+        // We don't want to compute a path between two identical nodes, since there is no path to compute...
+        if (source.getId() == dest.getId()) {
+            failed = false;
+            return;
+        }
+
         this.sourceAddress = sourceAddress;
         this.destAddress = destAddress;
         this.source = source;
@@ -134,6 +145,7 @@ public class Graph {
             neighbour.setLengthToSource(current.getLengthToSource() + edgeToNeighbour.getLength());
             neighbour.setTimeToSource(current.getTimeToSource() + edgeToNeighbour.getTime(vehicleType));
             neighbour.setParentEdge(edgeToNeighbourId);
+
             pq.add(neighbour);
         }
     }
@@ -162,18 +174,20 @@ public class Graph {
         routePath.moveTo(node.getLon(), node.getLat());
 
         while(parentEdge != null) {
-            // Determine if we should start at the end of the edge path or the start...
-            if (parentEdge.getPath()[0].getX() == node.getLon() && parentEdge.getPath()[0].getY() == node.getLat()) {
-                // If the previous point matches with the start of the path, then go through the path forwards
-                for (int i = 1; i < parentEdge.getPath().length; i++) {
-                    Coordinates point = parentEdge.getPath()[i];
-                    routePath.lineTo(point.getX(), point.getY());
-                }
-            } else {
-                // ... else go through the path backwards
-                for (int i = parentEdge.getPath().length - 2; i >= 0; i--) {
-                    Coordinates point = parentEdge.getPath()[i];
-                    routePath.lineTo(point.getX(), point.getY());
+            if (parentEdge.getPath().length != 0) {
+                // Determine if we should start at the end of the edge path or the start...
+                if (parentEdge.getPath()[0].getX() == node.getLon() && parentEdge.getPath()[0].getY() == node.getLat()) {
+                    // If the previous point matches with the start of the path, then go through the path forwards
+                    for (int i = 1; i < parentEdge.getPath().length; i++) {
+                        Coordinates point = parentEdge.getPath()[i];
+                        routePath.lineTo(point.getX(), point.getY());
+                    }
+                } else {
+                    // ... else go through the path backwards
+                    for (int i = parentEdge.getPath().length - 2; i >= 0; i--) {
+                        Coordinates point = parentEdge.getPath()[i];
+                        routePath.lineTo(point.getX(), point.getY());
+                    }
                 }
             }
 

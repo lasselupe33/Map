@@ -15,6 +15,7 @@ public enum WayType implements Serializable {
     PARK(490),
     FORREST(480),
     WATER(485),
+    MILITARY(480),
     RAILWAY(490),
     BUILDING(508),
     PITCH(490),

@@ -23,6 +23,10 @@ public class SimpleLongSet implements Iterable<Long>, Externalizable {
         size = 0;
     }
 
+    /**
+     * Add to the set
+     * @param value value of item to add
+     */
     public void add(long value) {
         // Bail out if value already exists
         if (contains(value)) {
@@ -51,10 +55,19 @@ public class SimpleLongSet implements Iterable<Long>, Externalizable {
         set = tempSet;
     }
 
+    /**
+     * Get long set
+     * @return set
+     */
     public long[] getSet() {
         return set;
     }
 
+    /**
+     * Check if the set contains an item with the given value
+     * @param value to check for
+     * @return true if value is en set; else false
+     */
     public boolean contains(long value) {
         for (long elm : set) {
             if (elm == value) {
@@ -65,10 +78,18 @@ public class SimpleLongSet implements Iterable<Long>, Externalizable {
         return false;
     }
 
+    /**
+     * get size of set
+     * @return size
+     */
     public int size() {
         return size;
     }
 
+    /**
+     * Get iterator over set
+     * @return iterator
+     */
     @Override
     public Iterator<Long> iterator() {
         Iterator<Long> it = new Iterator<Long>() {

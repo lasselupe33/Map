@@ -54,6 +54,7 @@ public class StrokeMap {
 
     /**
      * Initialize stroke map
+     * Map width to type
      */
     private static void initializeMap() {
         strokeMap = new EnumMap<>(WayType.class);
@@ -72,6 +73,7 @@ public class StrokeMap {
         strokeMap.put(WayType.TRUNK, 0.00025f);
         strokeMap.put(WayType.BARRIER, 0.000007f);
         strokeMap.put(WayType.HEDGE, 0.000007f);
+        strokeMap.put(WayType.PIER, 0.000017f);
         strokeMap.put(WayType.DRAIN, 0.0000015f);
         strokeMap.put(WayType.RUNWAY, 0.000009f);
         strokeMap.put(WayType.HIGHWAYBRIDGE, 0.00009f);

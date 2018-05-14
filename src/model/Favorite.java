@@ -18,11 +18,18 @@ public class Favorite implements Externalizable {
         this.address = address;
     }
 
-
+    /**
+     * Get name of favorite
+     * @return name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get address of favorite
+     * @return address
+     */
     public Address getAddress() { return address; }
 
     @Override
