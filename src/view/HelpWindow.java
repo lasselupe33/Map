@@ -154,7 +154,7 @@ public class HelpWindow {
                                     "vises på kortet med blå ikoner, og en liste over alle favoritter kan<br/>" +
                                     "ses ved ved at klikke på favoritikonet yderst til venstre i søgebaren.<br/>" +
                                     "En favorit kan vælges ved at klikke på den i listen eller på kortikonet.<br/>" +
-                                    "Når en favorit er gemt, bliver bogmærket under adressen udfyldt. Klikker</br>" +
+                                    "Når en favorit er gemt, bliver bogmærket under adressen udfyldt. <br/> Klikker" +
                                     "man på det udfyldte bogmærke, slettes favoritten.</html>";
         text(favoritesText, userManualPanel);
 

@@ -68,7 +68,9 @@ public class Graph {
     public void computePath(Node source, Node dest, Address sourceAddress, Address destAddress) {
         // We don't want to compute a path between two identical nodes, since there is no path to compute...
         if (source.getId() == dest.getId()) {
-            failed = false;
+            // Reset prev route
+            resetRoute();
+            failed = true;
             return;
         }
 

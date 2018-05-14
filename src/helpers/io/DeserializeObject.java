@@ -53,7 +53,8 @@ public class DeserializeObject implements Runnable {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            // Skip file if it doesn't exist.
+            IOHandler.instance.onObjectDeserializationComplete();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
