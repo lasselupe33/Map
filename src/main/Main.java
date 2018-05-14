@@ -68,7 +68,7 @@ public class Main {
         if (args.length == 0) {
             if (IOHandler.instance.isJar) {
                 try {
-                    if (Files.exists(Paths.get(new URI(IOHandler.externalRootPath + "/data")))) {
+                    if (Files.exists(Paths.get(new URI(IOHandler.externalRootPath + "/BFST18_binary")))) {
                         IOHandler.instance.loadFromBinary(true);
                     } else {
                         IOHandler.instance.loadFromBinary(false);

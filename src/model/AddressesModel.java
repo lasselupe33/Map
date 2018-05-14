@@ -104,6 +104,16 @@ public class AddressesModel implements Serializable {
         return addresses.get(coordToKeyMap.get(coord.toString()));
     }
 
+    /** Internal helper that resets the model */
+    public void reset() {
+        postcodeToCity = new HashMap<>();
+        parsingIndex = 0;
+        addresses = new ArrayList<>();
+        coordToKeyMap = new HashMap<>();
+        addressTree = null;
+        searchTrie = new TST<>();
+    }
+
     /** Internal helper that serialises the mapModel */
     public void serialize() {
         new SerializeObject("address/tree", addressTree);

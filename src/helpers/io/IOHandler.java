@@ -121,6 +121,7 @@ public class IOHandler {
             // Prepare models to recieve new data
             mapModel.reset();
             graph.reset();
+            addressesModel.reset();
 
             if (filename.endsWith(".osm")) {
                 readFromOSM(new InputSource(filename));
