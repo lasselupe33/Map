@@ -262,9 +262,6 @@ public class NavigationController extends MouseAdapter {
     public JTextField getStartInput(){
         return navigationView.getStartInput();
     }
-    public JTextField getEndInput(){
-        return navigationView.getEndInput();
-    }
 
     /**
      * Reset navigation view

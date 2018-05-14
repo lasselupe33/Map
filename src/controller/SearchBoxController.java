@@ -109,8 +109,6 @@ public class SearchBoxController extends MouseAdapter {
         stateHandler.updateCurrentState(ViewStates.ADDRESS_ENTERED);
     }
 
-    public String getSearchInput() { return searchBoxView.getSearchInput().getText(); }
-
     /** Go to navigation view */
     public void onNavigationClick() {
         stateHandler.updateCurrentState(ViewStates.NAVIGATION_ACTIVE);
