@@ -37,7 +37,7 @@ public class SerializingTest {
         IOHandler.instance.loadFromString("./test/data/tiny.osm");
 
         // Give time to parse osm on another thread
-        Thread.sleep(1000);
+        Thread.sleep(3000);
     }
 
     @Test
