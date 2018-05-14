@@ -85,22 +85,19 @@ public class AddressBuilderTest {
         assertEquals(assertAddress.toString(), testAddress.toString());
     }
 
-    @Test(expected = RuntimeException.class )
+    @Test
     public void testTooLongPostCode(){
-        Address assertAddress = new Address("Islands Brygge", "10", "2300");
         String stringAddress = "Islands Brygge 10, 23000 city of Danmark";
         Address testAddress = AddressBuilder.parse(stringAddress);
-        assertEquals(assertAddress.getCoordinates(), testAddress.getCoordinates());
-        assertEquals(assertAddress.getPostcode(), testAddress.getPostcode());
-        assertEquals(assertAddress.getCity(), testAddress.getCity());
-        assertEquals(assertAddress.getStreet(), testAddress.getStreet());
-        assertEquals(assertAddress.getHouse(), testAddress.getHouse());
-        assertEquals(assertAddress.toKey(), testAddress.toKey());
-        assertEquals(assertAddress.toString(), testAddress.toString());
+        assertTrue(null == testAddress.getPostcode());
     }
 
-
-    // TODO Test for too long postcodes where the first four digits aren't correct
+    @Test
+    public void testTooShortPostCode(){
+        String stringAddress = "Islands Brygge 10, 230 city of Danmark";
+        Address testAddress = AddressBuilder.parse(stringAddress);
+        assertTrue(null == testAddress.getPostcode());
+    }
 
     @Test
     public void testLetterInHouseNumber() {

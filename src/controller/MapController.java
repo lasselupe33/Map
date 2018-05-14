@@ -46,6 +46,10 @@ public class MapController {
         return transform;
     }
 
+    /**
+     * Get the instance of the MapController
+     * @return instance of MapController
+     */
     public static MapController getInstance() {
         return instance;
     }
@@ -64,6 +68,7 @@ public class MapController {
         return useAntiAliasing;
     }
 
+    /** toggle anitialiasing and repaint the canvas */
     public void toggleAntiAliasing() {
         useAntiAliasing = !useAntiAliasing;
         canvas.repaint();
@@ -83,8 +88,14 @@ public class MapController {
         zoom(factor, -canvas.getWidth() / 2, -canvas.getHeight() / 2);
     }
 
+    /**
+     * Zoom to given coordinates
+     * @param factor factor to zoom with
+     * @param x x coordinate
+     * @param y y coordinate
+     */
     public void zoom(double factor, double x, double y) {
-        // Cap the zoom so that the user isn't able to zoom either too far or too far in.
+        // Cap the zoom so that the user isn't able to zoom either too far out or too far in.
         if (UnitConverter.PxToKm(100) > 50 && factor < 1.01) factor = 1.0;
         if (UnitConverter.PxToKm(100) < 0.01 && factor > 1.0) factor = 1.0;
 
@@ -136,8 +147,7 @@ public class MapController {
         panToMap(coordinates.getX(), coordinates.getY());
 
         // Calculates scale the map should zoom
-        // (508 is the BUILDING WayTypes zoom priority)
-        double zoomscale = Math.abs(100.0 * (508 - getZoomLevel()) / 510.0);
+        double zoomscale = Math.abs(100.0 * (511 - getZoomLevel()) / 510.0);
         zoomToCenter(zoomscale);
 
         updateLocationCoordinates(coordinates);
@@ -179,7 +189,7 @@ public class MapController {
         pan(canvas.getWidth()/2, canvas.getHeight()/2);
     }
 
-    /** Methods to handle list of locations where Icons should be drawn */
+    /** Methods to handle list of locations where icons should be drawn */
     /* The location icon */
     public void updateLocationCoordinates(Coordinates coordinates){ locationIconCoordinates = coordinates; }
 
@@ -194,6 +204,10 @@ public class MapController {
 
     public Coordinates getStartCoordinates() { return startIconCoordinates; }
 
+    /**
+     * Get list of favorites
+     * @return ArrayList of favorites
+     */
     public ArrayList<Favorite> getFavorites() { return favoritesModel.getFavorites(); }
 
     /** Helper that returns the viewRect that surrounds the current viewPort in model coordinates */

@@ -40,7 +40,6 @@ public class Graph {
     private Address sourceAddress;
     private Address destAddress;
     private Node source;
-    private Node dest;
     private ArrayList<TextualElement> textualNavigation;
     private boolean failed = false;
 
@@ -67,10 +66,15 @@ public class Graph {
      * shortest, on bike or in car.
      */
     public void computePath(Node source, Node dest, Address sourceAddress, Address destAddress) {
+        // We don't want to compute a path between two identical nodes, since there is no path to compute...
+        if (source.getId() == dest.getId()) {
+            failed = false;
+            return;
+        }
+
         this.sourceAddress = sourceAddress;
         this.destAddress = destAddress;
         this.source = source;
-        this.dest = dest;
 
         // Performance logs
         long start = System.currentTimeMillis();
@@ -302,20 +306,18 @@ public class Graph {
         textualNavigation.add(new TextualElement("Tag mod " + directions[directionIndex] + (edge.getName() != null ? " ad " + edge.getName() : ""), "/icons/arrow-up.png", length));
     }
 
-    public void setSourceAndDest(Node s, Node d) {
-        source = s;
-        dest = d;
-    }
-
     public Path2D getRoutePath() {
         return routePath;
     }
 
     public void resetRoute() {
+        source = null;
         routePath = null;
         time = null;
         length = null;
         routeEdges = new ArrayList<>();
+        textualNavigation = null;
+        failed = false;
     }
 
     /** Helper that converts the ArrayList of edges in a node to an array once all edges have been created */
